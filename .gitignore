@@ -5,4 +5,5 @@
 .project
 
 # Maven
+/laskarit/viikko2/Unicafe/target
 target/
