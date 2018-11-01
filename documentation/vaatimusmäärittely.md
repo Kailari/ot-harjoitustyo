@@ -3,6 +3,9 @@
 ## Sovelluksen tarkoitus
 Sovellus on yksinkertainen hieman roguelike-henkinen luolaseikkailu, jossa pelaaja siivoaa luolaa möröistä kerros kerrallaan kohdaten jatkuvasti vahvempia mörköjä. Useat käyttäjät voivat pelata peliä samalla laitteella erillisiä pelaajaprofiileja käyttäen ilman huolta että he vahingossa sotkevat toistensa tallennuksia tai asetuksia.
 
+## Käyttäjät
+Sovelluksen luonteen vuoksi sovellukseen kuuluu vain yhden tyyppisiä käyttäjiä, joita kutsutaan tässä yhteydessä *"pelaajaprofiileiksi"*
+
 ## Pelaajaprofiilit
 Pelillä voi olla samalla laitteella useille pelaajille profiileja, joihin tallennetaan yksilöidyt tallennus- ja asetustiedostot. Lisäksi sovellus ylläpitää tietokantaa johon tallennetaan eri pelaajaprofiilien piste-ennätykset ja lyötyjen mörköjen määrä ym.
 
