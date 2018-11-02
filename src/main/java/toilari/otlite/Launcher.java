@@ -1,7 +1,7 @@
 package toilari.otlite;
 
 /**
- * Application launcher. Main entry point for the application.
+ * Vastaa sovelluksen käynnistämisestä ja komentoriviparametrien parsimisesta.
  */
 public class Launcher {
     public static void main(String[] args) {
