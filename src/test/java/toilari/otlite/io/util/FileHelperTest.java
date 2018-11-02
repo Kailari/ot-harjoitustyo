@@ -57,7 +57,7 @@ public class FileHelperTest {
     public void beforeEach() throws IOException {
         readableFiles = new Path[READABLE_CONTENTS.length];
         for (int i = 0; i < READABLE_CONTENTS.length; i++) {
-            Files.write(ROOT.resolve("readable_" + i + READABLE_EXTENSIONS[i]), READABLE_CONTENTS[i].getBytes());
+            readableFiles[i] = Files.write(ROOT.resolve("readable_" + i + READABLE_EXTENSIONS[i]), READABLE_CONTENTS[i].getBytes());
         }
     }
 
