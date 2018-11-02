@@ -3,6 +3,8 @@
 .settings
 .classpath
 .project
+.factorypath
+formatter.xml
 
 # Maven
 /laskarit/viikko2/Unicafe/target
