@@ -1,6 +1,5 @@
 package toilari.otlite.io.dao;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Path;
