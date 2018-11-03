@@ -1,17 +1,20 @@
 package toilari.otlite.io.dao;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Reader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
+import lombok.Getter;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import toilari.otlite.io.util.FileHelper;
+import toilari.otlite.io.util.TextFileHelper;
 import toilari.otlite.world.Tile;
 
 /**
@@ -19,90 +22,63 @@ import toilari.otlite.world.Tile;
  */
 @Slf4j
 public class TileDAO {
-    private static final String PATH = "tiles";
+    private static final String SUBDIRECTORY = "tiles";
 
-    private final File contentRoot;
-    private final Gson gson;
+    private final Gson gson = new GsonBuilder().create();
+
+    @NonNull private final Path contentRoot;
 
     /**
-     * Luo uuden TileDAOn, joka olettaa määrittelytiedostojen löytyvän
-     * juurihakemiston <code>contentRoot</code> alta.
+     * Kaikki ladatut ruututyypit.
      * 
-     * @param contentRoot Juurihakemisto mistä ruutujen määrittelytiedostoja
-     *                        etsitään
-     * @throws NullPointerException     if ContentRoot is null
-     * @throws IllegalArgumentException if ContentRoot is not a directory
+     * @return Taulukko jossa on kaikki ladatut ruututyypit. Tyhjä taulukko jos
+     *         yhtään tyyppiä ei ole löydetty tai jos ruututyyppejä ei vielä ole
+     *         ladattu.
      */
-    public TileDAO(File contentRoot) {
-        if (contentRoot == null) {
-            throw new NullPointerException("ContentRoot cannot be null!");
-        }
-        if (!contentRoot.isDirectory()) {
-            throw new IllegalArgumentException("ContentRoot must be a directory!");
-        }
+    @Getter private Tile[] tiles;
 
-        this.contentRoot = findContentRootOrCrash(contentRoot);
-        this.gson = new GsonBuilder().create();
+    /**
+     * Luo uuden TileDAOn joka etsii määrittelytiedostoja polusta
+     * <code>&lt;contentRoot&gt;/tiles/*.json</code>. Konstruktori kutsuu
+     * {@link #discoverAndLoadAll()} ruututyyppien löytämiseksi.
+     * 
+     * @param contentRoot Juurihakemisto josta pelin resursseja etsitään
+     */
+    public TileDAO(String contentRoot) {
+        this.contentRoot = Paths.get(contentRoot);
+        discoverAndLoadAll();
     }
 
     /**
      * Etsii polusta <code>[content_root]/tiles/</code> kaikki .json -tiedostot ja
-     * yrittää ladata ne {@link Tile ruutuina}.
-     * 
-     * @return Taulukko jossa kaikki löydetyt ruututyypit.
+     * yrittää ladata ne {@link Tile ruutuina}. Löydetyt ja ladatut ruudut
+     * varastoidaan ja niihin pääsee käsiksi kutsumalla {@link #getTiles()}.
      */
-    public Tile[] discoverAndLoadAll() {
-        File[] fileCandidates = contentRoot.listFiles((dir, name) -> {
-            return name.toLowerCase().endsWith(".json");
-        });
-
-        List<Tile> successfullyLoadedTiles = new ArrayList<>();
-        for (File candidate : fileCandidates) {
-            // accept only files, not directories etc.
-            if (!candidate.isFile()) {
-                continue;
-            }
-
-            Tile tile = tryLoad(candidate);
-            if (tile != null) {
-                successfullyLoadedTiles.add(tile);
-            }
-        }
-
-        return successfullyLoadedTiles.toArray(new Tile[successfullyLoadedTiles.size()]);
+    public void discoverAndLoadAll() {
+        Path path = contentRoot.resolve(SUBDIRECTORY);
+        tiles = FileHelper.discoverFiles(path, "json")
+                .map(this::tryLoad)
+                .filter(t -> t != null)
+                .toArray(Tile[]::new);
     }
 
     /**
      * Yrittää ladata ruututyypin määrittelyn tiedostosta.
      * 
-     * @param file Tiedosto josta määrittely ladataan.
+     * @param path Tiedoston polku josta määrittely ladataan
      * @return <code>null</code> jos tiedosto ei ollut validi ruututyypin määrittely
      *         tai jos tiedostoa ei löytynyt tai sitä ei voitu lukea. Muutoin
      *         määrittelyn mukainen {@link Tile ruutu}-instanssi.
      */
-    public Tile tryLoad(File file) {
-        try (FileReader reader = new FileReader(file)) {
+    public Tile tryLoad(Path path) {
+        try (Reader reader = TextFileHelper.getReader(path)) {
             return gson.fromJson(reader, Tile.class);
-        } catch (FileNotFoundException e) {
-            LOG.warn("File %s not found or could not be read.", file.getPath());
         } catch (JsonSyntaxException e) {
-            LOG.warn("Json syntax-error in file %s: %s", file.getPath(), e.getMessage());
+            LOG.warn("Json syntax-error in file {}: {}", path, e.getMessage());
         } catch (IOException e) {
-            LOG.warn("Error reading from file %s", file.getPath());
+            LOG.warn("Error reading from file {}", path);
         }
 
         return null;
-    }
-
-
-    private static File findContentRootOrCrash(File contentRoot) {
-        File[] potentialTileRoots = contentRoot.listFiles((dir, name) -> {
-            return name.equals(PATH);
-        });
-        if (potentialTileRoots.length != 1 || !potentialTileRoots[0].isDirectory()) {
-            throw new IllegalStateException("Could not find valid content root!");
-        }
-
-        return potentialTileRoots[0];
     }
 }

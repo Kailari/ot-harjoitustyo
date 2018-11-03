@@ -1,6 +1,8 @@
 package toilari.otlite.world;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import toilari.otlite.world.characters.ICharacter;
 
 /**
@@ -9,6 +11,8 @@ import toilari.otlite.world.characters.ICharacter;
  * 
  * @see Tileset
  */
+@EqualsAndHashCode
+@RequiredArgsConstructor
 public class Tile {
     /**
      * Määrittää kohdellaanko ruutua seinänä. (hahmot eivät voi liikkua ruutuun joka
@@ -17,18 +21,7 @@ public class Tile {
      * @return <code>true</code> jos ruutu on seinä, muutoin <code>false</code>
      */
     @Getter private final boolean wall;
-    private final char symbol;
-
-    /**
-     * Rakentaa uuden ruututyypin.
-     * 
-     * @param wall   onko tämä ruutu seinä?
-     * @param symbol ruudun symboli
-     */
-    public Tile(boolean wall, char symbol) {
-        this.wall = wall;
-        this.symbol = symbol;
-    }
+    @Getter private final char symbol;
 
     /**
      * Kutsutaan kun hahmo astuu ruutuun.
