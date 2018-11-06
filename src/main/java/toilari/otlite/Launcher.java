@@ -10,7 +10,7 @@ public class Launcher {
      * @param args Raa'at, parsimattomat kometoriviparametrit
      */
     public static void main(String[] args) {
-        OTLite app = new OTLite();
+        Game app = new Game();
         app.run();
     }
 }

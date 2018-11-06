@@ -27,12 +27,11 @@ public class TileDAOTest {
 
     private static final Path ROOT = Paths.get("target/test-temp/content/tiles/").normalize();
 
-    private static final String[][] TILE_DEFINITIONS = { { "wall.json", "{wall:true,symbol:'#'}" }, { "floor.json", "{wall:false,symbol:'.'}" }, { "hole.json", "{wall:false,symbol:' '}" }, { "invalid.json", "{this_is_not_a_field:wtf,symbol:,,:asd}" }
-    };
-    private static final Tile[] CORRECT_TILES = { new Tile(true, '#'), new Tile(false, '.'), new Tile(false, ' '),
-    };
+    private static final String[][] TILE_DEFINITIONS = { { "wall.json", "{id:'wall',wall:true,symbol:'#'}" }, { "floor.json", "{id:'floor',wall:false,symbol:'.'}" }, { "hole.json", "{id:'hole',wall:false,symbol:' '}" }, { "invalid.json", "{this_is_not_a_field:wtf,symbol:,,:asd}" } };
+    private static final Tile[] CORRECT_TILES = { new Tile(true, '#', "wall"), new Tile(false, '.',
+            "floor"), new Tile(false, ' ', "hole") };
 
-    TileDAO dao;
+    private TileDAO dao;
 
     /**
      * Luodaan testien vaatimat hakemistot ja .json-tiedostot.

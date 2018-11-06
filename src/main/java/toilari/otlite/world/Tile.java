@@ -8,8 +8,6 @@ import toilari.otlite.world.characters.ICharacter;
 /**
  * Määrittelee pelimaailman ruudun tyypin. Kustakin tyypistä on vain yksi
  * immutaabeli instanssi.
- * 
- * @see Tileset
  */
 @EqualsAndHashCode
 @RequiredArgsConstructor
@@ -22,6 +20,7 @@ public class Tile {
      */
     @Getter private final boolean wall;
     @Getter private final char symbol;
+    @Getter private final String id;
 
     /**
      * Kutsutaan kun hahmo astuu ruutuun.
@@ -31,7 +30,6 @@ public class Tile {
      * @param character hahmo joka juuri astui ruutuun
      */
     public void onCharacterEnter(int x, int y, ICharacter character) {
-        assert x == character.getX() && y == character.getY();
     }
 
     /**
