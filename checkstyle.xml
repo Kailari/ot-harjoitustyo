@@ -9,7 +9,7 @@
     <module name='TreeWalker'>
 
         <property name='tabWidth' value='4' />
-        
+
         <!-- Block Checks -->
 
         <module name='EmptyBlock' />
@@ -18,10 +18,10 @@
         <module name='RightCurly' />
         <module name='AvoidNestedBlocks' />
         <module name="NestedIfDepth">
-          <property name="max" value="2"/>
+            <property name="max" value="2"/>
         </module>
         <module name="NestedForDepth">
-          <property name="max" value="2"/>
+            <property name="max" value="2"/>
         </module>
         <module name="NestedTryDepth"/>
 
@@ -93,6 +93,12 @@
             <property name="scope" value="public"/>
             <property name="checkEmptyJavadoc" value="true"/>
         </module>
+
+        <!-- obsessive-compulsive disorder -->
+        <module name="RequireThis">
+            <property name="checkMethods" value="false"/>
+            <property name="validateOnlyOverlapping" value="false"/>
+        </module>
     </module>
 
     <!-- File Length -->
@@ -100,6 +106,4 @@
     <module name='FileLength'>
         <property name='max' value='500' />
     </module>
-
-
 </module>

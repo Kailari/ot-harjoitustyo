@@ -9,7 +9,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
-import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import toilari.otlite.io.util.FileHelper;
@@ -21,31 +20,35 @@ import toilari.otlite.world.Tile;
  */
 @Slf4j
 public class TileDAO {
-    private static final String SUBDIRECTORY = "tiles";
-
     private final Gson gson = new GsonBuilder().create();
 
     @NonNull private final Path contentRoot;
 
+    @NonNull private Tile[] tiles = new Tile[0];
+
     /**
-     * Kaikki ladatut ruututyypit.
+     * Hakee kaikki ladatut ruututyyppien määrittelyt. Mikäli ruututyyppejä ei ole,
+     * yritetään ne etsiä tiedostoista.
      * 
-     * @return Taulukko jossa on kaikki ladatut ruututyypit. Tyhjä taulukko jos
-     *         yhtään tyyppiä ei ole löydetty tai jos ruututyyppejä ei vielä ole
-     *         ladattu.
+     * @return kaikki ladatut ruututyypit. Tyhjä taulukko jos yhtään tyyppiä ei ole
+     *         löydetty tai jos ruututyyppejä ei vielä ole ladattu
      */
-    @Getter private Tile[] tiles;
+    public Tile[] getTiles() {
+        if (this.tiles.length == 0) {
+            discoverAndLoadAll();
+        }
+
+        return this.tiles;
+    }
 
     /**
      * Luo uuden TileDAOn joka etsii määrittelytiedostoja polusta
-     * <code>&lt;contentRoot&gt;/tiles/*.json</code>. Konstruktori kutsuu
-     * {@link #discoverAndLoadAll()} ruututyyppien löytämiseksi.
+     * <code>&lt;contentRoot&gt;/tiles/*.json</code>.
      * 
      * @param contentRoot Juurihakemisto josta pelin resursseja etsitään
      */
     public TileDAO(String contentRoot) {
         this.contentRoot = Paths.get(contentRoot);
-        discoverAndLoadAll();
     }
 
     /**
@@ -54,8 +57,7 @@ public class TileDAO {
      * varastoidaan ja niihin pääsee käsiksi kutsumalla {@link #getTiles()}.
      */
     public void discoverAndLoadAll() {
-        Path path = contentRoot.resolve(SUBDIRECTORY);
-        tiles = FileHelper.discoverFiles(path, "json")
+        this.tiles = FileHelper.discoverFiles(this.contentRoot, "json")
                 .map(this::tryLoad)
                 .filter(t -> t != null)
                 .toArray(Tile[]::new);
@@ -71,7 +73,7 @@ public class TileDAO {
      */
     public Tile tryLoad(Path path) {
         try (Reader reader = TextFileHelper.getReader(path)) {
-            return gson.fromJson(reader, Tile.class);
+            return this.gson.fromJson(reader, Tile.class);
         } catch (JsonSyntaxException e) {
             LOG.warn("Json syntax-error in file {}: {}", path, e.getMessage());
         } catch (IOException e) {

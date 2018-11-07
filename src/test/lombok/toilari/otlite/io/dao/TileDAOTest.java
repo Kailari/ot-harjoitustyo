@@ -27,7 +27,7 @@ public class TileDAOTest {
 
     private static final Path ROOT = Paths.get("target/test-temp/content/tiles/").normalize();
 
-    private static final String[][] TILE_DEFINITIONS = { { "wall.json", "{id:'wall',wall:true,symbol:'#'}" }, { "floor.json", "{id:'floor',wall:false,symbol:'.'}" }, { "hole.json", "{id:'hole',wall:false,symbol:' '}" }, { "invalid.json", "{this_is_not_a_field:wtf,symbol:,,:asd}" } };
+    private static final String[][] TILE_DEFINITIONS = { { "wall.json", "{\"id\":\"wall\",\"wall\":true,\"symbol\":\"#\"}" }, { "floor.json", "{\"id\":\"floor\",\"wall\":false,\"symbol\":\".\"}" }, { "hole.json", "{\"id\":\"hole\",\"wall\":false,\"symbol\":\" \"}" }, { "invalid.json", "{this_is_not_a_field:wtf,\"wall\":true,symbol:,,:asd}" } };
     private static final Tile[] CORRECT_TILES = { new Tile(true, '#', "wall"), new Tile(false, '.',
             "floor"), new Tile(false, ' ', "hole") };
 
@@ -52,7 +52,8 @@ public class TileDAOTest {
      */
     @BeforeEach
     public void beforeEach() {
-        dao = new TileDAO("target/test-temp/content");
+        this.dao = new TileDAO("target/test-temp/content/tiles/");
+        this.dao.discoverAndLoadAll();
     }
 
     /**
@@ -60,7 +61,7 @@ public class TileDAOTest {
      */
     @Test
     public void tileDAOHasAllDefinedTiles() {
-        assertEquals(CORRECT_TILES.length, dao.getTiles().length);
+        assertEquals(CORRECT_TILES.length, this.dao.getTiles().length);
     }
 
     /**
@@ -68,7 +69,7 @@ public class TileDAOTest {
      */
     @Test
     public void tileDAOHasCorrectTiles() {
-        val tiles = Arrays.asList(dao.getTiles());
+        val tiles = Arrays.asList(this.dao.getTiles());
         for (int i = 0; i < CORRECT_TILES.length; i++) {
             assertTrue(tiles.contains(CORRECT_TILES[i]));
         }
@@ -79,7 +80,7 @@ public class TileDAOTest {
      */
     @Test
     public void tileDAOHasNoNullTiles() {
-        for (val t : dao.getTiles()) {
+        for (val t : this.dao.getTiles()) {
             assertNotNull(t);
         }
     }
@@ -90,7 +91,7 @@ public class TileDAOTest {
      */
     @Test
     public void tryLoadReturnsNullOnFileThatDoesNotExist() {
-        assertNull(dao.tryLoad(Paths.get("No/This/Path/Does/Not/Exist/Either.nope")));
+        assertNull(this.dao.tryLoad(Paths.get("No/This/Path/Does/Not/Exist/Either.nope")));
     }
 
     /**
