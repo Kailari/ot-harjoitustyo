@@ -6,6 +6,11 @@
 .factorypath
 formatter.xml
 
+# IntelliJ IDEA
+.idea
+*.iml
+*.ipr
+
 # Maven
 /laskarit/viikko2/Unicafe/target
 target/

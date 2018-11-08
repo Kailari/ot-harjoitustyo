@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -59,7 +60,7 @@ public class TileDAO {
     public void discoverAndLoadAll() {
         this.tiles = FileHelper.discoverFiles(this.contentRoot, "json")
                 .map(this::tryLoad)
-                .filter(t -> t != null)
+                .filter(Objects::nonNull)
                 .toArray(Tile[]::new);
     }
 
@@ -71,7 +72,7 @@ public class TileDAO {
      *         tai jos tiedostoa ei löytynyt tai sitä ei voitu lukea. Muutoin
      *         määrittelyn mukainen {@link Tile ruutu}-instanssi.
      */
-    public Tile tryLoad(Path path) {
+    Tile tryLoad(Path path) {
         try (Reader reader = TextFileHelper.getReader(path)) {
             return this.gson.fromJson(reader, Tile.class);
         } catch (JsonSyntaxException e) {

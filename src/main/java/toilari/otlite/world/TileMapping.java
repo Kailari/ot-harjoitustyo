@@ -64,7 +64,7 @@ public class TileMapping {
      */
     public byte getIndex(String id) {
         val index = this.idToIndex.get(id);
-        return index == null ? (byte) -1 : (byte) 0;
+        return index == null ? (byte) -1 : index;
     }
 
     /**

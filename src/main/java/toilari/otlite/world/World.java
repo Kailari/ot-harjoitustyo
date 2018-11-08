@@ -8,6 +8,10 @@ import lombok.NonNull;
 public class World {
     private Level level;
 
+    public Level getCurrentLevel() {
+        return this.level;
+    }
+
     /**
      * Vaihtaa pelin karttaa.
      * 

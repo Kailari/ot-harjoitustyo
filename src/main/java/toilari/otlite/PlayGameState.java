@@ -1,5 +1,8 @@
 package toilari.otlite;
 
+import java.nio.file.Paths;
+import java.util.Scanner;
+
 import lombok.NonNull;
 import lombok.val;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +17,8 @@ import toilari.otlite.world.World;
 @Slf4j
 public class PlayGameState extends GameState {
     @NonNull private final World world;
+    
+    private Scanner scanner;
 
     /**
      * Luo uuden pelitila-instanssin.
@@ -25,11 +30,18 @@ public class PlayGameState extends GameState {
 
     @Override
     public void init() {
-        LOG.info("Initializing gameplay...");
+        LOG.info("Initializing gameplay...{}", Paths.get(".").toAbsolutePath());
 
-        LOG.debug("Loading assets...");
-        val tileMappings = new TileMapping(new TileDAO("content/tiles/"));
+        LOG.info("Loading assets...");
+        val tileDao = new TileDAO("content/tiles/");
+        tileDao.discoverAndLoadAll();
+
+        val tileMappings = new TileMapping(tileDao);
         this.world.changeLevel(createLevel(tileMappings));
+
+        this.scanner = new Scanner(System.in);
+
+        LOG.info("Initialization finished.");
     }
 
     private Level createLevel(TileMapping tileMappings) {
@@ -52,18 +64,24 @@ public class PlayGameState extends GameState {
 
     @Override
     public void update() {
-
+        System.out.println("Vuoro pelattu, paina <enter>");
+        this.scanner.nextLine();
     }
 
     @Override
     public void draw() {
-        /*for (int y = 0; y < this.world.get; y++) {
+        val level = this.world.getCurrentLevel();
 
-        }*/
+        for (int y = 0; y < level.getHeight(); y++) {
+            for (int x = 0; x < level.getWidth(); x++) {
+                val tile = level.getTileAt(x, y);
+                System.out.printf("%c%c", tile.getSymbol(), (x == level.getWidth() - 1 ? '\n' : ' '));
+            }
+        }
     }
 
     @Override
     public void destroy() {
-
+        this.scanner.close();
     }
 }

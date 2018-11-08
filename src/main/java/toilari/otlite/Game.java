@@ -1,10 +1,10 @@
 package toilari.otlite;
 
-import java.util.function.Supplier;
-
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.function.Supplier;
 
 /**
  * Pelin runko.
@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 public class Game {
     /**
      * Määrittää jatketaanko pääloopin suorittamista.
-     * 
+     *
      * @param running jos <code>true</code>, pääloopin suorittamista jatketaan
      */
     @Setter private boolean running;
@@ -22,7 +22,7 @@ public class Game {
 
     private final Supplier<GameState> defaultStateFactory;
 
-    protected Game(Supplier<GameState> defaultStateFactory) {
+    Game(Supplier<GameState> defaultStateFactory) {
         this.defaultStateFactory = defaultStateFactory;
     }
 
@@ -32,7 +32,7 @@ public class Game {
      * jälkeen. Kun päälooppi viimein valmistuu, viimeistellään suoritus metodissa
      * {@link #destroy()}
      */
-    public void run() {
+    void run() {
         init();
         loop();
         destroy();
@@ -40,15 +40,15 @@ public class Game {
 
     /**
      * Vaihtaa pelitilaa.
-     * 
+     *
      * @param newState uusi pelitila
      */
     public void changeState(@NonNull GameState newState) {
         LOG.info("Changing the game state to: {}", newState);
 
-        currentGameState.destroy();
-        currentGameState = newState;
-        currentGameState.init();
+        this.currentGameState.destroy();
+        this.currentGameState = newState;
+        this.currentGameState.init();
     }
 
     /**
@@ -56,9 +56,9 @@ public class Game {
      * alkaa.
      */
     private void init() {
-        currentGameState = defaultStateFactory.get();
-        currentGameState.init();
-        running = true;
+        this.currentGameState = this.defaultStateFactory.get();
+        this.currentGameState.init();
+        this.running = true;
     }
 
     /**
@@ -66,9 +66,9 @@ public class Game {
      * suorittamisesta. Metodi palaa vasta kun pääloopin suoritus on valmis.
      */
     private void loop() {
-        while (running) {
-            currentGameState.update();
-            currentGameState.draw();
+        while (this.running) {
+            this.currentGameState.update();
+            this.currentGameState.draw();
         }
     }
 
@@ -76,6 +76,6 @@ public class Game {
      * Kutsutaan kerran pääloopin jälkeen, kun ohjelman suoritus on loppumassa.
      */
     private void destroy() {
-        currentGameState.destroy();
+        this.currentGameState.destroy();
     }
 }
