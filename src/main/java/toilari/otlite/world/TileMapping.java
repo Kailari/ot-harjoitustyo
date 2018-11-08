@@ -20,36 +20,12 @@ public class TileMapping {
     @NonNull private Tile[] tiles;
 
     /**
-     * Luo tyhjän hakutaulun, jossa ei ole yhtäkään ruututyypin määrittelyä.
-     */
-    public TileMapping() {
-        this.tiles = new Tile[0];
-    }
-
-    /**
      * Luo hakutaulun johon lisätään annetulla DAO:lla löydetyt ruututyyppien
-     * määrittelyt. Määrittelyt ladataan kutsumalla {@link #init(TileDAO)}, joten
-     * <code>init()</code> ei enää tarvitse kutsua mikäli tätä konstruktoria
-     * käytetään.
-     * 
+     * määrittelyt.
+     *
      * @param dao DAO jolla ruututyypit haetaan
      */
     public TileMapping(TileDAO dao) {
-        this();
-        init(dao);
-    }
-
-    /**
-     * Lataa ruututyypit DAO:sta ja täydentää hakutaulun.
-     * 
-     * @param dao DAO jolla ruututyypit haetaan.
-     * @throws IllegalStateException jos
-     */
-    public void init(TileDAO dao) {
-        if (this.tiles.length != 0) {
-            throw new IllegalStateException("TileMapping must be initialized exactly once!");
-        }
-
         this.tiles = dao.getTiles();
         for (byte i = 0; i < this.tiles.length; i++) {
             this.idToIndex.put(this.tiles[i].getId(), i);
