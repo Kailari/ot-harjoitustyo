@@ -20,7 +20,7 @@ import toilari.otlite.world.Tile;
  * DAO ruututyyppien lataamiseen määrittelytiedostoista.
  */
 @Slf4j
-public class TileDAO {
+public class TileDAO implements ITileDAO {
     private final Gson gson = new GsonBuilder().create();
 
     @NonNull private final Path contentRoot;
@@ -34,6 +34,8 @@ public class TileDAO {
      * @return kaikki ladatut ruututyypit. Tyhjä taulukko jos yhtään tyyppiä ei ole
      *         löydetty tai jos ruututyyppejä ei vielä ole ladattu
      */
+    @NonNull
+    @Override
     public Tile[] getTiles() {
         if (this.tiles.length == 0) {
             discoverAndLoadAll();
