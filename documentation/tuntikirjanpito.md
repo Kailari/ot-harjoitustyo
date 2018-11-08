@@ -8,3 +8,4 @@
 | 2.11| 4h     | Testikoodin kirjoittaminen ja I/O-koodin refaktorointi. | 
 | 4.11| 2h     | Pelimaailman määrittelyn suunnittelu. |
 | 5.11| 2h     | Projektin konfigurointi siten että javadoc generointi toimii. |
+| 8.11| 2h     | Prototyyppi käynnistymään päälooppiin asti, gonahdus ja siirtyminen käyttämään IntelliJ IDEA sen sijaan että työskentely on jatkuvaa taistelua VSCoden kanssa. |
