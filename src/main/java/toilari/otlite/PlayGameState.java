@@ -46,6 +46,8 @@ public class PlayGameState extends GameState {
         val tileMappings = new TileMapping(tileDao);
         this.world.changeLevel(createLevel(tileMappings));
 
+
+        this.renderer.init(this);
         this.scanner = new Scanner(System.in);
 
         LOG.info("Initialization finished.");
@@ -83,5 +85,6 @@ public class PlayGameState extends GameState {
     @Override
     public void destroy() {
         this.scanner.close();
+        this.renderer.destroy(this);
     }
 }
