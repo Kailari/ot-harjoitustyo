@@ -2,7 +2,7 @@ package toilari.otlite.world;
 
 import lombok.NonNull;
 import lombok.Value;
-import toilari.otlite.world.characters.ICharacter;
+import toilari.otlite.world.entities.characters.Character;
 
 /**
  * Määrittelee pelimaailman ruudun tyypin. Kustakin tyypistä on vain yksi
@@ -28,7 +28,7 @@ public class Tile {
      * @param character hahmo joka juuri astui ruutuun
      * @throws NullPointerException jos <code>character</code> on null
      */
-    public void onCharacterEnter(int x, int y, @NonNull ICharacter character) {
+    public void onCharacterEnter(int x, int y, @NonNull Character character) {
     }
 
     /**
@@ -39,6 +39,6 @@ public class Tile {
      * @param character hahmo joka juuri astui pois ruudusta
      * @throws NullPointerException jos <code>character</code> on null
      */
-    public void onCharacterExit(int x, int y, @NonNull ICharacter character) {
+    public void onCharacterExit(int x, int y, @NonNull Character character) {
     }
 }

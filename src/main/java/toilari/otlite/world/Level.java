@@ -18,13 +18,13 @@ public class Level {
 
     /**
      * Luo uuden "kartan" pelimaailmaan.
-     * 
+     *
      * @param width        kartan leveys
      * @param height       kartan korkeus
      * @param tileMappings hakutaulu indeksi-ruututyyppi -muunnoksille
      * @param tiles        kartan ruutujen ruututyyppien indeksit
      * @throws IllegalArgumentException mikäli annetut kartan mitat eivät täsmää
-     *                                      kartan datataulukon kanssa
+     *                                  kartan datataulukon kanssa
      */
     public Level(int width, int height, TileMapping tileMappings, byte[] tiles) {
         this.tileMappings = tileMappings;
@@ -39,11 +39,11 @@ public class Level {
 
     /**
      * Palauttaa annetuissa koordinaateissa olevan ruututyypin.
-     * 
+     *
      * @param x ruudun x-koordinaatti
      * @param y ruudun y-koordinaatti
+     * @return annetuissa koordinaateissa olevan ruudun tyyppi
      * @throws IllegalArgumentException jos koordinaatit ovat kartan ulkopuolella
-     * @return 
      */
     public Tile getTileAt(int x, int y) {
         val index = (y * this.width) + x;
