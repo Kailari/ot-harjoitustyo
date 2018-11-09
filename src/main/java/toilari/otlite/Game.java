@@ -1,9 +1,10 @@
 package toilari.otlite;
 
+import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 /**
@@ -11,14 +12,23 @@ import java.util.function.Supplier;
  */
 @Slf4j
 public class Game {
+    private AtomicBoolean running = new AtomicBoolean();
+
     /**
      * Määrittää jatketaanko pääloopin suorittamista.
      *
-     * @param running jos <code>true</code>, pääloopin suorittamista jatketaan
+     * @param running jos <code>false</code> pääloopin suoritus lopetetaan
      */
-    @Setter private boolean running;
+    public void setRunning(boolean running) {
+        this.running.set(running);
+    }
 
-    @NonNull private GameState currentGameState;
+    /**
+     * Nykyinen pelitila.
+     *
+     * @return pelin nykyinen tila
+     */
+    @Getter private GameState currentGameState;
 
     private final Supplier<GameState> defaultStateFactory;
 
@@ -32,7 +42,7 @@ public class Game {
      * jälkeen. Kun päälooppi viimein valmistuu, viimeistellään suoritus metodissa
      * {@link #destroy()}
      */
-    void run() {
+    public void run() {
         init();
         loop();
         destroy();
@@ -46,8 +56,12 @@ public class Game {
     public void changeState(@NonNull GameState newState) {
         LOG.info("Changing the game state to: {}", newState);
 
-        this.currentGameState.destroy();
+        if (this.currentGameState != null) {
+            this.currentGameState.destroy();
+        }
+
         this.currentGameState = newState;
+        this.currentGameState.setGame(this);
         this.currentGameState.init();
     }
 
@@ -56,9 +70,8 @@ public class Game {
      * alkaa.
      */
     private void init() {
-        this.currentGameState = this.defaultStateFactory.get();
-        this.currentGameState.init();
-        this.running = true;
+        changeState(this.defaultStateFactory.get());
+        setRunning(true);
     }
 
     /**
@@ -66,7 +79,7 @@ public class Game {
      * suorittamisesta. Metodi palaa vasta kun pääloopin suoritus on valmis.
      */
     private void loop() {
-        while (this.running) {
+        while (this.running.get()) {
             this.currentGameState.update();
             this.currentGameState.draw();
         }

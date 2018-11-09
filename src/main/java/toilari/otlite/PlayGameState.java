@@ -30,7 +30,6 @@ public class PlayGameState extends GameState {
      * @param renderer piirtäjä jota käytetään instannsin näyttämiseen
      */
     public PlayGameState(IRenderer<PlayGameState> renderer) {
-        super("Game");
         this.world = new World();
         this.renderer = renderer;
     }

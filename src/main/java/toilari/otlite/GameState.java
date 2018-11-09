@@ -1,18 +1,15 @@
 package toilari.otlite;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 /**
  * "Pelitila", erillinen kokonaisuus pelin sisällä joka vaatii muista
  * pelitiloista poikkeavaa suorituslogiikkaa. Esim. valikot ja itse peli ovat
  * erillisiä pelitilojaan.
  */
-@ToString
 @RequiredArgsConstructor
 public abstract class GameState {
-    @Getter private final String name;
+    @Getter(AccessLevel.PROTECTED) @Setter(AccessLevel.PROTECTED) private Game game;
 
     /**
      * Alustaa/valmistelee pelitilan. Kutsutaan kerran kun pelitila aktivoituu.
