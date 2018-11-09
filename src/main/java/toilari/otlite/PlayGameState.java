@@ -3,10 +3,13 @@ package toilari.otlite;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 import toilari.otlite.io.dao.TileDAO;
+import toilari.otlite.rendering.GameStateRenderer;
+import toilari.otlite.rendering.IRenderer;
 import toilari.otlite.world.Level;
 import toilari.otlite.world.TileMapping;
 import toilari.otlite.world.World;
@@ -16,16 +19,20 @@ import toilari.otlite.world.World;
  */
 @Slf4j
 public class PlayGameState extends GameState {
-    @NonNull private final World world;
+    @Getter @NonNull private final World world;
+    private final IRenderer<PlayGameState> renderer;
     
     private Scanner scanner;
 
     /**
      * Luo uuden pelitila-instanssin.
+     *
+     * @param renderer piirtäjä jota käytetään instannsin näyttämiseen
      */
-    public PlayGameState() {
+    public PlayGameState(IRenderer<PlayGameState> renderer) {
         super("Game");
         this.world = new World();
+        this.renderer = renderer;
     }
 
     @Override
@@ -70,14 +77,7 @@ public class PlayGameState extends GameState {
 
     @Override
     public void draw() {
-        val level = this.world.getCurrentLevel();
-
-        for (int y = 0; y < level.getHeight(); y++) {
-            for (int x = 0; x < level.getWidth(); x++) {
-                val tile = level.getTileAt(x, y);
-                System.out.printf("%c%c", tile.getSymbol(), (x == level.getWidth() - 1 ? '\n' : ' '));
-            }
-        }
+        this.renderer.draw(this);
     }
 
     @Override

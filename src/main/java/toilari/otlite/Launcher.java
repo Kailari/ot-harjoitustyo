@@ -1,5 +1,7 @@
 package toilari.otlite;
 
+import toilari.otlite.rendering.GameStateRenderer;
+
 /**
  * Vastaa sovelluksen käynnistämisestä ja komentoriviparametrien parsimisesta.
  */
@@ -10,7 +12,7 @@ public class Launcher {
      * @param args Raa'at, parsimattomat kometoriviparametrit
      */
     public static void main(String[] args) {
-        Game app = new OTLiteGame();
+        Game app = new OTLiteGame(new GameStateRenderer());
         app.run();
     }
 }
