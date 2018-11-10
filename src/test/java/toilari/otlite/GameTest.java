@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import java.time.Duration;
-import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,7 +18,7 @@ class GameTest {
      */
     @Test
     void gameInitCallsSetGame() {
-        val game = new TestGame(() -> new TestGameState() {
+        val game = new TestGame(new TestGameState() {
             @Override
             public void init() {
                 super.init();
@@ -122,17 +121,17 @@ class GameTest {
 
 
         TestGame() {
-            super(TestGameState::new);
+            super(new TestGameState());
         }
 
-        TestGame(Supplier<GameState> factory) {
-            super(factory);
+        TestGame(GameState state) {
+            super(state);
         }
     }
 
     private static class InstantlyClosingGame extends TestGame {
         InstantlyClosingGame() {
-            super(() -> new TestGameState() {
+            super(new TestGameState() {
                 @Override
                 public void update() {
                     super.update();

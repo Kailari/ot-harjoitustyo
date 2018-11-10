@@ -29,11 +29,11 @@ public class Game {
      * @return pelin nykyinen tila
      */
     @Getter private GameState currentGameState;
+    @Getter @NonNull private GameState defaultGameState;
 
-    private final Supplier<GameState> defaultStateFactory;
 
-    Game(Supplier<GameState> defaultStateFactory) {
-        this.defaultStateFactory = defaultStateFactory;
+    public Game(GameState defaultState) {
+        this.defaultGameState = defaultState;
     }
 
     /**
@@ -70,7 +70,7 @@ public class Game {
      * alkaa.
      */
     private void init() {
-        changeState(this.defaultStateFactory.get());
+        changeState(this.defaultGameState);
         setRunning(true);
     }
 
