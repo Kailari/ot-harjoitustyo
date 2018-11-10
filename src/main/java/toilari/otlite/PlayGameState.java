@@ -90,7 +90,7 @@ public class PlayGameState extends GameState {
 
     @Override
     public void destroy() {
-        this.scanner.close();
+        //this.scanner.close();
         this.renderer.destroy(this);
     }
 }
