@@ -23,7 +23,7 @@ import toilari.otlite.world.Tile;
 /**
  * Testaa TileDAO-luokan toimintaa.
  */
-public class TileDAOTest {
+class TileDAOTest {
 
     private static final Path ROOT = Paths.get("target/test-temp/content/tiles/").normalize();
 
@@ -39,7 +39,7 @@ public class TileDAOTest {
      * @throws IOException jos kansioiden tai .json tiedostojen luonti epäonnistuu
      */
     @BeforeAll
-    public static void beforeAll() throws IOException {
+    static void beforeAll() throws IOException {
         Files.createDirectories(ROOT);
 
         for (val definition : TILE_DEFINITIONS) {
@@ -51,7 +51,7 @@ public class TileDAOTest {
      * Luodaan testien vaatimat .json-tiedostot ennen kunkin testin suorittamista.
      */
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         this.dao = new TileDAO("target/test-temp/content/tiles/");
         this.dao.discoverAndLoadAll();
     }
@@ -60,7 +60,7 @@ public class TileDAOTest {
      * Testaa että kaikki määritetyt ruudut löydetään.
      */
     @Test
-    public void tileDAOHasAllDefinedTiles() {
+    void tileDAOHasAllDefinedTiles() {
         assertEquals(CORRECT_TILES.length, this.dao.getTiles().length);
     }
 
@@ -68,10 +68,10 @@ public class TileDAOTest {
      * Testaa että kaikki määritetyt ruudut löytyvät oikeilla kenttien arvoilla.
      */
     @Test
-    public void tileDAOHasCorrectTiles() {
+    void tileDAOHasCorrectTiles() {
         val tiles = Arrays.asList(this.dao.getTiles());
-        for (int i = 0; i < CORRECT_TILES.length; i++) {
-            assertTrue(tiles.contains(CORRECT_TILES[i]));
+        for (val correct : CORRECT_TILES) {
+            assertTrue(tiles.contains(correct));
         }
     }
 
@@ -79,7 +79,7 @@ public class TileDAOTest {
      * Testaa ettei DAO:sta löydy null-tilejä.
      */
     @Test
-    public void tileDAOHasNoNullTiles() {
+    void tileDAOHasNoNullTiles() {
         for (val t : this.dao.getTiles()) {
             assertNotNull(t);
         }
@@ -90,7 +90,7 @@ public class TileDAOTest {
      * tiedostoa ei löydy.
      */
     @Test
-    public void tryLoadReturnsNullOnFileThatDoesNotExist() {
+    void tryLoadReturnsNullOnFileThatDoesNotExist() {
         assertNull(this.dao.tryLoad(Paths.get("No/This/Path/Does/Not/Exist/Either.nope")));
     }
 
@@ -98,7 +98,7 @@ public class TileDAOTest {
      * Poistetaan väliaikaiset tiedostot.
      */
     @AfterAll
-    public static void afterAll() {
+    static void afterAll() {
         FileHelper.deleteDirectoryAndChildren(ROOT);
     }
 }
