@@ -8,13 +8,12 @@ import lombok.val;
 /**
  * Yksi kartta pelimaailmassa.
  */
-@Value
 public class Level {
-    int width;
-    int height;
+    @Getter private final int width;
+    @Getter private final int height;
 
-    @Getter(AccessLevel.NONE) TileMapping tileMappings;
-    @Getter(AccessLevel.NONE) byte[] tiles;
+    @Getter(AccessLevel.NONE) private final TileMapping tileMappings;
+    @Getter(AccessLevel.NONE) private final byte[] tiles;
 
     /**
      * Luo uuden "kartan" pelimaailmaan.

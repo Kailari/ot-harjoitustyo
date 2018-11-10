@@ -37,19 +37,26 @@ public class PlayGameState extends GameState {
     @Override
     public void init() {
         LOG.info("Initializing gameplay...{}", Paths.get(".").toAbsolutePath());
+        loadAssets();
 
+        initSystems();
+
+        LOG.info("Initialization finished.");
+    }
+
+    private void loadAssets() {
         LOG.info("Loading assets...");
+
         val tileDao = new TileDAO("content/tiles/");
         tileDao.discoverAndLoadAll();
 
         val tileMappings = new TileMapping(tileDao);
         this.world.changeLevel(createLevel(tileMappings));
+    }
 
-
+    private void initSystems() {
         this.renderer.init(this);
         this.scanner = new Scanner(System.in);
-
-        LOG.info("Initialization finished.");
     }
 
     private Level createLevel(TileMapping tileMappings) {

@@ -5,7 +5,6 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Supplier;
 
 /**
  * Pelin runko.
@@ -23,13 +22,9 @@ public class Game {
         this.running.set(running);
     }
 
-    /**
-     * Nykyinen pelitila.
-     *
-     * @return pelin nykyinen tila
-     */
     @Getter private GameState currentGameState;
-    @Getter @NonNull private GameState defaultGameState;
+
+    @NonNull private GameState defaultGameState;
 
 
     public Game(GameState defaultState) {
@@ -49,7 +44,7 @@ public class Game {
     }
 
     /**
-     * Vaihtaa pelitilaa.
+     * Vaihtaa pelitilaa. Kutsuu uudelle ja vanhalle pelitilalle tarvittavat alustus- ja tuhoamismetodit.
      *
      * @param newState uusi pelitila
      */

@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Testaa että {@link Game} ja {@link GameState} toimivat oikein.
  */
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GameTest {
     /**
      * Testaa että pelitilalla on validi viite peli-instanssiin {@link GameState#init()} kutsuttaessa.
