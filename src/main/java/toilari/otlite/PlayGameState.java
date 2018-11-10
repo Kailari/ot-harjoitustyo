@@ -36,7 +36,7 @@ public class PlayGameState extends GameState {
 
     @Override
     public void init() {
-        LOG.info("Initializing gameplay...{}", Paths.get(".").toAbsolutePath());
+        LOG.info("Initializing PlayGameState...");
         loadAssets();
 
         initSystems();

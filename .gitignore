@@ -1,11 +1,3 @@
-# VSCode
-.vscode
-.settings
-.classpath
-.project
-.factorypath
-formatter.xml
-
 # IntelliJ IDEA
 .idea
 *.iml

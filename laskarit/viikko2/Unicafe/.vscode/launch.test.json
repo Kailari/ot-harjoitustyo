@@ -1,0 +1,30 @@
+{
+    "run": {
+        "default": "",
+        "items": [
+            {
+                "name": "Unicafe",
+                "projectName": "Unicafe",
+                "workingDirectory": "/home/toilari/Lipasto/ot2018/ot-harjoitustyo/laskarit/viikko2/Unicafe",
+                "args": [],
+                "vmargs": [],
+                "env": {},
+                "preLaunchTask": ""
+            }
+        ]
+    },
+    "debug": {
+        "default": "",
+        "items": [
+            {
+                "name": "Unicafe",
+                "projectName": "Unicafe",
+                "workingDirectory": "/home/toilari/Lipasto/ot2018/ot-harjoitustyo/laskarit/viikko2/Unicafe",
+                "args": [],
+                "vmargs": [],
+                "env": {},
+                "preLaunchTask": ""
+            }
+        ]
+    }
+}

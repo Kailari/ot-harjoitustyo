@@ -42,7 +42,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- SLF4J API "provided" to make compiler happy, SLF4J-simple at "runtime"
+        <!-- SLF4J API "compile" to make compiler happy, SLF4J-simple at "runtime"
              to allow logging under normal circumstances and SLF4J-NOP to disable
              logging altogether during "tests". "runtime" also means "test" scope,
              so runtime bindings are explicitely excluded from tests with surefire
@@ -70,6 +70,15 @@
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.0</version>
                 <configuration>
@@ -77,15 +86,6 @@
                     <classpathDependencyExcludes>
                         <classpathDependencyExclude>org.slf4j:slf4j-simple</classpathDependencyExclude>
                     </classpathDependencyExcludes>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.5</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
                 </configuration>
             </plugin>
 
@@ -116,11 +116,13 @@
                     <configLocation>checkstyle.xml</configLocation>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
                 <version>2.5</version>
             </plugin>
+
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -130,6 +132,13 @@
                         <id>default-prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
                         </goals>
                     </execution>
                 </executions>

@@ -1,8 +1,6 @@
 package toilari.otlite;
 
-import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import java.time.Duration;
 
@@ -17,17 +15,11 @@ class GameTest {
      */
     @Test
     void gameInitCallsSetGame() {
-        val game = new TestGame(new TestGameState() {
+        Game game = new TestGame(new InstantlyClosingGameState() {
             @Override
             public void init() {
                 super.init();
                 assertNotNull(getGame());
-            }
-
-            @Override
-            public void update() {
-                super.update();
-                getGame().setRunning(false);
             }
         });
 
@@ -39,9 +31,9 @@ class GameTest {
      */
     @Test
     void gameChangeStateWorksBeforeInit() {
-        val game = new TestGame();
-        val a = new TestGameState();
-        val b = new TestGameState();
+        Game game = new TestGame();
+        TestGameState a = new TestGameState();
+        GameState b = new TestGameState();
         game.changeState(a);
         game.changeState(b);
         assertTrue(a.destroyCalled);
@@ -50,7 +42,7 @@ class GameTest {
     @Test
     @SuppressWarnings("ConstantConditions")
     void gameChangeStateThrowsWhenCalledWithNullState() {
-        val game = new TestGame();
+        TestGame game = new TestGame();
         assertThrows(NullPointerException.class, () -> game.changeState(null));
     }
 
@@ -60,7 +52,7 @@ class GameTest {
      */
     @Test
     void gameDestroyCalledAfterFinishedExecution() {
-        val game = new InstantlyClosingGame();
+        TestGame game = new InstantlyClosingGame();
         game.run();
         assertTrue(game.isDestroyCalled());
     }
@@ -71,7 +63,7 @@ class GameTest {
     @Test
     void gameExitsWhenRunningSetToFalse() {
         assertTimeoutPreemptively(Duration.ofSeconds(5L), () -> {
-            val game = new InstantlyClosingGame();
+            Game game = new InstantlyClosingGame();
             game.run();
         });
     }
@@ -83,8 +75,8 @@ class GameTest {
     @Test
     void gameCallingRunCallsExpectedMethods() {
         assertTimeoutPreemptively(Duration.ofSeconds(2L), () -> {
-            val game = new TestGame();
-            val thread = new Thread(game::run);
+            TestGame game = new TestGame();
+            Thread thread = new Thread(game::run);
             thread.start();
 
             Thread.sleep(50L);
@@ -130,13 +122,15 @@ class GameTest {
 
     private static class InstantlyClosingGame extends TestGame {
         InstantlyClosingGame() {
-            super(new TestGameState() {
-                @Override
-                public void update() {
-                    super.update();
-                    getGame().setRunning(false);
-                }
-            });
+            super(new InstantlyClosingGameState());
+        }
+    }
+
+    private static class InstantlyClosingGameState extends TestGameState {
+        @Override
+        public void update() {
+            super.update();
+            getGame().setRunning(false);
         }
     }
 
