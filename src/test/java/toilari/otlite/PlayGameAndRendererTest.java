@@ -3,6 +3,7 @@ package toilari.otlite;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import toilari.otlite.rendering.IRenderer;
+import toilari.otlite.world.entities.ObjectManager;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -11,8 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class PlayGameAndRendererTest {
     @Test
     void hasValidWorldAfterInit() {
-        val state = new PlayGameState((r) -> {
-        }) {
+        val state = new PlayGameState((r) -> { }, new ObjectManager()) {
             @Override
             public void update() {
                 assertNotNull(getWorld());
@@ -29,7 +29,7 @@ class PlayGameAndRendererTest {
     void rendererMethodsGetCalled() {
         val renderer = new TestRenderer();
 
-        val state = new PlayGameState(renderer) {
+        val state = new PlayGameState(renderer, new ObjectManager()) {
             @Override
             public void update() {
                 assertFalse(renderer.destroy);

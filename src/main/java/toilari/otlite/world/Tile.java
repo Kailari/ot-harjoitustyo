@@ -4,6 +4,8 @@ import lombok.NonNull;
 import lombok.Value;
 import toilari.otlite.world.entities.characters.Character;
 
+import java.util.Objects;
+
 /**
  * Määrittelee pelimaailman ruudun tyypin. Kustakin tyypistä on vain yksi
  * immutaabeli instanssi.
@@ -40,5 +42,19 @@ public class Tile {
      * @throws NullPointerException jos <code>character</code> on null
      */
     public void onCharacterExit(int x, int y, @NonNull Character character) {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Tile) {
+            return ((Tile) o).getId().equals(this.getId());
+        }
+
+        return o == this;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

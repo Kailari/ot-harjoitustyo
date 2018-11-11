@@ -1,18 +1,17 @@
 package toilari.otlite;
 
-import java.nio.file.Paths;
-import java.util.Scanner;
-
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.val;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import toilari.otlite.io.dao.TileDAO;
-import toilari.otlite.rendering.GameStateRenderer;
 import toilari.otlite.rendering.IRenderer;
 import toilari.otlite.world.Level;
 import toilari.otlite.world.TileMapping;
 import toilari.otlite.world.World;
+import toilari.otlite.world.entities.ObjectManager;
+
+import java.util.Scanner;
 
 /**
  * Pelin varsinainen pelillinen osuus.
@@ -21,16 +20,17 @@ import toilari.otlite.world.World;
 public class PlayGameState extends GameState {
     @Getter @NonNull private final World world;
     private final IRenderer<PlayGameState> renderer;
-    
+
     private Scanner scanner;
 
     /**
      * Luo uuden pelitila-instanssin.
      *
      * @param renderer piirtäjä jota käytetään instannsin näyttämiseen
+     * @param objectManager peliobjektimanageri
      */
-    public PlayGameState(IRenderer<PlayGameState> renderer) {
-        this.world = new World();
+    public PlayGameState(@NonNull IRenderer<PlayGameState> renderer, @NonNull ObjectManager objectManager) {
+        this.world = new World(objectManager);
         this.renderer = renderer;
     }
 
@@ -63,7 +63,7 @@ public class PlayGameState extends GameState {
         final byte w = tileMappings.getIndex("wall");
         final byte f = tileMappings.getIndex("floor");
         final byte h = tileMappings.getIndex("hole");
-        final byte[] indices = new byte[] {
+        final byte[] indices = new byte[]{
             w, w, w, w, w, w, w, w,
             w, f, f, f, w, f, f, w,
             w, f, f, f, w, f, w, w,
@@ -79,6 +79,7 @@ public class PlayGameState extends GameState {
 
     @Override
     public void update() {
+        this.world.update();
         System.out.println("Vuoro pelattu, paina <enter>");
         this.scanner.nextLine();
     }
