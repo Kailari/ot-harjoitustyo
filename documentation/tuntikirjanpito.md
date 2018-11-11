@@ -9,3 +9,6 @@
 | 4.11| 2h     | Pelimaailman määrittelyn suunnittelu. |
 | 5.11| 2h     | Projektin konfigurointi siten että javadoc generointi toimii. |
 | 8.11| 2h     | Prototyyppi käynnistymään päälooppiin asti, gonahdus ja siirtyminen käyttämään IntelliJ IDEA sen sijaan että työskentely on jatkuvaa taistelua VSCoden kanssa. |
+| 9.11| 2h     | Käyttöliittymäkoodin muuhin koodiin liittämisen suunnittelua. |
+|10.11| 3h     | IDEAan siirtyminen ja configuraatioiden muutokset olivat rikkoneet vähän kaiken. Nyt kaikki toimii taas. |
+|11.11| 1h     | Peliobjektijärjestelmän suunnittelua, koodin siivousta. |
