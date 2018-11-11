@@ -37,10 +37,6 @@ public class TileDAO implements ITileDAO {
     @NonNull
     @Override
     public Tile[] getTiles() {
-        if (this.tiles.length == 0) {
-            discoverAndLoadAll();
-        }
-
         return this.tiles;
     }
 
