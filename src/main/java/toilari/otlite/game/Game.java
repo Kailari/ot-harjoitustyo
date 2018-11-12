@@ -1,4 +1,4 @@
-package toilari.otlite;
+package toilari.otlite.game;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -72,7 +72,7 @@ public class Game {
      */
     protected void init() {
         this.renderer.init(this);
-        
+
         changeState(this.defaultGameState);
         setRunning(true);
     }

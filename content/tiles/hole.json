@@ -1,5 +1,5 @@
 {
     "id": "hole",
     "wall": false,
-    "symbol": " "
+    "tileIndex": 0
 }

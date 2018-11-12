@@ -1,5 +1,5 @@
 {
     "id": "wall",
     "wall": true,
-    "symbol": "#"
+    "tileIndex": 2
 }

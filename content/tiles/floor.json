@@ -1,5 +1,5 @@
 {
     "id": "floor",
     "wall": false,
-    "symbol": "."
+    "tileIndex": 1
 }

@@ -1,6 +1,9 @@
 package toilari.otlite;
 
-import toilari.otlite.rendering.GameStateRenderer;
+import toilari.otlite.game.Game;
+import toilari.otlite.game.PlayGameState;
+import toilari.otlite.rendering.PlayGameStateRenderer;
+import toilari.otlite.rendering.lwjgl.LWJGLGameRenderer;
 import toilari.otlite.world.entities.ObjectManager;
 
 /**
@@ -13,7 +16,10 @@ public class Launcher {
      * @param args Raa'at, parsimattomat kometoriviparametrit
      */
     public static void main(String[] args) {
-        Game app = new Game(new PlayGameState(new GameStateRenderer(), new ObjectManager()));
+        Game app = new Game(
+            new PlayGameState(new PlayGameStateRenderer(), new ObjectManager()),
+            new LWJGLGameRenderer()
+        );
         app.run();
     }
 }

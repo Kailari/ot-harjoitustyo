@@ -19,7 +19,20 @@ public class Tile {
      * @return <code>true</code> jos ruutu on seinä, muutoin <code>false</code>
      */
     boolean wall;
-    char symbol;
+
+    /**
+     * Määrittää ruututyypin ulkonäön. Luku on indeksi tileset-tekstuuriin.
+     *
+     * @return ruudun indeksi tilesetissä
+     */
+    int tileIndex;
+
+    /**
+     * Ruututyypin yksilöllinen tunniste. Mikäli kahdella ruututyypillä on sama tunniste, on kyseessä
+     * suoritukselle fataali virhe.
+     *
+     * @return ruututyypin tunniste
+     */
     @NonNull String id;
 
     /**

@@ -1,4 +1,4 @@
-package toilari.otlite;
+package toilari.otlite.game;
 
 import org.junit.jupiter.api.Test;
 import toilari.otlite.rendering.GameRenderer;

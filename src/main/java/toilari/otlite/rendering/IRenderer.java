@@ -12,8 +12,10 @@ public interface IRenderer<TRenderable> {
      * Alustaa objektin piirtämiseksi tarvittavat resurssit.
      *
      * @param renderable object objekti jolle resurssit varataan
+     * @return <code>true</code> jos alustus onnistuu, muulloin <code>false</code>
      */
-    default void init(TRenderable renderable) {
+    default boolean init(TRenderable renderable) {
+        return true;
     }
 
     /**

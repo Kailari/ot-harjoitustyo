@@ -1,4 +1,4 @@
-package toilari.otlite;
+package toilari.otlite.game;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
