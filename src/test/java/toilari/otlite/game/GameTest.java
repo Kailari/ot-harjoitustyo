@@ -1,6 +1,7 @@
 package toilari.otlite;
 
 import org.junit.jupiter.api.Test;
+import toilari.otlite.rendering.GameRenderer;
 
 import java.time.Duration;
 
@@ -112,11 +113,11 @@ class GameTest {
 
 
         TestGame() {
-            super(new TestGameState());
+            super(new TestGameState(), new GameRenderer());
         }
 
         TestGame(GameState state) {
-            super(state);
+            super(state, new GameRenderer());
         }
     }
 

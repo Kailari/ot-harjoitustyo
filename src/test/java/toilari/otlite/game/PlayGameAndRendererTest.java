@@ -2,6 +2,7 @@ package toilari.otlite;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import toilari.otlite.rendering.GameRenderer;
 import toilari.otlite.rendering.IRenderer;
 import toilari.otlite.world.entities.ObjectManager;
 
@@ -20,7 +21,7 @@ class PlayGameAndRendererTest {
             }
         };
 
-        val game = new Game(state);
+        val game = new Game(state, new GameRenderer());
 
         game.run();
     }
@@ -43,7 +44,7 @@ class PlayGameAndRendererTest {
             }
         };
 
-        val game = new Game(state);
+        val game = new Game(state, new GameRenderer());
         game.run();
         assertTrue(renderer.destroy);
     }
@@ -57,8 +58,9 @@ class PlayGameAndRendererTest {
         }
 
         @Override
-        public void init(PlayGameState s) {
+        public boolean init(PlayGameState s) {
             this.init = true;
+            return true;
         }
 
         @Override

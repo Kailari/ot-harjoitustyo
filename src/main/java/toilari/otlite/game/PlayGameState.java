@@ -80,8 +80,6 @@ public class PlayGameState extends GameState {
     @Override
     public void update() {
         this.world.update();
-        System.out.println("Vuoro pelattu, paina <enter>");
-        this.scanner.nextLine();
     }
 
     @Override

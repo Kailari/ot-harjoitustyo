@@ -3,6 +3,7 @@ package toilari.otlite;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import toilari.otlite.rendering.IRenderer;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -26,9 +27,12 @@ public class Game {
 
     @NonNull private GameState defaultGameState;
 
+    @NonNull private final IRenderer<Game> renderer;
 
-    public Game(GameState defaultState) {
+
+    public Game(@NonNull GameState defaultState, @NonNull IRenderer<Game> renderer) {
         this.defaultGameState = defaultState;
+        this.renderer = renderer;
     }
 
     /**
@@ -39,7 +43,9 @@ public class Game {
      */
     public void run() {
         init();
-        loop();
+        while (this.running.get()) {
+            loop();
+        }
         destroy();
     }
 
@@ -64,26 +70,26 @@ public class Game {
      * Kutsutaan kerran ennen päälooppiin siirtymistä, kun sovelluksen suoritus
      * alkaa.
      */
-    private void init() {
+    protected void init() {
+        this.renderer.init(this);
+        
         changeState(this.defaultGameState);
         setRunning(true);
     }
 
     /**
-     * Kutsutaan kerran kun sovellus siirtyy päälooppiin. Vastaa pääloopin
-     * suorittamisesta. Metodi palaa vasta kun pääloopin suoritus on valmis.
+     * Kutsutaan toistuvasti niin kauan kuin peli on käynnissä.
      */
-    private void loop() {
-        while (this.running.get()) {
-            this.currentGameState.update();
-            this.currentGameState.draw();
-        }
+    protected void loop() {
+        this.currentGameState.update();
+        this.renderer.draw(this);
     }
 
     /**
      * Kutsutaan kerran pääloopin jälkeen, kun ohjelman suoritus on loppumassa.
      */
-    private void destroy() {
+    protected void destroy() {
         this.currentGameState.destroy();
+        this.renderer.destroy(this);
     }
 }
