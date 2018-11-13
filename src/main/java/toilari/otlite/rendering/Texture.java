@@ -3,11 +3,10 @@ package toilari.otlite.rendering;
 import lombok.Getter;
 import toilari.otlite.io.dao.TextureDAO;
 
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.*;
 
 public class Texture {
-    private static long currentlyBound = -1;
+    private static long currentlyBound = 0;
 
     @Getter private final int width;
     @Getter private final int height;
@@ -32,9 +31,9 @@ public class Texture {
      * Asettaa tekstuurin aktiiviseksi jotta piirtokomennot voivat käyttää sitä.
      */
     public void bind() {
-        if (Texture.currentlyBound != this.handle) {
+        //if (Texture.currentlyBound != this.handle) {
             glBindTexture(GL_TEXTURE_2D, this.handle);
-        }
+        //}
     }
 
     /**
@@ -43,5 +42,10 @@ public class Texture {
      */
     public void release() {
         glBindTexture(GL_TEXTURE_2D, 0);
+        currentlyBound = 0;
+    }
+
+    public void destroy() {
+        glDeleteTextures(this.handle);
     }
 }

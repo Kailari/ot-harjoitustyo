@@ -1,22 +1,33 @@
 package toilari.otlite.rendering;
 
+import lombok.NonNull;
 import lombok.val;
+import toilari.otlite.rendering.lwjgl.Sprite;
 import toilari.otlite.world.Level;
 
 public class LevelRenderer implements IRenderer<Level> {
     private final Texture tileset;
+    private final Sprite[] tileSprites;
     private final int tileWidth;
     private final int tileHeight;
-    private final int tilesetRows;
-    private final int tilesetColumns;
 
-    public LevelRenderer(Texture tileset, int tilesetRows, int tilesetColumns) {
+
+    public LevelRenderer(@NonNull Texture tileset, int tilesetRows, int tilesetColumns) {
         this.tileset = tileset;
-        this.tilesetRows = tilesetRows;
-        this.tilesetColumns = tilesetColumns;
-
         this.tileWidth = this.tileset.getWidth() / tilesetColumns;
         this.tileHeight = this.tileset.getHeight() / tilesetRows;
+
+        this.tileSprites = new Sprite[tilesetRows * tilesetColumns];
+        for (int y = 0; y < tilesetRows; y++) {
+            for (int x = 0; x < tilesetColumns; x++) {
+                this.tileSprites[(tilesetRows - (y + 1)) * tilesetColumns + x] = new Sprite(
+                    tileset,
+                    this.tileWidth * x,
+                    this.tileHeight * y,
+                    this.tileWidth,
+                    this.tileHeight);
+            }
+        }
     }
 
     @Override
@@ -28,7 +39,7 @@ public class LevelRenderer implements IRenderer<Level> {
                 val tile = level.getTileAt(x, y);
                 val index = tile.getTileIndex();
 
-                
+                this.tileSprites[index].draw(x * this.tileWidth, y * this.tileHeight);
             }
         }
 
