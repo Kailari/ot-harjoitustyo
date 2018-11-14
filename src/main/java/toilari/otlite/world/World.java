@@ -1,5 +1,6 @@
 package toilari.otlite.world;
 
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.world.entities.ObjectManager;
@@ -8,24 +9,20 @@ import toilari.otlite.world.entities.ObjectManager;
  * Pelimaailma.
  */
 public class World {
-    private Level level;
-    private final ObjectManager objectManager;
+    @Getter private Level currentLevel;
+    @NonNull @Getter private final ObjectManager objectManager;
 
-    public World(ObjectManager objectManager) {
+    public World(@NonNull ObjectManager objectManager) {
         this.objectManager = objectManager;
-    }
-
-    public Level getCurrentLevel() {
-        return this.level;
     }
 
     /**
      * Vaihtaa pelin karttaa.
-     * 
+     *
      * @param level Uusi kartta johon vaihdetaan
      */
     public void changeLevel(@NonNull Level level) {
-        this.level = level;
+        this.currentLevel = level;
     }
 
     /**

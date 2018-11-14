@@ -6,7 +6,6 @@ import lombok.Setter;
 import lombok.val;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
-import org.joml.Vector3f;
 
 /**
  * "Kamera" joka kuvaa pelimaailmaa. Sisältää apumetodeja kameran liikutteluun ja hallintaan pelimaailmassa.
@@ -20,10 +19,10 @@ public class Camera {
 
 
     @NonNull @Getter private Vector2f position = new Vector2f(0.0f, 0.0f);
-    @Getter private float zoom = 8.0f;
+    @Getter private float zoom = 1.0f;
 
     /**
-     * Pikseleiden määrä per ruutuyksykkö.
+     * Pikseleiden määrä per ruutuyksikkö.
      * Esim. jos ikkuna on 800x600 niin 1.0 = leveyssuunnassa 800 pikseliä, 2.0 = 400 pikseliä jne.
      * TODO: Toteuta getter/setter siten että ne päivittävät projektiomatriisin
      *
@@ -50,6 +49,11 @@ public class Camera {
         return this.viewMatrix;
     }
 
+    /**
+     * Hakee näkymämatriisin taulukkona. Taulukko on muotoa <code>float[16]</code>
+     *
+     * @return näkymämatriisi taulukkona.
+     */
     public float[] getViewMatrixArr() {
         refreshViewMatrix();
         return this.viewMatrixArr;

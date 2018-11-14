@@ -4,15 +4,17 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import toilari.otlite.io.dao.TextureDAO;
 import toilari.otlite.io.dao.TileDAO;
 import toilari.otlite.rendering.Camera;
 import toilari.otlite.rendering.IRenderer;
+import toilari.otlite.rendering.PlayerRenderer;
 import toilari.otlite.world.Level;
+import toilari.otlite.world.Tile;
 import toilari.otlite.world.TileMapping;
 import toilari.otlite.world.World;
 import toilari.otlite.world.entities.ObjectManager;
-
-import java.util.Scanner;
+import toilari.otlite.world.entities.characters.PlayerCharacter;
 
 /**
  * Pelin varsinainen pelillinen osuus.
@@ -22,16 +24,17 @@ public class PlayGameState extends GameState {
     @Getter @NonNull private final World world;
     private final IRenderer<PlayGameState> renderer;
 
-    private Scanner scanner;
+    private final PlayerCharacter player;
 
     /**
      * Luo uuden pelitila-instanssin.
      *
-     * @param renderer piirtäjä jota käytetään instannsin näyttämiseen
+     * @param renderer      piirtäjä jota käytetään instannsin näyttämiseen
      * @param objectManager peliobjektimanageri
      */
     public PlayGameState(@NonNull IRenderer<PlayGameState> renderer, @NonNull ObjectManager objectManager) {
         this.world = new World(objectManager);
+        this.player = new PlayerCharacter();
         this.renderer = renderer;
     }
 
@@ -39,7 +42,6 @@ public class PlayGameState extends GameState {
     public void init() {
         LOG.info("Initializing PlayGameState...");
         loadAssets();
-
         initSystems();
 
         LOG.info("Initialization finished.");
@@ -53,11 +55,17 @@ public class PlayGameState extends GameState {
 
         val tileMappings = new TileMapping(tileDao);
         this.world.changeLevel(createLevel(tileMappings));
+        this.world.getObjectManager().spawn(this.player);
+        this.player.setX(2 * Tile.SIZE_IN_WORLD);
+        this.player.setY(2 * Tile.SIZE_IN_WORLD);
     }
 
     private void initSystems() {
+        val textureDao = new TextureDAO("content/textures/");
+
+        val om = this.world.getObjectManager();
+        om.assignRenderer(PlayerCharacter.class, new PlayerRenderer(textureDao.load("white_knight.png")));
         this.renderer.init(this);
-        this.scanner = new Scanner(System.in);
     }
 
     private Level createLevel(TileMapping tileMappings) {

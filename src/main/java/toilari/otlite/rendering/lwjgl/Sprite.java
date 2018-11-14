@@ -6,7 +6,6 @@ import lombok.var;
 import org.joml.Matrix4f;
 import toilari.otlite.io.util.TextFileHelper;
 import toilari.otlite.rendering.Camera;
-import toilari.otlite.rendering.Texture;
 
 import java.io.IOException;
 import java.util.HashMap;

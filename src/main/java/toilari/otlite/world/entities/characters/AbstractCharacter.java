@@ -5,5 +5,5 @@ import toilari.otlite.world.entities.GameObject;
 /**
  * Hahmo pelimaailmassa.
  */
-public class Character extends GameObject {
+public abstract class AbstractCharacter extends GameObject {
 }

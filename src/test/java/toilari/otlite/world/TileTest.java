@@ -2,7 +2,7 @@ package toilari.otlite.world;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import toilari.otlite.world.entities.characters.Character;
+import toilari.otlite.world.entities.characters.AbstractCharacter;
 
 import java.util.Random;
 
@@ -26,7 +26,7 @@ class TileTest {
 
     /**
      * Testaa että null character aiheuttaa keskeytyksen metodissa
-     * {@link Tile#onCharacterEnter(int, int, Character)}.
+     * {@link Tile#onCharacterEnter(int, int, AbstractCharacter)}.
      */
     @Test
     @SuppressWarnings("ConstantConditions")
@@ -37,7 +37,7 @@ class TileTest {
 
     /**
      * Testaa että null character aiheuttaa keskeytyksen metodissa
-     * {@link Tile#onCharacterExit(int, int, Character)}.
+     * {@link Tile#onCharacterExit(int, int, AbstractCharacter)}.
      */
     @Test
     @SuppressWarnings("ConstantConditions")

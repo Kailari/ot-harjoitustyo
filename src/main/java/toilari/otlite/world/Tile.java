@@ -2,7 +2,7 @@ package toilari.otlite.world;
 
 import lombok.NonNull;
 import lombok.Value;
-import toilari.otlite.world.entities.characters.Character;
+import toilari.otlite.world.entities.characters.AbstractCharacter;
 
 import java.util.Objects;
 
@@ -12,6 +12,7 @@ import java.util.Objects;
  */
 @Value
 public class Tile {
+    public static final int SIZE_IN_WORLD = 8;
     /**
      * Määrittää kohdellaanko ruutua seinänä. (hahmot eivät voi liikkua ruutuun joka
      * on seinä)
@@ -43,7 +44,7 @@ public class Tile {
      * @param character hahmo joka juuri astui ruutuun
      * @throws NullPointerException jos <code>character</code> on null
      */
-    public void onCharacterEnter(int x, int y, @NonNull Character character) {
+    public void onCharacterEnter(int x, int y, @NonNull AbstractCharacter character) {
     }
 
     /**
@@ -54,7 +55,7 @@ public class Tile {
      * @param character hahmo joka juuri astui pois ruudusta
      * @throws NullPointerException jos <code>character</code> on null
      */
-    public void onCharacterExit(int x, int y, @NonNull Character character) {
+    public void onCharacterExit(int x, int y, @NonNull AbstractCharacter character) {
     }
 
     @Override

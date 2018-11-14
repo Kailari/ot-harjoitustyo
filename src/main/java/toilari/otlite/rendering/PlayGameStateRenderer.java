@@ -20,6 +20,7 @@ public class PlayGameStateRenderer implements IRenderer<PlayGameState> {
     public void draw(Camera camera, PlayGameState playGameState) {
         val world = playGameState.getWorld();
         this.levelRenderer.draw(camera, world.getCurrentLevel());
+        world.getObjectManager().draw(camera);
     }
 
     @Override

@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.lwjgl.system.MemoryStack;
 import toilari.otlite.io.util.FileStreamHelper;
-import toilari.otlite.rendering.Texture;
+import toilari.otlite.rendering.lwjgl.Texture;
 
 import javax.imageio.ImageIO;
 import java.awt.geom.AffineTransform;
@@ -60,10 +60,7 @@ public class TextureDAO {
      */
     private BufferedImage loadBufferedImage(InputStream is) throws IOException {
         val image = ImageIO.read(is);
-        val transform = AffineTransform.getScaleInstance(1.0f, -1.0f);
-        transform.translate(0, -image.getHeight());
-        val op = new AffineTransformOp(transform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-        return op.filter(image, null);
+        return image;
     }
 
     private static int generateGLTexture() {

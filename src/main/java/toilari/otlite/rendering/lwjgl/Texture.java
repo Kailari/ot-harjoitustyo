@@ -1,4 +1,4 @@
-package toilari.otlite.rendering;
+package toilari.otlite.rendering.lwjgl;
 
 import lombok.Getter;
 import toilari.otlite.io.dao.TextureDAO;

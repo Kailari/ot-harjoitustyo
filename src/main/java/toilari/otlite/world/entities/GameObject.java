@@ -3,6 +3,7 @@ package toilari.otlite.world.entities;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import toilari.otlite.rendering.IRenderer;
 
 import java.util.Objects;
 
