@@ -61,10 +61,6 @@ public class PlayGameState extends GameState {
     }
 
     private void initSystems() {
-        val textureDao = new TextureDAO("content/textures/");
-
-        val om = this.world.getObjectManager();
-        om.assignRenderer(PlayerCharacter.class, new PlayerRenderer(textureDao.load("white_knight.png")));
         this.renderer.init(this);
     }
 
