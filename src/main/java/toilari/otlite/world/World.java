@@ -14,6 +14,7 @@ public class World {
 
     public World(@NonNull ObjectManager objectManager) {
         this.objectManager = objectManager;
+        this.objectManager.setWorld(this);
     }
 
     /**

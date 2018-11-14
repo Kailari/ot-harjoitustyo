@@ -3,7 +3,7 @@ package toilari.otlite.world.entities;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import toilari.otlite.rendering.IRenderer;
+import toilari.otlite.world.World;
 
 import java.util.Objects;
 
@@ -12,6 +12,7 @@ public class GameObject {
 
     @Getter private final int id;
     @Getter private boolean removed;
+    @Getter @Setter(AccessLevel.PACKAGE) private World world;
 
     @Getter private int x;
     @Getter private int y;

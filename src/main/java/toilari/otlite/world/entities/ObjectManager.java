@@ -3,11 +3,9 @@ package toilari.otlite.world.entities;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
-import toilari.otlite.io.dao.TextureDAO;
 import toilari.otlite.rendering.Camera;
 import toilari.otlite.rendering.IRenderer;
-import toilari.otlite.rendering.PlayerRenderer;
-import toilari.otlite.world.entities.characters.PlayerCharacter;
+import toilari.otlite.world.World;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,8 +18,9 @@ import java.util.stream.Collectors;
  * asianmukaisesti.
  */
 public class ObjectManager {
-    @Getter private final List<GameObject> objects = new ArrayList<>();
-    private final Map<Class<? extends GameObject>, IRenderer> objectRenderers = new HashMap<>();
+    @NonNull @Getter private final List<GameObject> objects = new ArrayList<>();
+    @NonNull private final Map<Class<? extends GameObject>, IRenderer> objectRenderers = new HashMap<>();
+    private World world;
 
     /**
      * Lisää peliobjektin pelimaailmaan.
@@ -34,6 +33,7 @@ public class ObjectManager {
         }
 
         this.objects.add(object);
+        object.setWorld(this.world);
         object.init();
     }
 
@@ -70,5 +70,9 @@ public class ObjectManager {
 
     public <T extends GameObject> void assignRenderer(@NonNull Class<T> objectType, @NonNull IRenderer<T> renderer) {
         this.objectRenderers.put(objectType, renderer);
+    }
+
+    public void setWorld(World world) {
+        this.world = world;
     }
 }
