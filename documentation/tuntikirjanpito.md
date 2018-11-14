@@ -12,3 +12,6 @@
 | 9.11| 2h     | Käyttöliittymäkoodin muuhin koodiin liittämisen suunnittelua. |
 |10.11| 3h     | IDEAan siirtyminen ja configuraatioiden muutokset olivat rikkoneet vähän kaiken. Nyt kaikki toimii taas. |
 |11.11| 1h     | Peliobjektijärjestelmän suunnittelua, koodin siivousta. |
+|12.11| 3h     | LWJGL-pohjainen ikkuna ja renderöinti, valmistelua. |
+|13.11| 2h     | LWJGL-pohjainen ikkuna ja renderöinti, toimii. |
+|13.11| 1h     | LWJGL-pohjainen ikkuna ja renderöinti, refaktorointia. |
