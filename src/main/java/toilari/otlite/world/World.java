@@ -32,5 +32,7 @@ public class World {
         for (val gameObject : this.objectManager.getObjects()) {
             gameObject.update();
         }
+
+        this.objectManager.deleteRemoved();
     }
 }

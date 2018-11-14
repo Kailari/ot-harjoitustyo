@@ -62,6 +62,8 @@ public class Sprite {
      * @param regionStartY tekstuurin y-koordinaatti josta piirrettävä alue alkaa (pikseleinä)
      * @param regionWidth  piirrettävän alueen leveys (pikseleinä)
      * @param regionHeight piirrettävän alueen korkeus (pikseleinä)
+     * @param width        koko pelimaailmassa (pelimaailman yksiköissä)
+     * @param height       koko pelimaailmassa (pelimaailman yksiköissä)
      * @throws NullPointerException jos tekstuuri on null
      */
     public Sprite(
