@@ -4,12 +4,12 @@ import lombok.NonNull;
 import lombok.val;
 import lombok.var;
 import org.joml.Matrix4f;
-import org.lwjgl.system.MemoryStack;
 import toilari.otlite.io.util.TextFileHelper;
+import toilari.otlite.rendering.Camera;
 import toilari.otlite.rendering.Texture;
 
 import java.io.IOException;
-import java.nio.FloatBuffer;
+import java.util.HashMap;
 
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
@@ -18,6 +18,7 @@ import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL30.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL30.GL_FLOAT;
 import static org.lwjgl.opengl.GL30.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL30.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL30.*;
@@ -34,7 +35,15 @@ public class Sprite {
             try {
                 val vertSrc = TextFileHelper.readFileToString("content/shaders/sprite.vert");
                 val fragSrc = TextFileHelper.readFileToString("content/shaders/sprite.frag");
-                Sprite.shader = new ShaderProgram(vertSrc, fragSrc);
+
+                val attrs = new HashMap<Integer, String>();
+                attrs.put(0, "in_pos");
+                attrs.put(1, "in_uv");
+
+                val out = new HashMap<Integer, String>();
+                out.put(0, "out_fragColor");
+
+                Sprite.shader = new ShaderProgram(vertSrc, fragSrc, attrs, out);
             } catch (IOException e) {
                 throw new IllegalStateException("Default sprite shader could not be loaded.");
             }
@@ -45,107 +54,102 @@ public class Sprite {
     @NonNull private final Texture texture;
 
     private final int vao;
-    private final int vbo;
-    private final int ebo;
 
-    public Sprite(@NonNull Texture texture, int regionStartX, int regionStartY, int regionWidth, int regionHeight) {
+    /**
+     * Luo uuden spriten.
+     *
+     * @param texture      tekstuuri jota tämä sprite käyttää
+     * @param regionStartX tekstuurin x-koordinaatti josta piirrettävä alue alkaa (pikseleinä)
+     * @param regionStartY tekstuurin y-koordinaatti josta piirrettävä alue alkaa (pikseleinä)
+     * @param regionWidth  piirrettävän alueen leveys (pikseleinä)
+     * @param regionHeight piirrettävän alueen korkeus (pikseleinä)
+     * @throws NullPointerException jos tekstuuri on null
+     */
+    public Sprite(
+        @NonNull Texture texture,
+        int regionStartX,
+        int regionStartY,
+        int regionWidth,
+        int regionHeight,
+        int width,
+        int height
+    ) {
         this.texture = texture;
 
         this.vao = glGenVertexArrays();
         glBindVertexArray(this.vao);
-        try (val stack = MemoryStack.stackPush()) {
-            val vertices = createVertices(
-                stack,
-                texture.getWidth(),
-                texture.getHeight(),
-                regionStartX,
-                regionStartY,
-                regionWidth,
-                regionHeight);
+        val vertices = createVertices(
+            texture.getWidth(),
+            texture.getHeight(),
+            regionStartX,
+            regionStartY,
+            regionWidth,
+            regionHeight,
+            width,
+            height);
 
-            this.vbo = glGenBuffers();
-            glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
-            glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
+        int vbo = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
 
-            glEnableVertexAttribArray(0);
-            glVertexAttribPointer(0, 2, GL_FLOAT, false, 4 * 4, 0);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, false, 4 * 4, 0);
 
-            glEnableVertexAttribArray(1);
-            glVertexAttribPointer(1, 2, GL_FLOAT, false, 4 * 4, 2 * 4);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, false, 4 * 4, 2 * 4);
 
-            this.ebo = glGenBuffers();
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this.ebo);
-            val indices = stack.mallocInt(2 * 3);
-            indices.put(0).put(1).put(2);
-            indices.put(2).put(3).put(0);
-            indices.flip();
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
-
-            getShader();
-        }
+        int ebo = glGenBuffers();
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        val indices = new int[]{
+            0, 1, 2,
+            2, 3, 0
+        };
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
     }
 
-    private static FloatBuffer createVertices(MemoryStack stack, float width, float height, int regionStartX, int regionStartY, int regionWidth, int regionHeight) {
-        float uMax = (regionStartX + regionWidth) / width;
-        float vMax = (regionStartY + regionHeight) / height;
+    private static float[] createVertices(float textureWidth, float textureHeight, int regionStartX, int regionStartY, int regionWidth, int regionHeight, float width, float height) {
+        float uMax = (regionStartX + regionWidth) / textureWidth;
+        float vMax = (regionStartY + regionHeight) / textureHeight;
 
-        float uMin = regionStartX / width;
-        float vMin = regionStartY / height;
+        float uMin = regionStartX / textureWidth;
+        float vMin = regionStartY / textureHeight;
 
-
-        // xy   => 2
-        // uv   => 2
-        // 4 corners * (2 + 2) => 16
-        val vertices = stack.mallocFloat(4 * 4);
-        vertices.put(0.0f).put(0.0f)
-            .put(uMin).put(vMin);
-        vertices.put(regionWidth).put(0.0f)
-            .put(uMax).put(vMin);
-        vertices.put(regionWidth).put(regionHeight)
-            .put(uMax).put(vMax);
-        vertices.put(0.0f).put(regionHeight)
-            .put(uMin).put(vMax);
-
-        vertices.flip();
-
-        return vertices;
+        return new float[]{
+            0.0f, 0.0f, uMin, vMin,
+            width, 0.0f, uMax, vMin,
+            width, height, uMax, vMax,
+            0.0f, height, uMin, vMax,
+        };
     }
 
-
-    public void draw(int x, int y) {
-        float[] tmp1 = new float[4 * 4];
-        float[] tmp2 = new float[4 * 4];
-        float[] tmp3 = new float[4 * 4];
-
-
-
+    /**
+     * Piirtää spriten annettuihin koordinaatteihin.
+     *
+     * @param camera kamera jonka näkökulmasta piirretään
+     * @param x      x-koordinaatti johon piirretään
+     * @param y      y-koordinaatti johon piirretään
+     */
+    public void draw(Camera camera, int x, int y) {
         this.texture.bind();
         getShader().use();
 
         val uniformModel = glGetUniformLocation(getShader().getProgram(), "model");
+        val uniformView = glGetUniformLocation(getShader().getProgram(), "view");
+        val uniformProj = glGetUniformLocation(getShader().getProgram(), "projection");
+
         var model = new Matrix4f();
         model = model.translate(x, y, 0.0f);
-        glUniformMatrix4fv(uniformModel, false, model.get(tmp1));
-
-        val uniformView = glGetUniformLocation(getShader().getProgram(), "view");
-        var view = new Matrix4f();
-        view = view.identity();
-        glUniformMatrix4fv(uniformView, false, view.get(tmp2));
-
-        val uniformProj = glGetUniformLocation(getShader().getProgram(), "projection");
-        var proj = new Matrix4f();
-
-        float ratio = 800f / 600f;
-        float zoom = 100.0f;
-        proj = proj.setOrtho2D(-ratio * zoom, ratio * zoom, -1f * zoom, 1f * zoom);
-        glUniformMatrix4fv(uniformProj, false, proj.get(tmp3));
+        glUniformMatrix4fv(uniformModel, false, model.get(new float[4 * 4]));
+        glUniformMatrix4fv(uniformView, false, camera.getViewMatrixArr());
+        glUniformMatrix4fv(uniformProj, false, camera.getProjectionMatrixArr());
 
         glBindVertexArray(this.vao);
-        glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this.ebo);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
 
+    /**
+     * Vapauttaa spritelle varatut resurssit.
+     */
     public void destroy() {
         glDeleteVertexArrays(this.vao);
         glDeleteBuffers(this.vao);

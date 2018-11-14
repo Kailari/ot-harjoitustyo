@@ -9,6 +9,7 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 import toilari.otlite.game.Game;
+import toilari.otlite.rendering.Camera;
 import toilari.otlite.rendering.GameRenderer;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
@@ -24,6 +25,8 @@ public class LWJGLGameRenderer extends GameRenderer {
     @Getter @Setter private int windowWidth;
     @Getter @Setter private int windowHeight;
     private long windowHandle;
+
+    private Camera camera;
 
     /**
      * Luo uuden LWJGL-pohjaisen piirtäjän.
@@ -43,6 +46,8 @@ public class LWJGLGameRenderer extends GameRenderer {
         }
 
         glfwShowWindow(this.windowHandle);
+
+        this.camera = new Camera(getWindowWidth(), getWindowHeight());
 
         GL.createCapabilities();
         glClearColor(0.35f, 0.35f, 0.95f, 1.0f);
@@ -100,11 +105,11 @@ public class LWJGLGameRenderer extends GameRenderer {
     }
 
     @Override
-    public void draw(Game game) {
+    public void draw(Camera camera, Game game) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glfwPollEvents();
-        super.draw(game);
+        super.draw(this.camera, game);
 
         glfwSwapBuffers(this.windowHandle);
 

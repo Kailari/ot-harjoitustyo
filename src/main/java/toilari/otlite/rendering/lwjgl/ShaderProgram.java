@@ -3,6 +3,9 @@ package toilari.otlite.rendering.lwjgl;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
@@ -13,7 +16,20 @@ public class ShaderProgram {
     private final int fragmentShader;
     @Getter private final int program;
 
-    public ShaderProgram(@NonNull String vertexShaderSource, @NonNull String fragmentShaderSource) {
+    /**
+     * Luo uuden varjostimen.
+     *
+     * @param vertexShaderSource   verteksivarjostimen lähdekoodi
+     * @param fragmentShaderSource fragmenttivarjostimen lähdekoodi
+     * @param attributeLocations   verteksivarjostimen attribuuttien indeksit
+     * @param outLocations         fragmenttiatribuuttien indeksit
+     */
+    public ShaderProgram(
+        @NonNull String vertexShaderSource,
+        @NonNull String fragmentShaderSource,
+        @NonNull Map<Integer, String> attributeLocations,
+        @NonNull Map<Integer, String> outLocations
+    ) {
         this.vertexShader = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(this.vertexShader, vertexShaderSource);
         glCompileShader(this.vertexShader);
@@ -34,9 +50,14 @@ public class ShaderProgram {
         glAttachShader(this.program, this.vertexShader);
         glAttachShader(this.program, this.fragmentShader);
 
-        glBindAttribLocation(this.program, 0, "in_pos");
-        glBindAttribLocation(this.program, 1, "in_uv");
-        glBindFragDataLocation(this.program, 0, "out_fragColor");
+        for (val entry : attributeLocations.entrySet()) {
+            glBindAttribLocation(this.program, entry.getKey(), entry.getValue());
+        }
+
+        for (val entry : outLocations.entrySet()) {
+            glBindFragDataLocation(this.program, entry.getKey(), entry.getValue());
+        }
+
         glLinkProgram(this.program);
 
         if (glGetProgrami(this.program, GL_LINK_STATUS) != GL_TRUE) {

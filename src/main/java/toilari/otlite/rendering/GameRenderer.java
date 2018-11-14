@@ -9,7 +9,7 @@ import toilari.otlite.game.Game;
 @Slf4j
 public class GameRenderer implements IRenderer<Game> {
     @Override
-    public void draw(Game game) {
-        game.getCurrentGameState().draw();
+    public void draw(Camera camera, Game game) {
+        game.getCurrentGameState().draw(camera);
     }
 }

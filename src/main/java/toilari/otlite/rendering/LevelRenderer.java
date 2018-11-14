@@ -5,6 +5,9 @@ import lombok.val;
 import toilari.otlite.rendering.lwjgl.Sprite;
 import toilari.otlite.world.Level;
 
+/**
+ * Piirtää pelin kartan.
+ */
 public class LevelRenderer implements IRenderer<Level> {
     private final Texture tileset;
     private final Sprite[] tileSprites;
@@ -12,6 +15,14 @@ public class LevelRenderer implements IRenderer<Level> {
     private final int tileHeight;
 
 
+    /**
+     * Luo uuden karttapiirtäjän.
+     *
+     * @param tileset        tekstuuriatlas josta ruutujen tekstuurit löytyvät
+     * @param tilesetRows    montako riviä atlaksessa on
+     * @param tilesetColumns montako saraketta atlaksessa on
+     * @throws NullPointerException jos tekstuuri on null
+     */
     public LevelRenderer(@NonNull Texture tileset, int tilesetRows, int tilesetColumns) {
         this.tileset = tileset;
         this.tileWidth = this.tileset.getWidth() / tilesetColumns;
@@ -25,13 +36,15 @@ public class LevelRenderer implements IRenderer<Level> {
                     this.tileWidth * x,
                     this.tileHeight * y,
                     this.tileWidth,
-                    this.tileHeight);
+                    this.tileHeight,
+                    1,
+                    1);
             }
         }
     }
 
     @Override
-    public void draw(Level level) {
+    public void draw(Camera camera, Level level) {
         this.tileset.bind();
 
         for (int y = 0; y < level.getHeight(); y++) {
@@ -39,10 +52,15 @@ public class LevelRenderer implements IRenderer<Level> {
                 val tile = level.getTileAt(x, y);
                 val index = tile.getTileIndex();
 
-                this.tileSprites[index].draw(x * this.tileWidth, y * this.tileHeight);
+                this.tileSprites[index].draw(camera, x, y);
             }
         }
 
         this.tileset.release();
+    }
+
+    @Override
+    public void destroy(Level level) {
+        this.tileset.destroy();
     }
 }

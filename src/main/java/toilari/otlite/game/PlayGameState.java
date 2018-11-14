@@ -5,6 +5,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import toilari.otlite.io.dao.TileDAO;
+import toilari.otlite.rendering.Camera;
 import toilari.otlite.rendering.IRenderer;
 import toilari.otlite.world.Level;
 import toilari.otlite.world.TileMapping;
@@ -83,8 +84,8 @@ public class PlayGameState extends GameState {
     }
 
     @Override
-    public void draw() {
-        this.renderer.draw(this);
+    public void draw(Camera camera) {
+        this.renderer.draw(camera, this);
     }
 
     @Override

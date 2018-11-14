@@ -1,6 +1,7 @@
 package toilari.otlite.game;
 
 import org.junit.jupiter.api.Test;
+import toilari.otlite.rendering.Camera;
 import toilari.otlite.rendering.GameRenderer;
 
 import java.time.Duration;
@@ -70,7 +71,7 @@ class GameTest {
     }
 
     /**
-     * Testaa että {@link GameState#init()}, {@link GameState#update()}, {@link GameState#draw()}, ja
+     * Testaa että {@link GameState#init()}, {@link GameState#update()}, {@link GameState#draw(Camera)}, ja
      * {@link GameState#destroy()} kutsutaan oikeisiin aikoihin.
      */
     @Test
@@ -153,7 +154,7 @@ class GameTest {
         }
 
         @Override
-        public void draw() {
+        public void draw(Camera camera) {
             this.drawCalled = true;
         }
 

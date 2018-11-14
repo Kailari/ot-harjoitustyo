@@ -2,6 +2,7 @@ package toilari.otlite.game;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import toilari.otlite.rendering.Camera;
 import toilari.otlite.rendering.GameRenderer;
 import toilari.otlite.rendering.IRenderer;
 import toilari.otlite.world.entities.ObjectManager;
@@ -13,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class PlayGameAndRendererTest {
     @Test
     void hasValidWorldAfterInit() {
-        val state = new PlayGameState((r) -> { }, new ObjectManager()) {
+        val state = new PlayGameState((c, r) -> { }, new ObjectManager()) {
             @Override
             public void update() {
                 assertNotNull(getWorld());
@@ -38,8 +39,8 @@ class PlayGameAndRendererTest {
             }
 
             @Override
-            public void draw() {
-                super.draw();
+            public void draw(Camera camera) {
+                super.draw(camera);
                 assertTrue(renderer.draw);
             }
         };
@@ -53,7 +54,7 @@ class PlayGameAndRendererTest {
         boolean draw, init, destroy;
 
         @Override
-        public void draw(PlayGameState s) {
+        public void draw(Camera camera, PlayGameState s) {
             this.draw = true;
         }
 

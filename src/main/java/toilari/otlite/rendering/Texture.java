@@ -6,8 +6,6 @@ import toilari.otlite.io.dao.TextureDAO;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Texture {
-    private static long currentlyBound = 0;
-
     @Getter private final int width;
     @Getter private final int height;
 
@@ -31,20 +29,20 @@ public class Texture {
      * Asettaa tekstuurin aktiiviseksi jotta piirtokomennot voivat käyttää sitä.
      */
     public void bind() {
-        //if (Texture.currentlyBound != this.handle) {
-            glBindTexture(GL_TEXTURE_2D, this.handle);
-        //}
+        glBindTexture(GL_TEXTURE_2D, this.handle);
     }
 
     /**
-     * Jos tämä tekstuuri on aktiivinen, vapauttaa sen. Tämän kutsumisen jälkeen mikään tekstuuri
+     * Jos tämä tekstuuri on aktiivinen, vapauttaa sen. Tämän metodin kutsumisen jälkeen mikään tekstuuri
      * ei ole liitettynä/aktiivisena.
      */
     public void release() {
         glBindTexture(GL_TEXTURE_2D, 0);
-        currentlyBound = 0;
     }
 
+    /**
+     * Vapauttaa tekstuurille varatut resurssit.
+     */
     public void destroy() {
         glDeleteTextures(this.handle);
     }

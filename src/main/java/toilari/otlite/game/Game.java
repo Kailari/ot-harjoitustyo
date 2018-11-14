@@ -82,7 +82,7 @@ public class Game {
      */
     protected void loop() {
         this.currentGameState.update();
-        this.renderer.draw(this);
+        this.renderer.draw(null,this);
     }
 
     /**

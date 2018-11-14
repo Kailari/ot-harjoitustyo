@@ -4,9 +4,10 @@ public interface IRenderer<TRenderable> {
     /**
      * Piirtää annetun objektin.
      *
+     * @param camera     kamera jonka näkökulmasta piirtäminen tapahtuu
      * @param renderable objekti joka piirrettään
      */
-    void draw(TRenderable renderable);
+    void draw(Camera camera, TRenderable renderable);
 
     /**
      * Alustaa objektin piirtämiseksi tarvittavat resurssit.
