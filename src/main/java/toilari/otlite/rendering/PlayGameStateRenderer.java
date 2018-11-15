@@ -3,6 +3,7 @@ package toilari.otlite.rendering;
 import lombok.val;
 import toilari.otlite.game.PlayGameState;
 import toilari.otlite.io.dao.TextureDAO;
+import toilari.otlite.world.entities.characters.AnimalCharacter;
 import toilari.otlite.world.entities.characters.PlayerCharacter;
 
 public class PlayGameStateRenderer implements IRenderer<PlayGameState> {
@@ -17,7 +18,8 @@ public class PlayGameStateRenderer implements IRenderer<PlayGameState> {
         val textureDao = new TextureDAO("content/textures/");
 
         val om = playGameState.getWorld().getObjectManager();
-        om.assignRenderer(PlayerCharacter.class, new PlayerRenderer(textureDao.load("white_knight.png")));
+        om.assignRenderer(PlayerCharacter.class, new CharacterRenderer(textureDao.load("white_knight.png"), 6));
+        om.assignRenderer(AnimalCharacter.class, new CharacterRenderer(textureDao.load("sheep.png"), 1));
 
         return true;
     }

@@ -68,7 +68,7 @@ public class ObjectManager {
         }
     }
 
-    public <T extends GameObject> void assignRenderer(@NonNull Class<T> objectType, @NonNull IRenderer<T> renderer) {
+    public <T extends GameObject> void assignRenderer(@NonNull Class<? extends T> objectType, @NonNull IRenderer<? extends T> renderer) {
         this.objectRenderers.put(objectType, renderer);
     }
 

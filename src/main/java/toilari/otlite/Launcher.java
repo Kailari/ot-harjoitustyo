@@ -5,6 +5,7 @@ import toilari.otlite.game.PlayGameState;
 import toilari.otlite.rendering.PlayGameStateRenderer;
 import toilari.otlite.rendering.lwjgl.LWJGLGameRenderer;
 import toilari.otlite.world.entities.ObjectManager;
+import toilari.otlite.world.entities.characters.TurnManager;
 
 /**
  * Vastaa sovelluksen käynnistämisestä ja komentoriviparametrien parsimisesta.
@@ -17,7 +18,7 @@ public class Launcher {
      */
     public static void main(String[] args) {
         Game app = new Game(
-            new PlayGameState(new PlayGameStateRenderer(), new ObjectManager()),
+            new PlayGameState(new PlayGameStateRenderer(), new ObjectManager(), new TurnManager()),
             new LWJGLGameRenderer()
         );
         app.run();

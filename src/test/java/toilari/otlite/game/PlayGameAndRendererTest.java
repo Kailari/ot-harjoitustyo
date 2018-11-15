@@ -6,6 +6,7 @@ import toilari.otlite.rendering.Camera;
 import toilari.otlite.rendering.GameRenderer;
 import toilari.otlite.rendering.IRenderer;
 import toilari.otlite.world.entities.ObjectManager;
+import toilari.otlite.world.entities.characters.TurnManager;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -14,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class PlayGameAndRendererTest {
     @Test
     void hasValidWorldAfterInit() {
-        val state = new PlayGameState((c, r) -> { }, new ObjectManager()) {
+        val state = new PlayGameState((c, r) -> { }, new ObjectManager(), new TurnManager()) {
             @Override
             public void update() {
                 assertNotNull(getWorld());
@@ -31,7 +32,7 @@ class PlayGameAndRendererTest {
     void rendererMethodsGetCalled() {
         val renderer = new TestRenderer();
 
-        val state = new PlayGameState(renderer, new ObjectManager()) {
+        val state = new PlayGameState(renderer, new ObjectManager(), new TurnManager()) {
             @Override
             public void update() {
                 assertFalse(renderer.destroy);
