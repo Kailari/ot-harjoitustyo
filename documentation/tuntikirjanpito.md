@@ -16,3 +16,4 @@
 |13.11| 3h     | LWJGL-pohjainen ikkuna ja renderöinti, toimii. |
 |13.11| 2h     | LWJGL-pohjainen ikkuna ja renderöinti, refaktorointia. |
 |14.11| 1h     | Pelihahmon logiikan toteutuksen aloitus. |
+|14.11| 2h     | Vuorologiikka, hahmojen liikuttaminen ja ohjaus. |
