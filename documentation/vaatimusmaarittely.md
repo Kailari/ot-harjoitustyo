@@ -39,13 +39,19 @@ Pelin käynnistyttyä, joko valitaan profiili tai luodaan uusi. Profiileja ei ol
 #### Taistelu
 - Kahden hahmon ollessa vierekkäin, ne saavat vuorollaan käytettäväksi taistelutoimintoja, joilla ne voivat tuottaa vahinkopisteitä toisilleen.
 - Hahmoilla on myös attribuutteja, jotka vaikuttavat niihin kohdistuviin vahinkopisteisiin.
-- Hahmot jättävät kuollessaan jälkeensä kantamansa esineet.
 
 #### Möröt
 - Mörköjen vahvuus kasvaa joka kerroksessa.
 - Mörköjä on erilaisia ja uusia mörkötyyppejä voi luoda määritystiedostoja käyttäen.
 - Möröt lähtevät jahtaamaan pelaajaa tämän saapuessa liian lähelle.
 
+## Lisäominaisuuksia 
+
+#### Taistelu
+- Laajemmat vaihtoehdot taisteluun. Korkeammat attribuutit --> enemmän erilaisia iskuvaihtoehtoja
+- Rotkon reunalla olevan mörön voi yrittää potkaista alas
+
 #### Esineet
 - Pelissä on esineitä jotka vaikuttavat hahmojen attribuutteihin.
 - Esineitä voi luoda määritystiedostoja käyttäen.
+- Hahmot jättävät kuollessaan jälkeensä kantamansa esineet.
