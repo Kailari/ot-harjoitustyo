@@ -2,12 +2,15 @@ package toilari.otlite;
 
 import lombok.val;
 import toilari.otlite.game.Game;
-import toilari.otlite.game.GameState;
 import toilari.otlite.game.PlayGameState;
+import toilari.otlite.io.dao.TextureDAO;
+import toilari.otlite.rendering.CharacterRenderer;
 import toilari.otlite.rendering.IRenderer;
 import toilari.otlite.rendering.PlayGameStateRenderer;
 import toilari.otlite.rendering.lwjgl.LWJGLGameRenderer;
 import toilari.otlite.world.entities.TurnObjectManager;
+import toilari.otlite.world.entities.characters.AnimalCharacter;
+import toilari.otlite.world.entities.characters.PlayerCharacter;
 
 import java.util.HashMap;
 
@@ -21,12 +24,12 @@ public class Launcher {
      * @param args Raa'at, parsimattomat kometoriviparametrit
      */
     public static void main(String[] args) {
-        val rendererMapping = new HashMap<Class, IRenderer>();
-        rendererMapping.put(PlayGameState.class, new PlayGameStateRenderer());
+        val stateRenderers = new HashMap<Class, IRenderer>();
+        stateRenderers.put(PlayGameState.class, new PlayGameStateRenderer());
 
         val app = new LWJGLGameRenderer(
             new Game(new PlayGameState(new TurnObjectManager())),
-            rendererMapping
+            stateRenderers
         );
 
         app.run();

@@ -1,5 +1,6 @@
 package toilari.otlite.world.entities;
 
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.rendering.Camera;
@@ -17,8 +18,7 @@ import java.util.stream.Collectors;
  * asianmukaisesti.
  */
 public class ObjectManager {
-    @NonNull private final List<GameObject> objects = new ArrayList<>();
-    @NonNull private final Map<Class<? extends GameObject>, IRenderer> objectRenderers = new HashMap<>();
+    @Getter @NonNull private final List<GameObject> objects = new ArrayList<>();
     private World world;
 
     /**
@@ -45,25 +45,6 @@ public class ObjectManager {
     }
 
     /**
-     * Piirtää kaikki tällähetkellä olemassaolevat peliobjektit.
-     * <p>
-     * Varoitus "unchecked" on vaimennettu, koska metodi {@link #assignRenderer(Class, IRenderer)} pitää huolen ettei
-     * tyyppiristiriitaa pääse syntymään.
-     *
-     * @param camera kamera jonka näkökulmasta piirretään
-     * @throws NullPointerException jos kamera on <code>null</code>
-     */
-    @SuppressWarnings("unchecked")
-    public void draw(@NonNull Camera camera) {
-        for (val object : this.objects) {
-            val renderer = this.objectRenderers.get(object.getClass());
-            if (renderer != null) {
-                renderer.draw(camera, object);
-            }
-        }
-    }
-
-    /**
      * Lisää peliobjektin pelimaailmaan.
      *
      * @param object objekti joka lisätään
@@ -81,18 +62,6 @@ public class ObjectManager {
         this.objects.add(object);
         object.setWorld(this.world);
         object.init();
-    }
-
-    /**
-     * Asettaa piirtäjän peliobjektityypille. Vain luokkien joille on rekisteröity piirtäjä oliot piirretään ruudulle.
-     *
-     * @param objectType piirrettävän objektin luokka
-     * @param renderer   piirtäjä jolla luokan instanssit piirretään
-     * @param <T>        piirrettävän luokan tyyppi, tulee periytyä luokasta {@link GameObject}
-     * @throws NullPointerException jos objektin tyyppi tai piirtäjä on <code>null</code>
-     */
-    public <T extends GameObject> void assignRenderer(@NonNull Class<? extends T> objectType, @NonNull IRenderer<? extends T> renderer) {
-        this.objectRenderers.put(objectType, renderer);
     }
 
     /**

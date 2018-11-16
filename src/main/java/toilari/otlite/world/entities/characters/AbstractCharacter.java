@@ -56,7 +56,8 @@ public abstract class AbstractCharacter extends GameObject {
 
         int newX = Math.max(0, Math.min(getX() + dx, (getWorld().getCurrentLevel().getWidth() - 1) * Tile.SIZE_IN_WORLD));
         int newY = Math.max(0, Math.min(getY() + dy, (getWorld().getCurrentLevel().getHeight() - 1) * Tile.SIZE_IN_WORLD));
-        if (!getWorld().getCurrentLevel().getTileAt(newX / Tile.SIZE_IN_WORLD, newY / Tile.SIZE_IN_WORLD).isWall()) {
+        val tileAtTarget = getWorld().getCurrentLevel().getTileAt(newX / Tile.SIZE_IN_WORLD, newY / Tile.SIZE_IN_WORLD);
+        if (!tileAtTarget.isWall() && !tileAtTarget.getId().equals("hole")) {
             setX(newX);
             setY(newY);
             return true;
