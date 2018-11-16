@@ -11,33 +11,13 @@ public class GameObject {
     private static int idCounter;
 
     @Getter private final int id;
+    @Getter private boolean spawned;
     @Getter private boolean removed;
+
     @Getter @Setter(AccessLevel.PACKAGE) private World world;
 
-    @Getter private int x;
-    @Getter private int y;
-
-    @Getter @Setter(AccessLevel.PROTECTED) private boolean dirty;
-
-    /**
-     * Asettaa objektin x-koordinaatin.
-     *
-     * @param x uusi x-koordinaatti
-     */
-    public void setX(int x) {
-        this.x = x;
-        setDirty(true);
-    }
-
-    /**
-     * Asettaa objektin y-koordinaatin.
-     *
-     * @param y uusi y-koordinaatti
-     */
-    public void setY(int y) {
-        this.y = y;
-        setDirty(true);
-    }
+    @Getter @Setter private int x;
+    @Getter @Setter private int y;
 
     /**
      * Merkitsee peliobjektin poistetuksi. Poistettujen objektien {@link #update()}-metodeja ei kutsuta ja
@@ -45,10 +25,12 @@ public class GameObject {
      */
     public void remove() {
         this.removed = true;
-        setDirty(true);
     }
 
-    protected GameObject() {
+    /**
+     * Luo uuden peliobjektin ja asettaa sille yksilöllisen IDn.
+     */
+    public GameObject() {
         this.id = GameObject.idCounter++;
     }
 
@@ -59,28 +41,39 @@ public class GameObject {
         if (this.removed) {
             throw new IllegalStateException("init called for removed object!");
         }
+
+        if (this.spawned) {
+            throw new IllegalStateException("cannot spawn the same object multiple times!");
+        }
+
+        this.spawned = true;
     }
 
     /**
      * Päivittää peliobjektin tilan.
      */
     public void update() {
+        if (!this.spawned) {
+            throw new IllegalStateException("Upadate called for object not yet spawned!");
+        }
+
         if (this.removed) {
             throw new IllegalStateException("Update called after object was flagged for removal!");
         }
+
     }
 
     @Override
     public boolean equals(Object o) {
         if (o instanceof GameObject) {
-            return ((GameObject) o).id == this.id;
+            return ((GameObject) o).getId() == this.getId();
         }
 
-        return o == this;
+        return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id);
+        return Objects.hash(this.getId());
     }
 }

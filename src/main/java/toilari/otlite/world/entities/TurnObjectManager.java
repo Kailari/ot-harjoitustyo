@@ -39,6 +39,12 @@ public class TurnObjectManager extends ObjectManager {
 
     @Override
     public void update() {
+        super.update();
+
+        if (this.characters.isEmpty()) {
+            return;
+        }
+
         if (this.turnChangeTimer + TURN_CHANGE_DELAY > System.currentTimeMillis()) {
             return;
         }

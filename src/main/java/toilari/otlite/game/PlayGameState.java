@@ -22,8 +22,6 @@ import toilari.otlite.world.entities.characters.controller.PlayerController;
 public class PlayGameState extends GameState {
     @Getter @NonNull private final World world;
 
-    private final PlayerCharacter player;
-
     /**
      * Luo uuden pelitila-instanssin.
      *
@@ -32,7 +30,6 @@ public class PlayGameState extends GameState {
      */
     public PlayGameState(@NonNull TurnObjectManager objectManager) {
         this.world = new World(objectManager);
-        this.player = new PlayerCharacter(new PlayerController());
     }
 
     @Override
@@ -43,11 +40,14 @@ public class PlayGameState extends GameState {
 
         LOG.info("Initialization finished.");
 
-        this.world.getObjectManager().spawn(this.player);
-        this.player.setX(2 * Tile.SIZE_IN_WORLD);
-        this.player.setY(2 * Tile.SIZE_IN_WORLD);
+        val player = new PlayerCharacter();
+        player.giveControlTo(new PlayerController());
+        this.world.getObjectManager().spawn(player);
+        player.setX(2 * Tile.SIZE_IN_WORLD);
+        player.setY(2 * Tile.SIZE_IN_WORLD);
 
-        val sheep = new AnimalCharacter(new AnimalController());
+        val sheep = new AnimalCharacter();
+        sheep.giveControlTo(new AnimalController());
         this.world.getObjectManager().spawn(sheep);
         sheep.setX(2 * Tile.SIZE_IN_WORLD);
         sheep.setY(6 * Tile.SIZE_IN_WORLD);

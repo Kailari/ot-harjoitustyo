@@ -6,12 +6,12 @@ public class AnimalController extends CharacterController {
     private final Random random = new Random();
 
     @Override
-    public int getInputX() {
+    public int getMoveInputX() {
         return this.random.nextInt(3) - 1;
     }
 
     @Override
-    public int getInputY() {
+    public int getMoveInputY() {
         return this.random.nextInt(3) - 1;
     }
 }

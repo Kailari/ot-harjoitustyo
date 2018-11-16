@@ -36,7 +36,9 @@ public class ObjectManager {
      */
     public void update() {
         for (val object : this.objects) {
-            object.update();
+            if (!object.isRemoved()) {
+                object.update();
+            }
         }
 
         deleteRemoved();
