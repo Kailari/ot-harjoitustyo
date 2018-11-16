@@ -31,7 +31,12 @@ public class Camera {
      */
     @Getter @Setter private float pixelsPerUnit = 8.0f;
 
-
+    /**
+     * Luo uuden kameran pelimaailman tarkastelua varten.
+     *
+     * @param viewportWidth  ikkunan leveys
+     * @param viewportHeight ikkunan korkeus
+     */
     public Camera(int viewportWidth, int viewportHeight) {
         this.projectionMatrix = new Matrix4f();
         this.viewDirty = true;
@@ -44,6 +49,7 @@ public class Camera {
      *
      * @return näkymämatriisi
      */
+    @NonNull
     public Matrix4f getViewMatrix() {
         refreshViewMatrix();
         return this.viewMatrix;

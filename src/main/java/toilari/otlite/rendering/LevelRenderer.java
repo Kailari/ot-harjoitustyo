@@ -43,7 +43,7 @@ public class LevelRenderer implements IRenderer<Level> {
     }
 
     @Override
-    public void draw(Camera camera, Level level) {
+    public void draw(@NonNull Camera camera, @NonNull Level level) {
         this.tileset.bind();
 
         for (int y = 0; y < level.getHeight(); y++) {
@@ -59,7 +59,7 @@ public class LevelRenderer implements IRenderer<Level> {
     }
 
     @Override
-    public void destroy(Level level) {
+    public void destroy(@NonNull Level level) {
         this.tileset.destroy();
     }
 }

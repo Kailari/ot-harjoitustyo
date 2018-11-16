@@ -10,6 +10,9 @@ import java.util.Map;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
 
+/**
+ * Apuluokka sävytinohjelmien käsittelyyn.
+ */
 @Slf4j
 public class ShaderProgram {
     private final int vertexShader;
@@ -17,12 +20,13 @@ public class ShaderProgram {
     @Getter private final int program;
 
     /**
-     * Luo uuden varjostimen.
+     * Luo uuden sävyttimen.
      *
-     * @param vertexShaderSource   verteksivarjostimen lähdekoodi
-     * @param fragmentShaderSource fragmenttivarjostimen lähdekoodi
-     * @param attributeLocations   verteksivarjostimen attribuuttien indeksit
+     * @param vertexShaderSource   verteksisävyttimen lähdekoodi
+     * @param fragmentShaderSource fragmenttisävyttimen lähdekoodi
+     * @param attributeLocations   verteksisävyttimen attribuuttien indeksit
      * @param outLocations         fragmenttiatribuuttien indeksit
+     * @throws NullPointerException jos mikään parametreista on <code>null</code>
      */
     public ShaderProgram(
         @NonNull String vertexShaderSource,
@@ -65,10 +69,16 @@ public class ShaderProgram {
         }
     }
 
+    /**
+     * Asettaa sävytinohjelman käyttöön.
+     */
     public void use() {
         glUseProgram(this.program);
     }
 
+    /**
+     * Vapauttaa sävytinohjelmalle varatut resurssit.
+     */
     public void destroy() {
         glDeleteShader(this.vertexShader);
         glDeleteShader(this.fragmentShader);

@@ -1,5 +1,10 @@
 package toilari.otlite.io.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,10 +13,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.stream.Stream;
-
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Apuluokka tiedostojen luomista, poistamista ja etsimistä varten.
@@ -22,13 +23,14 @@ public class FileHelper {
     /**
      * Etsii annetusta polusta kaikki tiedostot joilla on annettu pääte ja palauttaa
      * ne {@link Stream streamina}.
-     * 
+     *
      * @param path      Polku josta etsitään
      * @param extension tiedostopääte
      * @return <code>Stream&lt;Path&gt;</code> jossa löydettyjen tiedostojen polut.
-     *         Tyhjä jos tiedostoja ei löytynyt
+     * Tyhjä jos tiedostoja ei löytynyt
+     * @throws NullPointerException jos polku tai tiedostopääte on <code>null</code>
      */
-    public static Stream<Path> discoverFiles(Path path, String extension) {
+    public static Stream<Path> discoverFiles(@NonNull Path path, @NonNull String extension) {
         if (extension.startsWith(".")) {
             throw new IllegalArgumentException("omit the initial '.' of the extension. (e.g. \"txt\", not \".txt\")");
         }
@@ -44,13 +46,14 @@ public class FileHelper {
     /**
      * Luo tiedoston jonka polkuna on <code>pathString</code> ja nimenä
      * <code>filename</code>. Tarvittavat hakemistot luodaan automaattisesti.
-     * 
+     *
      * @param path     polku kansioon johon tiedosto luodaan
      * @param filename tiedoston nimi
      * @return <code>true</code> kun tiedoston luonti onnistuu, muutoin
-     *         <code>false</code>
+     * <code>false</code>
+     * @throws NullPointerException jos polku tai tiedostonimi on <code>null</code>
      */
-    public static boolean createFile(Path path, String filename) {
+    public static boolean createFile(@NonNull Path path, @NonNull String filename) {
         Path filePath = path.resolve(filename);
 
         try {
@@ -71,12 +74,13 @@ public class FileHelper {
 
     /**
      * Poistaa tiedoston ja kaikki sen sisältämät alihakemistot ja tiedostot.
-     * 
+     *
      * @param path Poistettavan hakemiston polku
      * @return <code>true</code> jos poistaminen onnistuu, muutoin
-     *         <code>false</code>
+     * <code>false</code>
+     * @throws NullPointerException jos polku on <code>null</code>
      */
-    public static boolean deleteDirectoryAndChildren(Path path) {
+    public static boolean deleteDirectoryAndChildren(@NonNull Path path) {
         if (!Files.isDirectory(path)) {
             LOG.error("Path to be deleted should point to a directory!");
             return false;
@@ -84,9 +88,9 @@ public class FileHelper {
 
         try {
             Files.walk(path)
-                    .sorted(Comparator.reverseOrder())
-                    .map(Path::toFile)
-                    .forEach(File::delete);
+                .sorted(Comparator.reverseOrder())
+                .map(Path::toFile)
+                .forEach(File::delete);
             return true;
         } catch (IOException e) {
             LOG.error("Could not delete file: {}", e.getMessage());

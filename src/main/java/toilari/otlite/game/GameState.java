@@ -1,17 +1,14 @@
 package toilari.otlite.game;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import toilari.otlite.rendering.Camera;
+import toilari.otlite.rendering.IRenderer;
 
 /**
  * "Pelitila", erillinen kokonaisuus pelin sisällä joka vaatii muista
  * pelitiloista poikkeavaa suorituslogiikkaa. Esim. valikot ja itse peli ovat
  * erillisiä pelitilojaan.
  */
-@RequiredArgsConstructor
 public abstract class GameState {
     @Getter(AccessLevel.PROTECTED) @Setter(AccessLevel.PROTECTED) private Game game;
 
@@ -24,13 +21,6 @@ public abstract class GameState {
      * Päivittää pelin tilan.
      */
     public abstract void update();
-
-    /**
-     * Piirtää pelimaailman nykytilanteen ruudulle.
-     *
-     * @param camera kamera jonka näkökulmasta piirretään
-     */
-    public abstract void draw(Camera camera);
 
     /**
      * Tuhoaa pelitilan. Kutsutaan kerran kun pelitila poistuu käytöstä.

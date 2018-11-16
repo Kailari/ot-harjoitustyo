@@ -2,8 +2,8 @@ package toilari.otlite.game;
 
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import toilari.otlite.rendering.IRenderer;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -23,36 +23,30 @@ public class Game {
         this.running.set(running);
     }
 
-    @Getter private GameState currentGameState;
-
-    @NonNull private GameState defaultGameState;
-
-    @NonNull private final IRenderer<Game> renderer;
-
-
-    public Game(@NonNull GameState defaultState, @NonNull IRenderer<Game> renderer) {
-        this.defaultGameState = defaultState;
-        this.renderer = renderer;
+    public boolean isRunning() {
+        return this.running.get();
     }
 
+    @Getter private GameState currentGameState;
+    @NonNull private final GameState defaultGameState;
+
+    @Setter private StateChangeCallback stateChangeCallback;
+
     /**
-     * Aloittaa sovelluksen suorituksen. Aloittaa {@link #init() alustamalla}
-     * sovelluksen tarvitsemat resurssit ja siirtyy {@link #loop() päälooppiin} sen
-     * jälkeen. Kun päälooppi viimein valmistuu, viimeistellään suoritus metodissa
-     * {@link #destroy()}
+     * Luo uuden peli-instanssin.
+     *
+     * @param defaultState oletuspelitila joka asetetaan aktiiviseksi pelin suorituksen {@link #init() alkaessa}
+     * @throws NullPointerException jos oletustila on <code>null</code>
      */
-    public void run() {
-        init();
-        while (this.running.get()) {
-            loop();
-        }
-        destroy();
+    public Game(@NonNull GameState defaultState) {
+        this.defaultGameState = defaultState;
     }
 
     /**
      * Vaihtaa pelitilaa. Kutsuu uudelle ja vanhalle pelitilalle tarvittavat alustus- ja tuhoamismetodit.
      *
      * @param newState uusi pelitila
+     * @throws NullPointerException jos pelitila on <code>null</code>
      */
     public void changeState(@NonNull GameState newState) {
         LOG.info("Changing the game state to: {}", newState);
@@ -64,15 +58,15 @@ public class Game {
         this.currentGameState = newState;
         this.currentGameState.setGame(this);
         this.currentGameState.init();
+
+        this.stateChangeCallback.onStateChange(this.currentGameState);
     }
 
     /**
      * Kutsutaan kerran ennen päälooppiin siirtymistä, kun sovelluksen suoritus
      * alkaa.
      */
-    protected void init() {
-        this.renderer.init(this);
-
+    public void init() {
         changeState(this.defaultGameState);
         setRunning(true);
     }
@@ -80,16 +74,26 @@ public class Game {
     /**
      * Kutsutaan toistuvasti niin kauan kuin peli on käynnissä.
      */
-    protected void loop() {
+    public void update() {
         this.currentGameState.update();
-        this.renderer.draw(null,this);
     }
 
     /**
      * Kutsutaan kerran pääloopin jälkeen, kun ohjelman suoritus on loppumassa.
      */
-    protected void destroy() {
+    public void destroy() {
         this.currentGameState.destroy();
-        this.renderer.destroy(this);
+    }
+
+    /**
+     * Takaisinkutsu jolla käärivä käyttöliittymämoottori voi reagoida pelitilan muutoksiin.
+     */
+    public interface StateChangeCallback {
+        /**
+         * Kutsutaan kun pelitila vaihtuu.
+         *
+         * @param newState uusi pelitila
+         */
+        void onStateChange(@NonNull GameState newState);
     }
 }

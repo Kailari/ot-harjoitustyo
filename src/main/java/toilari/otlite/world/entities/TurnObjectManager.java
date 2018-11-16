@@ -1,23 +1,43 @@
-package toilari.otlite.world.entities.characters;
+package toilari.otlite.world.entities;
 
 import lombok.NonNull;
 import lombok.val;
+import toilari.otlite.world.World;
+import toilari.otlite.world.entities.characters.AbstractCharacter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TurnManager {
+/**
+ * Objektimanageri, joka lisää vuoropohjaista toiminnallisuutta. Hallinnoi {@link AbstractCharacter pelihahmojen}
+ * vuoroja ja tarjoaa metodit vuoron päättämiseen yms.
+ */
+public class TurnObjectManager extends ObjectManager {
     private static final int TURN_CHANGE_DELAY = 100;
 
     private final List<AbstractCharacter> characters = new ArrayList<>();
     private int turn;
     private long turnChangeTimer;
 
-    public void init() {
+    /**
+     * Päättää nykyisen akiivisen hahmon vuoron.
+     */
+    public void endTurn() {
+        this.turnChangeTimer = System.currentTimeMillis();
+        this.turn++;
+        if (this.turn == this.characters.size()) {
+            this.turn = 0;
+        }
+    }
+
+    @Override
+    public void init(@NonNull World world) {
+        super.init(world);
         this.characters.clear();
         this.turn = 0;
     }
 
+    @Override
     public void update() {
         if (this.turnChangeTimer + TURN_CHANGE_DELAY > System.currentTimeMillis()) {
             return;
@@ -41,18 +61,19 @@ public class TurnManager {
         return this.characters.get(this.turn);
     }
 
-    public void endTurn() {
-        this.turnChangeTimer = System.currentTimeMillis();
-        this.turn++;
-        if (this.turn == this.characters.size()) {
-            this.turn = 0;
+    @Override
+    public void spawn(@NonNull GameObject object) {
+        super.spawn(object);
+        if (object instanceof AbstractCharacter) {
+            this.characters.add((AbstractCharacter) object);
         }
     }
 
-    public void add(AbstractCharacter character) {
-        if (this.characters.contains(character)) {
-            throw new IllegalStateException("GameObject with the same ID is already tracked by the turn manager!");
+    @Override
+    protected void remove(@NonNull GameObject object) {
+        super.remove(object);
+        if (object instanceof AbstractCharacter) {
+            this.characters.remove(object);
         }
-        this.characters.add(character);
     }
 }

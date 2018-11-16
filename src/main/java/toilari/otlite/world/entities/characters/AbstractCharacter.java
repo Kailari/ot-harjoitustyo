@@ -5,6 +5,7 @@ import lombok.val;
 import lombok.var;
 import toilari.otlite.world.Tile;
 import toilari.otlite.world.entities.GameObject;
+import toilari.otlite.world.entities.TurnObjectManager;
 import toilari.otlite.world.entities.characters.controller.CharacterController;
 
 /**
@@ -23,7 +24,7 @@ public abstract class AbstractCharacter extends GameObject {
         super.update();
     }
 
-    protected void updateOnOwnTurn(TurnManager turnManager) {
+    public void updateOnOwnTurn(TurnObjectManager turnManager) {
         val inputX = Math.max(-1, Math.min(1, this.controller.getInputX()));
         var inputY = Math.max(-1, Math.min(1, this.controller.getInputY()));
         if (inputX != 0) {

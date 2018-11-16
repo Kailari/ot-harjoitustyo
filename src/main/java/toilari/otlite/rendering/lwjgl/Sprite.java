@@ -29,6 +29,7 @@ import static org.lwjgl.opengl.GL30.glDrawElements;
 public class Sprite {
     private static ShaderProgram shader;
 
+    @NonNull
     private static ShaderProgram getShader() {
         if (Sprite.shader == null) {
             try {
@@ -51,7 +52,6 @@ public class Sprite {
     }
 
     @NonNull private final Texture texture;
-
     private final int vao;
 
     /**
@@ -129,8 +129,9 @@ public class Sprite {
      * @param camera kamera jonka näkökulmasta piirretään
      * @param x      x-koordinaatti johon piirretään
      * @param y      y-koordinaatti johon piirretään
+     * @throws NullPointerException jos kamera on <code>null</code>
      */
-    public void draw(Camera camera, int x, int y) {
+    public void draw(@NonNull Camera camera, int x, int y) {
         this.texture.bind();
         getShader().use();
 

@@ -2,6 +2,7 @@ package toilari.otlite.io.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -21,11 +22,13 @@ public class TextFileHelper {
      * @param path    Luettavan tekstitiedoston polku
      * @param options Lista asetuksista joiden mukaan tiedosto avataan
      * @return Lukijan, jolla tiedostoa voidaan lukea
-     * @throws IOException jos tiedoston avaaminen epäonnistuu
+     * @throws IOException          jos tiedoston avaaminen epäonnistuu
+     * @throws NullPointerException jos polku tai asetukset on <code>null</code>
      */
-    public static BufferedReader getReader(Path path, OpenOption... options) throws IOException {
+    @NonNull
+    public static BufferedReader getReader(@NonNull Path path, @NonNull OpenOption... options) throws IOException {
         return new BufferedReader(
-            new InputStreamReader(FileStreamHelper.openForReading(path), Charset.forName("UTF-8")));
+            new InputStreamReader(FileStreamHelper.openForReading(path, options), Charset.forName("UTF-8")));
     }
 
     /**
@@ -35,9 +38,11 @@ public class TextFileHelper {
      * @param path    Kirjoitettavan tekstitiedoston polku
      * @param options Lista asetuksista joiden mukaan tiedosto avataan
      * @return Kirjoittajan, jolla tiedostoa voidaan lukea
-     * @throws IOException jos tiedoston avaaminen epäonnistuu
+     * @throws IOException          jos tiedoston avaaminen epäonnistuu
+     * @throws NullPointerException jos polku tai asetukset on <code>null</code>
      */
-    public static BufferedWriter getWriter(Path path, OpenOption... options) throws IOException {
+    @NonNull
+    public static BufferedWriter getWriter(@NonNull Path path, @NonNull OpenOption... options) throws IOException {
         return new BufferedWriter(
             new OutputStreamWriter(FileStreamHelper.openForWriting(path, options), Charset.forName("UTF-8")));
     }
@@ -47,9 +52,11 @@ public class TextFileHelper {
      *
      * @param path tiedoston polku
      * @return merkkijono jossa tiedoston sisältö. <code>null</code> jos tiedostoa ei löydy
-     * @throws IOException jos tiedoston avaaminen epäonnistuu
+     * @throws IOException          jos tiedoston avaaminen epäonnistuu
+     * @throws NullPointerException jos polku on <code>null</code>
      */
-    public static String readFileToString(String path) throws IOException {
+    @NonNull
+    public static String readFileToString(@NonNull String path) throws IOException {
         return new String(Files.readAllBytes(Paths.get(path)));
     }
 }

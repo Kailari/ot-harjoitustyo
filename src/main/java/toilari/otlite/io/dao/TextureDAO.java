@@ -8,11 +8,8 @@ import toilari.otlite.io.util.FileStreamHelper;
 import toilari.otlite.rendering.lwjgl.Texture;
 
 import javax.imageio.ImageIO;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,7 +24,13 @@ import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
 public class TextureDAO {
     @NonNull private final Path root;
 
-    public TextureDAO(String root) {
+    /**
+     * Luo uuden DAOn. Tekstuureja etsitään polusta joka annetaan parametrilla <code>root</code>
+     *
+     * @param root juurihakemisto josta tekstuureja etsitään
+     * @throws NullPointerException jos juurihakemisto on <code>null</code>
+     */
+    public TextureDAO(@NonNull String root) {
         this.root = Paths.get(root);
     }
 
@@ -36,13 +39,14 @@ public class TextureDAO {
      *
      * @param path polku josta kuvatiedostoa etsitään
      * @return <code>null</code> jos kuvatiedostoa ei löydy, muulloin ladatusta kuvatiedostosta luotu tekstuuri
+     * @throws NullPointerException jos polku on <code>null</code>
      */
-    public Texture load(String path) {
+    public Texture load(@NonNull String path) {
         int handle = generateGLTexture();
 
         int width, height;
         try (val is = FileStreamHelper.openForReading(this.root.resolve(path)); val stack = MemoryStack.stackPush()) {
-            val image = loadBufferedImage(is);
+            val image = ImageIO.read(is);
             width = image.getWidth();
             height = image.getHeight();
             val buffer = loadImageData(stack, image, width, height);
@@ -53,14 +57,6 @@ public class TextureDAO {
         }
 
         return new Texture(width, height, handle);
-    }
-
-    /**
-     * Lataa kuvan ja flippaa sen, jotta origo olisi oikeassa kohdassa
-     */
-    private BufferedImage loadBufferedImage(InputStream is) throws IOException {
-        val image = ImageIO.read(is);
-        return image;
     }
 
     private static int generateGLTexture() {
@@ -76,7 +72,7 @@ public class TextureDAO {
         return handle;
     }
 
-    private ByteBuffer loadImageData(MemoryStack stack, BufferedImage image, int width, int height) {
+    private ByteBuffer loadImageData(@NonNull MemoryStack stack, @NonNull BufferedImage image, int width, int height) {
         int[] pixels = new int[width * height];
         image.getRGB(0, 0, width, height, pixels, 0, width);
 

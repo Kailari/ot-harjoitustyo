@@ -5,6 +5,9 @@ import toilari.otlite.io.dao.TextureDAO;
 
 import static org.lwjgl.opengl.GL11.*;
 
+/**
+ * Piirtämistä varten ladattu kuva eli tekstuuri. Apuluokka tekstuurien käsittelyyn.
+ */
 public class Texture {
     @Getter private final int width;
     @Getter private final int height;

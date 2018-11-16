@@ -3,6 +3,9 @@ package toilari.otlite.io;
 import lombok.RequiredArgsConstructor;
 import org.lwjgl.glfw.GLFW;
 
+/**
+ * LWJGL-pohjainen implementaatio syötekäsittelijästä.
+ */
 @RequiredArgsConstructor
 public class LWJGLInputHandler implements IInputHandler {
     private final long windowHandle;

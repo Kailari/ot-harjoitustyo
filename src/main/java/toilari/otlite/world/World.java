@@ -2,19 +2,22 @@ package toilari.otlite.world;
 
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.val;
-import toilari.otlite.world.entities.ObjectManager;
+import toilari.otlite.world.entities.TurnObjectManager;
 
 /**
  * Pelimaailma.
  */
 public class World {
     @Getter private Level currentLevel;
-    @NonNull @Getter private final ObjectManager objectManager;
+    @NonNull @Getter private final TurnObjectManager objectManager;
 
-    public World(@NonNull ObjectManager objectManager) {
+    /**
+     * Luo uuden pelimaailman.
+     *
+     * @param objectManager objektimanageri jolla pelimaailman objekteja tulee hallinnoida
+     */
+    public World(@NonNull TurnObjectManager objectManager) {
         this.objectManager = objectManager;
-        this.objectManager.setWorld(this);
     }
 
     /**
@@ -27,13 +30,16 @@ public class World {
     }
 
     /**
+     * Alustaa pelimaailman.
+     */
+    public void init() {
+        this.objectManager.init(this);
+    }
+
+    /**
      * Päivittää pelimaailman.
      */
     public void update() {
-        for (val gameObject : this.objectManager.getObjects()) {
-            gameObject.update();
-        }
-
-        this.objectManager.deleteRemoved();
+        this.objectManager.update();
     }
 }
