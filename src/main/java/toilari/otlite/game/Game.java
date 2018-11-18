@@ -5,26 +5,24 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 /**
  * Pelin runko.
  */
 @Slf4j
 public class Game {
-    private AtomicBoolean running = new AtomicBoolean();
+    private boolean running = false;
 
     /**
      * Määrittää jatketaanko pääloopin suorittamista.
      *
      * @param running jos <code>false</code> pääloopin suoritus lopetetaan
      */
-    public void setRunning(boolean running) {
-        this.running.set(running);
+    public synchronized void setRunning(boolean running) {
+        this.running = running;
     }
 
-    public boolean isRunning() {
-        return this.running.get();
+    public synchronized boolean isRunning() {
+        return this.running;
     }
 
     @Getter private GameState currentGameState;
