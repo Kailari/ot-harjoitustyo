@@ -43,14 +43,14 @@ public class PlayGameState extends GameState {
         val player = new PlayerCharacter();
         player.giveControlTo(new PlayerController());
         this.world.getObjectManager().spawn(player);
-        player.setX(2 * Tile.SIZE_IN_WORLD);
-        player.setY(2 * Tile.SIZE_IN_WORLD);
+        player.setX(5 * Tile.SIZE_IN_WORLD);
+        player.setY(3 * Tile.SIZE_IN_WORLD);
 
         val sheep = new AnimalCharacter();
         sheep.giveControlTo(new AnimalController());
         this.world.getObjectManager().spawn(sheep);
-        sheep.setX(2 * Tile.SIZE_IN_WORLD);
-        sheep.setY(6 * Tile.SIZE_IN_WORLD);
+        sheep.setX(5 * Tile.SIZE_IN_WORLD);
+        sheep.setY(1 * Tile.SIZE_IN_WORLD);
     }
 
     private void loadAssets() {

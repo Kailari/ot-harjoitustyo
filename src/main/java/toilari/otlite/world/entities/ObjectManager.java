@@ -3,14 +3,10 @@ package toilari.otlite.world.entities;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
-import toilari.otlite.rendering.Camera;
-import toilari.otlite.rendering.IRenderer;
 import toilari.otlite.world.World;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -20,6 +16,21 @@ import java.util.stream.Collectors;
 public class ObjectManager {
     @Getter @NonNull private final List<GameObject> objects = new ArrayList<>();
     private World world;
+
+    /**
+     * Tarkistaa onko annetuissa koordinaateissa objektia ja palauttaa sen jos sellainen löytyy. Palauttaa objektin
+     * vaikka se olisi merkitty poistetuksi.
+     *
+     * @param x x-koordinaatti josta etsitään
+     * @param y y-koordinaatti josta etsitään
+     * @return <code>null</code> jos koordinaateissa ei ole objektia, muulloin löydetty objekti
+     */
+    public GameObject getObjectAt(int x, int y) {
+        return this.objects.stream()
+            .filter(o -> o.getX() == x && o.getY() == y)
+            .findFirst()
+            .orElse(null);
+    }
 
     /**
      * Alustaa objektimanagerin.

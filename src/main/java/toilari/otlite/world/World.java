@@ -2,6 +2,8 @@ package toilari.otlite.world;
 
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.val;
+import toilari.otlite.world.entities.GameObject;
 import toilari.otlite.world.entities.TurnObjectManager;
 
 /**
@@ -10,6 +12,19 @@ import toilari.otlite.world.entities.TurnObjectManager;
 public class World {
     @Getter private Level currentLevel;
     @NonNull @Getter private final TurnObjectManager objectManager;
+
+    /**
+     * Tarkistaa onko annetuissa koordinaateissa objektia ja palauttaa sen jos sellainen löytyy. Ei palauta objekteja
+     * jotka on jo merkitty poisteuksi.
+     *
+     * @param x x-koordinaatti josta etsitään
+     * @param y y-koordinaatti josta etsitään
+     * @return <code>null</code> jos koordinaateissa ei ole objektia, muulloin löydetty objekti
+     */
+    public GameObject getObjectAt(int x, int y) {
+        val obj = this.objectManager.getObjectAt(x, y);
+        return (obj != null && obj.isRemoved()) ? null : obj;
+    }
 
     /**
      * Luo uuden pelimaailman.
