@@ -30,6 +30,16 @@ public class TurnObjectManager extends ObjectManager {
         }
     }
 
+    /**
+     * Tarkistaa onko annetun hahmon vuoro.
+     *
+     * @param character hahmo joka tarkistetaan
+     * @return <code>true</code> jos on hahmon vuoro, muutoin <code>false</code>
+     */
+    public boolean isCharactersTurn(AbstractCharacter character) {
+        return this.characters.get(this.turn).equals(character);
+    }
+
     @Override
     public void init(@NonNull World world) {
         super.init(world);

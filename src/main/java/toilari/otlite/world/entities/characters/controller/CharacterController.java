@@ -1,6 +1,8 @@
 package toilari.otlite.world.entities.characters.controller;
 
 import lombok.Getter;
+import lombok.NonNull;
+import toilari.otlite.world.entities.TurnObjectManager;
 import toilari.otlite.world.entities.characters.AbstractCharacter;
 
 /**
@@ -45,4 +47,13 @@ public abstract class CharacterController {
      * jos pysytään paikallaan
      */
     public abstract int getMoveInputY();
+
+    /**
+     * Päivittää ohjaimen. Mahdollistaa tekoälyohjaimien monimutkaisemman logiikan simuloinnin.
+     *
+     * @param turnManager aktiivinen vuoromanageri
+     * @throws NullPointerException jos vuoromanageri on <code>null</code>
+     */
+    public void update(@NonNull TurnObjectManager turnManager) {
+    }
 }

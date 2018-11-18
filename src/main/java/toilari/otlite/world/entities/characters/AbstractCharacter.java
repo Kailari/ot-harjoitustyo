@@ -31,6 +31,13 @@ public abstract class AbstractCharacter extends GameObject {
             return;
         }
 
+        this.controller.update(turnManager);
+
+        // If controller ended turn, do not continue
+        if (!turnManager.isCharactersTurn(this.controller.getControlledCharacter())) {
+            return;
+        }
+
         val inputX = Math.max(-1, Math.min(1, this.controller.getMoveInputX()));
         var inputY = Math.max(-1, Math.min(1, this.controller.getMoveInputY()));
         if (inputX != 0) {
