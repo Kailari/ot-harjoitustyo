@@ -23,6 +23,16 @@ mvn jacoco:report
 ```
 jonka jälkeen selaimella tarkasteltava raportti löytyy polusta `target/site/jacoco/index.html`.
 
+### Suorittaminen
+Pelin voi käynnistää suoraan kutsumalla
+```
+mvn compile exec:java
+```
+tai
+```
+mvn compile exec:java -Dexec.mainClass=toilari.otlite.Launcher
+```
+
 ### Pakkaus
 Suoritettavan _.jar_-tiedoston saa generoitua komennolla
 ```
