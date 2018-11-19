@@ -4,13 +4,42 @@
 Kurssin *"Ohjelmistotekniikka"* harjoitustyönä tuotettu yksinkertainen roguelite-henkinen luolaseikkailu, jossa lätkitään mörköjä turpaan ja otetaan turpaan kahta kovemmin.
 
 ## Dokumentaatio
-- [tuntikirjanpito](documentation/tuntikirjanpito.md)
 - [vaatimusmäärittely](documentation/vaatimusmäärittely.md)
+- [tuntikirjanpito](documentation/tuntikirjanpito.md)
 
-## Laskarit - viikko 1
-- [komentorivi.txt](laskarit/viikko1/komentorivi.txt)
-- [gitlog.txt](laskarit/viikko1/gitlog.txt)
+## Releaset
+_Coming soon(ish)_
 
-## Laskarit - viikko 2
-![Testikattavuus](laskarit/viikko2/testikattavuus.png)
-- [viikko 2](laskarit/viikko2/)
+## Komentorivitoiminnot
+### Testaus
+Testien ajaminen tapahtuu komennolla
+```
+mvn test
+```
+
+Testikattavuusraportin generointi tapahtuu Mavenin [JaCoCo](https://www.eclemma.org/jacoco/)-lisäosalla
+```
+mvn jacoco:report
+```
+jonka jälkeen selaimella tarkasteltava raportti löytyy polusta `target/site/jacoco/index.html`.
+
+### Pakkaus
+Suoritettavan _.jar_-tiedoston saa generoitua komennolla
+```
+mvn package
+```
+Generoitu _OTLite-1.0-SNAPSHOT.jar_ löytyy polusta `target/`.
+
+### JavaDoc
+JavaDoc generoidaan komennolla
+```
+mvn javadoc:javadoc
+```
+jonka jälkeen selaimella tarkasteltavissa oleva dokumentaatio löytyy polusta `target/site/apidocs/index.html`.
+
+### Checkstyle
+Käytössä oleva _checkstyle_ on määritelty projektin juuressa löytyvässä [checkstyle.xml](checkstyle.xml)-tidostossa. Checkstylen tarkistus tapahtuu komennolla
+```
+mvn jxr:jxr checkstyle:checkstyle
+```
+jonka jälkeen selaimella tarkasteltavissa oleva raportti löytyy polusta `target/site/checkstyle.html`.
