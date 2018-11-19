@@ -12,7 +12,7 @@ import org.lwjgl.system.MemoryStack;
 import toilari.otlite.game.Game;
 import toilari.otlite.game.GameState;
 import toilari.otlite.io.Input;
-import toilari.otlite.io.LWJGLInputHandler;
+import toilari.otlite.io.lwjgl.LWJGLInputHandler;
 import toilari.otlite.rendering.AbstractGameRenderer;
 import toilari.otlite.rendering.Camera;
 import toilari.otlite.rendering.IRenderer;

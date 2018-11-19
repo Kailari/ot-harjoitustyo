@@ -1,7 +1,9 @@
-package toilari.otlite.io;
+package toilari.otlite.io.lwjgl;
 
 import lombok.RequiredArgsConstructor;
 import org.lwjgl.glfw.GLFW;
+import toilari.otlite.io.IInputHandler;
+import toilari.otlite.io.Key;
 
 /**
  * LWJGL-pohjainen implementaatio syötekäsittelijästä.
