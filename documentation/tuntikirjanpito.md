@@ -17,3 +17,7 @@
 |13.11| 2h     | LWJGL-pohjainen ikkuna ja renderöinti, refaktorointia. |
 |14.11| 1h     | Pelihahmon logiikan toteutuksen aloitus. |
 |14.11| 2h     | Vuorologiikka, hahmojen liikuttaminen ja ohjaus. |
+|16.11| 2h     | Käyttöliittymäkoodin eriyttäminen logiikasta (refaktorointia). |
+|18.11| 2h     | Testien kirjoittelua ja pientä bugifixailua ennen pelilogiikan aloittamista. |
+||
+|19.11| 1h     | Lisää testejä, README siivous. |
