@@ -25,6 +25,12 @@ public class Game {
         return this.running;
     }
 
+    /**
+     * Nykyinen pelitila. Määrittelemätön ennen kuin {@link #init()} tai {@link #changeState(GameState)} on kutsuttu,
+     * jonka jälkeen taattu validi ei-null pelitila-instanssi.
+     *
+     * @return nykyinen pelitila. Saattaa olla <code>null</code> jos mitään pelitilaa ei ole vielä asetettu aktiiviseksi
+     */
     @Getter private GameState currentGameState;
     @NonNull private final GameState defaultGameState;
 
@@ -51,28 +57,41 @@ public class Game {
 
         if (this.currentGameState != null) {
             this.currentGameState.destroy();
+            this.currentGameState.setGame(null);
         }
 
         this.currentGameState = newState;
         this.currentGameState.setGame(this);
         this.currentGameState.init();
 
-        this.stateChangeCallback.onStateChange(this.currentGameState);
+        if (this.stateChangeCallback != null) {
+            this.stateChangeCallback.onStateChange(this.currentGameState);
+        }
     }
 
     /**
      * Kutsutaan kerran ennen päälooppiin siirtymistä, kun sovelluksen suoritus
-     * alkaa.
+     * alkaa. Asettaa oletuspelitilan aktiiviseksi jos aktiivista pelitilaa ei
+     * ole vielä manuaalisesti asetettu
      */
     public void init() {
-        changeState(this.defaultGameState);
+        if (this.currentGameState == null) {
+            changeState(this.defaultGameState);
+        }
+
         setRunning(true);
     }
 
     /**
      * Kutsutaan toistuvasti niin kauan kuin peli on käynnissä.
+     *
+     * @throws IllegalStateException jos {@link #isRunning()} on <code>false</code>
      */
     public void update() {
+        if (!isRunning()) {
+            throw new IllegalStateException("Game updated while not running!");
+        }
+
         this.currentGameState.update();
     }
 
