@@ -4,7 +4,7 @@
 Kurssin *"Ohjelmistotekniikka"* harjoitustyönä tuotettu yksinkertainen roguelite-henkinen luolaseikkailu, jossa lätkitään mörköjä turpaan ja otetaan turpaan kahta kovemmin.
 
 ## Dokumentaatio
-- [vaatimusmäärittely](documentation/vaatimusmäärittely.md)
+- [vaatimusmäärittely](documentation/vaatimusmaarittely.md)
 - [tuntikirjanpito](documentation/tuntikirjanpito.md)
 
 ## Releaset
