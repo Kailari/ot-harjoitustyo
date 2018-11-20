@@ -1,9 +1,7 @@
 package toilari.otlite.world.entities.characters;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.val;
-import lombok.var;
+import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import toilari.otlite.world.Tile;
 import toilari.otlite.world.entities.GameObject;
 import toilari.otlite.world.entities.TurnObjectManager;
@@ -12,8 +10,15 @@ import toilari.otlite.world.entities.characters.controller.CharacterController;
 /**
  * Hahmo pelimaailmassa.
  */
+@Slf4j
 public abstract class AbstractCharacter extends GameObject {
     @Getter private CharacterController controller;
+    @Getter @Setter private float health = 10.0f;
+    @Getter @Setter private float attackDamage = 1.0f;
+
+    @Getter private long lastAttackTime;
+    @Getter private float lastAttackAmount;
+    @Getter private AbstractCharacter lastAttackTarget;
 
     @Override
     public void update() {
@@ -38,12 +43,16 @@ public abstract class AbstractCharacter extends GameObject {
             return;
         }
 
+        // Clamp input to range -1..1
         val inputX = Math.max(-1, Math.min(1, this.controller.getMoveInputX()));
         var inputY = Math.max(-1, Math.min(1, this.controller.getMoveInputY()));
+
+        // Allow moving only on one axis per move
         if (inputX != 0) {
             inputY = 0;
         }
 
+        // If character moved succesfully, end turn
         if (move(inputX * Tile.SIZE_IN_WORLD, inputY * Tile.SIZE_IN_WORLD)) {
             turnManager.endTurn();
         }
@@ -68,13 +77,46 @@ public abstract class AbstractCharacter extends GameObject {
 
         val tileIsWalkable = !tileAtTarget.isWall() && !tileAtTarget.getId().equals("hole");
 
-        if (tileIsWalkable && objectAtTarget == null) {
-            setX(newX);
-            setY(newY);
-            return true;
+        if (tileIsWalkable) {
+            if (objectAtTarget instanceof AbstractCharacter) {
+                val character = (AbstractCharacter) objectAtTarget;
+                if (attack(character, this.attackDamage)) {
+                    return true;
+                }
+            }
+
+            // Target object will be flagged as removed if we happened to kill it during this turn
+            if (objectAtTarget == null || objectAtTarget.isRemoved()) {
+                setX(newX);
+                setY(newY);
+                return true;
+            }
         }
 
         return false;
+    }
+
+    public boolean attack(@NonNull AbstractCharacter target, float amount) {
+        if (target.isRemoved()) {
+            return false;
+        }
+
+        LOG.info("Attacking! ({}->{})", getClass().getSimpleName(), target.getClass().getSimpleName());
+
+        float current = target.getHealth();
+        target.setHealth(Math.max(0, current - amount));
+
+        this.lastAttackTime = System.currentTimeMillis();
+        this.lastAttackAmount = current - target.getHealth();
+        this.lastAttackTarget = target;
+
+        if (target.getHealth() < 0.0001f) {
+            target.setHealth(0.0f);
+            target.remove();
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -91,5 +133,23 @@ public abstract class AbstractCharacter extends GameObject {
         if (controller != null && controller.getControlledCharacter() != this) {
             controller.takeControl(this);
         }
+    }
+
+    /**
+     * Takaisinkutsu, jolla käyttöliittymäkoodi voi reagoida hahmojen välisiin hyökkäyksiin.
+     */
+    public interface AttackCallback {
+        /**
+         * Kutsutaan kun hahmo vahingoittaa toista hahmoa.
+         *
+         * @param self        kuka lyö
+         * @param target      ketä lyödään
+         * @param amount      kuinka kovaa lyödään
+         * @param killingBlow oliko kuolettava isku
+         */
+        void onAttack(@NonNull AbstractCharacter self,
+                      @NonNull AbstractCharacter target,
+                      float amount,
+                      boolean killingBlow);
     }
 }

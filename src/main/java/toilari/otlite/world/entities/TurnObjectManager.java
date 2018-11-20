@@ -65,6 +65,10 @@ public class TurnObjectManager extends ObjectManager {
 
     @NonNull
     private AbstractCharacter findNextNotRemovedCharacter() {
+        while (this.turn >= this.characters.size()) {
+            this.turn -= this.characters.size();
+        }
+
         while (this.characters.get(this.turn).isRemoved()) {
             this.characters.remove(this.turn);
 

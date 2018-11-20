@@ -2,6 +2,7 @@ package toilari.otlite.rendering;
 
 import lombok.NonNull;
 import lombok.val;
+import toilari.otlite.io.dao.TextureDAO;
 import toilari.otlite.rendering.lwjgl.Sprite;
 import toilari.otlite.rendering.lwjgl.Texture;
 import toilari.otlite.world.Level;
@@ -11,27 +12,42 @@ import toilari.otlite.world.Tile;
  * Piirtää pelin kartan.
  */
 public class LevelRenderer implements IRenderer<Level> {
-    private final Texture tileset;
-    private final Sprite[] tileSprites;
+    @NonNull private final TextureDAO textureDAO;
+    @NonNull private final String textureFilename;
+
+    private final int tilesetRows;
+    private final int tilesetColumns;
+
+    private Texture tileset;
+    private Sprite[] tileSprites;
 
     /**
      * Luo uuden karttapiirtäjän.
      *
-     * @param tileset        tekstuuriatlas josta ruutujen tekstuurit löytyvät
-     * @param tilesetRows    montako riviä atlaksessa on
-     * @param tilesetColumns montako saraketta atlaksessa on
-     * @throws NullPointerException jos tekstuuri on null
+     * @param textureDAO      DAO-jolla tekstuuri ladataan
+     * @param textureFilename tileset-tekstuurin tiedostonimi
+     * @param tilesetRows     montako riviä atlaksessa on
+     * @param tilesetColumns  montako saraketta atlaksessa on
+     * @throws NullPointerException jos tiedostopolku tai DAO on null
      */
-    public LevelRenderer(@NonNull Texture tileset, int tilesetRows, int tilesetColumns) {
-        this.tileset = tileset;
+    public LevelRenderer(@NonNull TextureDAO textureDAO, @NonNull String textureFilename, int tilesetRows, int tilesetColumns) {
+        this.textureFilename = textureFilename;
+        this.textureDAO = textureDAO;
+        this.tilesetRows = tilesetRows;
+        this.tilesetColumns = tilesetColumns;
+    }
+
+    @Override
+    public boolean init() {
+        this.tileset = this.textureDAO.load(this.textureFilename);
         int tileWidth = this.tileset.getWidth() / tilesetColumns;
         int tileHeight = this.tileset.getHeight() / tilesetRows;
 
-        this.tileSprites = new Sprite[tilesetRows * tilesetColumns];
+        this.tileSprites = new Sprite[this.tilesetRows * this.tilesetColumns];
         for (int y = 0; y < tilesetRows; y++) {
             for (int x = 0; x < tilesetColumns; x++) {
                 this.tileSprites[y * tilesetColumns + x] = new Sprite(
-                    tileset,
+                    this.tileset,
                     tileWidth * x,
                     tileHeight * y,
                     tileWidth,
@@ -40,6 +56,8 @@ public class LevelRenderer implements IRenderer<Level> {
                     Tile.SIZE_IN_WORLD);
             }
         }
+
+        return true;
     }
 
     @Override
@@ -51,7 +69,7 @@ public class LevelRenderer implements IRenderer<Level> {
                 val tile = level.getTileAt(x, y);
                 val index = tile.getTileIndex();
 
-                this.tileSprites[index].draw(camera, x * Tile.SIZE_IN_WORLD, y * Tile.SIZE_IN_WORLD);
+                this.tileSprites[index].draw(camera, x * Tile.SIZE_IN_WORLD, y * Tile.SIZE_IN_WORLD, 1.0f, 1.0f, 1.0f);
             }
         }
 

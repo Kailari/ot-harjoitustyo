@@ -129,21 +129,26 @@ public class Sprite {
      * @param camera kamera jonka näkökulmasta piirretään
      * @param x      x-koordinaatti johon piirretään
      * @param y      y-koordinaatti johon piirretään
+     * @param r      värisävyn punainen komponentti
+     * @param g      värisävyn vihreä komponentti
+     * @param b      värisävyn sininen komponentti
      * @throws NullPointerException jos kamera on <code>null</code>
      */
-    public void draw(@NonNull Camera camera, int x, int y) {
+    public void draw(@NonNull Camera camera, int x, int y, float r, float g, float b) {
         this.texture.bind();
         getShader().use();
 
         val uniformModel = glGetUniformLocation(getShader().getProgram(), "model");
         val uniformView = glGetUniformLocation(getShader().getProgram(), "view");
         val uniformProj = glGetUniformLocation(getShader().getProgram(), "projection");
+        val uniformTint = glGetUniformLocation(getShader().getProgram(), "tint");
 
         var model = new Matrix4f();
         model = model.translate(x, y, 0.0f);
         glUniformMatrix4fv(uniformModel, false, model.get(new float[4 * 4]));
         glUniformMatrix4fv(uniformView, false, camera.getViewMatrixArr());
         glUniformMatrix4fv(uniformProj, false, camera.getProjectionMatrixArr());
+        glUniform3f(uniformTint, r, g, b);
 
         glBindVertexArray(this.vao);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

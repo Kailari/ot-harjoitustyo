@@ -2,6 +2,7 @@ package toilari.otlite.rendering;
 
 import lombok.NonNull;
 import toilari.otlite.rendering.lwjgl.LWJGLGameRenderer;
+import toilari.otlite.world.entities.characters.AbstractCharacter;
 
 /**
  * Piirtäjä pelin komponenttien piirtämiseksi ruudulle.
@@ -12,11 +13,9 @@ public interface IRenderer<TRenderable> {
     /**
      * Alustaa objektin piirtämiseksi tarvittavat resurssit.
      *
-     * @param renderable objekti jolle resurssit varataan
      * @return <code>true</code> jos alustus onnistuu, muulloin <code>false</code>
-     * @throws NullPointerException jos objekti on <code>null</code>
      */
-    default boolean init(@NonNull TRenderable renderable) {
+    default boolean init() {
         return true;
     }
 
@@ -29,6 +28,9 @@ public interface IRenderer<TRenderable> {
      * @throws NullPointerException jos objekti on <code>null</code>
      */
     void draw(Camera camera, @NonNull TRenderable renderable);
+
+    default void postDraw(@NonNull Camera camera, @NonNull TRenderable renderable) {
+    }
 
     /**
      * Vapauttaa allokoidut resurssit.

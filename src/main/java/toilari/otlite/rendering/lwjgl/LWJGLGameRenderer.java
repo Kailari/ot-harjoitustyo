@@ -106,7 +106,7 @@ public class LWJGLGameRenderer extends AbstractGameRenderer {
         if (renderer == null) {
             throw new IllegalStateException("No renderer registered for state \"" + state.getClass().getSimpleName() + "\"");
         }
-        renderer.init(state);
+        renderer.init();
     }
 
     private boolean initVideoMode() {
@@ -142,6 +142,7 @@ public class LWJGLGameRenderer extends AbstractGameRenderer {
             throw new IllegalStateException("No renderer registered for state \"" + state.getClass().getSimpleName() + "\"");
         }
         stateRenderer.draw(this.camera, state);
+        stateRenderer.postDraw(this.camera, state);
 
         glfwSwapBuffers(this.windowHandle);
 
