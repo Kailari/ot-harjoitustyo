@@ -19,7 +19,7 @@ public class CharacterRenderer implements IRenderer<AbstractCharacter> {
     @NonNull private final TextureDAO textureDAO;
 
     @NonNull private final String filename;
-    @NonNull private final int frames;
+    private final int frames;
 
     private Texture texture;
     private Texture fontTexture;

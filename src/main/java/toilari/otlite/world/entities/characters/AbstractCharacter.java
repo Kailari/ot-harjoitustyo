@@ -66,10 +66,6 @@ public abstract class AbstractCharacter extends GameObject {
      * @return <code>true</code> jos hahmo liikkui, muutoin <code>false</code>
      */
     protected boolean move(int dx, int dy) {
-        if (dx == 0 && dy == 0) {
-            return false;
-        }
-
         int newX = Math.max(0, Math.min(getX() + dx, (getWorld().getCurrentLevel().getWidth() - 1) * Tile.SIZE_IN_WORLD));
         int newY = Math.max(0, Math.min(getY() + dy, (getWorld().getCurrentLevel().getHeight() - 1) * Tile.SIZE_IN_WORLD));
         val tileAtTarget = getWorld().getCurrentLevel().getTileAt(newX / Tile.SIZE_IN_WORLD, newY / Tile.SIZE_IN_WORLD);
@@ -78,7 +74,7 @@ public abstract class AbstractCharacter extends GameObject {
         val tileIsWalkable = !tileAtTarget.isWall() && !tileAtTarget.getId().equals("hole");
 
         if (tileIsWalkable) {
-            if (objectAtTarget instanceof AbstractCharacter) {
+            if (!this.equals(objectAtTarget) && objectAtTarget instanceof AbstractCharacter) {
                 val character = (AbstractCharacter) objectAtTarget;
                 if (attack(character, this.attackDamage)) {
                     return true;
@@ -87,8 +83,7 @@ public abstract class AbstractCharacter extends GameObject {
 
             // Target object will be flagged as removed if we happened to kill it during this turn
             if (objectAtTarget == null || objectAtTarget.isRemoved()) {
-                setX(newX);
-                setY(newY);
+                setPos(newX, newY);
                 return true;
             }
         }
@@ -96,6 +91,13 @@ public abstract class AbstractCharacter extends GameObject {
         return false;
     }
 
+    /**
+     * Tekee kohteeseen annetun määrän vahinkopisteitä.
+     *
+     * @param target kohde jota vahingoitetaan
+     * @param amount vahingon määrä
+     * @return <code>true</code> jos hyökkäys päätti hahmon vuoron, <code>false</code> muutoin
+     */
     public boolean attack(@NonNull AbstractCharacter target, float amount) {
         if (target.isRemoved()) {
             return false;
@@ -133,23 +135,5 @@ public abstract class AbstractCharacter extends GameObject {
         if (controller != null && controller.getControlledCharacter() != this) {
             controller.takeControl(this);
         }
-    }
-
-    /**
-     * Takaisinkutsu, jolla käyttöliittymäkoodi voi reagoida hahmojen välisiin hyökkäyksiin.
-     */
-    public interface AttackCallback {
-        /**
-         * Kutsutaan kun hahmo vahingoittaa toista hahmoa.
-         *
-         * @param self        kuka lyö
-         * @param target      ketä lyödään
-         * @param amount      kuinka kovaa lyödään
-         * @param killingBlow oliko kuolettava isku
-         */
-        void onAttack(@NonNull AbstractCharacter self,
-                      @NonNull AbstractCharacter target,
-                      float amount,
-                      boolean killingBlow);
     }
 }

@@ -20,6 +20,17 @@ public class GameObject {
     @Getter @Setter private int y;
 
     /**
+     * Asettaa sekä x- että y-koordinaatit uusiin arvoihin.
+     *
+     * @param newX uusi x-koordinaatti
+     * @param newY uusi y-koordinaatti
+     */
+    public void setPos(int newX, int newY) {
+        setX(newX);
+        setY(newY);
+    }
+
+    /**
      * Merkitsee peliobjektin poistetuksi. Poistettujen objektien {@link #update()}-metodeja ei kutsuta ja
      * ne poistetaan kun kaikki objektit on päivitetty, ennen seuraavaa ruudun piirtämistä.
      */
