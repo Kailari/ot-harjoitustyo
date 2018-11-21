@@ -4,16 +4,16 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import toilari.otlite.io.dao.TileDAO;
-import toilari.otlite.world.Level;
-import toilari.otlite.world.Tile;
-import toilari.otlite.world.TileMapping;
-import toilari.otlite.world.World;
-import toilari.otlite.world.entities.TurnObjectManager;
-import toilari.otlite.world.entities.characters.AnimalCharacter;
-import toilari.otlite.world.entities.characters.PlayerCharacter;
-import toilari.otlite.world.entities.characters.controller.AnimalController;
-import toilari.otlite.world.entities.characters.controller.PlayerController;
+import toilari.otlite.dao.TileDAO;
+import toilari.otlite.game.world.Level;
+import toilari.otlite.game.world.Tile;
+import toilari.otlite.game.world.TileMapping;
+import toilari.otlite.game.world.World;
+import toilari.otlite.game.world.entities.TurnObjectManager;
+import toilari.otlite.game.world.entities.characters.AnimalCharacter;
+import toilari.otlite.game.world.entities.characters.PlayerCharacter;
+import toilari.otlite.game.world.entities.characters.controller.AnimalController;
+import toilari.otlite.game.world.entities.characters.controller.PlayerController;
 
 /**
  * Pelin varsinainen pelillinen osuus.

@@ -3,11 +3,11 @@ package toilari.otlite.game;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import toilari.otlite.io.dao.ProfileDAO;
-import toilari.otlite.io.database.Database;
-import toilari.otlite.menu.EventSystem;
-import toilari.otlite.menu.IEvent;
-import toilari.otlite.menu.Profile;
+import toilari.otlite.dao.ProfileDAO;
+import toilari.otlite.dao.database.Database;
+import toilari.otlite.game.event.EventSystem;
+import toilari.otlite.game.event.IEvent;
+import toilari.otlite.game.profile.Profile;
 
 import java.sql.SQLException;
 import java.util.List;

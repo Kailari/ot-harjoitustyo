@@ -3,6 +3,7 @@ package toilari.otlite.game;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import toilari.otlite.game.Game;
 
 /**
  * "Pelitila", erillinen kokonaisuus pelin sisällä joka vaatii muista

@@ -4,15 +4,10 @@ import lombok.val;
 import toilari.otlite.game.Game;
 import toilari.otlite.game.PlayGameState;
 import toilari.otlite.game.ProfileSelectState;
-import toilari.otlite.io.dao.TextureDAO;
-import toilari.otlite.rendering.CharacterRenderer;
-import toilari.otlite.rendering.IRenderer;
-import toilari.otlite.rendering.PlayGameStateRenderer;
-import toilari.otlite.rendering.ProfileSelectStateRenderer;
-import toilari.otlite.rendering.lwjgl.LWJGLGameRenderer;
-import toilari.otlite.world.entities.TurnObjectManager;
-import toilari.otlite.world.entities.characters.AnimalCharacter;
-import toilari.otlite.world.entities.characters.PlayerCharacter;
+import toilari.otlite.view.renderer.IRenderer;
+import toilari.otlite.view.renderer.lwjgl.PlayGameStateRenderer;
+import toilari.otlite.view.renderer.ProfileSelectStateRenderer;
+import toilari.otlite.view.lwjgl.LWJGLGameRunner;
 
 import java.util.HashMap;
 
@@ -30,7 +25,7 @@ public class Launcher {
         stateRenderers.put(PlayGameState.class, new PlayGameStateRenderer());
         stateRenderers.put(ProfileSelectState.class, new ProfileSelectStateRenderer());
 
-        val app = new LWJGLGameRenderer(
+        val app = new LWJGLGameRunner(
             new Game(new ProfileSelectState("data/profiles.db")),
             stateRenderers
         );

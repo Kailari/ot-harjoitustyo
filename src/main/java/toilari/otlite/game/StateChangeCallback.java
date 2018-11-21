@@ -1,6 +1,7 @@
 package toilari.otlite.game;
 
 import lombok.NonNull;
+import toilari.otlite.game.GameState;
 
 /**
  * Takaisinkutsu jolla käärivä käyttöliittymämoottori voi reagoida pelitilan muutoksiin.

@@ -217,8 +217,7 @@
                 <version>0.8.2</version>
                 <configuration>
                     <excludes>
-                        <exclude>toilari/otlite/rendering/lwjgl/*</exclude>
-                        <exclude>toilari/otlite/io/lwjgl/*</exclude>
+                        <exclude>toilari/otlite/view/lwjgl/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
