@@ -12,7 +12,6 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 import toilari.otlite.game.AbstractGameRunner;
 import toilari.otlite.game.Game;
-import toilari.otlite.game.GameState;
 import toilari.otlite.game.input.IInputHandler;
 import toilari.otlite.view.renderer.IRenderer;
 
@@ -81,10 +80,6 @@ public class LWJGLGameRunner extends AbstractGameRunner<LWJGLCamera> {
             return false;
         }
 
-        GLFWWindowSizeCallback
-            .create((handle, width, height) -> getCamera().resizeViewport(width, height))
-            .set(this.windowHandle);
-
         initWindow();
 
         if (!initVideoMode()) {
@@ -106,6 +101,11 @@ public class LWJGLGameRunner extends AbstractGameRunner<LWJGLCamera> {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 
         this.windowHandle = glfwCreateWindow(getWindowWidth(), getWindowHeight(), "OTLite", NULL, NULL);
+
+        GLFWWindowSizeCallback
+            .create((handle, width, height) -> getCamera().resizeViewport(width, height))
+            .set(this.windowHandle);
+        
     }
 
     private boolean initVideoMode() {
