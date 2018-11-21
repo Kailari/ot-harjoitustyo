@@ -14,7 +14,6 @@ import toilari.otlite.game.AbstractGameRunner;
 import toilari.otlite.game.Game;
 import toilari.otlite.game.GameState;
 import toilari.otlite.game.input.IInputHandler;
-import toilari.otlite.view.Camera;
 import toilari.otlite.view.renderer.IRenderer;
 
 import java.util.Map;
@@ -33,8 +32,6 @@ public class LWJGLGameRunner extends AbstractGameRunner<LWJGLCamera> {
     @Getter @Setter private int windowHeight;
     private long windowHandle;
 
-    @NonNull private final Map<Class, IRenderer> stateRendererMappings;
-
     /**
      * Luo uuden LWJGL-pohjaisen piirtäjän.
      *
@@ -42,8 +39,7 @@ public class LWJGLGameRunner extends AbstractGameRunner<LWJGLCamera> {
      * @param stateRendererMappings hakutaulu pelitilojen piirtäjille
      */
     public LWJGLGameRunner(@NonNull Game game, @NonNull Map<Class, IRenderer> stateRendererMappings) {
-        super(game);
-        this.stateRendererMappings = stateRendererMappings;
+        super(game, stateRendererMappings);
         this.windowWidth = 800;
         this.windowHeight = 600;
 
@@ -112,18 +108,6 @@ public class LWJGLGameRunner extends AbstractGameRunner<LWJGLCamera> {
         this.windowHandle = glfwCreateWindow(getWindowWidth(), getWindowHeight(), "OTLite", NULL, NULL);
     }
 
-    @Override
-    protected void onStateChange(@NonNull GameState state) {
-        val renderer = this.stateRendererMappings.get(state.getClass());
-        if (renderer == null) {
-            throw new IllegalStateException("No renderer registered for state \"" + state.getClass().getSimpleName() + "\"");
-        }
-        if (renderer.init()) {
-            LOG.error("Initializing gamestate renderer failed, trying to shut down gracefully...");
-            getGame().setRunning(false);
-        }
-    }
-
     private boolean initVideoMode() {
         try (val stack = MemoryStack.stackPush()) {
             val pWidth = stack.mallocInt(1);
@@ -147,18 +131,11 @@ public class LWJGLGameRunner extends AbstractGameRunner<LWJGLCamera> {
     }
 
     @Override
-    public void display(@NonNull Camera camera) {
+    public void display(@NonNull LWJGLCamera camera) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glfwPollEvents();
-        val state = getGame().getCurrentGameState();
-        val stateRenderer = this.stateRendererMappings.get(state.getClass());
-        if (stateRenderer == null) {
-            throw new IllegalStateException("No renderer registered for state \"" + state.getClass().getSimpleName() + "\"");
-        }
-        // TODO: Wrapper class to handle state-to-renderer -mappings to get rid of unchecked behavior
-        stateRenderer.draw(camera, state);
-        stateRenderer.postDraw(camera, state);
+        super.display(camera);
 
         glfwSwapBuffers(this.windowHandle);
 
