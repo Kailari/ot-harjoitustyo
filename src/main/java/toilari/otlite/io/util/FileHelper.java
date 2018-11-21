@@ -4,11 +4,13 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -73,6 +75,18 @@ public class FileHelper {
     }
 
     /**
+     * Luo tyhjän tiedoston joka löytyy annetusta polusta.
+     *
+     * @param filename polku johon tiedosto luodaan.
+     * @return <code>true</code> jos tiedoston luonti onnistuu, <code>false</code> muulloin
+     */
+    public static boolean createFile(@NonNull String filename) {
+        val path = Paths.get(filename);
+        val parent = path.getParent();
+        return createFile(parent == null ? Paths.get(".") : parent, path.getFileName().toString());
+    }
+
+    /**
      * Poistaa tiedoston ja kaikki sen sisältämät alihakemistot ja tiedostot.
      *
      * @param path Poistettavan hakemiston polku
@@ -96,6 +110,16 @@ public class FileHelper {
             LOG.error("Could not delete file: {}", e.getMessage());
             return false;
         }
+    }
+
+    /**
+     * Tarkistaa onko annetunnimistä tiedostoa olemassa.
+     *
+     * @param path tiedoston polku
+     * @return <code>true</code> jos tiedosto on olemassa, <code>false</code> jos tiedostoa ei ole.
+     */
+    public static boolean fileExists(@NonNull String path) {
+        return new File(path).exists();
     }
 
     private static boolean extensionFilter(String extension, Path path, BasicFileAttributes attributes) {

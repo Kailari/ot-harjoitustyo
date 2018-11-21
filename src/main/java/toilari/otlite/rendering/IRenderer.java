@@ -12,10 +12,10 @@ public interface IRenderer<TRenderable> {
     /**
      * Alustaa objektin piirtämiseksi tarvittavat resurssit.
      *
-     * @return <code>true</code> jos alustus onnistuu, muulloin <code>false</code>
+     * @return <code>true</code> jos alustus epäonnistuu, muulloin <code>false</code>
      */
     default boolean init() {
-        return true;
+        return false;
     }
 
     /**

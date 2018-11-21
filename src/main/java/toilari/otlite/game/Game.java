@@ -62,10 +62,13 @@ public class Game {
 
         this.currentGameState = newState;
         this.currentGameState.setGame(this);
-        this.currentGameState.init();
-
-        if (this.stateChangeCallback != null) {
-            this.stateChangeCallback.onStateChange(this.currentGameState);
+        if (this.currentGameState.init()) {
+            LOG.error("Gamestate state initializatin failed, trying to shutdown gracefully...");
+            setRunning(false);
+        } else {
+            if (this.stateChangeCallback != null) {
+                this.stateChangeCallback.onStateChange(this.currentGameState);
+            }
         }
     }
 
@@ -75,11 +78,11 @@ public class Game {
      * ole vielä manuaalisesti asetettu
      */
     public void init() {
+        setRunning(true);
+
         if (this.currentGameState == null) {
             changeState(this.defaultGameState);
         }
-
-        setRunning(true);
     }
 
     /**

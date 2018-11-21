@@ -6,3 +6,6 @@
 # Maven
 /laskarit/viikko2/Unicafe/target
 target/
+
+# Saved game state
+data/

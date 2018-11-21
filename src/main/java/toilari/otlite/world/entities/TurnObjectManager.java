@@ -2,6 +2,7 @@ package toilari.otlite.world.entities;
 
 import lombok.NonNull;
 import lombok.val;
+import toilari.otlite.game.PlayGameState;
 import toilari.otlite.world.World;
 import toilari.otlite.world.entities.characters.AbstractCharacter;
 

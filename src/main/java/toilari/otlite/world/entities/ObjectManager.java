@@ -3,6 +3,7 @@ package toilari.otlite.world.entities;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
+import toilari.otlite.game.PlayGameState;
 import toilari.otlite.world.World;
 
 import java.util.ArrayList;
@@ -14,8 +15,22 @@ import java.util.stream.Collectors;
  * asianmukaisesti.
  */
 public class ObjectManager {
+    @Getter private PlayGameState gameState;
     @Getter @NonNull private final List<GameObject> objects = new ArrayList<>();
     private World world;
+
+    /**
+     * Asettaa aktiivisen pelitilan. Voidaan asettaa vain kerran, uudelleenkutsu aiheuttaa keskeytyksen.
+     * Kutsutaan {@link PlayGameState} konstruktorissa.
+     *
+     * @param state aktiivinen pelitila
+     */
+    public void setGameState(@NonNull PlayGameState state) {
+        if (this.gameState != null) {
+            throw new IllegalStateException("Trying to re-set containing GameState!");
+        }
+        this.gameState = state;
+    }
 
     /**
      * Tarkistaa onko annetuissa koordinaateissa objektia ja palauttaa sen jos sellainen löytyy. Palauttaa objektin
@@ -49,6 +64,11 @@ public class ObjectManager {
         for (val object : this.objects) {
             if (!object.isRemoved()) {
                 object.update();
+            }
+
+            // Stop updating if gameobject shutdown the game
+            if (!getGameState().getGame().isRunning()) {
+                return;
             }
         }
 

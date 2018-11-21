@@ -106,7 +106,10 @@ public class LWJGLGameRenderer extends AbstractGameRenderer {
         if (renderer == null) {
             throw new IllegalStateException("No renderer registered for state \"" + state.getClass().getSimpleName() + "\"");
         }
-        renderer.init();
+        if (renderer.init()) {
+            LOG.error("Initializing gamestate renderer failed, trying to shut down gracefully...");
+            getGame().setRunning(false);
+        }
     }
 
     private boolean initVideoMode() {

@@ -59,7 +59,7 @@ public class CharacterRenderer implements IRenderer<AbstractCharacter> {
 
         this.font = new AnimatedSprite(this.fontTexture, 10, 4, 4);
 
-        return true;
+        return false;
     }
 
     @Override

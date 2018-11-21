@@ -30,8 +30,8 @@ public class PlayGameStateRenderer implements IRenderer<PlayGameState> {
     @Override
     public boolean init() {
         for (val renderer : this.rendererMappings.values()) {
-            if (!renderer.init()) {
-                return false;
+            if (renderer.init()) {
+                return true;
             }
         }
 

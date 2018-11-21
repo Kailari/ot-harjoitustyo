@@ -29,11 +29,12 @@ public class PlayGameState extends GameState {
      * @throws NullPointerException jos piirtäjä tai objektimanageri on <code>null</code>
      */
     public PlayGameState(@NonNull TurnObjectManager objectManager) {
+        objectManager.setGameState(this);
         this.world = new World(objectManager);
     }
 
     @Override
-    public void init() {
+    public boolean init() {
         LOG.info("Initializing PlayGameState...");
         loadAssets();
         initSystems();
@@ -51,6 +52,8 @@ public class PlayGameState extends GameState {
         this.world.getObjectManager().spawn(sheep);
         sheep.setX(5 * Tile.SIZE_IN_WORLD);
         sheep.setY(1 * Tile.SIZE_IN_WORLD);
+
+        return false;
     }
 
     private void loadAssets() {

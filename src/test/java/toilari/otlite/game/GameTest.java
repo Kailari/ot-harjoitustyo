@@ -246,8 +246,9 @@ class GameTest {
         boolean init, update, destroy, callback;
 
         @Override
-        public void init() {
+        public boolean init() {
             this.init = true;
+            return false;
         }
 
         @Override

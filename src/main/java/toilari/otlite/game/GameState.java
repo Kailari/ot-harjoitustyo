@@ -1,8 +1,8 @@
 package toilari.otlite.game;
 
-import lombok.*;
-import toilari.otlite.rendering.Camera;
-import toilari.otlite.rendering.IRenderer;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * "Pelitila", erillinen kokonaisuus pelin sisällä joka vaatii muista
@@ -10,12 +10,14 @@ import toilari.otlite.rendering.IRenderer;
  * erillisiä pelitilojaan.
  */
 public abstract class GameState {
-    @Getter(AccessLevel.PROTECTED) @Setter(AccessLevel.PROTECTED) private Game game;
+    @Getter @Setter(AccessLevel.PROTECTED) private Game game;
 
     /**
      * Alustaa/valmistelee pelitilan. Kutsutaan kerran kun pelitila aktivoituu.
+     *
+     * @return <code>true</code> jos alustus epäonnistuu kohtalokkaasti
      */
-    public abstract void init();
+    public abstract boolean init();
 
     /**
      * Päivittää pelin tilan.

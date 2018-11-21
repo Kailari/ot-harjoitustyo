@@ -57,7 +57,7 @@ public class LevelRenderer implements IRenderer<Level> {
             }
         }
 
-        return true;
+        return false;
     }
 
     @Override

@@ -3,10 +3,12 @@ package toilari.otlite;
 import lombok.val;
 import toilari.otlite.game.Game;
 import toilari.otlite.game.PlayGameState;
+import toilari.otlite.game.ProfileSelectState;
 import toilari.otlite.io.dao.TextureDAO;
 import toilari.otlite.rendering.CharacterRenderer;
 import toilari.otlite.rendering.IRenderer;
 import toilari.otlite.rendering.PlayGameStateRenderer;
+import toilari.otlite.rendering.ProfileSelectStateRenderer;
 import toilari.otlite.rendering.lwjgl.LWJGLGameRenderer;
 import toilari.otlite.world.entities.TurnObjectManager;
 import toilari.otlite.world.entities.characters.AnimalCharacter;
@@ -26,9 +28,10 @@ public class Launcher {
     public static void main(String[] args) {
         val stateRenderers = new HashMap<Class, IRenderer>();
         stateRenderers.put(PlayGameState.class, new PlayGameStateRenderer());
+        stateRenderers.put(ProfileSelectState.class, new ProfileSelectStateRenderer());
 
         val app = new LWJGLGameRenderer(
-            new Game(new PlayGameState(new TurnObjectManager())),
+            new Game(new ProfileSelectState()),
             stateRenderers
         );
 
