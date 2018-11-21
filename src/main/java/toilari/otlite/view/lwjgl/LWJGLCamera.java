@@ -6,6 +6,8 @@ import lombok.NonNull;
 import lombok.val;
 import org.joml.Matrix4f;
 
+import static org.lwjgl.opengl.GL11.glViewport;
+
 /**
  * "Kamera" joka kuvaa pelimaailmaa. Sisältää apumetodeja kameran liikutteluun ja hallintaan pelimaailmassa.
  */
@@ -71,6 +73,8 @@ public class LWJGLCamera extends toilari.otlite.view.Camera {
     LWJGLCamera(int viewportWidth, int viewportHeight, float pixelsPerUnit) {
         this.pixelsPerUnit = pixelsPerUnit;
         resizeViewport(viewportWidth, viewportHeight);
+
+        this.viewDirty = true;
         refreshViewMatrix();
     }
 
@@ -85,6 +89,7 @@ public class LWJGLCamera extends toilari.otlite.view.Camera {
         val mult = viewportHeight / this.pixelsPerUnit;
         this.projectionMatrix.setOrtho2D(0, ratio * mult, mult, 0);
         this.projectionMatrixArr = this.projectionMatrix.get(this.projectionMatrixArr);
+        glViewport(0, 0, viewportWidth, viewportHeight);
     }
 
     private void refreshViewMatrix() {

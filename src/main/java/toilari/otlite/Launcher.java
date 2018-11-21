@@ -4,6 +4,7 @@ import lombok.val;
 import toilari.otlite.game.Game;
 import toilari.otlite.game.PlayGameState;
 import toilari.otlite.game.ProfileSelectState;
+import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.view.renderer.IRenderer;
 import toilari.otlite.view.renderer.lwjgl.PlayGameStateRenderer;
 import toilari.otlite.view.renderer.ProfileSelectStateRenderer;
@@ -26,7 +27,8 @@ public class Launcher {
         stateRenderers.put(ProfileSelectState.class, new ProfileSelectStateRenderer());
 
         val app = new LWJGLGameRunner(
-            new Game(new ProfileSelectState("data/profiles.db")),
+            //new Game(new ProfileSelectState("data/profiles.db")),
+            new Game(new PlayGameState(new TurnObjectManager())),
             stateRenderers
         );
 
