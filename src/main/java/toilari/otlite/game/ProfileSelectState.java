@@ -1,22 +1,35 @@
 package toilari.otlite.game;
 
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import toilari.otlite.io.dao.ProfileDAO;
 import toilari.otlite.io.database.Database;
+import toilari.otlite.menu.EventSystem;
+import toilari.otlite.menu.IEvent;
+import toilari.otlite.menu.Profile;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Pelin käynnistyessä avautuva tila, jossa pelaaja valitsee profiilin jolla pelataan.
  */
 @Slf4j
 public class ProfileSelectState extends GameState {
-    private ProfileDAO profiles;
+    @Getter @NonNull private final EventSystem eventSystem = new EventSystem();
     @NonNull private final String databasePath;
 
-    public ProfileSelectState() {
-        this("data/profiles.db");
+    private ProfileDAO profiles;
+
+    /**
+     * Hakee listan saatavilla olevista profiileista.
+     *
+     * @return saatavilla olevat profiilit, tyhjä lista jos haku epäonnistuu.
+     * @throws SQLException jos haku tietokannasta epäonnistuu
+     */
+    public List<Profile> getProfiles() throws SQLException {
+        return this.profiles.findAll();
     }
 
     public ProfileSelectState(@NonNull String databasePath) {
@@ -25,6 +38,16 @@ public class ProfileSelectState extends GameState {
 
     @Override
     public boolean init() {
+        if (tryInitDatabaseAccess()) {
+            return true;
+        }
+
+        this.eventSystem.subscribeTo(QuitEvent.class, this::onQuit);
+
+        return false;
+    }
+
+    private boolean tryInitDatabaseAccess() {
         try {
             initDatabaseAccess(new Database(this.databasePath));
         } catch (SQLException e) {
@@ -37,7 +60,6 @@ public class ProfileSelectState extends GameState {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -51,6 +73,12 @@ public class ProfileSelectState extends GameState {
 
     @Override
     public void destroy() {
+    }
 
+    private void onQuit(@NonNull QuitEvent event) {
+        getGame().setRunning(false);
+    }
+
+    public static class QuitEvent implements IEvent {
     }
 }

@@ -1,4 +1,4 @@
-package toilari.otlite.profile;
+package toilari.otlite.menu;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

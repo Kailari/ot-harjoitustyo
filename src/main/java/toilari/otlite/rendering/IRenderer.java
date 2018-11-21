@@ -24,9 +24,9 @@ public interface IRenderer<TRenderable> {
      *
      * @param camera     kamera jonka näkökulmasta piirtäminen tapahtuu
      * @param renderable objekti joka piirrettään
-     * @throws NullPointerException jos objekti on <code>null</code>
+     * @throws NullPointerException jos kamera tai objekti on <code>null</code>
      */
-    void draw(Camera camera, @NonNull TRenderable renderable);
+    void draw(@NonNull Camera camera, @NonNull TRenderable renderable);
 
     /**
      * Voidaan käyttää objektin piirtämiseen, mikäli objekti tulee piirtää kaiken muun päälle. (käyttöliittymä yms.)

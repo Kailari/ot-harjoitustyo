@@ -31,7 +31,7 @@ public class Launcher {
         stateRenderers.put(ProfileSelectState.class, new ProfileSelectStateRenderer());
 
         val app = new LWJGLGameRenderer(
-            new Game(new ProfileSelectState()),
+            new Game(new ProfileSelectState("data/profiles.db")),
             stateRenderers
         );
 

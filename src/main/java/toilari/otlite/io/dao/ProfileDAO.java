@@ -3,7 +3,7 @@ package toilari.otlite.io.dao;
 import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.io.database.Database;
-import toilari.otlite.profile.Profile;
+import toilari.otlite.menu.Profile;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
