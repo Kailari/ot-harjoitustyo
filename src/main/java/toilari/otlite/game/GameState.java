@@ -2,8 +2,9 @@ package toilari.otlite.game;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
-import toilari.otlite.game.Game;
+import toilari.otlite.game.event.EventSystem;
 
 /**
  * "Pelitila", erillinen kokonaisuus pelin sisällä joka vaatii muista
@@ -11,6 +12,7 @@ import toilari.otlite.game.Game;
  * erillisiä pelitilojaan.
  */
 public abstract class GameState {
+    @Getter @NonNull private final EventSystem eventSystem = new EventSystem();
     @Getter @Setter(AccessLevel.PROTECTED) private Game game;
 
     /**

@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import org.joml.Vector2f;
 
-public abstract class Camera {
+public class Camera {
     @NonNull @Getter private Vector2f position = new Vector2f(0.0f, 0.0f);
 
     /**

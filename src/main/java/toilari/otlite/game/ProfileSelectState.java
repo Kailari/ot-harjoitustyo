@@ -3,11 +3,12 @@ package toilari.otlite.game;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import toilari.otlite.dao.ProfileDAO;
 import toilari.otlite.dao.database.Database;
-import toilari.otlite.game.event.EventSystem;
 import toilari.otlite.game.event.IEvent;
 import toilari.otlite.game.profile.Profile;
+import toilari.otlite.game.world.entities.TurnObjectManager;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -17,7 +18,6 @@ import java.util.List;
  */
 @Slf4j
 public class ProfileSelectState extends GameState {
-    @Getter @NonNull private final EventSystem eventSystem = new EventSystem();
     @NonNull private final String databasePath;
 
     private ProfileDAO profiles;
@@ -42,7 +42,10 @@ public class ProfileSelectState extends GameState {
             return true;
         }
 
-        this.eventSystem.subscribeTo(QuitEvent.class, this::onQuit);
+        getEventSystem().subscribeTo(QuitEvent.class, this::onQuit);
+        getEventSystem().subscribeTo(AddEvent.class, this::onAdd);
+        getEventSystem().subscribeTo(RemoveEvent.class, this::onRemove);
+        getEventSystem().subscribeTo(SelectEvent.class, this::onSelect);
 
         return false;
     }
@@ -79,6 +82,78 @@ public class ProfileSelectState extends GameState {
         getGame().setRunning(false);
     }
 
+    private void onAdd(@NonNull AddEvent event) {
+        try {
+            if (this.profiles.profileWithNameExists(event.getName())) {
+                LOG.warn("Profile with given name already exists!");
+                getEventSystem().fire(new InvalidNameEvent());
+                return;
+            }
+
+            this.profiles.createNew(event.getName());
+        } catch (SQLException e) {
+            LOG.error("Creating profile failed, trying to shut down gracefully.");
+            LOG.error("Cause: {}", e.getMessage());
+
+            getGame().setRunning(false);
+        }
+    }
+
+    private void onSelect(@NonNull SelectEvent event) {
+        try {
+            val profile = this.profiles.findProfileById(event.getId());
+
+            getGame().setActiveProfile(profile);
+            getGame().changeState(new PlayGameState(new TurnObjectManager()));
+        } catch (SQLException e) {
+            LOG.error("Selecting profile failed, trying to shut down gracefully.");
+            LOG.error("Cause: {}", e.getMessage());
+
+            getGame().setRunning(false);
+        }
+    }
+
+    private void onRemove(@NonNull RemoveEvent event) {
+        try {
+            this.profiles.removeById(event.getId());
+        } catch (SQLException e) {
+            LOG.error("Creating profile failed, trying to shut down gracefully.");
+            LOG.error("Cause: {}", e.getMessage());
+
+            getGame().setRunning(false);
+        }
+    }
+
     public static class QuitEvent implements IEvent {
+    }
+
+    public static class AddEvent implements IEvent {
+        @NonNull @Getter private final String name;
+
+        public AddEvent(@NonNull String name) {
+            this.name = name;
+        }
+    }
+
+    public static class InvalidNameEvent implements IEvent {
+    }
+
+    public static class InvalidIdEvent implements IEvent {
+    }
+
+    public static class RemoveEvent implements IEvent {
+        @Getter private final int id;
+
+        public RemoveEvent(int id) {
+            this.id = id;
+        }
+    }
+
+    public static class SelectEvent implements IEvent {
+        @Getter private final int id;
+
+        public SelectEvent(int id) {
+            this.id = id;
+        }
     }
 }

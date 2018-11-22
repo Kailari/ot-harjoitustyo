@@ -18,6 +18,17 @@ public class ProfileSelectStateRenderer implements IRenderer<ProfileSelectState,
     @Override
     public boolean init() {
         this.scanner = new Scanner(System.in);
+
+        System.out.println("Welcome to OT-Lite");
+        System.out.println("Please select/create a profile");
+        System.out.println();
+        System.out.println("Available commands:");
+        System.out.println("\tquit\t\tquits the game");
+        System.out.println("\tadd [name]\tadds a new profile");
+        System.out.println("\tremove [id]\tremoves a profile");
+        System.out.println("\tselect [id]\t\t");
+
+        System.out.println();
         return false;
     }
 
@@ -34,13 +45,34 @@ public class ProfileSelectStateRenderer implements IRenderer<ProfileSelectState,
             return;
         }
 
+        System.out.println("| id | name                           | save state                   |");
+        System.out.println("|----|--------------------------------|------------------------------|");
         for (val profile : profiles) {
-            System.out.printf("#%d - %-30s (%s unfinished saved game)\n", profile.getId(), profile.getName(), (profile.hasUnfinishedSave() ? "Has" : "No"));
+            System.out.printf("| %d  | %-30s | (%s unfinished saved game)\n", profile.getId(), profile.getName(), (profile.hasUnfinishedSave() ? "Has" : "No"));
         }
+        System.out.println("|----|--------------------------------|------------------------------|");
 
+        System.out.println();
+        System.out.print(">");
         val cmd = this.scanner.nextLine();
+        System.out.println();
         if (cmd.equals("quit")) {
             state.getEventSystem().fire(new ProfileSelectState.QuitEvent());
+        } else {
+            val split = cmd.split(" ");
+            if (split.length == 2) {
+                switch (split[0]) {
+                    case "add":
+                        state.getEventSystem().fire(new ProfileSelectState.AddEvent(split[1]));
+                        break;
+                    case "remove":
+                        state.getEventSystem().fire(new ProfileSelectState.RemoveEvent(Integer.parseInt(split[1])));
+                        break;
+                    case "select":
+                        state.getEventSystem().fire(new ProfileSelectState.SelectEvent(Integer.parseInt(split[1])));
+                        break;
+                }
+            }
         }
     }
 

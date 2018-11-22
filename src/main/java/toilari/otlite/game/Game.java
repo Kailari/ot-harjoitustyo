@@ -4,12 +4,15 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import toilari.otlite.game.profile.Profile;
 
 /**
  * Pelin runko.
  */
 @Slf4j
 public class Game {
+    @Getter @Setter private Profile activeProfile;
+
     private boolean running = false;
 
     /**
@@ -104,5 +107,4 @@ public class Game {
     public void destroy() {
         this.currentGameState.destroy();
     }
-
 }
