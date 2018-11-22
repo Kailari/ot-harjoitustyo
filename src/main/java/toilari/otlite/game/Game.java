@@ -4,7 +4,13 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import toilari.otlite.dao.ProfileDAO;
+import toilari.otlite.dao.database.Database;
 import toilari.otlite.game.profile.Profile;
+import toilari.otlite.game.profile.tracking.StatisticsManager;
+
+import java.sql.SQLException;
 
 /**
  * Pelin runko.
@@ -12,6 +18,8 @@ import toilari.otlite.game.profile.Profile;
 @Slf4j
 public class Game {
     @Getter @Setter private Profile activeProfile;
+    @Getter private StatisticsManager statistics;
+    @Getter private ProfileDAO profileDao;
 
     private boolean running = false;
 
@@ -36,6 +44,7 @@ public class Game {
      */
     @Getter private GameState currentGameState;
     @NonNull private final GameState defaultGameState;
+    @NonNull private final String saveDataPath;
 
     @Setter private StateChangeCallback stateChangeCallback;
 
@@ -45,8 +54,9 @@ public class Game {
      * @param defaultState oletuspelitila joka asetetaan aktiiviseksi pelin suorituksen {@link #init() alkaessa}
      * @throws NullPointerException jos oletustila on <code>null</code>
      */
-    public Game(@NonNull GameState defaultState) {
+    public Game(@NonNull GameState defaultState, @NonNull String saveDataPath) {
         this.defaultGameState = defaultState;
+        this.saveDataPath = saveDataPath;
     }
 
     /**
@@ -81,6 +91,16 @@ public class Game {
      * ole vielä manuaalisesti asetettu
      */
     public void init() {
+        try {
+            val database = new Database(this.saveDataPath);
+            this.profileDao = new ProfileDAO(database);
+            this.statistics = new StatisticsManager(database);
+        } catch (SQLException e) {
+            LOG.error("Could not initialize statistics tracking. Shutting down.");
+            LOG.error("Cause: {}", e.getMessage());
+            return;
+        }
+
         setRunning(true);
 
         if (this.currentGameState == null) {

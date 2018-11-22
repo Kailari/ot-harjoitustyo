@@ -2,6 +2,7 @@ package toilari.otlite.game.world.entities.characters;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import toilari.otlite.game.profile.tracking.Statistics;
 import toilari.otlite.game.world.Tile;
 import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.TurnObjectManager;
@@ -84,6 +85,9 @@ public abstract class AbstractCharacter extends GameObject {
             // Target object will be flagged as removed if we happened to kill it during this turn
             if (objectAtTarget == null || objectAtTarget.isRemoved()) {
                 setPos(newX, newY);
+
+                val game = getWorld().getObjectManager().getGameState().getGame();
+                game.getStatistics().increment(Statistics.TILES_MOVED, game.getActiveProfile().getId());
                 return true;
             }
         }
@@ -115,6 +119,9 @@ public abstract class AbstractCharacter extends GameObject {
         if (target.getHealth() < 0.0001f) {
             target.setHealth(0.0f);
             target.remove();
+
+            val game = getWorld().getObjectManager().getGameState().getGame();
+            game.getStatistics().increment(Statistics.KILLS, game.getActiveProfile().getId());
             return false;
         }
 

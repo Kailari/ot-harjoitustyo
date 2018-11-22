@@ -5,16 +5,13 @@ import lombok.val;
 import toilari.otlite.dao.database.Database;
 import toilari.otlite.game.profile.Profile;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * DAO jolla voidaan ladata pelaajaprofiilit levyltä.
  */
-public class ProfileDAO {
-    @NonNull private final Database database;
-
+public class ProfileDAO extends AbstractDatabaseDao<Profile> {
     /**
      * Luo uuden profiili DAOn, joka lukee annettua tietokantaa.
      * Luo tarvittavat taulut automaattisesti.
@@ -24,41 +21,25 @@ public class ProfileDAO {
      * @throws NullPointerException jos database on <code>null</code>
      */
     public ProfileDAO(@NonNull Database database) throws SQLException {
-        this.database = database;
+        super(database, "Profiles");
 
-        try (val connection = this.database.getConnection();
+        try (val connection = getDatabase().getConnection();
              val statement = connection.createStatement()) {
             statement.execute(
-                "CREATE TABLE IF NOT EXISTS Profiles (" +
+                "CREATE TABLE IF NOT EXISTS " + getTableName() + " (" +
                     "id INTEGER PRIMARY KEY," +
-                    "name VARCHAR(30)," +
+                    "name TEXT," +
                     "hasSave BOOLEAN)");
         }
     }
 
-    /**
-     * Hakee kaikki tallennetut profiilit.
-     *
-     * @return lista tallennetuista profiileista
-     * @throws SQLException jos tietokannan lukemisessa tapahtuu virhe
-     */
-    @NonNull
-    public List<Profile> findAll() throws SQLException {
-        val profiles = new ArrayList<Profile>();
-        try (val connection = this.database.getConnection();
-             val statement = connection.prepareStatement("SELECT * FROM Profiles")) {
-            val result = statement.executeQuery();
-
-            while (result.next()) {
-                profiles.add(new Profile(
-                    result.getInt("id"),
-                    result.getString("name"),
-                    result.getBoolean("hasSave")
-                ));
-            }
-        }
-
-        return profiles;
+    @Override
+    protected Profile createInstance(ResultSet result) throws SQLException {
+        return new Profile(
+            result.getInt("id"),
+            result.getString("name"),
+            result.getBoolean("hasSave")
+        );
     }
 
     /**
@@ -69,37 +50,11 @@ public class ProfileDAO {
      * @throws SQLException         jos tietokannan käsittelyssä tapahtuu virhe
      * @throws NullPointerException jos name on <code>null</code>
      */
-    public Profile findProfileByName(@NonNull String name) throws SQLException {
-        try (val connection = this.database.getConnection();
+    public Profile findByName(@NonNull String name) throws SQLException {
+        try (val connection = getDatabase().getConnection();
              val statement = connection.prepareStatement(
-                 "SELECT * FROM Profiles WHERE name = ?")) {
+                 "SELECT * FROM " + getTableName() + " WHERE name = ?")) {
             statement.setString(1, name);
-
-            val result = statement.executeQuery();
-            if (!result.next()) {
-                return null;
-            }
-
-            return new Profile(
-                result.getInt("id"),
-                result.getString("name"),
-                result.getBoolean("hasSave")
-            );
-        }
-    }
-
-    /**
-     * Etsii profiilin sen ID:n perusteella
-     *
-     * @param id etsittävän profiilin ID
-     * @return <code>null</code> jos profiilia ei ole, muulloin profiili jolla oli annettu id
-     * @throws SQLException jos tietokannan käsittelyssä tapahtuu virhe
-     */
-    public Profile findProfileById(int id) throws SQLException {
-        try (val connection = this.database.getConnection();
-             val statement = connection.prepareStatement(
-                 "SELECT * FROM Profiles WHERE id = ?")) {
-            statement.setInt(1, id);
 
             val result = statement.executeQuery();
             if (!result.next()) {
@@ -128,15 +83,27 @@ public class ProfileDAO {
             throw new IllegalStateException("Profile with name \"" + name + "\" already exists");
         }
 
-        try (val connection = this.database.getConnection();
+        try (val connection = getDatabase().getConnection();
              val statement = connection.prepareStatement(
-                 "INSERT INTO Profiles (name, hasSave) VALUES (?,FALSE)")) {
+                 "INSERT INTO " + getTableName() + " (name, hasSave) VALUES (?,FALSE)")) {
 
             statement.setString(1, name);
             statement.executeUpdate();
         }
 
-        return findProfileByName(name);
+        return findByName(name);
+    }
+
+    @Override
+    public void removeById(int id) throws SQLException {
+        try (val connection = getDatabase().getConnection();
+             val statement = connection.prepareStatement(
+                 "DELETE FROM PlayerStatistics WHERE profile_id = ?")) {
+            statement.setInt(1, id);
+            statement.executeUpdate();
+        }
+
+        super.removeById(id);
     }
 
     /**
@@ -148,9 +115,9 @@ public class ProfileDAO {
      * @throws NullPointerException jos nimi on <code>null</code>
      */
     public boolean profileWithNameExists(@NonNull String name) throws SQLException {
-        try (val connection = this.database.getConnection();
+        try (val connection = getDatabase().getConnection();
              val statement = connection.prepareStatement(
-                 "SELECT EXISTS(SELECT 1 FROM Profiles WHERE name = ? LIMIT 1)")) {
+                 "SELECT EXISTS(SELECT 1 FROM " + getTableName() + " WHERE name = ? LIMIT 1)")) {
             statement.setString(1, name);
 
             val result = statement.executeQuery();
@@ -158,19 +125,4 @@ public class ProfileDAO {
         }
     }
 
-    /**
-     * Poistaa profiilin sen ID:n perusteella.
-     *
-     * @param id poistettavan profiilin ID
-     * @throws SQLException jos tietokannan käsittelyssä tapahtuu virhe
-     */
-    public void removeById(int id) throws SQLException {
-        try (val connection = this.database.getConnection();
-             val statement = connection.prepareStatement(
-                 "DELETE FROM Profiles WHERE id = ?")) {
-            statement.setInt(1, id);
-
-            statement.executeUpdate();
-        }
-    }
 }

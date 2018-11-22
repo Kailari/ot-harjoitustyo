@@ -39,6 +39,10 @@ public class EventSystem {
      */
     @SuppressWarnings("unchecked") // subscribeTo ensures correct type
     public void fire(@NonNull IEvent event) {
+        if (!this.listeners.containsKey(event.getClass())) {
+            return;
+        }
+
         for (val listener : this.listeners.get(event.getClass())) {
             listener.onEvent(event);
         }

@@ -4,7 +4,9 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import toilari.otlite.game.ProfileSelectState;
+import toilari.otlite.game.event.ProfileMenuEvent;
 import toilari.otlite.game.profile.Profile;
+import toilari.otlite.game.profile.tracking.Statistics;
 import toilari.otlite.view.Camera;
 
 import java.sql.SQLException;
@@ -26,7 +28,7 @@ public class ProfileSelectStateRenderer implements IRenderer<ProfileSelectState,
         System.out.println("\tquit\t\tquits the game");
         System.out.println("\tadd [name]\tadds a new profile");
         System.out.println("\tremove [id]\tremoves a profile");
-        System.out.println("\tselect [id]\t\t");
+        System.out.println("\tselect [id]\tselects a profile and starts the game");
 
         System.out.println();
         return false;
@@ -38,38 +40,44 @@ public class ProfileSelectStateRenderer implements IRenderer<ProfileSelectState,
 
         List<Profile> profiles;
         try {
-            profiles = state.getProfiles();
+            profiles = state.getGame().getProfileDao().findAll();
         } catch (SQLException e) {
             LOG.error("Database error occured while getting profiles: {}", e.getMessage());
             state.getGame().setRunning(false);
             return;
         }
 
-        System.out.println("| id | name                           | save state                   |");
-        System.out.println("|----|--------------------------------|------------------------------|");
+        System.out.println("| id | name                           | has unfinished save | kills | tiles moved |");
+        System.out.println("|----|--------------------------------|---------------------|-------|-------------|");
         for (val profile : profiles) {
-            System.out.printf("| %d  | %-30s | (%s unfinished saved game)\n", profile.getId(), profile.getName(), (profile.hasUnfinishedSave() ? "Has" : "No"));
+            System.out.printf("| %2d | %-30s | %-19s | %5d | %11d |\n",
+                profile.getId(),
+                profile.getName(),
+                (profile.hasUnfinishedSave() ? "Yes" : "No"),
+                state.getGame().getStatistics().getLong(Statistics.KILLS, profile.getId()),
+                state.getGame().getStatistics().getLong(Statistics.TILES_MOVED, profile.getId())
+            );
         }
-        System.out.println("|----|--------------------------------|------------------------------|");
+        System.out.println("|----|--------------------------------|---------------------|-------|-------------|");
 
         System.out.println();
         System.out.print(">");
         val cmd = this.scanner.nextLine();
         System.out.println();
         if (cmd.equals("quit")) {
-            state.getEventSystem().fire(new ProfileSelectState.QuitEvent());
+            state.getEventSystem().fire(new ProfileMenuEvent.Quit());
         } else {
             val split = cmd.split(" ");
             if (split.length == 2) {
                 switch (split[0]) {
                     case "add":
-                        state.getEventSystem().fire(new ProfileSelectState.AddEvent(split[1]));
+                        state.getEventSystem().fire(new ProfileMenuEvent.Add(split[1]));
                         break;
                     case "remove":
-                        state.getEventSystem().fire(new ProfileSelectState.RemoveEvent(Integer.parseInt(split[1])));
+                        state.getEventSystem().fire(new ProfileMenuEvent.Remove(Integer.parseInt(split[1])));
                         break;
                     case "select":
-                        state.getEventSystem().fire(new ProfileSelectState.SelectEvent(Integer.parseInt(split[1])));
+                        state.getEventSystem().fire(new ProfileMenuEvent.Select(Integer.parseInt(split[1])));
                         break;
                 }
             }
