@@ -46,7 +46,10 @@ public class TextRenderer {
         for (int i = 0; i < string.length(); i++) {
             val c = string.charAt(i);
 
-            if (c == '\n') {
+            if (c == ' ') {
+                destX += size;
+                continue;
+            } else if (c == '\n') {
                 destX = x;
                 destY += size;
                 continue;
