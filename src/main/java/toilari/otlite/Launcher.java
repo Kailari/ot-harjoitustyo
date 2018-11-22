@@ -7,7 +7,7 @@ import toilari.otlite.game.ProfileSelectState;
 import toilari.otlite.view.lwjgl.LWJGLGameRunner;
 import toilari.otlite.view.renderer.IRenderer;
 import toilari.otlite.view.renderer.ProfileSelectStateRenderer;
-import toilari.otlite.view.renderer.lwjgl.PlayGameStateRenderer;
+import toilari.otlite.view.lwjgl.renderer.PlayGameStateRenderer;
 
 import java.util.HashMap;
 

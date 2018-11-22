@@ -1,4 +1,4 @@
-package toilari.otlite.view.renderer.lwjgl;
+package toilari.otlite.view.lwjgl.renderer;
 
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.renderer.IRenderer;

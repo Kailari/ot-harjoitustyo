@@ -1,10 +1,7 @@
-package toilari.otlite.io;
+package toilari.otlite.game.input;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import toilari.otlite.game.input.IInputHandler;
-import toilari.otlite.game.input.Input;
-import toilari.otlite.game.input.Key;
 
 import static org.junit.jupiter.api.Assertions.*;
 

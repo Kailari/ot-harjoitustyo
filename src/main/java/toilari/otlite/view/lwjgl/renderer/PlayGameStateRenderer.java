@@ -1,4 +1,4 @@
-package toilari.otlite.view.renderer.lwjgl;
+package toilari.otlite.view.lwjgl.renderer;
 
 import lombok.NonNull;
 import lombok.val;
