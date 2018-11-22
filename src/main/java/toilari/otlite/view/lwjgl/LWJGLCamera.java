@@ -15,6 +15,8 @@ public class LWJGLCamera extends toilari.otlite.view.Camera {
 
     @NonNull private Matrix4f viewMatrix = new Matrix4f();
     @NonNull private float[] viewMatrixArr = new float[16];
+    @Getter private int viewportWidth;
+    @Getter private int viewportHeight;
     private final float pixelsPerUnit;
 
     @Getter private float zoom = 1.0f;
@@ -85,6 +87,9 @@ public class LWJGLCamera extends toilari.otlite.view.Camera {
      * @param viewportHeight näkymän korkeus
      */
     void resizeViewport(int viewportWidth, int viewportHeight) {
+        this.viewportWidth = viewportWidth;
+        this.viewportHeight = viewportHeight;
+
         val ratio = (float) viewportWidth / viewportHeight;
         val mult = viewportHeight / this.pixelsPerUnit;
         this.projectionMatrix.setOrtho2D(0, ratio * mult, mult, 0);

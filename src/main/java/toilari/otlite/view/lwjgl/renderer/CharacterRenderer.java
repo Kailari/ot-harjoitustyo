@@ -4,9 +4,9 @@ import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.dao.TextureDAO;
 import toilari.otlite.game.world.entities.characters.AbstractCharacter;
-import toilari.otlite.view.lwjgl.AnimatedSprite;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.Sprite;
+import toilari.otlite.view.lwjgl.TextRenderer;
 import toilari.otlite.view.lwjgl.Texture;
 import toilari.otlite.view.renderer.IRenderer;
 
@@ -26,7 +26,7 @@ public class CharacterRenderer implements IRenderer<AbstractCharacter, LWJGLCame
     private Texture texture;
     private Texture fontTexture;
     private Sprite sprite;
-    private AnimatedSprite font;
+    private TextRenderer textRenderer;
 
     /**
      * Luo uuden piirtäjän. Olettaa että annetussa tekstuurissa on kaikki framet ladottuna vaakasuunnassa vierekkäin.
@@ -59,7 +59,7 @@ public class CharacterRenderer implements IRenderer<AbstractCharacter, LWJGLCame
             8
         );
 
-        this.font = new AnimatedSprite(this.fontTexture, 10, 4, 4);
+        this.textRenderer = new TextRenderer(this.textureDAO, 1, 8);
 
         return false;
     }
@@ -74,9 +74,9 @@ public class CharacterRenderer implements IRenderer<AbstractCharacter, LWJGLCame
     @Override
     public void postDraw(@NonNull LWJGLCamera camera, @NonNull AbstractCharacter character) {
         if (character.getLastAttackTarget() != null && System.currentTimeMillis() < character.getLastAttackTime() + DAMAGE_LABEL_DURATION) {
-            int frame = Math.round(character.getLastAttackAmount() % 10);
+            int damage = Math.round(character.getLastAttackAmount());
             val target = character.getLastAttackTarget();
-            this.font.draw(camera, target.getX() + 2, target.getY() + 2, frame, 0.8f, 0.1f, 0.1f);
+            this.textRenderer.draw(camera, target.getX() + 2, target.getY() + 2, 0.8f, 0.1f, 0.1f, 4, String.valueOf(damage));
         }
     }
 

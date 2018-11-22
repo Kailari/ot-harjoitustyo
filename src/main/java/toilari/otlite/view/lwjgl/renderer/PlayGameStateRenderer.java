@@ -7,6 +7,7 @@ import toilari.otlite.game.PlayGameState;
 import toilari.otlite.game.world.entities.characters.AnimalCharacter;
 import toilari.otlite.game.world.entities.characters.PlayerCharacter;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
+import toilari.otlite.view.lwjgl.TextRenderer;
 import toilari.otlite.view.renderer.IRenderer;
 
 import java.util.HashMap;
@@ -18,16 +19,19 @@ import java.util.Map;
 public class PlayGameStateRenderer implements ILWJGLRenderer<PlayGameState> {
     // TODO: mapping class for these to get rid of unchecked code
     @NonNull private final Map<Class, IRenderer> rendererMappings = new HashMap<>();
+    private final TextureDAO textures;
+
     private LevelRenderer levelRenderer;
+    private TextRenderer textRenderer;
 
     /**
      * Luo uuden pelitilapiirtäjän.
      */
     public PlayGameStateRenderer() {
-        val textures = new TextureDAO("content/textures/");
-        this.levelRenderer = new LevelRenderer(textures, "tileset.png", 8, 8);
-        this.rendererMappings.put(PlayerCharacter.class, new CharacterRenderer(textures, "white_knight.png", 6));
-        this.rendererMappings.put(AnimalCharacter.class, new CharacterRenderer(textures, "sheep.png", 1));
+        this.textures = new TextureDAO("content/textures/");
+        this.levelRenderer = new LevelRenderer(this.textures, "tileset.png", 8, 8);
+        this.rendererMappings.put(PlayerCharacter.class, new CharacterRenderer(this.textures, "white_knight.png", 6));
+        this.rendererMappings.put(AnimalCharacter.class, new CharacterRenderer(this.textures, "sheep.png", 1));
     }
 
     @Override
@@ -37,6 +41,8 @@ public class PlayGameStateRenderer implements ILWJGLRenderer<PlayGameState> {
                 return true;
             }
         }
+
+        this.textRenderer = new TextRenderer(this.textures, 1, 8);
 
         return this.levelRenderer.init();
     }
@@ -65,6 +71,10 @@ public class PlayGameStateRenderer implements ILWJGLRenderer<PlayGameState> {
                 renderer.postDraw(camera, object);
             }
         }
+
+        int x = 0;
+        int y = camera.getViewportHeight() / 8 - 8;
+        this.textRenderer.draw(camera, x, y, 0.25f, 0.65f, 0.25f, 4, playGameState.getGame().getActiveProfile().getName());
     }
 
     @Override
