@@ -67,7 +67,7 @@ public class ObjectManager {
             }
 
             // Stop updating if gameobject shutdown the game
-            if (!getGameState().getGame().isRunning()) {
+            if (getGameState() != null && !getGameState().getGame().isRunning()) {
                 return;
             }
         }
