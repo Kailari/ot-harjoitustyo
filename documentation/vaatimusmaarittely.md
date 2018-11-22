@@ -47,6 +47,7 @@ Pelin käynnistyttyä, joko valitaan profiili tai luodaan uusi. Profiileja ei ol
 
 ## Lisäominaisuuksia 
 
+### Pelimekaniikat
 #### Taistelu
 - Laajemmat vaihtoehdot taisteluun. Korkeammat attribuutit --> enemmän erilaisia iskuvaihtoehtoja
 - Rotkon reunalla olevan mörön voi yrittää potkaista alas
@@ -55,3 +56,6 @@ Pelin käynnistyttyä, joko valitaan profiili tai luodaan uusi. Profiileja ei ol
 - Pelissä on esineitä jotka vaikuttavat hahmojen attribuutteihin.
 - Esineitä voi luoda määritystiedostoja käyttäen.
 - Hahmot jättävät kuollessaan jälkeensä kantamansa esineet.
+
+### Mukauttaminen
+- Pelin sisältö kulkee tällä hetkellä erillisessä _content/_ kansiopolussa. Paketoinnin helpottamiseksi, pelin oletussisältö tulisi pakata mukaan ajettavaan _.jar_-tiedostoon itseensä, ja I/O-luokkia muuttaa siten että ne hakevat oletuksena paketista, mutta jos kansiosta löytyy samanniminen tiedosto, käytetään paketoidun sijaan sitä. Tämä pitää muokattavuuden edelleen samalla tasolla (oletussisältöä voi muokata koskematta paketin sisältöön), mutta helpottaa pelin siirtämistä/asentamista (_.jar kulkee sellaisenaan_)
