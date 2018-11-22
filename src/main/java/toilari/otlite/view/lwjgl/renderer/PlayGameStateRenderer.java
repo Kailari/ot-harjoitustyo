@@ -49,6 +49,11 @@ public class PlayGameStateRenderer implements ILWJGLRenderer<PlayGameState> {
 
     @Override
     public void draw(@NonNull LWJGLCamera camera, @NonNull PlayGameState playGameState) {
+        val player = playGameState.getPlayer();
+        val cameraX = player.getX() - camera.getViewportWidth() / 16;
+        val cameraY = player.getY() - camera.getViewportHeight() / 16;
+        camera.setPosition(cameraX, cameraY);
+
         val world = playGameState.getWorld();
         this.levelRenderer.draw(camera, world.getCurrentLevel());
 
@@ -72,9 +77,9 @@ public class PlayGameStateRenderer implements ILWJGLRenderer<PlayGameState> {
             }
         }
 
-        int x = 0;
-        int y = camera.getViewportHeight() / 8 - 8;
-        this.textRenderer.draw(camera, x, y, 0.25f, 0.65f, 0.25f, 4, playGameState.getGame().getActiveProfile().getName());
+        int x = Math.round(camera.getPosition().x);
+        int y = Math.round(camera.getPosition().y);
+        this.textRenderer.draw(camera, x + 2, y + 2, 0.25f, 0.65f, 0.25f, 4, playGameState.getGame().getActiveProfile().getName());
     }
 
     @Override

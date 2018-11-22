@@ -100,8 +100,10 @@ public class LWJGLCamera extends toilari.otlite.view.Camera {
     private void refreshViewMatrix() {
         if (this.viewDirty) {
             this.viewMatrix
+                .identity()
                 .translate(getPosition().x, this.getPosition().y, 0.0f)
-                .scale(this.zoom);
+                .scale(this.zoom)
+                .invert();
             this.viewMatrix.get(this.viewMatrixArr);
 
             this.viewDirty = false;

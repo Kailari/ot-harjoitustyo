@@ -21,6 +21,7 @@ import toilari.otlite.game.world.entities.characters.controller.PlayerController
 @Slf4j
 public class PlayGameState extends GameState {
     @Getter @NonNull private final World world;
+    @Getter private PlayerCharacter player;
 
     /**
      * Luo uuden pelitila-instanssin.
@@ -41,7 +42,7 @@ public class PlayGameState extends GameState {
 
         LOG.info("Initialization finished.");
 
-        val player = new PlayerCharacter();
+        this.player = new PlayerCharacter();
         player.giveControlTo(new PlayerController());
         this.world.getObjectManager().spawn(player);
         player.setX(5 * Tile.SIZE_IN_WORLD);
