@@ -4,9 +4,9 @@
 Sovellus on yksinkertainen hieman roguelike-henkinen luolaseikkailu, jossa pelaaja siivoaa luolaa möröistä kerros kerrallaan kohdaten jatkuvasti vahvempia mörköjä. Useat käyttäjät voivat pelata peliä samalla laitteella erillisiä pelaajaprofiileja käyttäen ilman huolta että he vahingossa sotkevat toistensa tallennuksia tai asetuksia.
 
 ## Käyttäjät
-Sovelluksen luonteen vuoksi sovellukseen kuuluu vain yhden tyyppisiä käyttäjiä, joita kutsutaan tässä yhteydessä *"pelaajaprofiileiksi"*
+Sovelluksen luonteen vuoksi sovellukseen kuuluu vain yhden tyyppisiä käyttäjiä, joita kutsutaan tässä yhteydessä *"pelaajaprofiileiksi"*. Mikäli pelin statistiikkakanta siirettäisiin keskitetyksi verkkopalvelimelle, tarvittaisiin myös kannan ylläpidolle erillisiä pääkäyttäjiä, mutta paikallisen kannan tapauksessa on asioiden yksinkertaistamiseksi annettu kaikille sovelluksen käyttäjille pelin toimintojen puitteissa "vapaa pääsy" kantaan.
 
-## Pelaajaprofiilit
+### Pelaajaprofiilit
 Pelillä voi olla samalla laitteella useille pelaajille profiileja, joihin tallennetaan yksilöidyt tallennus- ja asetustiedostot. Lisäksi sovellus ylläpitää tietokantaa johon tallennetaan eri pelaajaprofiilien piste-ennätykset ja lyötyjen mörköjen määrä ym.
 
 Pelin käynnistyttyä, joko valitaan profiili tai luodaan uusi. Profiileja ei ole suojattu sen ihmeemmin, joten niiden tarkoituksena on vain sallia samalla laitteella pelaavien käyttäjien käyttää sujuvasti erilaisia asetuksia ja välttää sekaannuksia tallennustiedostojen kanssa.
@@ -45,7 +45,7 @@ Pelin käynnistyttyä, joko valitaan profiili tai luodaan uusi. Profiileja ei ol
 - Mörköjä on erilaisia ja uusia mörkötyyppejä voi luoda määritystiedostoja käyttäen.
 - Möröt lähtevät jahtaamaan pelaajaa tämän saapuessa liian lähelle.
 
-## Lisäominaisuuksia 
+## Lisäominaisuuksia / Jatkokehitysideoita
 
 ### Pelimekaniikat
 #### Taistelu
@@ -58,4 +58,21 @@ Pelin käynnistyttyä, joko valitaan profiili tai luodaan uusi. Profiileja ei ol
 - Hahmot jättävät kuollessaan jälkeensä kantamansa esineet.
 
 ### Mukauttaminen
-- Pelin sisältö kulkee tällä hetkellä erillisessä _content/_ kansiopolussa. Paketoinnin helpottamiseksi, pelin oletussisältö tulisi pakata mukaan ajettavaan _.jar_-tiedostoon itseensä, ja I/O-luokkia muuttaa siten että ne hakevat oletuksena paketista, mutta jos kansiosta löytyy samanniminen tiedosto, käytetään paketoidun sijaan sitä. Tämä pitää muokattavuuden edelleen samalla tasolla (oletussisältöä voi muokata koskematta paketin sisältöön), mutta helpottaa pelin siirtämistä/asentamista (_.jar kulkee sellaisenaan_)
+- Pelin sisältö kulkee tällä hetkellä erillisessä _content/_ kansiopolussa. Paketoinnin helpottamiseksi, pelin oletussisältö tulisi pakata mukaan ajettavaan _.jar_-tiedostoon itseensä.
+    - ja I/O-luokkia tulisi muuttaa siten että ne hakevat oletuksena paketista, mutta jos kansiosta löytyy samanniminen tiedosto, käytetään paketoidun sijaan sitä.
+    - Tämä pitää muokattavuuden edelleen samalla tasolla (oletussisältöä voi muokata koskematta paketin sisältöön), mutta helpottaa pelin siirtämistä/asentamista (_.jar kulkee sellaisenaan_)
+
+### Suorituskyky
+#### Grafiikka
+- Peli käyttää tällä hetkellä erittäin naiivia lähestymistapaa piirtämiseen, jossa lähes jokainen piirrettävä objekti piirretään omana piirtokäskynään. Tämä on luonnollisesti kohtuuttoman hidasta.
+    - Piirtämisen voisi toteuttaa tehokkaammin prioriteettijonolla optimoidulla sarjapiirtäjällä ("Batched renderer")
+    - Tekstuurit tulee pakata suurempiin "atlaksiin" joissa on usean eri objektin tekstuurit yhdessä kuvassa.
+    - Spritejä ei piirretä suoraan, vaan kukin sprite asetetaan vuorollaan "jonoon" piirtämistä varten.
+    - Jonona toimii prioriteettijono, joka järjestää ensisijaisesti z-akselin mukaan, ja toissijaisesti käytetyn tekstuurin mukaan.
+    - Varsinainen piirtäminen tapahtuu käymällä prioriteettijonoa läpi alusta loppuun ja lisäämällä uusien spritejen geometria lennossa luotavaan VAO/VBO:iin. Tätä jatketaan kunnes tekstuuri vaihtuu, jolloin nykyinen piirtäjä "flushataan" eli tähänasti luotu VBO piirretään ja aletaan luoda uutta uudella tekstuurilla.
+    - Optimitilanteessa tämä tarkoittaa että piirtokomentojen määrä on objektien määrän sijaan käytettyjen tekstuurien määrä
+
+#### Statistiikka
+- Statistiikkaa kerätään tällä hetkellä kirjoittaen jokainen päivitys suoraan kantaan. Tämä asettaa pelin suorituskyvylle ilmeisen I/O pullonkaulan mikäli statistiikkapäivityksiä tulee useita nopeaan tahtiin.
+    - ongelmien minimoimiseksi päivitykset tulisi asettaa jonoon ja varsinainen kirjoittaminen suorittaa omassa säikeessään.
+    - muutoksien nykytila voidaan päivittää jo muistiin, mutta levylle kirjoittamista ei tarvitse jäädä odottamaan, vaan se tapahtuu taustalla omia aikojaan.
