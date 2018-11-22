@@ -1,5 +1,6 @@
 package toilari.otlite.dao;
 
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.dao.database.Database;
@@ -7,11 +8,15 @@ import toilari.otlite.game.profile.Profile;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * DAO jolla voidaan ladata pelaajaprofiilit levyltä.
  */
-public class ProfileDAO extends AbstractDatabaseDao<Profile> {
+public class ProfileDAO {
+    @NonNull @Getter private final Database database;
+
     /**
      * Luo uuden profiili DAOn, joka lukee annettua tietokantaa.
      * Luo tarvittavat taulut automaattisesti.
@@ -21,25 +26,91 @@ public class ProfileDAO extends AbstractDatabaseDao<Profile> {
      * @throws NullPointerException jos database on <code>null</code>
      */
     public ProfileDAO(@NonNull Database database) throws SQLException {
-        super(database, "Profiles");
+        this.database = database;
 
         try (val connection = getDatabase().getConnection();
              val statement = connection.createStatement()) {
             statement.execute(
-                "CREATE TABLE IF NOT EXISTS " + getTableName() + " (" +
+                "CREATE TABLE IF NOT EXISTS Profiles (" +
                     "id INTEGER PRIMARY KEY," +
                     "name TEXT," +
                     "hasSave BOOLEAN)");
         }
     }
 
-    @Override
-    protected Profile createInstance(ResultSet result) throws SQLException {
+    private Profile createInstance(ResultSet result) throws SQLException {
         return new Profile(
             result.getInt("id"),
             result.getString("name"),
             result.getBoolean("hasSave")
         );
+    }
+
+    /**
+     * Hakee kaikki tallennetut objektit.
+     *
+     * @return lista tallennetuista objekteista
+     * @throws SQLException jos tietokannan lukemisessa tapahtuu virhe
+     */
+    @NonNull
+    public List<Profile> findAll() throws SQLException {
+        val allFound = new ArrayList<Profile>();
+        try (val connection = this.database.getConnection();
+             val statement = connection.prepareStatement("SELECT * FROM Profiles")) {
+            val result = statement.executeQuery();
+
+            while (result.next()) {
+                allFound.add(createInstance(result));
+            }
+        }
+
+        return allFound;
+    }
+
+
+    /**
+     * Etsii objektin sen ID:n perusteella.
+     *
+     * @param id etsittävän objektin ID
+     * @return <code>null</code> jos objektia ei ole, muulloin objekti jolla oli annettu id
+     * @throws SQLException jos tietokannan käsittelyssä tapahtuu virhe
+     */
+    public Profile findById(int id) throws SQLException {
+        try (val connection = this.database.getConnection();
+             val statement = connection.prepareStatement(
+                 "SELECT * FROM Profiles WHERE id = ?")) {
+            statement.setInt(1, id);
+
+            val result = statement.executeQuery();
+            if (!result.next()) {
+                return null;
+            }
+
+            return createInstance(result);
+        }
+    }
+
+    /**
+     * Poistaa objektin sen ID:n perusteella.
+     *
+     * @param id poistettavan objektin ID
+     * @throws SQLException jos tietokannan käsittelyssä tapahtuu virhe
+     */
+    public void removeById(int id) throws SQLException {
+        try (val connection = getDatabase().getConnection();
+             val statement = connection.prepareStatement(
+                 "DELETE FROM PlayerStatistics WHERE profile_id = ?")) {
+            statement.setInt(1, id);
+            statement.executeUpdate();
+        }
+
+        try (val connection = this.database.getConnection();
+             val statement = connection.prepareStatement(
+                 "DELETE FROM Profiles WHERE id = ?")) {
+            statement.setInt(1, id);
+
+            statement.executeUpdate();
+        }
     }
 
     /**
@@ -53,7 +124,7 @@ public class ProfileDAO extends AbstractDatabaseDao<Profile> {
     public Profile findByName(@NonNull String name) throws SQLException {
         try (val connection = getDatabase().getConnection();
              val statement = connection.prepareStatement(
-                 "SELECT * FROM " + getTableName() + " WHERE name = ?")) {
+                 "SELECT * FROM Profiles WHERE name = ?")) {
             statement.setString(1, name);
 
             val result = statement.executeQuery();
@@ -85,25 +156,13 @@ public class ProfileDAO extends AbstractDatabaseDao<Profile> {
 
         try (val connection = getDatabase().getConnection();
              val statement = connection.prepareStatement(
-                 "INSERT INTO " + getTableName() + " (name, hasSave) VALUES (?,FALSE)")) {
+                 "INSERT INTO Profiles (name, hasSave) VALUES (?,FALSE)")) {
 
             statement.setString(1, name);
             statement.executeUpdate();
         }
 
         return findByName(name);
-    }
-
-    @Override
-    public void removeById(int id) throws SQLException {
-        try (val connection = getDatabase().getConnection();
-             val statement = connection.prepareStatement(
-                 "DELETE FROM PlayerStatistics WHERE profile_id = ?")) {
-            statement.setInt(1, id);
-            statement.executeUpdate();
-        }
-
-        super.removeById(id);
     }
 
     /**
@@ -117,7 +176,7 @@ public class ProfileDAO extends AbstractDatabaseDao<Profile> {
     public boolean profileWithNameExists(@NonNull String name) throws SQLException {
         try (val connection = getDatabase().getConnection();
              val statement = connection.prepareStatement(
-                 "SELECT EXISTS(SELECT 1 FROM " + getTableName() + " WHERE name = ? LIMIT 1)")) {
+                 "SELECT EXISTS(SELECT 1 FROM Profiles WHERE name = ? LIMIT 1)")) {
             statement.setString(1, name);
 
             val result = statement.executeQuery();
