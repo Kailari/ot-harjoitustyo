@@ -1,9 +1,12 @@
 package toilari.otlite.dao;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import lombok.val;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import toilari.otlite.dao.util.FileHelper;
+import toilari.otlite.game.world.Tile;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,14 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import lombok.val;
-import toilari.otlite.dao.util.FileHelper;
-import toilari.otlite.game.world.Tile;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Testaa TileDAO-luokan toimintaa.
@@ -27,15 +23,23 @@ class TileDAOTest {
 
     private static final Path ROOT = Paths.get("target/test-temp/content/tiles/").normalize();
 
-    private static final String[][] TILE_DEFINITIONS = { { "wall.json", "{\"id\":\"wall\",\"wall\":true,\"symbol\":\"#\"}" }, { "floor.json", "{\"id\":\"floor\",\"wall\":false,\"symbol\":\".\"}" }, { "hole.json", "{\"id\":\"hole\",\"wall\":false,\"symbol\":\" \"}" }, { "invalid.json", "{this_is_not_a_field:wtf,\"wall\":true,symbol:,,:asd}" } };
-    private static final Tile[] CORRECT_TILES = { new Tile(true, '#', "wall"), new Tile(false, '.',
-            "floor"), new Tile(false, ' ', "hole") };
+    private static final String[][] TILE_DEFINITIONS = {
+        {"wall.json", "{\"id\":\"wall\",\"wall\":true,\"symbol\":\"#\"}"},
+        {"floor.json", "{\"id\":\"floor\",\"wall\":false,\"symbol\":\".\"}"},
+        {"hole.json", "{\"id\":\"hole\",\"wall\":false,\"symbol\":\" \"}"},
+        {"invalid.json", "{this_is_not_a_field:wtf,\"wall\":true,symbol:,,:asd}"}
+    };
+    private static final Tile[] CORRECT_TILES = {
+        new Tile(true, '#', "wall"),
+        new Tile(false, '.', "floor"),
+        new Tile(false, ' ', "hole")
+    };
 
     private TileDAO dao;
 
     /**
      * Luodaan testien vaatimat hakemistot ja .json-tiedostot.
-     * 
+     *
      * @throws IOException jos kansioiden tai .json tiedostojen luonti epäonnistuu
      */
     @BeforeAll
@@ -54,6 +58,15 @@ class TileDAOTest {
     void beforeEach() {
         this.dao = new TileDAO("target/test-temp/content/tiles/");
         this.dao.discoverAndLoadAll();
+    }
+
+    /**
+     * Testaa ettei konstruktori hyväksy virheellisiä parametreja.
+     */
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void constructorThrowsWithNullRoot() {
+        assertThrows(NullPointerException.class, () -> new TileDAO(null));
     }
 
     /**
@@ -83,6 +96,15 @@ class TileDAOTest {
         for (val t : this.dao.getTiles()) {
             assertNotNull(t);
         }
+    }
+
+    /**
+     * Testaa ettei tryLoad hyväksy virheellisiä parametreja.
+     */
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void tryLoadThrowsWithNullPath() {
+        assertThrows(NullPointerException.class, () -> this.dao.tryLoad(null));
     }
 
     /**

@@ -38,14 +38,6 @@ public class ProfileDAO {
         }
     }
 
-    private Profile createInstance(ResultSet result) throws SQLException {
-        return new Profile(
-            result.getInt("id"),
-            result.getString("name"),
-            result.getBoolean("hasSave")
-        );
-    }
-
     /**
      * Hakee kaikki tallennetut objektit.
      *
@@ -132,11 +124,7 @@ public class ProfileDAO {
                 return null;
             }
 
-            return new Profile(
-                result.getInt("id"),
-                result.getString("name"),
-                result.getBoolean("hasSave")
-            );
+            return createInstance(result);
         }
     }
 
@@ -151,7 +139,7 @@ public class ProfileDAO {
      */
     public Profile createNew(@NonNull String name) throws SQLException {
         if (profileWithNameExists(name)) {
-            throw new IllegalStateException("Profile with name \"" + name + "\" already exists");
+            throw new IllegalArgumentException("Profile with name \"" + name + "\" already exists");
         }
 
         try (val connection = getDatabase().getConnection();
@@ -184,4 +172,11 @@ public class ProfileDAO {
         }
     }
 
+    private Profile createInstance(ResultSet result) throws SQLException {
+        return new Profile(
+            result.getInt("id"),
+            result.getString("name"),
+            result.getBoolean("hasSave")
+        );
+    }
 }
