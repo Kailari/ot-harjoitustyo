@@ -60,16 +60,12 @@ public class FileHelper {
 
         try {
             Files.createDirectories(path);
-        } catch (IOException e) {
-            LOG.error("Could not create required directories: {}", e.getMessage());
-            return false;
-        }
-
-        try {
             Files.createFile(filePath);
             return true;
         } catch (IOException e) {
-            LOG.error("Could not create file: {}", e.getMessage());
+            // This generally should not happen unless something really wacky is going on, or if thread gets
+            // SIGTERM'd mid-I/O or sth.
+            LOG.error("Could not create file or its parent directories: {}", e.getMessage());
             return false;
         }
     }
@@ -101,6 +97,7 @@ public class FileHelper {
         }
 
         try {
+            //noinspection ResultOfMethodCallIgnored
             Files.walk(path)
                 .sorted(Comparator.reverseOrder())
                 .map(Path::toFile)

@@ -1,23 +1,21 @@
 package toilari.otlite.dao.util;
 
+import lombok.val;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Testaa että tekstitiedostojen apukomennot toimivat oikein.
- */
 class TextFileHelperTest {
     private static final Path ROOT = Paths.get("target/test-temp/");
     private static final List<String> EDITABLE_CONTENT = Arrays.asList(
@@ -29,63 +27,68 @@ class TextFileHelperTest {
     private Path editable = ROOT.resolve("editable.txt");
     private Path empty = ROOT.resolve("empty.txt");
 
-    /**
-     * Luo juurihakemiston johon testien tarvitsemat tiedostot voidaan luoda.
-     *
-     * @throws IOException Jos hakemiston luominen epäonnistuu
-     */
     @BeforeAll
     static void beforeAll() throws IOException {
         Files.createDirectories(ROOT);
     }
 
-    /**
-     * Luo testien tarvitsemat väliaikaiset tiedostot.
-     *
-     * @throws IOException Jos tiedostojen luonti epäonnistuu
-     */
     @BeforeEach
     void beforeEach() throws IOException {
         Files.write(this.editable, EDITABLE_CONTENT, Charset.forName("UTF-8"));
     }
 
-    /**
-     * Testaa että tiedoston avaaminen lukemista varten onnistuu.
-     */
+
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void getReaderThrowsIfParamsAreNull() {
+        assertThrows(NullPointerException.class, () -> TextFileHelper.getReader(null));
+        assertThrows(NullPointerException.class, () -> TextFileHelper.getReader(this.editable, (OpenOption[]) null));
+    }
+
     @Test
     void getReaderOpensExistingFile() {
         assertDoesNotThrow(() -> TextFileHelper.getReader(this.editable));
     }
 
-    /**
-     * Testaa että tiedoston avaaminen epäonnistuu jos tiedostoa ei ole.
-     */
     @Test
     void getReaderFailsForNonexistingFile() {
         assertThrows(IOException.class, () -> TextFileHelper.getReader(this.empty));
     }
 
-    /**
-     * Testaa että tiedoston avaaminen lukemista varten onnistuu.
-     */
+
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void getWriterThrowsIfParamsAreNull() {
+        assertThrows(NullPointerException.class, () -> TextFileHelper.getWriter(null));
+        assertThrows(NullPointerException.class, () -> TextFileHelper.getWriter(this.editable, (OpenOption[]) null));
+    }
+
     @Test
     void getWriterOpensExistingFile() {
         assertDoesNotThrow(() -> TextFileHelper.getWriter(this.editable));
     }
 
-    /**
-     * Testaa että tiedoston avaaminen onnistuu vaikka tiedostoa ei ole.
-     */
     @Test
     void openForWritingDoesNotFailForNonexistingFile() {
         assertDoesNotThrow(() -> TextFileHelper.getWriter(this.empty));
     }
 
-    /**
-     * Poistaa testien tarvitsemat väliaikaiset tiedostot.
-     *
-     * @throws IOException Jos tiedostojen poisto epäonnistuu
-     */
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void readFileToStringThrowsIfPathIsNull() {
+        assertThrows(NullPointerException.class, () -> TextFileHelper.readFileToString(null));
+    }
+
+    @Test
+    void readFileToStringReturnsCorrectStringForExistingFile() throws IOException {
+        val string = TextFileHelper.readFileToString(this.editable.toString());
+        val split = string.split("\n");
+        for (int i = 0; i < Math.min(split.length, EDITABLE_CONTENT.size()); i++) {
+            assertEquals(EDITABLE_CONTENT.get(i), split[i]);
+        }
+    }
+
+
     @AfterEach
     void afterEach() throws IOException {
         Files.deleteIfExists(this.editable);

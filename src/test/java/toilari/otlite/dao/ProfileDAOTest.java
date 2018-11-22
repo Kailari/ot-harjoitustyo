@@ -18,9 +18,6 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-/**
- * Testaa että ProfileDAO toimii kuten oletettu.
- */
 class ProfileDAOTest {
     private static final Path PERSISTENT_ROOT = Paths.get("src/test/resources/");
     private static final Path ROOT = Paths.get("target/test-temp/");
@@ -31,11 +28,8 @@ class ProfileDAOTest {
         Files.copy(PERSISTENT_ROOT.resolve("test.db"), ROOT.resolve("test.db"), StandardCopyOption.REPLACE_EXISTING);
     }
 
-    /**
-     * Testaa että konstruktori luo tarvittavat tietokantataulut jos niitä ei vielä ole.
-     */
     @Test
-    void constructorCreatesTableIfItDoesNotExist() throws SQLException {
+    void constructorCreatesRequiredTables() throws SQLException {
         val database = new Database(ROOT.resolve("does_not_exist.db").toString());
         new ProfileDAO(database);
 
@@ -49,13 +43,10 @@ class ProfileDAOTest {
 
     @Test
     @SuppressWarnings("ConstantConditions")
-    void constructorThrowsWithNullDatabase() {
+    void constructorThrowsIfDatabaseIsNull() {
         assertThrows(NullPointerException.class, () -> new ProfileDAO(null));
     }
 
-    /**
-     * Tarkistaa että DAO löytää olemassaolevat rivit testitietokannasta.
-     */
     @Test
     void findAllFindsExistingEntries() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());

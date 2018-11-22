@@ -30,6 +30,15 @@ class DatabaseTest {
     }
 
     /**
+     * Testaa ettei konstruktori hyväksy epäkelpoja argumentteja.
+     */
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void constructorThrowsIfPathIsNull() {
+        assertThrows(NullPointerException.class, () -> new Database(null));
+    }
+
+    /**
      * Testaa että uuden tietokannan luominen luo tiedoston tietokannalle jos sitä ei ole jo olemassa.
      */
     @Test

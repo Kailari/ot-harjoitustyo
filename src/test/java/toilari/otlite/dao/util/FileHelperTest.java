@@ -27,22 +27,11 @@ class FileHelperTest {
 
     private Path[] readableFiles;
 
-    /**
-     * Luo testeissä tarvittavia tiedostoja ja hakemistoja ennen testien
-     * suorittamista.
-     *
-     * @throws IOException jos hakemistojen luonti epäonnistuu
-     */
     @BeforeAll
     static void beforeAll() throws IOException {
         Files.createDirectories(ROOT);
     }
 
-    /**
-     * Luo testeissä tarvittavat väliaikaiset tiedostot.
-     *
-     * @throws IOException jos tiedostoon kirjoittaminen epäonnistuu
-     */
     @BeforeEach
     void beforeEach() throws IOException {
         Files.createDirectories(INVALID);
@@ -50,41 +39,34 @@ class FileHelperTest {
         this.readableFiles = new Path[READABLE_CONTENTS.length];
         for (int i = 0; i < READABLE_CONTENTS.length; i++) {
             this.readableFiles[i] = Files.write(ROOT.resolve("readable_" + i + "." + READABLE_EXTENSIONS[i]),
-                    READABLE_CONTENTS[i].getBytes());
+                READABLE_CONTENTS[i].getBytes());
         }
     }
 
-    /**
-     * Testaa että {@link FileHelper#discoverFiles(Path, String)} palauttaa vain
-     * asetetun tiedostopäätteen mukaisia polkuja kun pääte on .txt.
-     */
+
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void discoverFilesThrowsIfParametersAreNull() {
+        assertThrows(NullPointerException.class, () -> FileHelper.discoverFiles(null, ".test"));
+        assertThrows(NullPointerException.class, () -> FileHelper.discoverFiles(ROOT, null));
+    }
+
     @Test
     void discoverFilesFindsOnlyTxtFilesWhenExtensionIsTxt() {
         List<Path> files = FileHelper.discoverFiles(ROOT, "txt").collect(Collectors.toList());
         assertTrue(files.stream().allMatch(p -> p.toString().toLowerCase().endsWith(".txt")));
     }
 
-    /**
-     * Testaa että {@link FileHelper#discoverFiles(Path, String)} löytää oikean
-     * määrän tiedostoja.
-     */
     @Test
     void discoverFilesFindsCorrectNumberOfFiles() {
         assertEquals(READABLE_CONTENTS.length - 1, FileHelper.discoverFiles(ROOT, "txt").count());
     }
 
-    /**
-     * Testaa että {@link FileHelper#discoverFiles(Path, String)} palauttaa vain
-     * asetetun tiedostopäätteen mukaisia polkuja kun pääte on .json.
-     */
     @Test
     void discoverFilesFindsOnlyJsonFilesWhenExtensionIsJson() {
         assertTrue(FileHelper.discoverFiles(ROOT, "json").allMatch(s -> s.toString().toLowerCase().endsWith(".json")));
     }
 
-    /**
-     * Testaa että {@link FileHelper#discoverFiles(Path, String)} palauttaa vain.
-     */
     @Test
     void discoverFilesReturnsEmptyStreamWhenRootFileDoesNotExist() {
         val files = FileHelper.discoverFiles(Paths.get("this/path/does/hopefully/not/exist/"), "txt");
@@ -92,76 +74,71 @@ class FileHelperTest {
         assertEquals(0, files.count());
     }
 
-    /**
-     * Testaa että {@link FileHelper#discoverFiles(Path, String)} ei palauta
-     * polkuja jotka viittaavat kansioihin.
-     */
     @Test
     void discoverFilesDoesNotMatchFolders() {
         assertTrue(FileHelper.discoverFiles(ROOT, "txt").noneMatch(path -> path.toFile().isDirectory()));
     }
 
-    /**
-     * Testaa että {@link FileHelper#discoverFiles(Path, String)} heittää virheen
-     * jos tiedostopääte alkaa pisteellä.
-     */
     @Test
     void discoverFilesThrowsIfExtensionStartsWithComma() {
         assertThrows(IllegalArgumentException.class, () -> FileHelper.discoverFiles(Paths.get("ignored"), ".extension"));
     }
 
-    /**
-     * Testaa että {@link FileHelper#deleteDirectoryAndChildren(Path)} palauttaa
-     * false kun parametri ei osoita kansioon.
-     */
+
     @Test
-    void deleteDirectoryAndChildrenCannotRemoveSingleFile() {
+    @SuppressWarnings("ConstantConditions")
+    void deleteDirectoryAndChildrenThrowsIfPathIsNull() {
+        assertThrows(NullPointerException.class, () -> FileHelper.deleteDirectoryAndChildren(null));
+    }
+
+    @Test
+    void deleteDirectoryAndChildrenReturnsFalseWhenTryingToRemoveSingleFile() {
         assertFalse(FileHelper.deleteDirectoryAndChildren(this.readableFiles[0]));
     }
 
-    /**
-     * Testaa että {@link FileHelper#deleteDirectoryAndChildren(Path)} hyväksyy
-     * parametriksi vain kansioita. (palauttaa false)
-     */
     @Test
-    void deleteDirectoryAndChildrenFileNotRemoved() {
+    void deleteDirectoryAndChildrenDoesNotRemoveSingleFile() {
         FileHelper.deleteDirectoryAndChildren(this.readableFiles[0]);
         assertTrue(Files.exists(this.readableFiles[0]));
     }
 
-    /**
-     * Testaa että {@link FileHelper#deleteDirectoryAndChildren(Path)} palauttaa
-     * true kun poistettava kansio on olemassa.
-     */
     @Test
     void deleteDirectoryAndChildrenReturnsTrueOnValidPath() {
         assertTrue(FileHelper.deleteDirectoryAndChildren(ROOT));
     }
 
-    /**
-     * Testaa että {@link FileHelper#deleteDirectoryAndChildren(Path)} poistaa
-     * annetun hakemiston.
-     */
     @Test
     void deleteDirectoryAndChildrenReallyDeletes() {
         FileHelper.deleteDirectoryAndChildren(ROOT);
         assertFalse(Files.exists(ROOT));
     }
 
-    /**
-     * Testaa että {@link FileHelper#createFile(Path, String)} luo tiedoston
-     * onnistuneesti.
-     */
+
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void createFileThrowsIfParamsAreNull() {
+        assertThrows(NullPointerException.class, () -> FileHelper.createFile(null, "file.test"));
+        assertThrows(NullPointerException.class, () -> FileHelper.createFile(ROOT, null));
+        assertThrows(NullPointerException.class, () -> FileHelper.createFile(null));
+    }
+
+    @Test
+    void createFileCanCreateFilesToWorkingDirectory() {
+        assertTrue(FileHelper.createFile("test.file") && Files.exists(Paths.get("./test.file")));
+    }
+
     @Test
     void createFileCreatesFile() {
         assertTrue(FileHelper.createFile(ROOT, "test.file") && Files.exists(ROOT.resolve("test.file")));
     }
 
-    /**
-     * Siivoaa väliaikaiset tiedostot.
-     *
-     * @throws IOException jos tiedoston poistaminen epäonnistuu
-     */
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void fileExistsThrowsIfPathIsNull() {
+        assertThrows(NullPointerException.class, () -> FileHelper.fileExists(null));
+    }
+
+
     @AfterEach
     void afterEach() throws IOException {
         Files.deleteIfExists(INVALID);
@@ -171,12 +148,10 @@ class FileHelperTest {
         }
     }
 
-    /**
-     * Siivoaa luodut väliaikaiset testeissä tarvitut tiedostot.
-     */
     @AfterAll
     static void afterAll() {
         try {
+            Files.deleteIfExists(Paths.get("./test.file"));
             //noinspection ResultOfMethodCallIgnored
             Files.walk(ROOT).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
         } catch (IOException ignored) {

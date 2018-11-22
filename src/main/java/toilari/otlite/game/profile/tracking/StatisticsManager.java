@@ -45,7 +45,7 @@ public class StatisticsManager {
 
     public void increment(Statistics key, int profileId) {
         try {
-            this.playerStatistics.increment(key.getId(), profileId);
+            this.playerStatistics.increment(profileId, key.getId());
         } catch (SQLException e) {
             LOG.warn("Could not increment statistic {} for profile {}", key.getName(), profileId);
         }

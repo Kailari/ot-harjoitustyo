@@ -2,18 +2,29 @@ package toilari.otlite.dao;
 
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import toilari.otlite.dao.database.Database;
-import toilari.otlite.game.profile.tracking.PlayerStatistic;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Lukee pelaajaprofiilien statistiikkadataa tietokannasta.
+ */
+@Slf4j
 public class PlayerStatisticDAO {
     @NonNull @Getter private final Database database;
 
+    /**
+     * Luo uuden DAOn statistiikkadatan lukemiseen. Luo tarvittavat tietokantataulut jos niitä ei vielä ole.
+     *
+     * @param database tietokanta jota luetaan
+     * @throws SQLException         jos tietokannan käsittelyssä tapahtuu virhe
+     * @throws NullPointerException jos tietokanta on <code>null</code>
+     */
     public PlayerStatisticDAO(@NonNull Database database) throws SQLException {
         this.database = database;
+
         try (val connection = getDatabase().getConnection();
              val statement = connection.createStatement()) {
             statement.execute(
@@ -21,28 +32,20 @@ public class PlayerStatisticDAO {
                     "profile_id INTEGER," +
                     "statistic_id INTEGER," +
                     "value DOUBLE," +
-                    "PRIMARY KEY (profile_id, statistic_id))");
+                    "PRIMARY KEY (profile_id, statistic_id)," +
+                    "FOREIGN KEY (profile_id) REFERENCES Profiles(id))");
         }
     }
 
-    private PlayerStatistic createInstance(ResultSet result) throws SQLException {
-        return new PlayerStatistic(
-            result.getInt("profile_id"),
-            result.getInt("statistic_id"),
-            result.getDouble("value"));
-    }
-
-    public void update(int profileId, int statisticId, double value) throws SQLException {
-        try (val connection = getDatabase().getConnection();
-             val statement = connection.prepareStatement(
-                 "UPDATE PlayerStatistics SET value = ? WHERE profile_id = ? AND statistic_id = ?")) {
-            statement.setDouble(1, value);
-            statement.setInt(2, profileId);
-            statement.setInt(3, statisticId);
-            statement.executeUpdate();
-        }
-    }
-
+    /**
+     * Lisää pelaajalle statistiikan tietokantatauluun, muttei korvaa tietoa jos taulussa on jo rivi tälle pelaajalle,
+     * tälle kyseiselle statistiikalle.
+     *
+     * @param profileId   pelaajaprofiili jonka tietoja päivitetään
+     * @param statisticId päivitettävän statistiikan ID
+     * @param value       arvo
+     * @throws SQLException jos tietokannan käsittelyssä tapahtuu virhe
+     */
     public void addButDoNotReplace(int profileId, int statisticId, double value) throws SQLException {
         try (val connection = getDatabase().getConnection();
              val statement = connection.prepareStatement(
@@ -57,6 +60,33 @@ public class PlayerStatisticDAO {
         }
     }
 
+    /**
+     * Päivittää pelaajan statistiikkoja.
+     *
+     * @param profileId   pelaajaprofiili jonka tietoja päivitetään
+     * @param statisticId päivitettävän statistiikan ID
+     * @param value       uusi arvo
+     * @throws SQLException jos tietokannan käsittelyssä tapahtuu virhe
+     */
+    public void update(int profileId, int statisticId, double value) throws SQLException {
+        try (val connection = getDatabase().getConnection();
+             val statement = connection.prepareStatement(
+                 "UPDATE PlayerStatistics SET value = ? WHERE profile_id = ? AND statistic_id = ?")) {
+            statement.setDouble(1, value);
+            statement.setInt(2, profileId);
+            statement.setInt(3, statisticId);
+            statement.executeUpdate();
+        }
+    }
+
+    /**
+     * Hakee pelaajan statistiikkatiedon.
+     *
+     * @param profileId   pelaajaprofiili jonka tietoja haetaan
+     * @param statisticId noudettavan statistiikan ID
+     * @return statistiikan nykyinen arvo
+     * @throws SQLException jos tietokannan käsittelyssä tapahtuu virhe
+     */
     public double get(int profileId, int statisticId) throws SQLException {
         try (val connection = getDatabase().getConnection();
              val statement = connection.prepareStatement(
@@ -66,6 +96,7 @@ public class PlayerStatisticDAO {
 
             val result = statement.executeQuery();
             if (!result.next()) {
+                LOG.error("No entry for statistic {} for profile {}", statisticId, profileId);
                 return 0.0;
             }
 
@@ -73,7 +104,14 @@ public class PlayerStatisticDAO {
         }
     }
 
-    public void increment(int statisticId, int profileId) throws SQLException {
+    /**
+     * Kasvattaa pelaajan statistiikkatietoa yhdellä.
+     *
+     * @param profileId   pelaajaprofiili jonka tietoja muokataan
+     * @param statisticId kasvatettavan statistiikan ID
+     * @throws SQLException jos tietokannan käsittelyssä tapahtuu virhe
+     */
+    public void increment(int profileId, int statisticId) throws SQLException {
         try (val connection = getDatabase().getConnection();
              val statement = connection.prepareStatement(
                  "UPDATE PlayerStatistics SET value = value + 1 WHERE profile_id = ? AND statistic_id = ?")) {
