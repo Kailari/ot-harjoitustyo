@@ -13,7 +13,7 @@ public class PlayerCharacter extends AbstractCharacter {
     }
 
     @Override
-    protected boolean move(int dx, int dy) {
+    public boolean move(int dx, int dy) {
         if (super.move(dx, dy)) {
             val game = getWorld().getObjectManager().getGameState().getGame();
             game.getStatistics().increment(Statistics.TILES_MOVED, game.getActiveProfile().getId());

@@ -41,12 +41,6 @@ public abstract class AbstractCharacter extends GameObject {
         return this.health < 0.000001f;
     }
 
-
-    @Override
-    public void update() {
-        super.update();
-    }
-
     /**
      * Päivitysrutiini jota kutsutaan vain hahmon omalla vuorolla.
      *
@@ -96,7 +90,7 @@ public abstract class AbstractCharacter extends GameObject {
      * @param dy siirtymä y-akselilla
      * @return <code>true</code> jos hahmo liikkui, muutoin <code>false</code>
      */
-    protected boolean move(int dx, int dy) {
+    public boolean move(int dx, int dy) {
         if (canMoveTo(dx, dy)) {
             // No need to bound-check, it is already performed in canMoveTo()
             int newX = getX() / Tile.SIZE_IN_WORLD + dx;
@@ -141,7 +135,7 @@ public abstract class AbstractCharacter extends GameObject {
         val tileIsWalkable = !tileAtTarget.isWall();
 
         if (tileIsWalkable) {
-            return !(objectAtTarget instanceof AbstractCharacter) || objectAtTarget.isRemoved();
+            return objectAtTarget == null || objectAtTarget.isRemoved();
         }
 
         return false;

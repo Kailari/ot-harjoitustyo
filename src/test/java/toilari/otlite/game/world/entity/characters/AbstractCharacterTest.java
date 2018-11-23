@@ -2,14 +2,14 @@ package toilari.otlite.game.world.entity.characters;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import toilari.otlite.game.world.level.Level;
-import toilari.otlite.game.world.level.NormalTile;
-import toilari.otlite.game.world.level.Tile;
-import toilari.otlite.game.world.level.TileMapping;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.AbstractCharacter;
 import toilari.otlite.game.world.entities.characters.CharacterAttributes;
+import toilari.otlite.game.world.level.Level;
+import toilari.otlite.game.world.level.NormalTile;
+import toilari.otlite.game.world.level.Tile;
+import toilari.otlite.game.world.level.TileMapping;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,6 +39,19 @@ class AbstractCharacterTest {
         val character = new TestCharacter();
         manager.spawn(character);
         assertEquals(10.0f, character.getHealth());
+    }
+
+    @Test
+    void characterIsDeadWhenHealthIsZero() {
+        val manager = new TurnObjectManager();
+        val world = new World(manager);
+        world.init();
+
+        val character = new TestCharacter();
+        manager.spawn(character);
+        character.setHealth(0.0f);
+
+        assertTrue(character.isDead());
     }
 
     @Test
@@ -91,9 +104,9 @@ class AbstractCharacterTest {
         world.init();
 
         val obstacle = new TestCharacter();
-        obstacle.setPos(2, 2);
+        obstacle.setPos(2 * Tile.SIZE_IN_WORLD, 2 * Tile.SIZE_IN_WORLD);
         val character = new TestCharacter();
-        character.setPos(3, 2);
+        character.setPos(3 * Tile.SIZE_IN_WORLD, 2 * Tile.SIZE_IN_WORLD);
         manager.spawn(character);
         manager.spawn(obstacle);
 
@@ -109,10 +122,147 @@ class AbstractCharacterTest {
         world.init();
 
         val character = new TestCharacter();
-        character.setPos(3, 2);
+        character.setPos(3 * Tile.SIZE_IN_WORLD, 2 * Tile.SIZE_IN_WORLD);
         manager.spawn(character);
 
         assertFalse(character.canMoveTo(0, 0));
+    }
+
+    @Test
+    void canMoveToReturnsTrueWhenCharacterCanMove() {
+        val manager = new TurnObjectManager();
+        val world = new World(manager);
+        world.changeLevel(createLevel());
+        world.init();
+
+        val character = new TestCharacter();
+        character.setPos(Tile.SIZE_IN_WORLD, 2 * Tile.SIZE_IN_WORLD);
+        manager.spawn(character);
+
+        assertTrue(character.canMoveTo(1, 0));
+    }
+
+    @Test
+    void canMoveToReturnsTrueWhenObjectInTargetTileIsRemoved() {
+        val manager = new TurnObjectManager();
+        val world = new World(manager);
+        world.changeLevel(createLevel());
+        world.init();
+
+        val character = new TestCharacter();
+        character.setPos(Tile.SIZE_IN_WORLD, 2 * Tile.SIZE_IN_WORLD);
+        manager.spawn(character);
+
+        val obstacle = new TestCharacter();
+        character.setPos(2 * Tile.SIZE_IN_WORLD, 2 * Tile.SIZE_IN_WORLD);
+        manager.spawn(obstacle);
+        obstacle.remove();
+
+        assertTrue(character.canMoveTo(1, 0));
+    }
+
+
+    @Test
+    void moveChangesPositionWhenMoveSucceeds() {
+        val manager = new TurnObjectManager();
+        val world = new World(manager);
+        world.changeLevel(createLevel());
+        world.init();
+
+        val character = new TestCharacter();
+        character.setPos(Tile.SIZE_IN_WORLD, 2 * Tile.SIZE_IN_WORLD);
+        manager.spawn(character);
+
+        character.move(1, 0);
+
+        assertEquals(2 * Tile.SIZE_IN_WORLD, character.getX());
+        assertEquals(2 * Tile.SIZE_IN_WORLD, character.getY());
+    }
+
+    @Test
+    void moveReturnsTrueWhenMoveSucceeds() {
+        val manager = new TurnObjectManager();
+        val world = new World(manager);
+        world.changeLevel(createLevel());
+        world.init();
+
+        val character = new TestCharacter();
+        character.setPos(Tile.SIZE_IN_WORLD, 2 * Tile.SIZE_IN_WORLD);
+        manager.spawn(character);
+
+        assertTrue(character.move(1, 0));
+    }
+
+    @Test
+    void moveDoesNotMoveCharacterInsideWall() {
+        val manager = new TurnObjectManager();
+        val world = new World(manager);
+        world.changeLevel(createLevel());
+        world.init();
+
+        val character = new TestCharacter();
+        character.setPos(Tile.SIZE_IN_WORLD, Tile.SIZE_IN_WORLD);
+        manager.spawn(character);
+
+        character.move(-1, 0);
+
+        assertEquals(Tile.SIZE_IN_WORLD, character.getX());
+        assertEquals(Tile.SIZE_IN_WORLD, character.getY());
+    }
+
+    @Test
+    void moveReturnsFalseWhenMovingFails() {
+        val manager = new TurnObjectManager();
+        val world = new World(manager);
+        world.changeLevel(createLevel());
+        world.init();
+
+        val character = new TestCharacter();
+        character.setPos(1, 1);
+        manager.spawn(character);
+
+        assertFalse(character.move(-1, 0));
+    }
+
+    @Test
+    void moveReturnsTrueWhenObjectInTargetTileIsRemoved() {
+        val manager = new TurnObjectManager();
+        val world = new World(manager);
+        world.changeLevel(createLevel());
+        world.init();
+
+        val character = new TestCharacter();
+        character.setPos(Tile.SIZE_IN_WORLD, 2 * Tile.SIZE_IN_WORLD);
+        manager.spawn(character);
+
+        val obstacle = new TestCharacter();
+        character.setPos(2 * Tile.SIZE_IN_WORLD, 2 * Tile.SIZE_IN_WORLD);
+        manager.spawn(obstacle);
+        obstacle.remove();
+
+        assertTrue(character.move(1, 0));
+    }
+
+    @Test
+    void moveChangesPositionWhenObjectInTargetTileIsRemoved() {
+        val manager = new TurnObjectManager();
+        val world = new World(manager);
+        world.changeLevel(createLevel());
+        world.init();
+
+        val character = new TestCharacter();
+        character.setPos(Tile.SIZE_IN_WORLD, 2 * Tile.SIZE_IN_WORLD);
+        manager.spawn(character);
+
+        val obstacle = new TestCharacter();
+        character.setPos(Tile.SIZE_IN_WORLD, Tile.SIZE_IN_WORLD);
+        manager.spawn(obstacle);
+        obstacle.remove();
+
+        character.move(0, -1);
+
+        assertEquals(Tile.SIZE_IN_WORLD, character.getX());
+        assertEquals(Tile.SIZE_IN_WORLD, character.getY());
     }
 
 
@@ -123,16 +273,19 @@ class AbstractCharacterTest {
             new NormalTile(false, true, 2, "hole"),
         });
 
+        val w = tileMappings.getIndex("wall");
+        val f = tileMappings.getIndex("floor");
+        val h = tileMappings.getIndex("hole");
+
         val indices = new byte[]{
-            1, 0, 0, 0, 0, 0, 0, 0,
-            0, 1, 1, 1, 1, 1, 1, 0,
-            0, 1, 1, 1, 0, 0, 1, 0,
-            0, 2, 2, 1, 1, 1, 0, 0,
-            0, 2, 1, 1, 1, 1, 1, 0,
-            0, 1, 1, 2, 2, 1, 1, 0,
-            0, 1, 1, 1, 1, 1, 1, 0,
-            0, 0, 0, 0, 0, 0, 0, 1,
-        };
+            f, w, w, w, w, w, w, w,
+            w, f, f, f, f, f, f, w,
+            w, f, f, f, w, w, f, w,
+            w, h, h, f, f, f, w, w,
+            w, h, f, f, f, f, f, w,
+            w, f, f, h, h, f, f, w,
+            w, f, f, f, f, f, f, w,
+            w, w, w, w, w, w, w, f};
 
         return new Level(8, 8, tileMappings, indices);
     }
