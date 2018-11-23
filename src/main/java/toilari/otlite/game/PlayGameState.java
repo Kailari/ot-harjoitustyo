@@ -4,10 +4,11 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import lombok.var;
 import toilari.otlite.dao.TileDAO;
-import toilari.otlite.game.world.Level;
-import toilari.otlite.game.world.Tile;
-import toilari.otlite.game.world.TileMapping;
+import toilari.otlite.game.world.level.Level;
+import toilari.otlite.game.world.level.Tile;
+import toilari.otlite.game.world.level.TileMapping;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.AnimalCharacter;
@@ -43,16 +44,28 @@ public class PlayGameState extends GameState {
         LOG.info("Initialization finished.");
 
         this.player = new PlayerCharacter();
-        player.giveControlTo(new PlayerController());
-        this.world.getObjectManager().spawn(player);
-        player.setX(5 * Tile.SIZE_IN_WORLD);
-        player.setY(3 * Tile.SIZE_IN_WORLD);
+        this.player.giveControlTo(new PlayerController());
+        this.world.getObjectManager().spawn(this.player);
+        this.player.setX(5 * Tile.SIZE_IN_WORLD);
+        this.player.setY(3 * Tile.SIZE_IN_WORLD);
 
-        val sheep = new AnimalCharacter();
+        var sheep = new AnimalCharacter();
         sheep.giveControlTo(new AnimalController());
         this.world.getObjectManager().spawn(sheep);
         sheep.setX(5 * Tile.SIZE_IN_WORLD);
         sheep.setY(1 * Tile.SIZE_IN_WORLD);
+
+        sheep = new AnimalCharacter();
+        sheep.giveControlTo(new AnimalController());
+        this.world.getObjectManager().spawn(sheep);
+        sheep.setX(8 * Tile.SIZE_IN_WORLD);
+        sheep.setY(1 * Tile.SIZE_IN_WORLD);
+
+        sheep = new AnimalCharacter();
+        sheep.giveControlTo(new AnimalController());
+        this.world.getObjectManager().spawn(sheep);
+        sheep.setX(11 * Tile.SIZE_IN_WORLD);
+        sheep.setY(2 * Tile.SIZE_IN_WORLD);
 
         return false;
     }
@@ -76,17 +89,17 @@ public class PlayGameState extends GameState {
         final byte f = tileMappings.getIndex("floor");
         final byte h = tileMappings.getIndex("hole");
         final byte[] indices = new byte[]{
-            w, w, w, w, w, w, w, w,
-            w, f, f, f, w, f, f, w,
-            w, f, f, f, w, f, w, w,
-            w, h, h, f, f, f, f, w,
-            w, h, h, f, f, f, f, w,
-            w, f, f, f, h, f, f, w,
-            w, f, f, f, f, f, f, w,
-            w, w, w, w, w, w, w, w,
+            w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w,
+            w, f, f, f, w, f, f, w, f, w, h, h, h, f, f, w,
+            w, f, f, f, w, f, w, w, w, f, h, f, h, f, f, w,
+            w, h, h, f, f, f, f, w, f, f, h, h, h, f, f, w,
+            w, h, h, f, f, f, f, f, f, f, f, f, f, f, f, w,
+            w, f, f, f, h, f, f, w, f, f, f, f, f, f, f, w,
+            w, f, f, f, f, f, f, h, f, f, f, f, f, f, f, w,
+            w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w,
         };
 
-        return new Level(8, 8, tileMappings, indices);
+        return new Level(16, 8, tileMappings, indices);
     }
 
     @Override

@@ -18,7 +18,6 @@ public class TurnObjectManager extends ObjectManager {
     @Getter private int totalTurn;
     @Getter private int remainingActionPoints;
     private int turn;
-    private AbstractCharacter activeCharacter;
 
     public void spendActionPoints(int amount) {
         if (this.remainingActionPoints < amount) {
@@ -32,15 +31,29 @@ public class TurnObjectManager extends ObjectManager {
      * Päättää nykyisen akiivisen hahmon vuoron.
      */
     public void nextTurn() {
-        this.totalTurn++;
-        this.turn++;
-        this.activeCharacter = findNextNotRemovedCharacter();
-        this.remainingActionPoints = this.activeCharacter.getAttributes().getActionPoints();
+        if (this.characters.isEmpty()) {
+            return;
+        }
 
-        val controller = this.activeCharacter.getController();
+        this.turn++;
+        validateTurnIndex();
+
+        this.totalTurn++;
+        this.remainingActionPoints = getActiveCharacter().getAttributes().getActionPoints();
+
+        val controller = getActiveCharacter().getController();
         if (controller != null) {
             controller.beginTurn();
         }
+    }
+
+    /**
+     * Hakee hahmon jonka vuoro on tällä hetkellä.
+     *
+     * @return hahmo jonka vuoro nyt on, <code>null</code> jos hahmoja ei ole
+     */
+    public AbstractCharacter getActiveCharacter() {
+        return this.characters.isEmpty() ? null : this.characters.get(this.turn);
     }
 
     /**
@@ -50,7 +63,7 @@ public class TurnObjectManager extends ObjectManager {
      * @return <code>true</code> jos on hahmon vuoro, muutoin <code>false</code>
      */
     public boolean isCharactersTurn(AbstractCharacter character) {
-        return this.characters.get(this.turn).equals(character);
+        return !this.characters.isEmpty() && getActiveCharacter().equals(character);
     }
 
     @Override
@@ -68,36 +81,21 @@ public class TurnObjectManager extends ObjectManager {
             return;
         }
 
-        if (this.activeCharacter == null) {
-            nextTurn();
-        }
-
-        this.activeCharacter.updateOnOwnTurn(this);
-    }
-
-    @NonNull
-    private AbstractCharacter findNextNotRemovedCharacter() {
-        while (this.turn >= this.characters.size()) {
-            this.turn -= this.characters.size();
-        }
-
-        while (this.characters.get(this.turn).isRemoved()) {
-            this.characters.remove(this.turn);
-
-            if (this.characters.size() == 0) {
-                throw new IllegalStateException("There should always be at least one character present when turn manager is enabled!");
-            } else if (this.turn == this.characters.size()) {
-                this.turn = 0;
-            }
-        }
-        return this.characters.get(this.turn);
+        getActiveCharacter().updateOnOwnTurn(this);
     }
 
     @Override
     public void spawn(@NonNull GameObject object) {
         super.spawn(object);
         if (object instanceof AbstractCharacter) {
-            this.characters.add((AbstractCharacter) object);
+            int index;
+            if (this.turn == 0) {
+                index = Math.max(0, this.characters.size() - 1);
+            } else {
+                index = this.turn - 1;
+                this.turn++;
+            }
+            this.characters.add(index, (AbstractCharacter) object);
         }
     }
 
@@ -105,11 +103,19 @@ public class TurnObjectManager extends ObjectManager {
     protected void remove(@NonNull GameObject object) {
         super.remove(object);
         if (object instanceof AbstractCharacter) {
-            if (object.equals(this.activeCharacter)) {
-                nextTurn();
-            }
-
             this.characters.remove(object);
+            validateTurnIndex();
+        }
+    }
+
+    private void validateTurnIndex() {
+        if (this.characters.isEmpty()) {
+            this.turn = 0;
+            return;
+        }
+
+        if (this.turn == this.characters.size()) {
+            this.turn = 0;
         }
     }
 }

@@ -1,4 +1,4 @@
-package toilari.otlite.game.world;
+package toilari.otlite.game.world.level;
 
 import lombok.AccessLevel;
 import lombok.Getter;

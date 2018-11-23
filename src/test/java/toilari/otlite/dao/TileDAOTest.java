@@ -6,7 +6,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import toilari.otlite.dao.util.FileHelper;
-import toilari.otlite.game.world.Tile;
+import toilari.otlite.game.world.level.NormalTile;
+import toilari.otlite.game.world.level.Tile;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,9 +31,9 @@ class TileDAOTest {
         {"invalid.json", "{this_is_not_a_field:wtf,\"wall\":true,symbol:,,:asd}"}
     };
     private static final Tile[] CORRECT_TILES = {
-        new Tile(true, '#', "wall"),
-        new Tile(false, '.', "floor"),
-        new Tile(false, ' ', "hole")
+        new NormalTile(true, false, 0, "wall"),
+        new NormalTile(false, false, 1, "floor"),
+        new NormalTile(false, true, 2, "hole")
     };
 
     private TileDAO dao;

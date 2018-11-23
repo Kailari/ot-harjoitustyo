@@ -3,7 +3,7 @@ package toilari.otlite.view.lwjgl.renderer;
 import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.dao.TextureDAO;
-import toilari.otlite.game.world.Tile;
+import toilari.otlite.game.world.level.Tile;
 import toilari.otlite.game.world.entities.characters.AbstractCharacter;
 import toilari.otlite.view.lwjgl.AnimatedSprite;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
@@ -77,10 +77,11 @@ public class PlayerRenderer extends CharacterRenderer {
         } else if (!canMove) {
             frame = 4;
         }
+        val isDangerous = (canMove && character.getWorld().getCurrentLevel().getTileAt(x + dx, y + dy).isDangerous());
 
-        float r = isEnemy ? 0.85f : 0.85f;
-        float g = isEnemy ? 0.2f : 0.95f;
-        float b = isEnemy ? 0.2f : 0.85f;
+        float r = isEnemy || isDangerous ? 0.85f : 0.85f;
+        float g = isEnemy || isDangerous ? 0.2f : 0.95f;
+        float b = isEnemy || isDangerous ? 0.2f : 0.85f;
         this.arrows.draw(camera, (x + dx) * Tile.SIZE_IN_WORLD + 2, (y + dy) * Tile.SIZE_IN_WORLD + 2, frame, r, g, b);
     }
 }

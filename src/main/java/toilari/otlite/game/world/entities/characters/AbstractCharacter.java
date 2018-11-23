@@ -2,7 +2,7 @@ package toilari.otlite.game.world.entities.characters;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import toilari.otlite.game.world.Tile;
+import toilari.otlite.game.world.level.Tile;
 import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.controller.CharacterController;
@@ -13,7 +13,7 @@ import toilari.otlite.game.world.entities.characters.controller.CharacterControl
 @Slf4j
 public abstract class AbstractCharacter extends GameObject {
     @Getter private CharacterController controller;
-    @Getter @Setter private float health = 10.0f;
+    @Getter @Setter private float health;
     @Getter @Setter private float attackDamage = 1.0f;
 
     @Getter private long lastAttackTime;
@@ -22,8 +22,14 @@ public abstract class AbstractCharacter extends GameObject {
 
     @Getter private final CharacterAttributes attributes;
 
-    protected AbstractCharacter(CharacterAttributes attributes) {
+    protected AbstractCharacter(@NonNull CharacterAttributes attributes) {
         this.attributes = attributes;
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        this.health = getAttributes().getMaxHealth();
     }
 
     /**
@@ -47,13 +53,17 @@ public abstract class AbstractCharacter extends GameObject {
             return false;
         }
 
-        int newX = Math.max(0, Math.min(getX() / Tile.SIZE_IN_WORLD + dx, getWorld().getCurrentLevel().getWidth() - 1));
-        int newY = Math.max(0, Math.min(getY() / Tile.SIZE_IN_WORLD + dy, getWorld().getCurrentLevel().getHeight() - 1));
+        int newX = getX() / Tile.SIZE_IN_WORLD + dx;
+        int newY = getY() / Tile.SIZE_IN_WORLD + dy;
+
+        if (newX < 0 || newX >= getWorld().getCurrentLevel().getWidth() || newY < 0 || newY >= getWorld().getCurrentLevel().getHeight()) {
+            return false;
+        }
 
         val tileAtTarget = getWorld().getCurrentLevel().getTileAt(newX, newY);
         val objectAtTarget = getWorld().getObjectAt(newX, newY);
 
-        val tileIsWalkable = !tileAtTarget.isWall() && !tileAtTarget.getId().equals("hole");
+        val tileIsWalkable = !tileAtTarget.isWall();
 
         if (tileIsWalkable) {
             return !(objectAtTarget instanceof AbstractCharacter) || objectAtTarget.isRemoved();
@@ -105,7 +115,7 @@ public abstract class AbstractCharacter extends GameObject {
         } else if (this.controller.wantsAttack() && turnManager.getRemainingActionPoints() >= getAttributes().getAttackCost()) {
             val targetX = getX() / Tile.SIZE_IN_WORLD + inputX;
             val targetY = getY() / Tile.SIZE_IN_WORLD + inputY;
-            if (attack(targetX, targetY)) {
+            if (canAttack(targetX, targetY)) {
                 turnManager.spendActionPoints(getAttributes().getAttackCost());
             }
         }
@@ -123,7 +133,11 @@ public abstract class AbstractCharacter extends GameObject {
             int newX = Math.max(0, Math.min(getX() / Tile.SIZE_IN_WORLD + dx, getWorld().getCurrentLevel().getWidth() - 1));
             int newY = Math.max(0, Math.min(getY() / Tile.SIZE_IN_WORLD + dy, getWorld().getCurrentLevel().getHeight() - 1));
 
+            int oldX = getX() / Tile.SIZE_IN_WORLD;
+            int oldY = getY() / Tile.SIZE_IN_WORLD;
             setPos(newX * Tile.SIZE_IN_WORLD, newY * Tile.SIZE_IN_WORLD);
+            getWorld().getCurrentLevel().getTileAt(oldX, oldY).onCharacterExit(oldX, oldY, this);
+            getWorld().getCurrentLevel().getTileAt(newX, newY).onCharacterEnter(newX, newY, this);
             return true;
         }
 
@@ -155,22 +169,13 @@ public abstract class AbstractCharacter extends GameObject {
     }
 
     /**
-     * Luovuttaa hallinnan parametrina annetulle ohjaimelle.
+     * Tarkistaa voiko hahmo hyökätä annettuun suuntaan.
      *
-     * @param controller ohjain jolle hallinta luovutetaan. <code>null</code> jos ohjain halutaan poistaa
+     * @param targetX kohteen x-koordinaatti
+     * @param targetY kohteen y-koordinaatti
+     * @return <code>true</code> jos hahmo voi hyökätä annettuihin koordinaatteihin
      */
-    public void giveControlTo(CharacterController controller) {
-        if (this.controller != null) {
-            this.controller.takeControl(null);
-        }
-
-        this.controller = controller;
-        if (controller != null && controller.getControlledCharacter() != this) {
-            controller.takeControl(this);
-        }
-    }
-
-    private boolean attack(int targetX, int targetY) {
+    public boolean canAttack(int targetX, int targetY) {
         int newX = Math.max(0, Math.min(targetX, getWorld().getCurrentLevel().getWidth() - 1));
         int newY = Math.max(0, Math.min(targetY, getWorld().getCurrentLevel().getHeight() - 1));
         if (newX == this.getX() && newY == this.getY()) {
@@ -184,5 +189,21 @@ public abstract class AbstractCharacter extends GameObject {
 
         attack((AbstractCharacter) objectAtTarget, this.getAttackDamage());
         return true;
+    }
+
+    /**
+     * Luovuttaa hallinnan parametrina annetulle ohjaimelle.
+     *
+     * @param controller ohjain jolle hallinta luovutetaan. <code>null</code> jos ohjain halutaan poistaa
+     */
+    public void giveControlTo(CharacterController controller) {
+        if (this.controller != null) {
+            this.controller.takeControl(null);
+        }
+
+        this.controller = controller;
+        if (controller != null && controller.getControlledCharacter() != this) {
+            controller.takeControl(this);
+        }
     }
 }

@@ -1,7 +1,8 @@
-package toilari.otlite.game.world;
+package toilari.otlite.game.world.level;
 
+import lombok.Getter;
 import lombok.NonNull;
-import lombok.Value;
+import lombok.RequiredArgsConstructor;
 import toilari.otlite.game.world.entities.characters.AbstractCharacter;
 
 import java.util.Objects;
@@ -10,23 +11,30 @@ import java.util.Objects;
  * Määrittelee pelimaailman ruudun tyypin. Kustakin tyypistä on vain yksi
  * immutaabeli instanssi.
  */
-@Value
-public class Tile {
+@RequiredArgsConstructor
+public abstract class Tile {
     public static final int SIZE_IN_WORLD = 8;
     /**
      * Määrittää kohdellaanko ruutua seinänä. (hahmot eivät voi liikkua ruutuun joka
      * on seinä)
      *
-     * @return <code>true</code> jos ruutu on seinä, muutoin <code>false</code>
+     * @return <code>true</code> jos ruutu on seinä, muulloin <code>false</code>
      */
-    boolean wall;
+    @Getter private final boolean wall;
+
+    /**
+     * Määrittää kohdellaanko ruutua vaarallisena. (tekoäly välttelee oletuksena vaarallisia ruutuja)
+     *
+     * @return <code>true</code> jos ruutu on vaarallinen, muulloin <code>false</code>
+     */
+    @Getter private final boolean dangerous;
 
     /**
      * Määrittää ruututyypin ulkonäön. Luku on indeksi tileset-tekstuuriin.
      *
      * @return ruudun indeksi tilesetissä
      */
-    int tileIndex;
+    @Getter private final int tileIndex;
 
     /**
      * Ruututyypin yksilöllinen tunniste. Mikäli kahdella ruututyypillä on sama tunniste, on kyseessä
@@ -34,7 +42,7 @@ public class Tile {
      *
      * @return ruututyypin tunniste
      */
-    @NonNull String id;
+    @Getter private final @NonNull String id;
 
     /**
      * Kutsutaan kun hahmo astuu ruutuun.

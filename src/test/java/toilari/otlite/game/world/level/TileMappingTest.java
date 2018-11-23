@@ -1,4 +1,4 @@
-package toilari.otlite.game.world;
+package toilari.otlite.game.world.level;
 
 import lombok.NonNull;
 import lombok.val;
@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import toilari.otlite.dao.ITileDAO;
+import toilari.otlite.game.world.level.Tile;
+import toilari.otlite.game.world.level.TileMapping;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -70,10 +72,10 @@ class TileMappingTest {
     }
 
     private static class TestTileDAO implements ITileDAO {
-        private static final Tile A = new Tile(true, 'a', "A");
-        private static final Tile B = new Tile(false, 'b', "B");
-        private static final Tile C = new Tile(false, 'c', "C");
-        private static final Tile D = new Tile(true, 'd', "D");
+        private static final Tile A = new NormalTile(true, false, 0, "A");
+        private static final Tile B = new NormalTile(false, false, 1, "B");
+        private static final Tile C = new NormalTile(false, false, 2, "C");
+        private static final Tile D = new NormalTile(true, false, 3, "D");
 
         @NonNull
         @Override

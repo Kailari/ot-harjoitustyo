@@ -5,6 +5,7 @@ import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.TurnObjectManager;
+import toilari.otlite.game.world.level.Level;
 
 /**
  * Pelimaailma.

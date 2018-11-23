@@ -1,5 +1,7 @@
 {
-    "id": "hole",
-    "wall": false,
-    "tileIndex": 0
+  "id": "hole",
+  "wall": false,
+  "dangerous": true,
+  "tileIndex": 0,
+  "type": "Kill"
 }

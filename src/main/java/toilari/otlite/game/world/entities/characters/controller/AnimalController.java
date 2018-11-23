@@ -2,6 +2,7 @@ package toilari.otlite.game.world.entities.characters.controller;
 
 import lombok.NonNull;
 import lombok.val;
+import toilari.otlite.game.world.level.Tile;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 
 import java.util.ArrayList;
@@ -51,20 +52,23 @@ public class AnimalController extends CharacterController {
 
     private void refreshMoveDirections() {
         val character = getControlledCharacter();
+        val level = character.getWorld().getCurrentLevel();
+        val x = character.getX() / Tile.SIZE_IN_WORLD;
+        val y = character.getY() / Tile.SIZE_IN_WORLD;
         this.availableDirections.clear();
-        if (character.canMoveTo(1, 0)) {
+        if (character.canMoveTo(1, 0) && !level.getTileAt(x + 1, y).isDangerous()) {
             this.availableDirections.add(RIGHT);
         }
 
-        if (character.canMoveTo(-1, 0)) {
+        if (character.canMoveTo(-1, 0) && !level.getTileAt(x - 1, y).isDangerous()) {
             this.availableDirections.add(LEFT);
         }
 
-        if (character.canMoveTo(0, 1)) {
+        if (character.canMoveTo(0, 1) && !level.getTileAt(x, y + 1).isDangerous()) {
             this.availableDirections.add(DOWN);
         }
 
-        if (character.canMoveTo(0, -1)) {
+        if (character.canMoveTo(0, -1) && !level.getTileAt(x, y - 1).isDangerous()) {
             this.availableDirections.add(UP);
         }
     }

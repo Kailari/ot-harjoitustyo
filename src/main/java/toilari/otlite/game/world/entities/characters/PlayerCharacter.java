@@ -6,7 +6,7 @@ import toilari.otlite.game.profile.tracking.Statistics;
 
 public class PlayerCharacter extends AbstractCharacter {
     public PlayerCharacter() {
-        super(new CharacterAttributes(1, 1, 2));
+        super(new CharacterAttributes(10.0f, 1, 1, 2));
     }
 
     @Override

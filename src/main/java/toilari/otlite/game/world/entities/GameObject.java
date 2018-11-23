@@ -4,6 +4,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import toilari.otlite.game.world.World;
+import toilari.otlite.game.world.entities.characters.AbstractCharacter;
+import toilari.otlite.game.world.level.Tile;
 
 import java.util.Objects;
 
@@ -21,6 +23,8 @@ public class GameObject {
 
     /**
      * Asettaa sekä x- että y-koordinaatit uusiin arvoihin.
+     * <b>HUOM: EI KUTSU {@link Tile#onCharacterEnter(int, int, AbstractCharacter)} tai
+     * {@link Tile#onCharacterExit(int, int, AbstractCharacter)} vaan ne täytyy kutsua manuaalisesti</b>
      *
      * @param newX uusi x-koordinaatti
      * @param newY uusi y-koordinaatti

@@ -1,7 +1,7 @@
 package toilari.otlite.dao;
 
 import lombok.NonNull;
-import toilari.otlite.game.world.Tile;
+import toilari.otlite.game.world.level.Tile;
 
 /**
  * Rajapinta ruututyyppien lataamiseen.

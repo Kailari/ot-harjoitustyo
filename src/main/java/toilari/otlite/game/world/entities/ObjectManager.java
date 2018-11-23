@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.game.PlayGameState;
-import toilari.otlite.game.world.Tile;
+import toilari.otlite.game.world.level.Tile;
 import toilari.otlite.game.world.World;
 
 import java.util.ArrayList;

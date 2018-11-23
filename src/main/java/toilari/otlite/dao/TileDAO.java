@@ -5,9 +5,13 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import toilari.otlite.dao.util.FileHelper;
 import toilari.otlite.dao.util.TextFileHelper;
-import toilari.otlite.game.world.Tile;
+import toilari.otlite.dao.util.TileAdapter;
+import toilari.otlite.game.world.level.KillTile;
+import toilari.otlite.game.world.level.NormalTile;
+import toilari.otlite.game.world.level.Tile;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -20,7 +24,16 @@ import java.util.Objects;
  */
 @Slf4j
 public class TileDAO implements ITileDAO {
-    @NonNull private final Gson gson = new GsonBuilder().create();
+    @NonNull private final Gson gson = new GsonBuilder()
+        .registerTypeAdapter(Tile.class, constructTileAdapter())
+        .create();
+
+    private static TileAdapter constructTileAdapter() {
+        val adapter = new TileAdapter();
+        adapter.registerTileType("normal", NormalTile.class);
+        adapter.registerTileType("kill", KillTile.class);
+        return adapter;
+    }
 
     @NonNull private final Path contentRoot;
     @NonNull private Tile[] tiles = new Tile[0];

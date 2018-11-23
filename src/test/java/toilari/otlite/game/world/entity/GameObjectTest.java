@@ -8,13 +8,15 @@ import toilari.otlite.game.world.entities.TurnObjectManager;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Testaa peliobjektien toimintaa.
- */
 class GameObjectTest {
-    /**
-     * Testaa että objekteja joilla on sama ID kohdellaan samana objektina.
-     */
+    @Test
+    void instanceOfAnotherClassIsNotEqual() {
+        val a = new TestGameObject(1337);
+        val b = new Object();
+
+        assertNotEquals(a, b);
+    }
+
     @Test
     void objectsWithEqualIDAreTreatedAsEqual() {
         val a = new TestGameObject(715517);
@@ -23,9 +25,6 @@ class GameObjectTest {
         assertEquals(a, b);
     }
 
-    /**
-     * Testaa että objekteja joilla on eri ID kohdellaan eri objekteina.
-     */
     @Test
     void objectsWithNotEqualIDAreNotEqual() {
         val a = new TestGameObject(1337);
@@ -34,9 +33,22 @@ class GameObjectTest {
         assertNotEquals(a, b);
     }
 
-    /**
-     * Testaa että objekteille annettu ID on yksilöllinen.
-     */
+    @Test
+    void equalObjectsHaveEqualHashCode() {
+        val a = new TestGameObject(715517);
+        val b = new TestGameObject(715517);
+
+        assertEquals(a.hashCode(), b.hashCode());
+    }
+
+    @Test
+    void notEqualObjectsDoNotHaveEqualHashCode() {
+        val a = new TestGameObject(715517);
+        val b = new TestGameObject(1337);
+
+        assertNotEquals(a.hashCode(), b.hashCode());
+    }
+
     @Test
     void objectIDsAreUnique() {
         val a = new GameObject();
@@ -48,9 +60,6 @@ class GameObjectTest {
         assertNotEquals(b.getId(), c.getId());
     }
 
-    /**
-     * Testaa että objekteille annettu ID on yksilöllinen.
-     */
     @Test
     void objectIDsAreUniqueLarge() {
         val objs = new GameObject[1000];

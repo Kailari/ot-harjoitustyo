@@ -12,18 +12,12 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ObjectManagerTest {
-    /**
-     * Testaa että .spawn() ennen .init() aiheuttaa virheen.
-     */
     @Test
-    void spawnThrowsBeforeInitIsCalled() {
+    void callingSpawnThrowsBeforeInitIsCalled() {
         val manager = new ObjectManager();
         assertThrows(IllegalStateException.class, () -> manager.spawn(new GameObject()));
     }
 
-    /**
-     * Testaa että <code>null</code> objektin spawnaaminen heittää virheen.
-     */
     @Test
     @SuppressWarnings("ConstantConditions")
     void tryingToSpawnNullObjectThrows() {
@@ -34,9 +28,17 @@ class ObjectManagerTest {
         assertThrows(NullPointerException.class, () -> world.getObjectManager().spawn(null));
     }
 
-    /**
-     * Testaa että maailman päivittäminen kutsuu oikein managerin päivityskutsua, joka vuorostaan päivittää objektit.
-     */
+    @Test
+    void spawningSetsWorldInstance() {
+        val manager = new TurnObjectManager();
+        val world = new World(manager);
+        manager.init(world);
+        val object = new TestGameObject();
+        world.getObjectManager().spawn(object);
+
+        assertEquals(world, object.getWorld());
+    }
+
     @Test
     void updatingWorldCallsObjectUpdate() {
         val manager = new TurnObjectManager();
@@ -50,9 +52,6 @@ class ObjectManagerTest {
         assertTrue(obj.called);
     }
 
-    /**
-     * Testaa että {@link ObjectManager#getObjects()} palauttaa kaikki pelimaailmaan lisätyt objektit.
-     */
     @Test
     void getObjectsContainsAllSpawnedObjects() {
         val manager = new TurnObjectManager();
@@ -69,10 +68,6 @@ class ObjectManagerTest {
         assertTrue(Arrays.stream(objects).allMatch(spawned::contains));
     }
 
-    /**
-     * Testaa että {@link ObjectManager#getObjects()} palauttaa {@link ObjectManager#update()}-kutsun jälkeen vain ne
-     * pelimaailman objektit joita ei edellisen päivitysrutiinin aikana ole merkitty poistetuiksi.
-     */
     @Test
     void getObjectsContainsAllButRemovedObjectsAfterNextUpdate() {
         val manager = new TurnObjectManager();

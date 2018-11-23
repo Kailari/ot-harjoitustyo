@@ -2,15 +2,13 @@ package toilari.otlite.view.lwjgl.renderer;
 
 import lombok.*;
 import toilari.otlite.dao.TextureDAO;
-import toilari.otlite.game.world.Tile;
+import toilari.otlite.game.world.level.Tile;
 import toilari.otlite.game.world.entities.characters.AbstractCharacter;
 import toilari.otlite.view.lwjgl.AnimatedSprite;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.TextRenderer;
 import toilari.otlite.view.lwjgl.Texture;
 import toilari.otlite.view.renderer.IRenderer;
-
-import static org.lwjgl.opengl.GL11.*;
 
 /**
  * Piirtäjä pelihahmojen piirtämiseen.

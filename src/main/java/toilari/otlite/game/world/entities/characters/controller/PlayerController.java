@@ -1,11 +1,10 @@
 package toilari.otlite.game.world.entities.characters.controller;
 
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.val;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
-import toilari.otlite.game.world.Tile;
+import toilari.otlite.game.world.level.Tile;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.AbstractCharacter;
 
@@ -60,6 +59,10 @@ public class PlayerController extends CharacterController {
 
     @Override
     public void update(@NonNull TurnObjectManager turnManager) {
+        if (getControlledCharacter() == null || getControlledCharacter().isRemoved()) {
+            turnManager.nextTurn();
+        }
+
         int rawInputX = getMoveInputXRaw();
         int rawInputY = getMoveInputYRaw();
         boolean rawInputEndTurn = getEndTurnInputRaw();
