@@ -98,6 +98,24 @@ public class PlayGameStateRenderer implements ILWJGLRenderer<PlayGameState> {
         }
 
         this.textRenderer.draw(camera, x + 2, y + 2 + 8, 0.65f, 0.25f, 0.25f, 2, apStr);
+
+        if (state.getPlayer().isDead()) {
+            val ded = "You are dead";
+            val len = ded.length();
+            val size = 8;
+
+            val w = (int) Math.ceil(camera.getViewportWidth() / camera.getPixelsPerUnit());
+            val h = (int) Math.ceil(camera.getViewportHeight() / camera.getPixelsPerUnit());
+
+            val dt = Math.min(1, (System.currentTimeMillis() - state.getPlayer().getDeathTime()) / 5000.0f);
+            this.textRenderer.draw(
+                camera,
+                x + (w / 2) - (len * size) / 2,
+                y + (h / 2) - (size / 2) + (int) Math.floor((h / 2f + size) - dt * (h / 2f + size)),
+                0.65f, 0.25f, 0.25f,
+                size,
+                ded);
+        }
     }
 
     @Override

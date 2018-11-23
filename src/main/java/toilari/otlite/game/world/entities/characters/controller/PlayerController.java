@@ -4,9 +4,8 @@ import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
-import toilari.otlite.game.world.level.Tile;
 import toilari.otlite.game.world.entities.TurnObjectManager;
-import toilari.otlite.game.world.entities.characters.AbstractCharacter;
+import toilari.otlite.game.world.level.Tile;
 
 public class PlayerController extends CharacterController {
     private boolean isHolding = false;
@@ -53,8 +52,7 @@ public class PlayerController extends CharacterController {
 
         val targetX = getControlledCharacter().getX() / Tile.SIZE_IN_WORLD + getMoveInputX();
         val targetY = getControlledCharacter().getY() / Tile.SIZE_IN_WORLD + getMoveInputY();
-        val objectAtTarget = getControlledCharacter().getWorld().getObjectAt(targetX, targetY);
-        return objectAtTarget instanceof AbstractCharacter && !objectAtTarget.equals(getControlledCharacter());
+        return getControlledCharacter().canAttack(targetX, targetY);
     }
 
     @Override
@@ -66,8 +64,6 @@ public class PlayerController extends CharacterController {
         int rawInputX = getMoveInputXRaw();
         int rawInputY = getMoveInputYRaw();
         boolean rawInputEndTurn = getEndTurnInputRaw();
-        val settings = turnManager.getGameState().getGame().getActiveProfile().getSettings();
-        val autoEndTurn = settings.isAutoEndTurn();
 
         if (this.isHolding) {
             this.inputX = 0;
@@ -76,6 +72,7 @@ public class PlayerController extends CharacterController {
             this.inputX = rawInputX;
             this.inputY = rawInputY;
 
+            val autoEndTurn = turnManager.getGameState().getGame().getActiveProfile().getSettings().isAutoEndTurn();
             if (rawInputEndTurn || (turnManager.getRemainingActionPoints() == 0 && autoEndTurn)) {
                 turnManager.nextTurn();
             }

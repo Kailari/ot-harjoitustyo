@@ -53,4 +53,8 @@ public class Level {
 
         return tile;
     }
+
+    public boolean isWithinBounds(int newX, int newY) {
+        return newX >= 0 && newX < this.width && newY >= 0 && newY < this.height;
+    }
 }

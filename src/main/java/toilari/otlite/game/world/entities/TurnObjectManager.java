@@ -103,7 +103,12 @@ public class TurnObjectManager extends ObjectManager {
     protected void remove(@NonNull GameObject object) {
         super.remove(object);
         if (object instanceof AbstractCharacter) {
-            this.characters.remove(object);
+
+            int index = this.characters.indexOf(object);
+            if (index < this.turn) {
+                this.turn--;
+            }
+            this.characters.remove(index);
             validateTurnIndex();
         }
     }

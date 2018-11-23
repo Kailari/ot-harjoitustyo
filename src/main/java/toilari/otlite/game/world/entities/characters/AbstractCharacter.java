@@ -2,10 +2,10 @@ package toilari.otlite.game.world.entities.characters;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import toilari.otlite.game.world.level.Tile;
 import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.controller.CharacterController;
+import toilari.otlite.game.world.level.Tile;
 
 /**
  * Hahmo pelimaailmassa.
@@ -41,36 +41,6 @@ public abstract class AbstractCharacter extends GameObject {
         return this.health < 0.000001f;
     }
 
-    /**
-     * Tarkistaa voiko hahmo liikkua annettuun suuntaan.
-     *
-     * @param dx siirtymä x-akselilla
-     * @param dy siirtymä y-akselilla
-     * @return <code>true</code> jos liikkuminen on mahdollista
-     */
-    public boolean canMoveTo(int dx, int dy) {
-        if (dx == 0 && dy == 0) {
-            return false;
-        }
-
-        int newX = getX() / Tile.SIZE_IN_WORLD + dx;
-        int newY = getY() / Tile.SIZE_IN_WORLD + dy;
-
-        if (newX < 0 || newX >= getWorld().getCurrentLevel().getWidth() || newY < 0 || newY >= getWorld().getCurrentLevel().getHeight()) {
-            return false;
-        }
-
-        val tileAtTarget = getWorld().getCurrentLevel().getTileAt(newX, newY);
-        val objectAtTarget = getWorld().getObjectAt(newX, newY);
-
-        val tileIsWalkable = !tileAtTarget.isWall();
-
-        if (tileIsWalkable) {
-            return !(objectAtTarget instanceof AbstractCharacter) || objectAtTarget.isRemoved();
-        }
-
-        return false;
-    }
 
     @Override
     public void update() {
@@ -113,9 +83,7 @@ public abstract class AbstractCharacter extends GameObject {
                 turnManager.spendActionPoints(getAttributes().getMoveCost());
             }
         } else if (this.controller.wantsAttack() && turnManager.getRemainingActionPoints() >= getAttributes().getAttackCost()) {
-            val targetX = getX() / Tile.SIZE_IN_WORLD + inputX;
-            val targetY = getY() / Tile.SIZE_IN_WORLD + inputY;
-            if (canAttack(targetX, targetY)) {
+            if (attack(inputX, inputY)) {
                 turnManager.spendActionPoints(getAttributes().getAttackCost());
             }
         }
@@ -130,18 +98,90 @@ public abstract class AbstractCharacter extends GameObject {
      */
     protected boolean move(int dx, int dy) {
         if (canMoveTo(dx, dy)) {
-            int newX = Math.max(0, Math.min(getX() / Tile.SIZE_IN_WORLD + dx, getWorld().getCurrentLevel().getWidth() - 1));
-            int newY = Math.max(0, Math.min(getY() / Tile.SIZE_IN_WORLD + dy, getWorld().getCurrentLevel().getHeight() - 1));
+            // No need to bound-check, it is already performed in canMoveTo()
+            int newX = getX() / Tile.SIZE_IN_WORLD + dx;
+            int newY = getY() / Tile.SIZE_IN_WORLD + dy;
 
             int oldX = getX() / Tile.SIZE_IN_WORLD;
             int oldY = getY() / Tile.SIZE_IN_WORLD;
+
             setPos(newX * Tile.SIZE_IN_WORLD, newY * Tile.SIZE_IN_WORLD);
+
             getWorld().getCurrentLevel().getTileAt(oldX, oldY).onCharacterExit(oldX, oldY, this);
             getWorld().getCurrentLevel().getTileAt(newX, newY).onCharacterEnter(newX, newY, this);
+
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * Tarkistaa voiko hahmo liikkua annettuun suuntaan.
+     *
+     * @param dx siirtymä x-akselilla
+     * @param dy siirtymä y-akselilla
+     * @return <code>true</code> jos liikkuminen on mahdollista
+     */
+    public boolean canMoveTo(int dx, int dy) {
+        if (dx == 0 && dy == 0) {
+            return false;
+        }
+
+        int newX = getX() / Tile.SIZE_IN_WORLD + dx;
+        int newY = getY() / Tile.SIZE_IN_WORLD + dy;
+
+        if (!getWorld().getCurrentLevel().isWithinBounds(newX, newY)) {
+            return false;
+        }
+
+        val tileAtTarget = getWorld().getCurrentLevel().getTileAt(newX, newY);
+        val objectAtTarget = getWorld().getObjectAt(newX, newY);
+
+        val tileIsWalkable = !tileAtTarget.isWall();
+
+        if (tileIsWalkable) {
+            return !(objectAtTarget instanceof AbstractCharacter) || objectAtTarget.isRemoved();
+        }
+
+        return false;
+    }
+
+    /**
+     * Yrittää hyökätä annettuun suuntaan.
+     *
+     * @param dx siirtymä x-akselilla
+     * @param dy siirtymä y-akselilla
+     * @return <code>true</code> jos hyökkäys tapahtui, muulloin <code>false</code>
+     */
+    protected boolean attack(int dx, int dy) {
+        if (dx == 0 && dy == 0) {
+            return false;
+        }
+
+        int newX = getX() / Tile.SIZE_IN_WORLD + dx;
+        int newY = getY() / Tile.SIZE_IN_WORLD + dy;
+
+        if (!canAttack(newX, newY)) {
+            return false;
+        }
+
+        attack((AbstractCharacter) getWorld().getObjectAt(newX, newY), this.getAttackDamage());
+        return true;
+    }
+
+    /**
+     * Testaa voiko hahmo hyökätä annettuun suuntaan. Hyökkääminen onnistuu jos koordinaateista löytyy toinen hahmo,
+     * jota ei vielä ole poistettu.
+     *
+     * @param x tarkistettava x-koordinaatti
+     * @param y tarkistettava y-koordinaatti
+     * @return <code>true</code> jos voidaan hyökätä, muulloin <code>false</code>
+     */
+    public boolean canAttack(int x, int y) {
+        val objectAtTarget = getWorld().getObjectAt(x, y);
+        return objectAtTarget instanceof AbstractCharacter && !objectAtTarget.isRemoved();
+
     }
 
     /**
@@ -150,7 +190,7 @@ public abstract class AbstractCharacter extends GameObject {
      * @param target kohde jota vahingoitetaan
      * @param amount vahingon määrä
      */
-    public void attack(@NonNull AbstractCharacter target, float amount) {
+    protected void attack(@NonNull AbstractCharacter target, float amount) {
         if (target.isRemoved()) {
             return;
         }
@@ -166,29 +206,6 @@ public abstract class AbstractCharacter extends GameObject {
             target.setHealth(0.0f);
             target.remove();
         }
-    }
-
-    /**
-     * Tarkistaa voiko hahmo hyökätä annettuun suuntaan.
-     *
-     * @param targetX kohteen x-koordinaatti
-     * @param targetY kohteen y-koordinaatti
-     * @return <code>true</code> jos hahmo voi hyökätä annettuihin koordinaatteihin
-     */
-    public boolean canAttack(int targetX, int targetY) {
-        int newX = Math.max(0, Math.min(targetX, getWorld().getCurrentLevel().getWidth() - 1));
-        int newY = Math.max(0, Math.min(targetY, getWorld().getCurrentLevel().getHeight() - 1));
-        if (newX == this.getX() && newY == this.getY()) {
-            return false;
-        }
-
-        val objectAtTarget = getWorld().getObjectAt(newX, newY);
-        if (!(objectAtTarget instanceof AbstractCharacter) || objectAtTarget.isRemoved()) {
-            return true;
-        }
-
-        attack((AbstractCharacter) objectAtTarget, this.getAttackDamage());
-        return true;
     }
 
     /**

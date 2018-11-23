@@ -10,6 +10,7 @@ public class KillTile extends Tile {
 
     @Override
     public void onCharacterEnter(int x, int y, @NonNull AbstractCharacter character) {
+        character.setHealth(0.0f);
         character.remove();
     }
 }
