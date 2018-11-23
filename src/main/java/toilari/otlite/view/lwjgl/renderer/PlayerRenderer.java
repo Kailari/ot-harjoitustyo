@@ -8,8 +8,10 @@ import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.characters.AbstractCharacter;
 import toilari.otlite.view.lwjgl.AnimatedSprite;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
+import toilari.otlite.view.lwjgl.Texture;
 
 public class PlayerRenderer extends CharacterRenderer {
+    private Texture icons;
     private AnimatedSprite arrows;
 
     /**
@@ -19,15 +21,22 @@ public class PlayerRenderer extends CharacterRenderer {
      * @throws NullPointerException jos dao on <code>null</code>
      */
     public PlayerRenderer(@NonNull TextureDAO textureDAO) {
-        super(textureDAO, "white_knight.png", 12);
+        super(textureDAO, "white_knight.png", 6);
     }
 
     @Override
     public boolean init() {
         super.init();
-        this.arrows = new AnimatedSprite(getTexture(), 12, 4, 4);
+        this.icons = getTextureDAO().load("icons.png");
+        this.arrows = new AnimatedSprite(this.icons, 6, 4, 4);
 
         return false;
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        this.icons.destroy();
     }
 
     @Override
@@ -55,10 +64,10 @@ public class PlayerRenderer extends CharacterRenderer {
         val y = character.getY() / Tile.SIZE_IN_WORLD;
         val world = character.getWorld();
 
-        drawArrow(camera, world, x, y, -1, 0, 7);
-        drawArrow(camera, world, x, y, 1, 0, 6);
-        drawArrow(camera, world, x, y, 0, -1, 8);
-        drawArrow(camera, world, x, y, 0, 1, 9);
+        drawArrow(camera, world, x, y, -1, 0, 1);
+        drawArrow(camera, world, x, y, 1, 0, 0);
+        drawArrow(camera, world, x, y, 0, -1, 2);
+        drawArrow(camera, world, x, y, 0, 1, 3);
     }
 
     private void drawArrow(@NonNull LWJGLCamera camera, @NonNull World world, int x, int y, int dx, int dy, int frame) {
@@ -67,9 +76,9 @@ public class PlayerRenderer extends CharacterRenderer {
 
         val isEnemy = world.getObjectAt(x + dx, y + dy) instanceof AbstractCharacter;
         if (!canMove) {
-            frame = 10;
+            frame = 4;
         } else if (isEnemy) {
-            frame = 11;
+            frame = 5;
         }
 
         float r = isEnemy ? 0.85f : 0.85f;

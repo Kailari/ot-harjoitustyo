@@ -41,10 +41,7 @@ public interface IRenderer<TRenderable, TCamera extends Camera> {
 
     /**
      * Vapauttaa allokoidut resurssit.
-     *
-     * @param renderable object objekti jolle varatut resurssit vapautetaan
-     * @throws NullPointerException jos objetki on <code>null</code>
      */
-    default void destroy(@NonNull TRenderable renderable) {
+    default void destroy() {
     }
 }

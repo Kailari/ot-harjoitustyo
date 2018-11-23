@@ -78,7 +78,7 @@ public class LevelRenderer implements ILWJGLRenderer<Level> {
     }
 
     @Override
-    public void destroy(@NonNull Level level) {
+    public void destroy() {
         this.tileset.destroy();
     }
 }

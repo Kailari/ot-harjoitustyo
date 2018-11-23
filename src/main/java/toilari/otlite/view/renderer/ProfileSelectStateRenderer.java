@@ -85,7 +85,7 @@ public class ProfileSelectStateRenderer implements IRenderer<ProfileSelectState,
     }
 
     @Override
-    public void destroy(@NonNull ProfileSelectState profileSelectState) {
+    public void destroy() {
         this.scanner.close();
     }
 }

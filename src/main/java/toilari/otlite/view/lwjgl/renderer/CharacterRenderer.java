@@ -19,7 +19,7 @@ public class CharacterRenderer implements IRenderer<AbstractCharacter, LWJGLCame
     private static final int DAMAGE_LABEL_DURATION = 1000;
     private static final int DAMAGE_LABEL_OFFSET = Tile.SIZE_IN_WORLD;
 
-    @NonNull private final TextureDAO textureDAO;
+    @Getter(AccessLevel.PROTECTED) @NonNull private final TextureDAO textureDAO;
 
     @NonNull private final String filename;
     private final int frames;
@@ -88,7 +88,7 @@ public class CharacterRenderer implements IRenderer<AbstractCharacter, LWJGLCame
     }
 
     @Override
-    public void destroy(@NonNull AbstractCharacter character) {
+    public void destroy() {
         this.texture.destroy();
         this.fontTexture.destroy();
     }

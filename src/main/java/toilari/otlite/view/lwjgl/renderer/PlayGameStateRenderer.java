@@ -99,8 +99,7 @@ public class PlayGameStateRenderer implements ILWJGLRenderer<PlayGameState> {
     }
 
     @Override
-    public void destroy(@NonNull PlayGameState playGameState) {
-        val world = playGameState.getWorld();
-        this.levelRenderer.destroy(world.getCurrentLevel());
+    public void destroy() {
+        this.levelRenderer.destroy();
     }
 }
