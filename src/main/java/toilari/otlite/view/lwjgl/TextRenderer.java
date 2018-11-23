@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TextRenderer {
-    private static final String AVAILABLE_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVXYZ.!?-+";
+    private static final String AVAILABLE_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVXYZ.!?-+/\\";
     private static final Map<Character, Integer> CHAR_TO_FRAME = new HashMap<>();
 
     static {
@@ -33,7 +33,7 @@ public class TextRenderer {
 
         this.font = new AnimatedSprite[maxFontSize - minFontSize + 1];
         for (int i = 0; i < this.font.length; i++, size++) {
-            this.font[i] = new AnimatedSprite(texture, 40, size, size);
+            this.font[i] = new AnimatedSprite(texture, 42, size, size);
         }
     }
 

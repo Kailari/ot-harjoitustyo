@@ -19,20 +19,31 @@ public class PlayerRenderer extends CharacterRenderer {
      * @throws NullPointerException jos dao on <code>null</code>
      */
     public PlayerRenderer(@NonNull TextureDAO textureDAO) {
-        super(textureDAO, "white_knight.png", 6);
+        super(textureDAO, "white_knight.png", 12);
     }
 
     @Override
     public boolean init() {
         super.init();
-        this.arrows = new AnimatedSprite(getTexture(), 6, 4, 4);
+        this.arrows = new AnimatedSprite(getTexture(), 12, 4, 4);
 
         return false;
     }
 
     @Override
+    public void draw(@NonNull LWJGLCamera camera, @NonNull AbstractCharacter character) {
+        if (character.getWorld().getObjectManager().getRemainingActionPoints() > 0) {
+            this.setCurrentFrame((int) (System.currentTimeMillis() % 1000 / 500));
+        } else {
+            this.setCurrentFrame(2 + (int) (System.currentTimeMillis() % (500 * 4) / 500));
+        }
+        super.draw(camera, character);
+    }
+
+    @Override
     public void postDraw(@NonNull LWJGLCamera camera, @NonNull AbstractCharacter character) {
-        if (character.getWorld().getObjectManager().isCharactersTurn(character)) {
+        if (character.getWorld().getObjectManager().isCharactersTurn(character)
+            && character.getWorld().getObjectManager().getRemainingActionPoints() > 0) {
             drawActionVisualizers(camera, character);
         }
 
@@ -44,21 +55,23 @@ public class PlayerRenderer extends CharacterRenderer {
         val y = character.getY() / Tile.SIZE_IN_WORLD;
         val world = character.getWorld();
 
-        drawArrow(camera, world, x, y, -1, 0, 3);
-        drawArrow(camera, world, x, y, 1, 0, 2);
-        drawArrow(camera, world, x, y, 0, -1, 4);
-        drawArrow(camera, world, x, y, 0, 1, 5);
+        drawArrow(camera, world, x, y, -1, 0, 7);
+        drawArrow(camera, world, x, y, 1, 0, 6);
+        drawArrow(camera, world, x, y, 0, -1, 8);
+        drawArrow(camera, world, x, y, 0, 1, 9);
     }
 
     private void drawArrow(@NonNull LWJGLCamera camera, @NonNull World world, int x, int y, int dx, int dy, int frame) {
         val tile = world.getCurrentLevel().getTileAt(x + dx, y + dy);
         val canMove = !tile.isWall() && !tile.getId().equals("hole");
 
+        val isEnemy = world.getObjectAt(x + dx, y + dy) instanceof AbstractCharacter;
         if (!canMove) {
-            return;
+            frame = 10;
+        } else if (isEnemy) {
+            frame = 11;
         }
 
-        val isEnemy = world.getObjectAt(x + dx, y + dy) instanceof AbstractCharacter;
         float r = isEnemy ? 0.85f : 0.85f;
         float g = isEnemy ? 0.2f : 0.95f;
         float b = isEnemy ? 0.2f : 0.85f;

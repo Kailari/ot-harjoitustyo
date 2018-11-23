@@ -31,7 +31,7 @@ class ProfileDAOTest {
     @Test
     void constructorCreatesRequiredTables() throws SQLException {
         val database = new Database(ROOT.resolve("does_not_exist.db").toString());
-        new ProfileDAO(database);
+        new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
 
         try (val connection = database.getConnection();
              val statement = connection.prepareStatement(
@@ -44,13 +44,13 @@ class ProfileDAOTest {
     @Test
     @SuppressWarnings("ConstantConditions")
     void constructorThrowsIfDatabaseIsNull() {
-        assertThrows(NullPointerException.class, () -> new ProfileDAO(null));
+        assertThrows(NullPointerException.class, () -> new ProfileDAO(null, new SettingsDAO(ROOT.toString())));
     }
 
     @Test
     void findAllFindsExistingEntries() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
-        val dao = new ProfileDAO(database);
+        val dao = new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
 
         val all = dao.findAll();
         assertTrue(all.stream().anyMatch(p -> p.getName().equals("Kissa")));
@@ -60,7 +60,7 @@ class ProfileDAOTest {
     @Test
     void findByNameFindsNonNullForExistingEntry() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
-        val dao = new ProfileDAO(database);
+        val dao = new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
 
         assertNotNull(dao.findByName("Kissa"));
     }
@@ -70,7 +70,7 @@ class ProfileDAOTest {
     void findByNameThrowsForNullName() {
         assertThrows(NullPointerException.class, () -> {
             val database = new Database(ROOT.resolve("test.db").toString());
-            val dao = new ProfileDAO(database);
+            val dao = new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
 
             assertNull(dao.findByName(null));
         });
@@ -79,7 +79,7 @@ class ProfileDAOTest {
     @Test
     void findByNameFindsNonNullForNonExistentEntry() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
-        val dao = new ProfileDAO(database);
+        val dao = new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
 
         assertNull(dao.findByName("EnOleOlemassa"));
     }
@@ -87,7 +87,7 @@ class ProfileDAOTest {
     @Test
     void findByIDFindsNonNullForExistingEntry() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
-        val dao = new ProfileDAO(database);
+        val dao = new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
 
         assertNotNull(dao.findById(1));
     }
@@ -95,7 +95,7 @@ class ProfileDAOTest {
     @Test
     void findByIDFindsNonNullForNonExistentEntry() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
-        val dao = new ProfileDAO(database);
+        val dao = new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
 
         assertNull(dao.findById(1337));
     }
@@ -103,7 +103,7 @@ class ProfileDAOTest {
     @Test
     void removeByIDRemovesOneWhenGivenValidID() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
-        val dao = new ProfileDAO(database);
+        val dao = new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
 
         val size = dao.findAll().size();
         dao.removeById(2);
@@ -113,7 +113,7 @@ class ProfileDAOTest {
     @Test
     void removeByIDDoesNotLeaveStatisticsBehind() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
-        val dao = new ProfileDAO(database);
+        val dao = new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
         dao.removeById(2);
 
         try (val connection = database.getConnection();
@@ -129,7 +129,7 @@ class ProfileDAOTest {
     @Test
     void removeByIDRemovesNothingWhenGivenInvalidID() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
-        val dao = new ProfileDAO(database);
+        val dao = new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
 
         val size = dao.findAll().size();
         dao.removeById(1337);
@@ -139,7 +139,7 @@ class ProfileDAOTest {
     @Test
     void removeByIDDoesNotTouchStatisticsWhenGivenInvalidID() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
-        val dao = new ProfileDAO(database);
+        val dao = new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
 
         int count;
         try (val connection = database.getConnection();
@@ -166,7 +166,7 @@ class ProfileDAOTest {
     @Test
     void profileWithNameExistsReturnsTrueForExistingName() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
-        val dao = new ProfileDAO(database);
+        val dao = new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
 
         assertTrue(dao.profileWithNameExists("Kissa"));
         assertTrue(dao.profileWithNameExists("Koira"));
@@ -175,7 +175,7 @@ class ProfileDAOTest {
     @Test
     void profileWithNameExistsReturnsFalseForInvalidName() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
-        val dao = new ProfileDAO(database);
+        val dao = new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
 
         assertFalse(dao.profileWithNameExists("IDoNotExist"));
     }
@@ -184,7 +184,7 @@ class ProfileDAOTest {
     @SuppressWarnings("ConstantConditions")
     void profileWithNameExistsThrowsWithNullName() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
-        val dao = new ProfileDAO(database);
+        val dao = new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
 
         assertThrows(NullPointerException.class, () -> dao.profileWithNameExists(null));
     }
@@ -192,7 +192,7 @@ class ProfileDAOTest {
     @Test
     void createNewThrowsWithDuplicateName() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
-        val dao = new ProfileDAO(database);
+        val dao = new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
 
         assertThrows(IllegalArgumentException.class, () -> dao.createNew("Kissa"));
     }
@@ -200,7 +200,7 @@ class ProfileDAOTest {
     @Test
     void createNewCreatesNonNUllWithValidName() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
-        val dao = new ProfileDAO(database);
+        val dao = new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
 
         assertNotNull(dao.createNew("NewProfile"));
     }
@@ -208,7 +208,7 @@ class ProfileDAOTest {
     @Test
     void createNewCreatesExpectedWithValidName() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
-        val dao = new ProfileDAO(database);
+        val dao = new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
 
         assertEquals("NewProfile", dao.createNew("NewProfile").getName());
     }
@@ -217,7 +217,7 @@ class ProfileDAOTest {
     @SuppressWarnings("ConstantConditions")
     void createNewThrowsWithNullName() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
-        val dao = new ProfileDAO(database);
+        val dao = new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
 
         assertThrows(NullPointerException.class, () -> dao.createNew(null));
     }

@@ -13,6 +13,7 @@ public class Profile {
      */
     @Getter private final int id;
     @Getter private final String name;
+    @Getter private final Settings settings;
     private boolean unfinishedSave;
 
     /**

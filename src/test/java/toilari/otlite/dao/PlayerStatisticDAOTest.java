@@ -61,7 +61,7 @@ class PlayerStatisticDAOTest {
     @Test
     void addButDoNotReplaceInsertsToEmptyTable() throws SQLException {
         val database = new Database(ROOT.resolve("does_not_exist.db").toString());
-        val profile = new ProfileDAO(database).createNew("TestProfile");
+        val profile = new ProfileDAO(database, new SettingsDAO(ROOT.toString())).createNew("TestProfile");
         val dao = new PlayerStatisticDAO(database);
 
         dao.addButDoNotReplace(profile.getId(), Statistics.KILLS.getId(), 10.0);
@@ -81,7 +81,7 @@ class PlayerStatisticDAOTest {
     @Test
     void addButDoNotReplaceDoesNotOverrideExistingData() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
-        val profile = new ProfileDAO(database).findByName("Kissa");
+        val profile = new ProfileDAO(database, new SettingsDAO(ROOT.toString())).findByName("Kissa");
         val dao = new PlayerStatisticDAO(database);
 
         dao.addButDoNotReplace(profile.getId(), Statistics.KILLS.getId(), 10.0);
@@ -101,7 +101,7 @@ class PlayerStatisticDAOTest {
     @Test
     void updateChangesValues() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
-        val profile = new ProfileDAO(database).findByName("Kissa");
+        val profile = new ProfileDAO(database, new SettingsDAO(ROOT.toString())).findByName("Kissa");
         val dao = new PlayerStatisticDAO(database);
 
         dao.update(profile.getId(), Statistics.KILLS.getId(), 9001.0);
@@ -120,7 +120,7 @@ class PlayerStatisticDAOTest {
     @Test
     void updateDoesNotTouchOtherProfilesValues() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
-        val profile = new ProfileDAO(database).findByName("Kissa");
+        val profile = new ProfileDAO(database, new SettingsDAO(ROOT.toString())).findByName("Kissa");
         val dao = new PlayerStatisticDAO(database);
 
         dao.update(profile.getId(), Statistics.KILLS.getId(), 9001.0);
@@ -138,7 +138,7 @@ class PlayerStatisticDAOTest {
     @Test
     void getReturnsZeroIfEntryDoesNotExist() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
-        val profile = new ProfileDAO(database).findByName("Kissa");
+        val profile = new ProfileDAO(database, new SettingsDAO(ROOT.toString())).findByName("Kissa");
         val dao = new PlayerStatisticDAO(database);
 
         assertEquals(0.0, dao.get(profile.getId(), 715517));
@@ -147,7 +147,7 @@ class PlayerStatisticDAOTest {
     @Test
     void getReturnsCorrectValueIfEntryExists() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
-        val profile = new ProfileDAO(database).findByName("Kissa");
+        val profile = new ProfileDAO(database, new SettingsDAO(ROOT.toString())).findByName("Kissa");
         val dao = new PlayerStatisticDAO(database);
 
         assertEquals(2.0, dao.get(profile.getId(), Statistics.KILLS.getId()));
@@ -156,7 +156,7 @@ class PlayerStatisticDAOTest {
     @Test
     void incrementIncreasesValueByExactlyOne() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
-        val profile = new ProfileDAO(database).findByName("Kissa");
+        val profile = new ProfileDAO(database, new SettingsDAO(ROOT.toString())).findByName("Kissa");
         val dao = new PlayerStatisticDAO(database);
 
         dao.increment(profile.getId(), Statistics.KILLS.getId());
@@ -175,7 +175,7 @@ class PlayerStatisticDAOTest {
     @Test
     void incrementDoesNotTouchOtherProfilesValues() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
-        val profile = new ProfileDAO(database).findByName("Kissa");
+        val profile = new ProfileDAO(database, new SettingsDAO(ROOT.toString())).findByName("Kissa");
         val dao = new PlayerStatisticDAO(database);
 
         dao.increment(profile.getId(), Statistics.KILLS.getId());

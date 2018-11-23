@@ -66,8 +66,8 @@ public class PlayGameStateRenderer implements ILWJGLRenderer<PlayGameState> {
     }
 
     @Override
-    public void postDraw(@NonNull LWJGLCamera camera, @NonNull PlayGameState playGameState) {
-        val world = playGameState.getWorld();
+    public void postDraw(@NonNull LWJGLCamera camera, @NonNull PlayGameState state) {
+        val world = state.getWorld();
         this.levelRenderer.postDraw(camera, world.getCurrentLevel());
 
         for (val object : world.getObjectManager().getObjects()) {
@@ -79,9 +79,23 @@ public class PlayGameStateRenderer implements ILWJGLRenderer<PlayGameState> {
 
         int x = Math.round(camera.getPosition().x);
         int y = Math.round(camera.getPosition().y);
-        val str = playGameState.getGame().getActiveProfile().getName()
-            + "\nTurn: " + playGameState.getPlayer().getController().getTurnsTaken();
+
+        val str = state.getGame().getActiveProfile().getName()
+            + "\nTurn: " + state.getPlayer().getController().getTurnsTaken();
         this.textRenderer.draw(camera, x + 2, y + 2, 0.25f, 0.65f, 0.25f, 4, str);
+
+        String apStr = "Waiting...";
+        if (world.getObjectManager().isCharactersTurn(state.getPlayer())) {
+            val remaining = world.getObjectManager().getRemainingActionPoints();
+            val total = state.getPlayer().getAttributes().getActionPoints();
+            if (remaining == 0) {
+                apStr = "Press <SPACE> to end turn";
+            } else {
+                apStr = "AP: " + String.valueOf(remaining) + "/" + String.valueOf(total);
+            }
+        }
+
+        this.textRenderer.draw(camera, x + 2, y + 2 + 8, 0.65f, 0.25f, 0.25f, 2, apStr);
     }
 
     @Override

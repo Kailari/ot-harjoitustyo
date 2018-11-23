@@ -1,6 +1,7 @@
 package toilari.otlite.game.world.entities.characters.controller;
 
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.val;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
@@ -62,6 +63,8 @@ public class PlayerController extends CharacterController {
         int rawInputX = getMoveInputXRaw();
         int rawInputY = getMoveInputYRaw();
         boolean rawInputEndTurn = getEndTurnInputRaw();
+        val settings = turnManager.getGameState().getGame().getActiveProfile().getSettings();
+        val autoEndTurn = settings.isAutoEndTurn();
 
         if (this.isHolding) {
             this.inputX = 0;
@@ -70,7 +73,7 @@ public class PlayerController extends CharacterController {
             this.inputX = rawInputX;
             this.inputY = rawInputY;
 
-            if (rawInputEndTurn || turnManager.getRemainingActionPoints() == 0) {
+            if (rawInputEndTurn || (turnManager.getRemainingActionPoints() == 0 && autoEndTurn)) {
                 turnManager.nextTurn();
             }
         }

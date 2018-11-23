@@ -1,6 +1,5 @@
 package toilari.otlite.dao;
 
-import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.dao.database.Database;
@@ -15,20 +14,23 @@ import java.util.List;
  * DAO jolla voidaan ladata pelaajaprofiilit levyltä.
  */
 public class ProfileDAO {
-    @NonNull @Getter private final Database database;
+    @NonNull private final Database database;
+    @NonNull private final SettingsDAO settingsDao;
 
     /**
      * Luo uuden profiili DAOn, joka lukee annettua tietokantaa.
      * Luo tarvittavat taulut automaattisesti.
      *
-     * @param database tietokanta josta pelaajaprofiilit löytyvät.
+     * @param database    tietokanta josta pelaajaprofiilit löytyvät.
+     * @param settingsDao dao jolla pelaajaprofiilien asetukset voidaan löytää
      * @throws SQLException         jos profiilitaulun lisäämisessä tietokantaan tapahtuu virhe
-     * @throws NullPointerException jos database on <code>null</code>
+     * @throws NullPointerException jos database tai dao on <code>null</code>
      */
-    public ProfileDAO(@NonNull Database database) throws SQLException {
+    public ProfileDAO(@NonNull Database database, @NonNull SettingsDAO settingsDao) throws SQLException {
         this.database = database;
+        this.settingsDao = settingsDao;
 
-        try (val connection = getDatabase().getConnection();
+        try (val connection = this.database.getConnection();
              val statement = connection.createStatement()) {
             statement.execute(
                 "CREATE TABLE IF NOT EXISTS Profiles (" +
@@ -89,7 +91,7 @@ public class ProfileDAO {
      * @throws SQLException jos tietokannan käsittelyssä tapahtuu virhe
      */
     public void removeById(int id) throws SQLException {
-        try (val connection = getDatabase().getConnection();
+        try (val connection = this.database.getConnection();
              val statement = connection.prepareStatement(
                  "DELETE FROM PlayerStatistics WHERE profile_id = ?")) {
             statement.setInt(1, id);
@@ -114,7 +116,7 @@ public class ProfileDAO {
      * @throws NullPointerException jos name on <code>null</code>
      */
     public Profile findByName(@NonNull String name) throws SQLException {
-        try (val connection = getDatabase().getConnection();
+        try (val connection = this.database.getConnection();
              val statement = connection.prepareStatement(
                  "SELECT * FROM Profiles WHERE name = ?")) {
             statement.setString(1, name);
@@ -142,7 +144,7 @@ public class ProfileDAO {
             throw new IllegalArgumentException("Profile with name \"" + name + "\" already exists");
         }
 
-        try (val connection = getDatabase().getConnection();
+        try (val connection = this.database.getConnection();
              val statement = connection.prepareStatement(
                  "INSERT INTO Profiles (name, hasSave) VALUES (?,FALSE)")) {
 
@@ -162,7 +164,7 @@ public class ProfileDAO {
      * @throws NullPointerException jos nimi on <code>null</code>
      */
     public boolean profileWithNameExists(@NonNull String name) throws SQLException {
-        try (val connection = getDatabase().getConnection();
+        try (val connection = this.database.getConnection();
              val statement = connection.prepareStatement(
                  "SELECT EXISTS(SELECT 1 FROM Profiles WHERE name = ? LIMIT 1)")) {
             statement.setString(1, name);
@@ -173,9 +175,13 @@ public class ProfileDAO {
     }
 
     private Profile createInstance(ResultSet result) throws SQLException {
+        val name = result.getString("name");
+        val settings = this.settingsDao.loadByName(name);
+
         return new Profile(
             result.getInt("id"),
-            result.getString("name"),
+            name,
+            settings,
             result.getBoolean("hasSave")
         );
     }

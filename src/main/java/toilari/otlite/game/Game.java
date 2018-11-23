@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import toilari.otlite.dao.ProfileDAO;
+import toilari.otlite.dao.SettingsDAO;
 import toilari.otlite.dao.database.Database;
 import toilari.otlite.game.profile.Profile;
 import toilari.otlite.game.profile.tracking.StatisticsManager;
@@ -20,6 +21,7 @@ public class Game {
     @Getter @Setter private Profile activeProfile;
     @Getter private StatisticsManager statistics;
     @Getter private ProfileDAO profileDao;
+    @Getter private SettingsDAO settingsDao;
 
     private boolean running = false;
 
@@ -92,8 +94,9 @@ public class Game {
      */
     public void init() {
         try {
+            this.settingsDao = new SettingsDAO("data/");
             val database = new Database(this.saveDataPath);
-            this.profileDao = new ProfileDAO(database);
+            this.profileDao = new ProfileDAO(database, settingsDao);
             this.statistics = new StatisticsManager(database);
         } catch (SQLException e) {
             LOG.error("Could not initialize statistics tracking. Shutting down.");
