@@ -19,19 +19,21 @@ import java.util.Map;
 public class PlayGameStateRenderer implements ILWJGLRenderer<PlayGameState> {
     // TODO: mapping class for these to get rid of unchecked code
     @NonNull private final Map<Class, IRenderer> rendererMappings = new HashMap<>();
-    private final TextureDAO textures;
+    private final TextureDAO textureDao;
 
     private LevelRenderer levelRenderer;
     private TextRenderer textRenderer;
 
     /**
      * Luo uuden pelitilapiirtäjän.
+     *
+     * @param textureDao dao jolla tekstuurit ladataan
      */
-    public PlayGameStateRenderer() {
-        this.textures = new TextureDAO("content/textures/");
-        this.levelRenderer = new LevelRenderer(this.textures, "tileset.png", 8, 8);
-        this.rendererMappings.put(PlayerCharacter.class, new PlayerRenderer(this.textures));
-        this.rendererMappings.put(AnimalCharacter.class, new CharacterRenderer(this.textures, "sheep.png", 1));
+    public PlayGameStateRenderer(@NonNull TextureDAO textureDao) {
+        this.textureDao = textureDao;
+        this.levelRenderer = new LevelRenderer(this.textureDao, "tileset.png", 8, 8);
+        this.rendererMappings.put(PlayerCharacter.class, new PlayerRenderer(this.textureDao));
+        this.rendererMappings.put(AnimalCharacter.class, new CharacterRenderer(this.textureDao, "sheep.png", 1));
     }
 
     @Override
@@ -42,7 +44,7 @@ public class PlayGameStateRenderer implements ILWJGLRenderer<PlayGameState> {
             }
         }
 
-        this.textRenderer = new TextRenderer(this.textures, 1, 8);
+        this.textRenderer = new TextRenderer(this.textureDao, 1, 8);
 
         return this.levelRenderer.init();
     }

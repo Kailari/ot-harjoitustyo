@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TextRenderer {
-    private static final String AVAILABLE_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVXYZ.!?-+/\\";
+    private static final String AVAILABLE_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ.!?-+/\\";
     private static final Map<Character, Integer> CHAR_TO_FRAME = new HashMap<>();
 
     static {

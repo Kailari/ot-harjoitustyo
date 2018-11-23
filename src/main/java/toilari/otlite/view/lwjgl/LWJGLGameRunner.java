@@ -57,6 +57,9 @@ public class LWJGLGameRunner extends AbstractGameRunner<LWJGLCamera> {
         GL.createCapabilities();
         glClearColor(0.125f, 0.1f, 0.25f, 1.0f);
 
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         return true;
     }
 

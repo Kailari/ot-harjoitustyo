@@ -17,7 +17,7 @@ public class LWJGLCamera extends toilari.otlite.view.Camera {
     @NonNull private float[] viewMatrixArr = new float[16];
     @Getter private int viewportWidth;
     @Getter private int viewportHeight;
-    private final float pixelsPerUnit;
+    @Getter private final float pixelsPerUnit;
 
     @Getter private float zoom = 1.0f;
     private boolean viewDirty;

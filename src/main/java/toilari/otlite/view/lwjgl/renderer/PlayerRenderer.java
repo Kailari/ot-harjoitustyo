@@ -4,7 +4,6 @@ import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.dao.TextureDAO;
 import toilari.otlite.game.world.Tile;
-import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.characters.AbstractCharacter;
 import toilari.otlite.view.lwjgl.AnimatedSprite;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
@@ -62,23 +61,21 @@ public class PlayerRenderer extends CharacterRenderer {
     private void drawActionVisualizers(@NonNull LWJGLCamera camera, @NonNull AbstractCharacter character) {
         val x = character.getX() / Tile.SIZE_IN_WORLD;
         val y = character.getY() / Tile.SIZE_IN_WORLD;
-        val world = character.getWorld();
 
-        drawArrow(camera, world, x, y, -1, 0, 1);
-        drawArrow(camera, world, x, y, 1, 0, 0);
-        drawArrow(camera, world, x, y, 0, -1, 2);
-        drawArrow(camera, world, x, y, 0, 1, 3);
+        drawArrow(camera, character, x, y, -1, 0, 1);
+        drawArrow(camera, character, x, y, 1, 0, 0);
+        drawArrow(camera, character, x, y, 0, -1, 2);
+        drawArrow(camera, character, x, y, 0, 1, 3);
     }
 
-    private void drawArrow(@NonNull LWJGLCamera camera, @NonNull World world, int x, int y, int dx, int dy, int frame) {
-        val tile = world.getCurrentLevel().getTileAt(x + dx, y + dy);
-        val canMove = !tile.isWall() && !tile.getId().equals("hole");
+    private void drawArrow(@NonNull LWJGLCamera camera, @NonNull AbstractCharacter character, int x, int y, int dx, int dy, int frame) {
+        val canMove = character.canMoveTo(dx, dy);
 
-        val isEnemy = world.getObjectAt(x + dx, y + dy) instanceof AbstractCharacter;
-        if (!canMove) {
-            frame = 4;
-        } else if (isEnemy) {
+        val isEnemy = character.getWorld().getObjectAt(x + dx, y + dy) instanceof AbstractCharacter;
+        if (isEnemy) {
             frame = 5;
+        } else if (!canMove) {
+            frame = 4;
         }
 
         float r = isEnemy ? 0.85f : 0.85f;

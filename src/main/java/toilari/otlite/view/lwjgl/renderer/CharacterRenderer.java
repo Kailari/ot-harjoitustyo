@@ -61,8 +61,6 @@ public class CharacterRenderer implements IRenderer<AbstractCharacter, LWJGLCame
 
     @Override
     public void draw(@NonNull LWJGLCamera camera, @NonNull AbstractCharacter character) {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         this.sprite.draw(camera, character.getX(), character.getY(), getCurrentFrame(), 1.0f, 1.0f, 1.0f);
     }
 

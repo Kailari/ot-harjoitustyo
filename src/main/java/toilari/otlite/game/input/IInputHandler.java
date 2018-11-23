@@ -19,4 +19,26 @@ public interface IInputHandler {
      * @return <code>true</code> jos näppäin on vapautettuna, muutoin <code>false</code>
      */
     boolean isKeyUp(Key key);
+
+    /**
+     * Hakee hiiren x-koordinaatin suhteessa ikkunan vasempaan yläkulmaan.
+     *
+     * @return hiiren x-koordinaatti
+     */
+    int mouseX();
+
+    /**
+     * Hakee hiiren y-koordinaatin suhteessa ikkunan vasempaan yläkulmaan.
+     *
+     * @return hiiren y-koordinaatti
+     */
+    int mouseY();
+
+    /**
+     * Kertoo onko hiiren nappi pohjassa.
+     *
+     * @param button minkä napin tila tarkistetaan
+     * @return <code>true</code> jos nappi on pohjassa
+     */
+    boolean isMouseDown(int button);
 }

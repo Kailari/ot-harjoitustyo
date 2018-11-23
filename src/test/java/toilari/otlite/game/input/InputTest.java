@@ -61,5 +61,20 @@ class InputTest {
                     return true;
             }
         }
+
+        @Override
+        public int mouseX() {
+            return 10;
+        }
+
+        @Override
+        public int mouseY() {
+            return 20;
+        }
+
+        @Override
+        public boolean isMouseDown(int button) {
+            return false;
+        }
     }
 }

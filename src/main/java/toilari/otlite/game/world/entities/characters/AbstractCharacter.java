@@ -26,8 +26,40 @@ public abstract class AbstractCharacter extends GameObject {
         this.attributes = attributes;
     }
 
+    /**
+     * Tarkistaa onvatko hahmon terveyspisteet nollassa.
+     *
+     * @return <code>true</code> jos hahmon terveyspisteet ovat likimain nolla
+     */
     public boolean isDead() {
         return this.health < 0.000001f;
+    }
+
+    /**
+     * Tarkistaa voiko hahmo liikkua annettuun suuntaan.
+     *
+     * @param dx siirtymä x-akselilla
+     * @param dy siirtymä y-akselilla
+     * @return <code>true</code> jos liikkuminen on mahdollista
+     */
+    public boolean canMoveTo(int dx, int dy) {
+        if (dx == 0 && dy == 0) {
+            return false;
+        }
+
+        int newX = Math.max(0, Math.min(getX() / Tile.SIZE_IN_WORLD + dx, getWorld().getCurrentLevel().getWidth() - 1));
+        int newY = Math.max(0, Math.min(getY() / Tile.SIZE_IN_WORLD + dy, getWorld().getCurrentLevel().getHeight() - 1));
+
+        val tileAtTarget = getWorld().getCurrentLevel().getTileAt(newX, newY);
+        val objectAtTarget = getWorld().getObjectAt(newX, newY);
+
+        val tileIsWalkable = !tileAtTarget.isWall() && !tileAtTarget.getId().equals("hole");
+
+        if (tileIsWalkable) {
+            return !(objectAtTarget instanceof AbstractCharacter) || objectAtTarget.isRemoved();
+        }
+
+        return false;
     }
 
     @Override
@@ -87,21 +119,9 @@ public abstract class AbstractCharacter extends GameObject {
      * @return <code>true</code> jos hahmo liikkui, muutoin <code>false</code>
      */
     protected boolean move(int dx, int dy) {
-        int newX = Math.max(0, Math.min(getX() / Tile.SIZE_IN_WORLD + dx, getWorld().getCurrentLevel().getWidth() - 1));
-        int newY = Math.max(0, Math.min(getY() / Tile.SIZE_IN_WORLD + dy, getWorld().getCurrentLevel().getHeight() - 1));
-        if (newX == this.getX() && newY == this.getY()) {
-            return false;
-        }
-
-        val tileAtTarget = getWorld().getCurrentLevel().getTileAt(newX, newY);
-        val objectAtTarget = getWorld().getObjectAt(newX, newY);
-
-        val tileIsWalkable = !tileAtTarget.isWall() && !tileAtTarget.getId().equals("hole");
-
-        if (tileIsWalkable) {
-            if (objectAtTarget instanceof AbstractCharacter && !objectAtTarget.isRemoved()) {
-                return false;
-            }
+        if (canMoveTo(dx, dy)) {
+            int newX = Math.max(0, Math.min(getX() / Tile.SIZE_IN_WORLD + dx, getWorld().getCurrentLevel().getWidth() - 1));
+            int newY = Math.max(0, Math.min(getY() / Tile.SIZE_IN_WORLD + dy, getWorld().getCurrentLevel().getHeight() - 1));
 
             setPos(newX * Tile.SIZE_IN_WORLD, newY * Tile.SIZE_IN_WORLD);
             return true;
