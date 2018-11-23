@@ -23,10 +23,27 @@ public class ProfileSelectStateRenderer implements ILWJGLRenderer<ProfileSelectS
     private static final int SMALL_BUTTON_SIZE = 2;
     private static final int SMALL_BUTTON_FONT_SIZE = 2;
 
+    private static final float SMALL_BUTTON_IDLE_R = 0.65f;
+    private static final float SMALL_BUTTON_IDLE_G = 0.65f;
+    private static final float SMALL_BUTTON_IDLE_B = 0.65f;
+
+    private static final float SMALL_BUTTON_HOVER_R = 1.0f;
+    private static final float SMALL_BUTTON_HOVER_G = 1.0f;
+    private static final float SMALL_BUTTON_HOVER_B = 1.0f;
+
+
     private static final int LARGE_BUTTON_WIDTH = 64;
     private static final int LARGE_BUTTON_HEIGHT = 8;
     private static final int LARGE_BUTTON_SIZE = 2;
     private static final int LARGE_BUTTON_FONT_SIZE = 2;
+
+    private static final float LARGE_BUTTON_IDLE_R = 0.65f;
+    private static final float LARGE_BUTTON_IDLE_G = 0.65f;
+    private static final float LARGE_BUTTON_IDLE_B = 0.65f;
+
+    private static final float LARGE_BUTTON_HOVER_R = 1.0f;
+    private static final float LARGE_BUTTON_HOVER_G = 1.0f;
+    private static final float LARGE_BUTTON_HOVER_B = 1.0f;
 
     private static final int BUTTON_MARGIN = 2;
     private static final int BUTTON_START_Y = 8;
@@ -39,8 +56,6 @@ public class ProfileSelectStateRenderer implements ILWJGLRenderer<ProfileSelectS
     private List<UIButton> profileButtons;
     private TextRenderer textRenderer;
 
-    private boolean mouseWasDown;
-
     public ProfileSelectStateRenderer(@NonNull TextureDAO textureDAO) {
         this.textureDAO = textureDAO;
     }
@@ -50,9 +65,18 @@ public class ProfileSelectStateRenderer implements ILWJGLRenderer<ProfileSelectS
         this.uiTexture = this.textureDAO.load("ui.png");
         this.textRenderer = new TextRenderer(this.textureDAO, 1, 16);
 
-        this.createProfileButton = new UIButton(SMALL_BUTTON_WIDTH, SMALL_BUTTON_HEIGHT, SMALL_BUTTON_SIZE, "Add", this.uiTexture,
+        this.createProfileButton = new UIButton(
+            SMALL_BUTTON_WIDTH, SMALL_BUTTON_HEIGHT, SMALL_BUTTON_SIZE,
+            "Add", this.uiTexture,
+            SMALL_BUTTON_IDLE_R, SMALL_BUTTON_IDLE_G, SMALL_BUTTON_IDLE_B,
+            SMALL_BUTTON_HOVER_R, SMALL_BUTTON_HOVER_G, SMALL_BUTTON_HOVER_B,
             () -> System.out.println("Create clicked!"));
-        this.removeProfileButton = new UIButton(SMALL_BUTTON_WIDTH, SMALL_BUTTON_HEIGHT, SMALL_BUTTON_SIZE, "Remove", this.uiTexture,
+
+        this.removeProfileButton = new UIButton(
+            SMALL_BUTTON_WIDTH, SMALL_BUTTON_HEIGHT, SMALL_BUTTON_SIZE,
+            "Remove", this.uiTexture,
+            SMALL_BUTTON_IDLE_R, SMALL_BUTTON_IDLE_G, SMALL_BUTTON_IDLE_B,
+            SMALL_BUTTON_HOVER_R, SMALL_BUTTON_HOVER_G, SMALL_BUTTON_HOVER_B,
             () -> System.out.println("Remove clicked!"));
 
         return false;
@@ -75,11 +99,11 @@ public class ProfileSelectStateRenderer implements ILWJGLRenderer<ProfileSelectS
         int i = 0;
         for (val button : this.profileButtons) {
             val y = BUTTON_START_Y + SMALL_BUTTON_HEIGHT + BUTTON_MARGIN + (i++ * (LARGE_BUTTON_HEIGHT + BUTTON_MARGIN));
-            button.draw(camera, this.textRenderer, LARGE_BUTTON_FONT_SIZE, x, y, 1.0f, 1.0f, 1.0f);
+            button.draw(camera, this.textRenderer, LARGE_BUTTON_FONT_SIZE, x, y);
         }
 
-        this.createProfileButton.draw(camera, this.textRenderer, SMALL_BUTTON_FONT_SIZE, x, BUTTON_START_Y, 1.0f, 1.0f, 1.0f);
-        this.removeProfileButton.draw(camera, this.textRenderer, SMALL_BUTTON_FONT_SIZE, x + SMALL_BUTTON_WIDTH + BUTTON_MARGIN, BUTTON_START_Y, 1.0f, 1.0f, 1.0f);
+        this.createProfileButton.draw(camera, this.textRenderer, SMALL_BUTTON_FONT_SIZE, x, BUTTON_START_Y);
+        this.removeProfileButton.draw(camera, this.textRenderer, SMALL_BUTTON_FONT_SIZE, x + SMALL_BUTTON_WIDTH + BUTTON_MARGIN, BUTTON_START_Y);
     }
 
     private boolean refreshProfileList(@NonNull ProfileSelectState state) {
@@ -93,9 +117,12 @@ public class ProfileSelectStateRenderer implements ILWJGLRenderer<ProfileSelectS
         }
 
         for (val profile : profiles) {
-            val button = new UIButton(LARGE_BUTTON_WIDTH, LARGE_BUTTON_HEIGHT, LARGE_BUTTON_SIZE, profile.getName(), this.uiTexture,
-                () -> state.getEventSystem().fire(new ProfileMenuEvent.Select(profile.getId())));
-            this.profileButtons.add(button);
+            this.profileButtons.add(new UIButton(
+                LARGE_BUTTON_WIDTH, LARGE_BUTTON_HEIGHT, LARGE_BUTTON_SIZE,
+                profile.getName(), this.uiTexture,
+                LARGE_BUTTON_IDLE_R, LARGE_BUTTON_IDLE_G, LARGE_BUTTON_IDLE_B,
+                LARGE_BUTTON_HOVER_R, LARGE_BUTTON_HOVER_G, LARGE_BUTTON_HOVER_B,
+                () -> state.getEventSystem().fire(new ProfileMenuEvent.Select(profile.getId()))));
         }
 
         return false;

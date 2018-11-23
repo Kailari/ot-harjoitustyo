@@ -25,13 +25,31 @@ public class UIButton {
 
     private final Action onClick;
 
-    private boolean mouseWasDown;
+    private final float hoverR;
+    private final float hoverG;
+    private final float hoverB;
 
-    public UIButton(int width, int height, int size, @NonNull String text, @NonNull Texture texture, Action onClick) {
+    private final float idleR;
+    private final float idleG;
+    private final float idleB;
+
+    private boolean mouseWasDown;
+    private float r, g, b;
+
+    public UIButton(int width, int height, int size, @NonNull String text, @NonNull Texture texture, float idleR, float idleG, float idleB, float hoverR, float hoverG, float hoverB, Action onClick) {
         this.width = width;
         this.height = height;
         this.size = size;
         this.text = text;
+
+        this.idleR = idleR;
+        this.idleG = idleG;
+        this.idleB = idleB;
+
+        this.hoverR = hoverR;
+        this.hoverG = hoverG;
+        this.hoverB = hoverB;
+
         this.onClick = onClick;
 
         this.topLeft = new Sprite(texture, 0, 0, 4, 4, size, size);
@@ -47,20 +65,20 @@ public class UIButton {
         this.botRight = new Sprite(texture, 4, 4, 4, 4, size, size);
     }
 
-    public void draw(@NonNull LWJGLCamera camera, @NonNull TextRenderer textRenderer, int fontSize, int x, int y, float r, float g, float b) {
+    public void draw(@NonNull LWJGLCamera camera, @NonNull TextRenderer textRenderer, int fontSize, int x, int y) {
         updateMouse(camera, x, y);
 
-        this.topLeft.draw(camera, x, y, r, g, b);
-        this.top.draw(camera, x + this.size, y, r, g, b);
-        this.topRight.draw(camera, x + this.width - this.size, y, r, g, b);
+        this.topLeft.draw(camera, x, y, this.r, this.g, this.b);
+        this.top.draw(camera, x + this.size, y, this.r, this.g, this.b);
+        this.topRight.draw(camera, x + this.width - this.size, y, this.r, this.g, this.b);
 
-        this.left.draw(camera, x, y + this.size, r, g, b);
-        this.fill.draw(camera, x + this.size, y + this.size, r, g, b);
-        this.right.draw(camera, x + this.width - this.size, y + this.size, r, g, b);
+        this.left.draw(camera, x, y + this.size, this.r, this.g, this.b);
+        this.fill.draw(camera, x + this.size, y + this.size, this.r, this.g, this.b);
+        this.right.draw(camera, x + this.width - this.size, y + this.size, this.r, this.g, this.b);
 
-        this.botLeft.draw(camera, x, y + this.height - this.size, r, g, b);
-        this.bot.draw(camera, x + this.size, y + this.height - this.size, r, g, b);
-        this.botRight.draw(camera, x + this.width - this.size, y + this.height - this.size, r, g, b);
+        this.botLeft.draw(camera, x, y + this.height - this.size, this.r, this.g, this.b);
+        this.bot.draw(camera, x + this.size, y + this.height - this.size, this.r, this.g, this.b);
+        this.botRight.draw(camera, x + this.width - this.size, y + this.height - this.size, this.r, this.g, this.b);
 
         val textX = x + Math.round(this.width / 2f - (this.text.length() / 2.0f) * fontSize);
         val textY = y + Math.round(this.height / 2f - fontSize / 2f);
@@ -68,13 +86,24 @@ public class UIButton {
     }
 
     private void updateMouse(@NonNull LWJGLCamera camera, int x, int y) {
+        val mouseX = (int) Math.floor(Input.getHandler().mouseX() / camera.getPixelsPerUnit());
+        val mouseY = (int) Math.floor(Input.getHandler().mouseY() / camera.getPixelsPerUnit());
+
+        if (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height) {
+            this.r = this.hoverR;
+            this.g = this.hoverG;
+            this.b = this.hoverB;
+        } else {
+            this.r = this.idleR;
+            this.g = this.idleG;
+            this.b = this.idleB;
+        }
+
         if (this.mouseWasDown) {
             this.mouseWasDown = Input.getHandler().isMouseDown(0);
         } else if (Input.getHandler().isMouseDown(0)) {
             this.mouseWasDown = true;
-            click(x, y,
-                (int) Math.floor(Input.getHandler().mouseX() / camera.getPixelsPerUnit()),
-                (int) Math.floor(Input.getHandler().mouseY() / camera.getPixelsPerUnit()));
+            click(x, y, mouseX, mouseY);
         }
     }
 
