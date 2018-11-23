@@ -22,9 +22,10 @@ class AbstractCharacterTest {
     @Test
     void characterIsAliveWhenSpawned() {
         val manager = new TurnObjectManager();
-        new World(manager);
-        val character = new TestCharacter();
+        val world = new World(manager);
+        world.init();
 
+        val character = new TestCharacter();
         manager.spawn(character);
         assertFalse(character.isDead());
     }
@@ -32,9 +33,10 @@ class AbstractCharacterTest {
     @Test
     void healthIsMaxedAtSpawn() {
         val manager = new TurnObjectManager();
-        new World(manager);
-        val character = new TestCharacter();
+        val world = new World(manager);
+        world.init();
 
+        val character = new TestCharacter();
         manager.spawn(character);
         assertEquals(10.0f, character.getHealth());
     }
@@ -44,6 +46,7 @@ class AbstractCharacterTest {
         val manager = new TurnObjectManager();
         val world = new World(manager);
         world.changeLevel(createLevel());
+        world.init();
 
         val characterAtTopLeft = new TestCharacter();
         characterAtTopLeft.setPos(0, 0);
@@ -64,6 +67,7 @@ class AbstractCharacterTest {
         val manager = new TurnObjectManager();
         val world = new World(manager);
         world.changeLevel(createLevel());
+        world.init();
 
         val characterAtTopLeft = new TestCharacter();
         characterAtTopLeft.setPos(0, 0);
@@ -84,6 +88,7 @@ class AbstractCharacterTest {
         val manager = new TurnObjectManager();
         val world = new World(manager);
         world.changeLevel(createLevel());
+        world.init();
 
         val obstacle = new TestCharacter();
         obstacle.setPos(2, 2);
@@ -101,6 +106,7 @@ class AbstractCharacterTest {
         val manager = new TurnObjectManager();
         val world = new World(manager);
         world.changeLevel(createLevel());
+        world.init();
 
         val character = new TestCharacter();
         character.setPos(3, 2);
