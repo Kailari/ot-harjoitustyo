@@ -79,7 +79,8 @@ public class PlayGameStateRenderer implements ILWJGLRenderer<PlayGameState> {
 
         int x = Math.round(camera.getPosition().x);
         int y = Math.round(camera.getPosition().y);
-        this.textRenderer.draw(camera, x + 2, y + 2, 0.25f, 0.65f, 0.25f, 4, playGameState.getGame().getActiveProfile().getName());
+        val str = playGameState.getGame().getActiveProfile().getName() + "\nTurn: " + playGameState.getWorld().getObjectManager().getTotalTurn();
+        this.textRenderer.draw(camera, x + 2, y + 2, 0.25f, 0.65f, 0.25f, 4, str);
     }
 
     @Override

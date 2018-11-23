@@ -1,7 +1,7 @@
 package toilari.otlite.game.world.entities;
 
+import lombok.Getter;
 import lombok.NonNull;
-import lombok.val;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.characters.AbstractCharacter;
 
@@ -13,21 +13,28 @@ import java.util.List;
  * vuoroja ja tarjoaa metodit vuoron päättämiseen yms.
  */
 public class TurnObjectManager extends ObjectManager {
-    private static final int TURN_CHANGE_DELAY = 100;
-
     private final List<AbstractCharacter> characters = new ArrayList<>();
+    @Getter private int totalTurn;
+    @Getter private int remainingActionPoints;
     private int turn;
-    private long turnChangeTimer;
+    private AbstractCharacter activeCharacter;
+
+    public void spendActionPoints(int amount) {
+        if (this.remainingActionPoints < amount) {
+            throw new IllegalStateException("Action points cannot go negative!");
+        }
+
+        this.remainingActionPoints -= amount;
+    }
 
     /**
      * Päättää nykyisen akiivisen hahmon vuoron.
      */
-    public void endTurn() {
-        this.turnChangeTimer = System.currentTimeMillis();
+    public void nextTurn() {
+        this.totalTurn++;
         this.turn++;
-        if (this.turn == this.characters.size()) {
-            this.turn = 0;
-        }
+        this.activeCharacter = findNextNotRemovedCharacter();
+        this.remainingActionPoints = this.activeCharacter.getActionPoints();
     }
 
     /**
@@ -55,12 +62,11 @@ public class TurnObjectManager extends ObjectManager {
             return;
         }
 
-        if (this.turnChangeTimer + TURN_CHANGE_DELAY > System.currentTimeMillis()) {
-            return;
+        if (this.activeCharacter == null) {
+            nextTurn();
         }
 
-        val character = findNextNotRemovedCharacter();
-        character.updateOnOwnTurn(this);
+        this.activeCharacter.updateOnOwnTurn(this);
     }
 
     @NonNull
@@ -93,6 +99,10 @@ public class TurnObjectManager extends ObjectManager {
     protected void remove(@NonNull GameObject object) {
         super.remove(object);
         if (object instanceof AbstractCharacter) {
+            if (object.equals(this.activeCharacter)) {
+                nextTurn();
+            }
+
             this.characters.remove(object);
         }
     }

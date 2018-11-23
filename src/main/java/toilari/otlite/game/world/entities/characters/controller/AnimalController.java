@@ -23,11 +23,26 @@ public class AnimalController extends CharacterController {
 
     @Override
     public void update(@NonNull TurnObjectManager turnManager) {
+        if (turnManager.getRemainingActionPoints() < getControlledCharacter().getMoveCost()) {
+            turnManager.nextTurn();
+            return;
+        }
+
         this.inputX = this.random.nextInt(3) - 1;
         this.inputY = this.random.nextInt(3) - 1;
 
         if (this.inputX == 0 && this.inputY == 0) {
-            turnManager.endTurn();
+            turnManager.nextTurn();
         }
+    }
+
+    @Override
+    public boolean wantsMove() {
+        return !wantsAttack() && (getMoveInputX() != 0 || getMoveInputY() != 0);
+    }
+
+    @Override
+    public boolean wantsAttack() {
+        return false;
     }
 }

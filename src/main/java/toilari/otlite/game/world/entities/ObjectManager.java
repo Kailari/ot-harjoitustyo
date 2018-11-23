@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.game.PlayGameState;
+import toilari.otlite.game.world.Tile;
 import toilari.otlite.game.world.World;
 
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ public class ObjectManager {
      */
     public GameObject getObjectAt(int x, int y) {
         return this.objects.stream()
-            .filter(o -> o.getX() == x && o.getY() == y)
+            .filter(o -> o.getX() / Tile.SIZE_IN_WORLD == x && o.getY() / Tile.SIZE_IN_WORLD == y)
             .findFirst()
             .orElse(null);
     }

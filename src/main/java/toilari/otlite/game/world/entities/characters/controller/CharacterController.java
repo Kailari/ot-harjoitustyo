@@ -56,4 +56,8 @@ public abstract class CharacterController {
      */
     public void update(@NonNull TurnObjectManager turnManager) {
     }
+
+    public abstract boolean wantsMove();
+
+    public abstract boolean wantsAttack();
 }
