@@ -41,6 +41,23 @@ public class PlayerController extends CharacterController {
     }
 
     @Override
+    public boolean wantsMove() {
+        return !wantsAttack() && (getMoveInputX() != 0 || getMoveInputY() != 0);
+    }
+
+    @Override
+    public boolean wantsAttack() {
+        if (getMoveInputX() == 0 && getMoveInputY() == 0) {
+            return false;
+        }
+
+        val targetX = getControlledCharacter().getX() / Tile.SIZE_IN_WORLD + getMoveInputX();
+        val targetY = getControlledCharacter().getY() / Tile.SIZE_IN_WORLD + getMoveInputY();
+        val objectAtTarget = getControlledCharacter().getWorld().getObjectAt(targetX, targetY);
+        return objectAtTarget instanceof AbstractCharacter && !objectAtTarget.equals(getControlledCharacter());
+    }
+
+    @Override
     public void update(@NonNull TurnObjectManager turnManager) {
         int rawInputX = getMoveInputXRaw();
         int rawInputY = getMoveInputYRaw();
@@ -58,27 +75,6 @@ public class PlayerController extends CharacterController {
             }
         }
 
-        if (rawInputX != 0 || rawInputY != 0 || rawInputEndTurn) {
-            this.isHolding = true;
-        } else {
-            this.isHolding = false;
-        }
-    }
-
-    @Override
-    public boolean wantsMove() {
-        return !wantsAttack() && (getMoveInputX() != 0 || getMoveInputY() != 0);
-    }
-
-    @Override
-    public boolean wantsAttack() {
-        if (getMoveInputX() == 0 && getMoveInputY() == 0) {
-            return false;
-        }
-
-        val targetX = getControlledCharacter().getX() / Tile.SIZE_IN_WORLD + getMoveInputX();
-        val targetY = getControlledCharacter().getY() / Tile.SIZE_IN_WORLD + getMoveInputY();
-        val objectAtTarget = getControlledCharacter().getWorld().getObjectAt(targetX, targetY);
-        return objectAtTarget instanceof AbstractCharacter && !objectAtTarget.equals(getControlledCharacter());
+        this.isHolding = rawInputX != 0 || rawInputY != 0 || rawInputEndTurn;
     }
 }

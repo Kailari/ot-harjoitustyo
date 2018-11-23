@@ -5,6 +5,10 @@ import lombok.val;
 import toilari.otlite.game.profile.tracking.Statistics;
 
 public class PlayerCharacter extends AbstractCharacter {
+    public PlayerCharacter() {
+        super(new CharacterAttributes(1, 1, 2));
+    }
+
     @Override
     protected boolean move(int dx, int dy) {
         if (super.move(dx, dy)) {

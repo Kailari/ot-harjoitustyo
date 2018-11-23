@@ -2,6 +2,7 @@ package toilari.otlite.game.world.entities;
 
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.val;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.characters.AbstractCharacter;
 
@@ -34,7 +35,12 @@ public class TurnObjectManager extends ObjectManager {
         this.totalTurn++;
         this.turn++;
         this.activeCharacter = findNextNotRemovedCharacter();
-        this.remainingActionPoints = this.activeCharacter.getActionPoints();
+        this.remainingActionPoints = this.activeCharacter.getAttributes().getActionPoints();
+
+        val controller = this.activeCharacter.getController();
+        if (controller != null) {
+            controller.beginTurn();
+        }
     }
 
     /**

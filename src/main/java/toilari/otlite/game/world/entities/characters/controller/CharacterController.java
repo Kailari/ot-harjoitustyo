@@ -11,6 +11,7 @@ import toilari.otlite.game.world.entities.characters.AbstractCharacter;
  */
 public abstract class CharacterController {
     @Getter private AbstractCharacter controlledCharacter;
+    @Getter private int turnsTaken;
 
     /**
      * Ottaa parametrina annetun hahmon hallintaan. Asettaa hahmon ohjainviitteen tarvittaessa
@@ -49,6 +50,20 @@ public abstract class CharacterController {
     public abstract int getMoveInputY();
 
     /**
+     * Kertoo haluaako hahmo liikkua.
+     *
+     * @return <code>true</code> jos hahmon halutaan liikkuvan
+     */
+    public abstract boolean wantsMove();
+
+    /**
+     * Kertoo haluaako hahmo hyökätä.
+     *
+     * @return <code>true</code> jos hahmon halutaan hyökkäävän
+     */
+    public abstract boolean wantsAttack();
+
+    /**
      * Päivittää ohjaimen. Mahdollistaa tekoälyohjaimien monimutkaisemman logiikan simuloinnin.
      *
      * @param turnManager aktiivinen vuoromanageri
@@ -57,7 +72,11 @@ public abstract class CharacterController {
     public void update(@NonNull TurnObjectManager turnManager) {
     }
 
-    public abstract boolean wantsMove();
+    /**
+     * Kutsutaan kun ohjatun hahmon vuoro alkaa.
+     */
+    public void beginTurn() {
+        this.turnsTaken++;
+    }
 
-    public abstract boolean wantsAttack();
 }

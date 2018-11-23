@@ -30,7 +30,7 @@ public class PlayGameStateRenderer implements ILWJGLRenderer<PlayGameState> {
     public PlayGameStateRenderer() {
         this.textures = new TextureDAO("content/textures/");
         this.levelRenderer = new LevelRenderer(this.textures, "tileset.png", 8, 8);
-        this.rendererMappings.put(PlayerCharacter.class, new CharacterRenderer(this.textures, "white_knight.png", 6));
+        this.rendererMappings.put(PlayerCharacter.class, new PlayerRenderer(this.textures));
         this.rendererMappings.put(AnimalCharacter.class, new CharacterRenderer(this.textures, "sheep.png", 1));
     }
 
@@ -79,7 +79,8 @@ public class PlayGameStateRenderer implements ILWJGLRenderer<PlayGameState> {
 
         int x = Math.round(camera.getPosition().x);
         int y = Math.round(camera.getPosition().y);
-        val str = playGameState.getGame().getActiveProfile().getName() + "\nTurn: " + playGameState.getWorld().getObjectManager().getTotalTurn();
+        val str = playGameState.getGame().getActiveProfile().getName()
+            + "\nTurn: " + playGameState.getPlayer().getController().getTurnsTaken();
         this.textRenderer.draw(camera, x + 2, y + 2, 0.25f, 0.65f, 0.25f, 4, str);
     }
 

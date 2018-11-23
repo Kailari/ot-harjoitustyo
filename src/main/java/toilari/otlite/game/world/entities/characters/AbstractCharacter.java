@@ -20,9 +20,15 @@ public abstract class AbstractCharacter extends GameObject {
     @Getter private float lastAttackAmount;
     @Getter private AbstractCharacter lastAttackTarget;
 
-    @Getter private int moveCost = 1;
-    @Getter private int attackCost = 1;
-    @Getter private int actionPoints = 1;
+    @Getter private final CharacterAttributes attributes;
+
+    protected AbstractCharacter(CharacterAttributes attributes) {
+        this.attributes = attributes;
+    }
+
+    public boolean isDead() {
+        return this.health < 0.000001f;
+    }
 
     @Override
     public void update() {
@@ -60,15 +66,15 @@ public abstract class AbstractCharacter extends GameObject {
             inputY = 0;
         }
 
-        if (this.controller.wantsMove() && turnManager.getRemainingActionPoints() >= this.moveCost) {
+        if (this.controller.wantsMove() && turnManager.getRemainingActionPoints() >= getAttributes().getMoveCost()) {
             if (move(inputX, inputY)) {
-                turnManager.spendActionPoints(this.moveCost);
+                turnManager.spendActionPoints(getAttributes().getMoveCost());
             }
-        } else if (this.controller.wantsAttack() && turnManager.getRemainingActionPoints() >= this.attackCost) {
+        } else if (this.controller.wantsAttack() && turnManager.getRemainingActionPoints() >= getAttributes().getAttackCost()) {
             val targetX = getX() / Tile.SIZE_IN_WORLD + inputX;
             val targetY = getY() / Tile.SIZE_IN_WORLD + inputY;
             if (attack(targetX, targetY)) {
-                turnManager.spendActionPoints(this.attackCost);
+                turnManager.spendActionPoints(getAttributes().getAttackCost());
             }
         }
     }
@@ -122,7 +128,7 @@ public abstract class AbstractCharacter extends GameObject {
         this.lastAttackAmount = current - target.getHealth();
         this.lastAttackTarget = target;
 
-        if (target.getHealth() < 0.0001f) {
+        if (target.isDead()) {
             target.setHealth(0.0f);
             target.remove();
         }

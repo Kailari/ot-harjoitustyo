@@ -1,11 +1,11 @@
 package toilari.otlite.view.lwjgl.renderer;
 
-import lombok.NonNull;
-import lombok.val;
+import lombok.*;
 import toilari.otlite.dao.TextureDAO;
+import toilari.otlite.game.world.Tile;
 import toilari.otlite.game.world.entities.characters.AbstractCharacter;
+import toilari.otlite.view.lwjgl.AnimatedSprite;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
-import toilari.otlite.view.lwjgl.Sprite;
 import toilari.otlite.view.lwjgl.TextRenderer;
 import toilari.otlite.view.lwjgl.Texture;
 import toilari.otlite.view.renderer.IRenderer;
@@ -17,16 +17,19 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class CharacterRenderer implements IRenderer<AbstractCharacter, LWJGLCamera> {
     private static final int DAMAGE_LABEL_DURATION = 1000;
+    private static final int DAMAGE_LABEL_OFFSET = Tile.SIZE_IN_WORLD;
 
     @NonNull private final TextureDAO textureDAO;
 
     @NonNull private final String filename;
     private final int frames;
 
-    private Texture texture;
-    private Texture fontTexture;
-    private Sprite sprite;
-    private TextRenderer textRenderer;
+    @Getter @Setter(AccessLevel.PROTECTED) private int currentFrame;
+
+    @Getter(AccessLevel.PROTECTED) private Texture texture;
+    @Getter(AccessLevel.PROTECTED) private Texture fontTexture;
+    @Getter(AccessLevel.PROTECTED) private AnimatedSprite sprite;
+    @Getter(AccessLevel.PROTECTED) private TextRenderer textRenderer;
 
     /**
      * Luo uuden piirtäjän. Olettaa että annetussa tekstuurissa on kaikki framet ladottuna vaakasuunnassa vierekkäin.
@@ -49,15 +52,7 @@ public class CharacterRenderer implements IRenderer<AbstractCharacter, LWJGLCame
         this.texture = this.textureDAO.load(this.filename);
         this.fontTexture = this.textureDAO.load("font.png");
 
-        this.sprite = new Sprite(
-            this.texture,
-            0,
-            0,
-            this.texture.getWidth() / this.frames,
-            this.texture.getHeight(),
-            8,
-            8
-        );
+        this.sprite = new AnimatedSprite(this.texture, this.frames, 8, 8);
 
         this.textRenderer = new TextRenderer(this.textureDAO, 1, 8);
 
@@ -68,15 +63,27 @@ public class CharacterRenderer implements IRenderer<AbstractCharacter, LWJGLCame
     public void draw(@NonNull LWJGLCamera camera, @NonNull AbstractCharacter character) {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        this.sprite.draw(camera, character.getX(), character.getY(), 1.0f, 1.0f, 1.0f);
+        this.sprite.draw(camera, character.getX(), character.getY(), getCurrentFrame(), 1.0f, 1.0f, 1.0f);
     }
 
     @Override
     public void postDraw(@NonNull LWJGLCamera camera, @NonNull AbstractCharacter character) {
         if (character.getLastAttackTarget() != null && System.currentTimeMillis() < character.getLastAttackTime() + DAMAGE_LABEL_DURATION) {
-            int damage = Math.round(character.getLastAttackAmount());
+            float dt = (System.currentTimeMillis() - character.getLastAttackTime()) / (float) DAMAGE_LABEL_DURATION;
+            int offsetY = 2 - Math.round(dt * DAMAGE_LABEL_OFFSET);
+            int offsetX = 2;
+
+            String msg;
             val target = character.getLastAttackTarget();
-            this.textRenderer.draw(camera, target.getX() + 2, target.getY() + 2, 0.8f, 0.1f, 0.1f, 4, String.valueOf(damage));
+            if (target.isDead()) {
+                msg = "rekt";
+                offsetX -= 6;
+            } else {
+                int damage = Math.round(character.getLastAttackAmount());
+                msg = String.valueOf(damage);
+            }
+
+            this.textRenderer.draw(camera, target.getX() + offsetX, target.getY() + offsetY, 0.8f, 0.1f, 0.1f, 4, msg);
         }
     }
 

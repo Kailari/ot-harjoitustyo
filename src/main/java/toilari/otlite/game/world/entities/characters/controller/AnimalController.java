@@ -23,7 +23,7 @@ public class AnimalController extends CharacterController {
 
     @Override
     public void update(@NonNull TurnObjectManager turnManager) {
-        if (turnManager.getRemainingActionPoints() < getControlledCharacter().getMoveCost()) {
+        if (turnManager.getRemainingActionPoints() < getControlledCharacter().getAttributes().getMoveCost()) {
             turnManager.nextTurn();
             return;
         }
