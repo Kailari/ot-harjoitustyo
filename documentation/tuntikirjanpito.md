@@ -21,3 +21,7 @@
 |18.11| 2h     | Testien kirjoittelua ja pientä bugifixailua ennen pelilogiikan aloittamista. |
 ||
 |19.11| 1h     | Lisää testejä, README siivous. |
+|20.11| 2h     | lisättiin vähän pelilogiikkaa, lisää koodin ja dokumentaation siivoilua. |
+|21.11| 3h     | toteutettiin viestinvälitysjärjestelmä mahdollistamaan käyttöliittymän toteutus. Paljon käyttöliittymän ja logiikan yhteenhitsaamiseen tarvittavaa taustatyötä. |
+|21.11| 1h     | toteutettiin profiilivalikon tekstipohjainen käyttöliittymä. |
+|22.11| 4h     | Testien lisäilyä/parantelua/siivoilua. Hieman pelilogiikkaa. |
