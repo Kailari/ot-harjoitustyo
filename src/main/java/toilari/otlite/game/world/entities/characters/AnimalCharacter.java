@@ -5,7 +5,7 @@ import lombok.NonNull;
 public class AnimalCharacter extends AbstractCharacter {
     public AnimalCharacter() {
         this(new CharacterAttributes(
-            1,
+            5,
             2,
             0,
             0.1f,

@@ -62,13 +62,33 @@ public abstract class EndTurnControllerComponent extends AbstractControllerCompo
     }
 
     public static class AI extends EndTurnControllerComponent {
+        private int updateTicksWaited;
+        private int prevRemaining = -1;
+
+        @Override
+        public void setWantsToEndTurn(boolean wantsToEndTurn) {
+            super.setWantsToEndTurn(wantsToEndTurn);
+            this.updateTicksWaited = 0;
+        }
+
         public AI(@NonNull AbstractCharacter character) {
             super(character);
         }
 
         @Override
         public void updateInput() {
-            setWantsToEndTurn(true);
+            val remaining = getCharacter().getWorld().getObjectManager().getRemainingActionPoints();
+            if (remaining == this.prevRemaining) {
+                this.updateTicksWaited++;
+            } else {
+                this.updateTicksWaited = 0;
+            }
+
+            this.prevRemaining = remaining;
+
+            if (this.updateTicksWaited > 1) {
+                setWantsToEndTurn(true);
+            }
         }
     }
 }

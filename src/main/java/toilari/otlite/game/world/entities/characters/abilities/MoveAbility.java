@@ -36,8 +36,9 @@ public class MoveAbility extends AbstractAbility<MoveAbility, MoveControllerComp
 
             getCharacter().getWorld().getTileAt(oldX, oldY).onCharacterExit(oldX, oldY, getCharacter());
             getCharacter().getWorld().getTileAt(newX, newY).onCharacterEnter(newX, newY, getCharacter());
+            return true;
         }
 
-        return true;
+        return false;
     }
 }

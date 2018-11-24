@@ -10,7 +10,7 @@ public class PlayerCharacter extends AbstractCharacter {
 
     public PlayerCharacter() {
         this(new CharacterAttributes(
-            2,
+            1,
             2,
             0,
             0.1f,
