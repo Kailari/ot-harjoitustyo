@@ -13,14 +13,6 @@ public interface IInputHandler {
     boolean isKeyDown(Key key);
 
     /**
-     * Onko näppäin vapautettuna.
-     *
-     * @param key näppäinkoodi jonka tila tarkistetaan
-     * @return <code>true</code> jos näppäin on vapautettuna, muutoin <code>false</code>
-     */
-    boolean isKeyUp(Key key);
-
-    /**
      * Hakee hiiren x-koordinaatin suhteessa ikkunan vasempaan yläkulmaan.
      *
      * @return hiiren x-koordinaatti

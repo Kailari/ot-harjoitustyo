@@ -109,7 +109,7 @@ public class ObjectManager {
         }
     }
 
-    protected void remove(@NonNull GameObject object) {
+    protected void remove(GameObject object) {
         this.objects.remove(object);
     }
 }

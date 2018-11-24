@@ -2,6 +2,7 @@ package toilari.otlite.game.world.entities.characters.controller;
 
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.val;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.AbstractCharacter;
 
@@ -19,8 +20,11 @@ public abstract class CharacterController {
      * @param character hahmo joka otetaan hallintaan. voi olla <code>null</code> jos ohjain halutaan poistaa
      */
     public void takeControl(AbstractCharacter character) {
+
         if (this.controlledCharacter != null) {
-            this.controlledCharacter.giveControlTo(null);
+            val old = this.controlledCharacter;
+            this.controlledCharacter = null;
+            old.giveControlTo(null);
         }
 
         this.controlledCharacter = character;
@@ -67,9 +71,13 @@ public abstract class CharacterController {
      * Päivittää ohjaimen. Mahdollistaa tekoälyohjaimien monimutkaisemman logiikan simuloinnin.
      *
      * @param turnManager aktiivinen vuoromanageri
-     * @throws NullPointerException jos vuoromanageri on <code>null</code>
+     * @throws IllegalStateException jos ohjaimella ei ole ohjattavaa hahmoa
+     * @throws NullPointerException  jos vuoromanageri on <code>null</code>
      */
     public void update(@NonNull TurnObjectManager turnManager) {
+        if (getControlledCharacter() == null) {
+            throw new IllegalStateException("Controller without a possessed character was updated!");
+        }
     }
 
     /**
@@ -78,5 +86,4 @@ public abstract class CharacterController {
     public void beginTurn() {
         this.turnsTaken++;
     }
-
 }

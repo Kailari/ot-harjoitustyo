@@ -19,9 +19,20 @@ public class TurnObjectManager extends ObjectManager {
     @Getter private int remainingActionPoints;
     private int turn;
 
+    /**
+     * Kuluttaa annetun määrän toimintopisteitä nykyiseltä vuorolta.
+     *
+     * @param amount kulutettujen toimintopisteiden määrä
+     * @throws IllegalArgumentException jos määrä on negatiivinen
+     * @throws IllegalArgumentException jos pisteiden määrä lopuksi olisi negatiivinen
+     */
     public void spendActionPoints(int amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Amount must be positive!");
+        }
+
         if (this.remainingActionPoints < amount) {
-            throw new IllegalStateException("Action points cannot go negative!");
+            throw new IllegalArgumentException("Action points cannot go negative!");
         }
 
         this.remainingActionPoints -= amount;
@@ -31,14 +42,14 @@ public class TurnObjectManager extends ObjectManager {
      * Päättää nykyisen akiivisen hahmon vuoron.
      */
     public void nextTurn() {
+        this.turn++;
+        this.totalTurn++;
+        validateTurnIndex();
+
         if (this.characters.isEmpty()) {
             return;
         }
 
-        this.turn++;
-        validateTurnIndex();
-
-        this.totalTurn++;
         this.remainingActionPoints = getActiveCharacter().getAttributes().getActionPoints();
 
         val controller = getActiveCharacter().getController();
@@ -88,28 +99,30 @@ public class TurnObjectManager extends ObjectManager {
     public void spawn(@NonNull GameObject object) {
         super.spawn(object);
         if (object instanceof AbstractCharacter) {
-            int index;
-            if (this.turn == 0) {
-                index = Math.max(0, this.characters.size() - 1);
-            } else {
-                index = this.turn - 1;
+            this.characters.add(this.turn, (AbstractCharacter) object);
+            if (this.characters.size() != 1) {
                 this.turn++;
+            } else {
+                this.turn = -1;
+                this.totalTurn = -1;
+                nextTurn();
             }
-            this.characters.add(index, (AbstractCharacter) object);
         }
     }
 
     @Override
-    protected void remove(@NonNull GameObject object) {
+    protected void remove(GameObject object) {
         super.remove(object);
         if (object instanceof AbstractCharacter) {
 
             int index = this.characters.indexOf(object);
-            if (index < this.turn) {
-                this.turn--;
+            if (index != -1) {
+                if (index < this.turn) {
+                    this.turn--;
+                }
+                this.characters.remove(index);
+                validateTurnIndex();
             }
-            this.characters.remove(index);
-            validateTurnIndex();
         }
     }
 
@@ -121,6 +134,11 @@ public class TurnObjectManager extends ObjectManager {
 
         if (this.turn == this.characters.size()) {
             this.turn = 0;
+        }
+
+        if (this.characters.get(this.turn).isRemoved()) {
+            this.characters.remove(this.turn);
+            validateTurnIndex();
         }
     }
 }

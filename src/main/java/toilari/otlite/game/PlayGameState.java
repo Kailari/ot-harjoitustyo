@@ -6,15 +6,15 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import lombok.var;
 import toilari.otlite.dao.TileDAO;
-import toilari.otlite.game.world.level.Level;
-import toilari.otlite.game.world.level.Tile;
-import toilari.otlite.game.world.level.TileMapping;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.AnimalCharacter;
 import toilari.otlite.game.world.entities.characters.PlayerCharacter;
 import toilari.otlite.game.world.entities.characters.controller.AnimalController;
 import toilari.otlite.game.world.entities.characters.controller.PlayerController;
+import toilari.otlite.game.world.level.Level;
+import toilari.otlite.game.world.level.Tile;
+import toilari.otlite.game.world.level.TileMapping;
 
 /**
  * Pelin varsinainen pelillinen osuus.
@@ -44,7 +44,7 @@ public class PlayGameState extends GameState {
         LOG.info("Initialization finished.");
 
         this.player = new PlayerCharacter();
-        this.player.giveControlTo(new PlayerController());
+        this.player.giveControlTo(new PlayerController(getGame().getActiveProfile().getSettings().isAutoEndTurn()));
         this.world.getObjectManager().spawn(this.player);
         this.player.setX(5 * Tile.SIZE_IN_WORLD);
         this.player.setY(3 * Tile.SIZE_IN_WORLD);

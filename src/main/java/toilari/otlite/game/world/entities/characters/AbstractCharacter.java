@@ -209,7 +209,9 @@ public abstract class AbstractCharacter extends GameObject {
      */
     public void giveControlTo(CharacterController controller) {
         if (this.controller != null) {
-            this.controller.takeControl(null);
+            val old = this.controller;
+            this.controller = null;
+            old.takeControl(null);
         }
 
         this.controller = controller;

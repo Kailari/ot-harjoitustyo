@@ -9,15 +9,12 @@ public class Input {
     private static IInputHandler instance;
 
     /**
-     * Alustaa syötekäsittelijän/avustajan. Voidaan kutsua vain kerran ohjelman suorituksen aikana.
+     * Alustaa syötekäsittelijän/avustajan. Tulisi kutsua vain kerran ohjelman suorituksen aikana.
      *
      * @param instance syötekäsittelijän instanssi jonka toiminnallisuutta apumetodit toimivat
      * @throws NullPointerException jos instanssi on <code>null</code>
      */
     public static void init(@NonNull IInputHandler instance) {
-        if (Input.instance != null) {
-            throw new IllegalStateException("InputHandler instance initialized multiple times!");
-        }
         Input.instance = instance;
     }
 

@@ -2,6 +2,7 @@ package toilari.otlite.game.world.entity;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import toilari.otlite.game.PlayGameState;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.ObjectManager;
@@ -29,7 +30,7 @@ class ObjectManagerTest {
     }
 
     @Test
-    void spawningSetsWorldInstance() {
+    void spawningSetsSpawnedObjectsWorldInstance() {
         val manager = new TurnObjectManager();
         val world = new World(manager);
         manager.init(world);
@@ -88,6 +89,39 @@ class ObjectManagerTest {
         for (int i = 0; i < 1000; i++) {
             assertEquals(i % 2 != 0, spawned.contains(objects[i]));
         }
+    }
+
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void spawnThrowsIfObjectIsNull() {
+        assertThrows(NullPointerException.class, () -> new ObjectManager().spawn(null));
+    }
+
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void initThrowsIfWorldIsNull() {
+        assertThrows(NullPointerException.class, () -> new ObjectManager().init(null));
+    }
+
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void setGameStateThrowsIfStateIsNull() {
+        assertThrows(NullPointerException.class, () -> new ObjectManager().setGameState(null));
+    }
+
+    @Test
+    void callingSetGameStateMultipleTimesThrows() {
+        val manager = new ObjectManager();
+        manager.setGameState(new PlayGameState(new TurnObjectManager()));
+        assertThrows(IllegalStateException.class, () -> manager.setGameState(new PlayGameState(new TurnObjectManager())));
+    }
+
+    @Test
+    void getGameStateReturnsCorrectStateAfterCallingSetGameState() {
+        val manager = new ObjectManager();
+        val state = new PlayGameState(new TurnObjectManager());
+        manager.setGameState(state);
+        assertEquals(state, manager.getGameState());
     }
 
     private static class TestGameObject extends GameObject {

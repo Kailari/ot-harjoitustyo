@@ -22,11 +22,6 @@ public class LWJGLInputHandler implements IInputHandler {
     }
 
     @Override
-    public boolean isKeyUp(Key key) {
-        return GLFW.glfwGetKey(this.windowHandle, key.getKeycode()) == GLFW.GLFW_RELEASE;
-    }
-
-    @Override
     public int mouseX() {
         GLFW.glfwGetCursorPos(this.windowHandle, MOUSE_X, MOUSE_Y);
         return (int) Math.floor(MOUSE_X[0]);
