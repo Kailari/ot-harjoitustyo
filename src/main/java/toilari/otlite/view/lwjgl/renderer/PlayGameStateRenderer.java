@@ -85,7 +85,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         String apStr = "Waiting...";
         if (world.getObjectManager().isCharactersTurn(state.getPlayer())) {
             val remaining = world.getObjectManager().getRemainingActionPoints();
-            val total = state.getPlayer().getAttributes().getActionPoints();
+            val total = state.getPlayer().getAttributes().getActionPoints(state.getPlayer().getLevels());
             if (remaining == 0) {
                 apStr = "Press <SPACE> to end turn";
             } else {

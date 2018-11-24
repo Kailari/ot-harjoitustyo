@@ -22,6 +22,26 @@ public class GameObject {
     @Getter @Setter private int y;
 
     /**
+     * Hakee objektin x-ruutukoordinaatin. Jokaisessa ruudussa on {@link Tile#SIZE_IN_WORLD} koordinaattiyksikköä,
+     * joten kartan käsittelyyn tarvitaan epätarkempia <i>ruutukoordinaatteja</i>
+     *
+     * @return objektin x-koordinaatti ruutuina
+     */
+    public int getTileX() {
+        return this.x / Tile.SIZE_IN_WORLD;
+    }
+
+    /**
+     * Hakee objektin y-ruutukoordinaatin. Jokaisessa ruudussa on {@link Tile#SIZE_IN_WORLD} koordinaattiyksikköä,
+     * joten kartan käsittelyyn tarvitaan epätarkempia <i>ruutukoordinaatteja</i>
+     *
+     * @return objektin y-koordinaatti ruutuina
+     */
+    public int getTileY() {
+        return this.y / Tile.SIZE_IN_WORLD;
+    }
+
+    /**
      * Asettaa sekä x- että y-koordinaatit uusiin arvoihin.
      * <b>HUOM: EI KUTSU {@link Tile#onCharacterEnter(int, int, AbstractCharacter)} tai
      * {@link Tile#onCharacterExit(int, int, AbstractCharacter)} vaan ne täytyy kutsua manuaalisesti</b>
@@ -32,6 +52,18 @@ public class GameObject {
     public void setPos(int newX, int newY) {
         setX(newX);
         setY(newY);
+    }
+
+    /**
+     * Asettaa sekä x- että y-koordinaatit uusiin arvoihin. Sijainti on ruutukoordinaatteina.
+     * <b>HUOM: EI KUTSU {@link Tile#onCharacterEnter(int, int, AbstractCharacter)} tai
+     * {@link Tile#onCharacterExit(int, int, AbstractCharacter)} vaan ne täytyy kutsua manuaalisesti</b>
+     *
+     * @param newX uusi x-ruutukoordinaatti
+     * @param newY uusi y-ruutukoordinaatti
+     */
+    public void setTilePos(int newX, int newY) {
+        setPos(newX * Tile.SIZE_IN_WORLD, newY * Tile.SIZE_IN_WORLD);
     }
 
     /**

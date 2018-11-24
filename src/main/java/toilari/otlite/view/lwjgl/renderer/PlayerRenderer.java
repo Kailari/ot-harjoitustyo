@@ -3,8 +3,8 @@ package toilari.otlite.view.lwjgl.renderer;
 import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.dao.TextureDAO;
-import toilari.otlite.game.world.level.Tile;
 import toilari.otlite.game.world.entities.characters.AbstractCharacter;
+import toilari.otlite.game.world.level.Tile;
 import toilari.otlite.view.lwjgl.AnimatedSprite;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.Texture;
@@ -69,7 +69,7 @@ public class PlayerRenderer extends CharacterRenderer {
     }
 
     private void drawArrow(@NonNull LWJGLCamera camera, @NonNull AbstractCharacter character, int x, int y, int dx, int dy, int frame) {
-        val canMove = character.canMoveTo(dx, dy);
+        val canMove = true; //character.canMoveTo(dx, dy);
 
         val isEnemy = character.getWorld().getObjectAt(x + dx, y + dy) instanceof AbstractCharacter;
         if (isEnemy) {

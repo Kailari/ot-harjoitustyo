@@ -42,6 +42,10 @@ public class TurnObjectManager extends ObjectManager {
      * Päättää nykyisen akiivisen hahmon vuoron.
      */
     public void nextTurn() {
+        if (getActiveCharacter() != null) {
+            getActiveCharacter().updateAfterTurn();
+        }
+
         this.turn++;
         this.totalTurn++;
         validateTurnIndex();
@@ -50,7 +54,7 @@ public class TurnObjectManager extends ObjectManager {
             return;
         }
 
-        this.remainingActionPoints = getActiveCharacter().getAttributes().getActionPoints();
+        this.remainingActionPoints = getActiveCharacter().getAttributes().getActionPoints(getActiveCharacter().getLevels());
 
         val controller = getActiveCharacter().getController();
         if (controller != null) {
@@ -64,7 +68,7 @@ public class TurnObjectManager extends ObjectManager {
      * @return hahmo jonka vuoro nyt on, <code>null</code> jos hahmoja ei ole
      */
     public AbstractCharacter getActiveCharacter() {
-        return this.characters.isEmpty() ? null : this.characters.get(this.turn);
+        return this.turn < 0 || this.characters.isEmpty() ? null : this.characters.get(this.turn);
     }
 
     /**
@@ -92,7 +96,7 @@ public class TurnObjectManager extends ObjectManager {
             return;
         }
 
-        getActiveCharacter().updateOnOwnTurn(this);
+        getActiveCharacter().updateOnTurn(this);
     }
 
     @Override

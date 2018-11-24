@@ -3,81 +3,29 @@ package toilari.otlite.game.world.entities.characters.controller;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
-import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.AbstractCharacter;
+import toilari.otlite.game.world.entities.characters.abilities.IAbility;
+import toilari.otlite.game.world.entities.characters.abilities.components.IControllerComponent;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Ohjaa hahmoja pelimaailmassa. Voi ottaa syötteen esim. pelaajalta tai "tekoälyltä".
  * Yksi ohjain voi ohjata kerrallaan vain yhtä hahmoa.
  */
-public abstract class CharacterController {
-    @Getter private AbstractCharacter controlledCharacter;
+public class CharacterController {
+    @NonNull @Getter private final AbstractCharacter controlledCharacter;
     @Getter private int turnsTaken;
 
-    /**
-     * Ottaa parametrina annetun hahmon hallintaan. Asettaa hahmon ohjainviitteen tarvittaessa
-     *
-     * @param character hahmo joka otetaan hallintaan. voi olla <code>null</code> jos ohjain halutaan poistaa
-     */
-    public void takeControl(AbstractCharacter character) {
+    private final Map<Class<? extends IAbility>, IControllerComponent> components = new HashMap<>();
 
-        if (this.controlledCharacter != null) {
-            val old = this.controlledCharacter;
-            this.controlledCharacter = null;
-            old.giveControlTo(null);
-        }
-
-        this.controlledCharacter = character;
-        if (character != null && character.getController() != this) {
-            character.giveControlTo(this);
-        }
+    public CharacterController(@NonNull AbstractCharacter controlledCharacter) {
+        this.controlledCharacter = controlledCharacter;
     }
 
-    /**
-     * Hakee vaakasuutaisen liikkeen syötteen. Negatiivinen arvo tarkoittaa että hahmo pyrkii
-     * liikkumaan seuraavalla vuorollaan vasemmalle, positiivinen arvo oikealle. Arvo nolla
-     * tarkoittaa että hahmo pysyy vuorolla vaakasuunnassa paikallaan.
-     *
-     * @return <code>-1</code> jos ollaan liikkumassa vasemmalle, <code>1</code> oikealle ja
-     * <code>0</code> jos pysytään paikallaan
-     */
-    public abstract int getMoveInputX();
-
-    /**
-     * Hakee pystysuuntaisen liikkeen syötteen. Negatiivinen arvo tarkoittaa että hahmo pyrkii
-     * liikkumaan seuraavalla vuorollaan ylös, positiivinen arvo alas. Arvo nolla tarkoittaa että
-     * hahmo pysyy vuorolla pystysuunnassa paikallaan.
-     *
-     * @return <code>-1</code> jos ollaan liikkumassa ylös, <code>1</code> alas ja <code>0</code>
-     * jos pysytään paikallaan
-     */
-    public abstract int getMoveInputY();
-
-    /**
-     * Kertoo haluaako hahmo liikkua.
-     *
-     * @return <code>true</code> jos hahmon halutaan liikkuvan
-     */
-    public abstract boolean wantsMove();
-
-    /**
-     * Kertoo haluaako hahmo hyökätä.
-     *
-     * @return <code>true</code> jos hahmon halutaan hyökkäävän
-     */
-    public abstract boolean wantsAttack();
-
-    /**
-     * Päivittää ohjaimen. Mahdollistaa tekoälyohjaimien monimutkaisemman logiikan simuloinnin.
-     *
-     * @param turnManager aktiivinen vuoromanageri
-     * @throws IllegalStateException jos ohjaimella ei ole ohjattavaa hahmoa
-     * @throws NullPointerException  jos vuoromanageri on <code>null</code>
-     */
-    public void update(@NonNull TurnObjectManager turnManager) {
-        if (getControlledCharacter() == null) {
-            throw new IllegalStateException("Controller without a possessed character was updated!");
-        }
+    public <A extends IAbility<A, C>, C extends IControllerComponent<A>> void registerComponent(A ability, IControllerComponent<A> component) {
+        this.components.put(ability.getClass(), component);
     }
 
     /**
@@ -85,5 +33,28 @@ public abstract class CharacterController {
      */
     public void beginTurn() {
         this.turnsTaken++;
+    }
+
+    /**
+     * Hakee ohjainkomponentin toiminnon suorittamista varten.
+     *
+     * @param ability toiminto jonka ohjainkomponentti haetaan
+     * @param <A>     toiminnon tyyppi
+     * @param <C>     jotain hirveää
+     * @return ohjainkomponentti jonka syötteellä toiminto voidaan suorittaa
+     * @throws IllegalStateException jos toiminto on rekisteröity virheellisesti, eikä komponenttia siksi löydy
+     */
+    @NonNull
+    public <A extends IAbility<A, C>, C extends IControllerComponent<A>> C getComponentFor(@NonNull A ability) {
+        val component = this.components.get(ability.getClass());
+        if (component == null) {
+            throw new IllegalStateException("No registered component for ability \"" + ability.getClass().getSimpleName() + "\"");
+        }
+
+        // Due to horrendous type signature of the component registration method, this cast is completely
+        // safe, as long as no weird type-casting takes place when calling the register-method due to some
+        // brainfart of an unbelieveable magnitude. Thus:
+        // noinspection unchecked
+        return (C) component;
     }
 }

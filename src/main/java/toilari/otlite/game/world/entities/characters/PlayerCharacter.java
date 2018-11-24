@@ -9,18 +9,28 @@ public class PlayerCharacter extends AbstractCharacter {
     @Getter private long deathTime;
 
     public PlayerCharacter() {
-        super(new CharacterAttributes(10.0f, 1, 1, 2));
+        this(new CharacterAttributes(
+            2,
+            2,
+            0,
+            0.1f,
+            0.0f,
+            0.001f,
+            0.0f,
+            0.0f,
+            1.0f,
+            0.1f,
+            0.0f,
+            0.1f,
+            10.0f,
+            0.1f,
+            0.5f,
+            0.001f
+        ));
     }
 
-    @Override
-    public boolean move(int dx, int dy) {
-        if (super.move(dx, dy)) {
-            val game = getWorld().getObjectManager().getGameState().getGame();
-            game.getStatistics().increment(Statistics.TILES_MOVED, game.getActiveProfile().getId());
-            return true;
-        }
-
-        return false;
+    public PlayerCharacter(CharacterAttributes attributes) {
+        super(attributes);
     }
 
     @Override

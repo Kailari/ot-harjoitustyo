@@ -54,7 +54,14 @@ public class Level {
         return tile;
     }
 
-    public boolean isWithinBounds(int newX, int newY) {
-        return newX >= 0 && newX < this.width && newY >= 0 && newY < this.height;
+    /**
+     * Tarkistaa ovatko koordinaatit kartan rajojen sisäpuolella.
+     *
+     * @param x tarkistettava x-koordinaatti.
+     * @param y tarkistettava y-koordinaatti.
+     * @return <code>true</code> jos koordinaatit ovat kartan sisällä, muulloin <code>false</code>
+     */
+    public boolean isWithinBounds(int x, int y) {
+        return x >= 0 && x < this.width && y >= 0 && y < this.height;
     }
 }
