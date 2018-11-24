@@ -19,9 +19,10 @@
 |14.11| 2h     | Vuorologiikka, hahmojen liikuttaminen ja ohjaus. |
 |16.11| 2h     | Käyttöliittymäkoodin eriyttäminen logiikasta (refaktorointia). |
 |18.11| 2h     | Testien kirjoittelua ja pientä bugifixailua ennen pelilogiikan aloittamista. |
-||
 |19.11| 1h     | Lisää testejä, README siivous. |
 |20.11| 2h     | lisättiin vähän pelilogiikkaa, lisää koodin ja dokumentaation siivoilua. |
 |21.11| 3h     | toteutettiin viestinvälitysjärjestelmä mahdollistamaan käyttöliittymän toteutus. Paljon käyttöliittymän ja logiikan yhteenhitsaamiseen tarvittavaa taustatyötä. |
 |21.11| 1h     | toteutettiin profiilivalikon tekstipohjainen käyttöliittymä. |
 |22.11| 4h     | Testien lisäilyä/parantelua/siivoilua. Hieman pelilogiikkaa. |
+|23.11| 4h     | Valikon käyttöliittymä ja muuta pienempää renderöintiin liittyvää. Vuoro- ja toimintojärjestelmien rungon hiomista. Ohjaimien toimintaa järkevämmäksi. |
+|23.11| 2h     | Testejä, testejä, testejä. ...testejä unohtamatta! |
