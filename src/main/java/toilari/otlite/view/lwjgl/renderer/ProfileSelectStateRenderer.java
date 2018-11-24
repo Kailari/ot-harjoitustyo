@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public class ProfileSelectStateRenderer implements ILWJGLRenderer<ProfileSelectState> {
+public class ProfileSelectStateRenderer implements ILWJGLGameStateRenderer<ProfileSelectState> {
     private static final int SMALL_BUTTON_WIDTH = 31;
     private static final int SMALL_BUTTON_HEIGHT = 8;
     private static final int SMALL_BUTTON_SIZE = 2;
@@ -54,42 +54,53 @@ public class ProfileSelectStateRenderer implements ILWJGLRenderer<ProfileSelectS
     private UIButton createProfileButton;
     private UIButton removeProfileButton;
     private List<UIButton> profileButtons;
+    private List<Integer> profileIds;
     private TextRenderer textRenderer;
+
+    private ProfileSelectState state;
 
     public ProfileSelectStateRenderer(@NonNull TextureDAO textureDAO) {
         this.textureDAO = textureDAO;
     }
 
     @Override
-    public boolean init() {
+    public boolean init(@NonNull ProfileSelectState state) {
+        this.state = state;
         this.uiTexture = this.textureDAO.load("ui.png");
         this.textRenderer = new TextRenderer(this.textureDAO, 1, 16);
 
-        this.createProfileButton = new UIButton(
-            SMALL_BUTTON_WIDTH, SMALL_BUTTON_HEIGHT, SMALL_BUTTON_SIZE,
-            "Add", this.uiTexture,
-            SMALL_BUTTON_IDLE_R, SMALL_BUTTON_IDLE_G, SMALL_BUTTON_IDLE_B,
-            SMALL_BUTTON_HOVER_R, SMALL_BUTTON_HOVER_G, SMALL_BUTTON_HOVER_B,
-            () -> System.out.println("Create clicked!"));
+        if (refreshProfileList(state)) {
+            return true;
+        }
 
-        this.removeProfileButton = new UIButton(
-            SMALL_BUTTON_WIDTH, SMALL_BUTTON_HEIGHT, SMALL_BUTTON_SIZE,
-            "Remove", this.uiTexture,
-            SMALL_BUTTON_IDLE_R, SMALL_BUTTON_IDLE_G, SMALL_BUTTON_IDLE_B,
-            SMALL_BUTTON_HOVER_R, SMALL_BUTTON_HOVER_G, SMALL_BUTTON_HOVER_B,
-            () -> System.out.println("Remove clicked!"));
+        this.createProfileButton = new UIButton(SMALL_BUTTON_WIDTH, SMALL_BUTTON_HEIGHT, SMALL_BUTTON_SIZE, "Add", this.uiTexture,
+            SMALL_BUTTON_IDLE_R, SMALL_BUTTON_IDLE_G, SMALL_BUTTON_IDLE_B, SMALL_BUTTON_HOVER_R, SMALL_BUTTON_HOVER_G, SMALL_BUTTON_HOVER_B,
+            () -> state.getEventSystem().fire(new ProfileMenuEvent.Add("Player #" + this.profileButtons.size())));
+
+        this.removeProfileButton = new UIButton(SMALL_BUTTON_WIDTH, SMALL_BUTTON_HEIGHT, SMALL_BUTTON_SIZE, "Remove", this.uiTexture,
+            SMALL_BUTTON_IDLE_R, SMALL_BUTTON_IDLE_G, SMALL_BUTTON_IDLE_B, SMALL_BUTTON_HOVER_R, SMALL_BUTTON_HOVER_G, SMALL_BUTTON_HOVER_B,
+            () -> state.getEventSystem().fire(new ProfileMenuEvent.Remove(this.profileIds.get(this.profileIds.size() - 1))));
+
+        state.getEventSystem().subscribeTo(ProfileMenuEvent.Added.class, this::onAdded);
+        state.getEventSystem().subscribeTo(ProfileMenuEvent.Removed.class, this::onRemoved);
 
         return false;
     }
 
+    private void onAdded(@NonNull ProfileMenuEvent.Added event) {
+        createProfileButton(this.state, event.getProfile());
+    }
+
+    private void onRemoved(@NonNull ProfileMenuEvent.Removed event) {
+        int index = this.profileIds.indexOf(event.getProfileId());
+        if (index >= 0) {
+            this.profileButtons.remove(index);
+            this.profileIds.remove(index);
+        }
+    }
+
     @Override
     public void draw(@NonNull LWJGLCamera camera, @NonNull ProfileSelectState state) {
-        if (this.profileButtons == null) {
-            if (refreshProfileList(state)) {
-                return;
-            }
-        }
-
         drawButtons(camera);
     }
 
@@ -108,6 +119,7 @@ public class ProfileSelectStateRenderer implements ILWJGLRenderer<ProfileSelectS
 
     private boolean refreshProfileList(@NonNull ProfileSelectState state) {
         this.profileButtons = new ArrayList<>();
+        this.profileIds = new ArrayList<>();
         List<Profile> profiles;
         try {
             profiles = state.getGame().getProfileDao().findAll();
@@ -117,19 +129,21 @@ public class ProfileSelectStateRenderer implements ILWJGLRenderer<ProfileSelectS
         }
 
         for (val profile : profiles) {
-            this.profileButtons.add(new UIButton(
-                LARGE_BUTTON_WIDTH, LARGE_BUTTON_HEIGHT, LARGE_BUTTON_SIZE,
-                profile.getName(), this.uiTexture,
-                LARGE_BUTTON_IDLE_R, LARGE_BUTTON_IDLE_G, LARGE_BUTTON_IDLE_B,
-                LARGE_BUTTON_HOVER_R, LARGE_BUTTON_HOVER_G, LARGE_BUTTON_HOVER_B,
-                () -> state.getEventSystem().fire(new ProfileMenuEvent.Select(profile.getId()))));
+            createProfileButton(state, profile);
         }
 
         return false;
     }
 
+    private void createProfileButton(@NonNull ProfileSelectState state, @NonNull Profile profile) {
+        this.profileButtons.add(new UIButton(LARGE_BUTTON_WIDTH, LARGE_BUTTON_HEIGHT, LARGE_BUTTON_SIZE, profile.getName(), this.uiTexture,
+            LARGE_BUTTON_IDLE_R, LARGE_BUTTON_IDLE_G, LARGE_BUTTON_IDLE_B, LARGE_BUTTON_HOVER_R, LARGE_BUTTON_HOVER_G, LARGE_BUTTON_HOVER_B,
+            () -> state.getEventSystem().fire(new ProfileMenuEvent.Select(profile.getId()))));
+        this.profileIds.add(profile.getId());
+    }
+
     @Override
-    public void destroy() {
+    public void destroy(@NonNull ProfileSelectState state) {
         this.uiTexture.destroy();
     }
 }

@@ -13,6 +13,7 @@ import org.lwjgl.system.MemoryStack;
 import toilari.otlite.game.AbstractGameRunner;
 import toilari.otlite.game.Game;
 import toilari.otlite.game.input.IInputHandler;
+import toilari.otlite.view.renderer.IGameStateRenderer;
 import toilari.otlite.view.renderer.IRenderer;
 
 import java.util.Map;
@@ -37,7 +38,7 @@ public class LWJGLGameRunner extends AbstractGameRunner<LWJGLCamera> {
      * @param game                  peli jonka tämä käyttöliittymämoottori käärii
      * @param stateRendererMappings hakutaulu pelitilojen piirtäjille
      */
-    public LWJGLGameRunner(@NonNull Game game, @NonNull Map<Class, IRenderer> stateRendererMappings) {
+    public LWJGLGameRunner(@NonNull Game game, @NonNull Map<Class, IGameStateRenderer> stateRendererMappings) {
         super(game, stateRendererMappings);
         this.windowWidth = 800;
         this.windowHeight = 600;

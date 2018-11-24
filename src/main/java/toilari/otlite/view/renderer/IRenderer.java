@@ -20,8 +20,7 @@ public interface IRenderer<TRenderable, TCamera extends Camera> {
     }
 
     /**
-     * Piirtää annetun objektin. Huomaa että abstraktissa implementaatiossa null kamera on sallittu, mutta
-     * erikoistuneet implementaation (esim. {@link LWJGLGameRunner}) voivat pakottaa kameran ei-nulliksi.
+     * Piirtää annetun objektin.
      *
      * @param camera     kamera jonka näkökulmasta piirtäminen tapahtuu
      * @param renderable objekti joka piirrettään

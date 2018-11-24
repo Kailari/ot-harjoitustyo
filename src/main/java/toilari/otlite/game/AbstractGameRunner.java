@@ -7,7 +7,7 @@ import lombok.val;
 import toilari.otlite.game.input.IInputHandler;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.view.Camera;
-import toilari.otlite.view.renderer.IRenderer;
+import toilari.otlite.view.renderer.IGameStateRenderer;
 
 import java.util.Map;
 
@@ -19,14 +19,14 @@ import java.util.Map;
  */
 @Slf4j
 public abstract class AbstractGameRunner<T extends Camera> {
-    @NonNull private final Map<Class, IRenderer> stateRendererMappings;
+    @NonNull private final Map<Class, IGameStateRenderer> stateRendererMappings;
 
     @NonNull @Getter private final Game game;
 
     @Getter private T camera;
 
 
-    protected AbstractGameRunner(@NonNull Game game, @NonNull Map<Class, IRenderer> stateRendererMappings) {
+    protected AbstractGameRunner(@NonNull Game game, @NonNull Map<Class, IGameStateRenderer> stateRendererMappings) {
         this.game = game;
         this.stateRendererMappings = stateRendererMappings;
         this.game.setStateChangeCallback(this::onStateChange);
@@ -42,7 +42,7 @@ public abstract class AbstractGameRunner<T extends Camera> {
         if (renderer == null) {
             throw new IllegalStateException("No renderer registered for state \"" + state.getClass().getSimpleName() + "\"");
         }
-        if (renderer.init()) {
+        if (renderer.init(state)) {
             LOG.error("Initializing gamestate renderer failed, trying to shut down gracefully...");
             getGame().setRunning(false);
         }
@@ -66,7 +66,6 @@ public abstract class AbstractGameRunner<T extends Camera> {
         }
         // TODO: Wrapper class to handle state-to-renderer -mappings to get rid of unchecked behavior
         stateRenderer.draw(camera, state);
-        stateRenderer.postDraw(camera, state);
     }
 
     /**

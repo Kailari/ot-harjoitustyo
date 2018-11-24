@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * Piirtäjä pelitilan piirtämiseen. Vastaa maailman
  */
-public class PlayGameStateRenderer implements ILWJGLRenderer<PlayGameState> {
+public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameState> {
     // TODO: mapping class for these to get rid of unchecked code
     @NonNull private final Map<Class, IRenderer> rendererMappings = new HashMap<>();
     private final TextureDAO textureDao;
@@ -37,7 +37,7 @@ public class PlayGameStateRenderer implements ILWJGLRenderer<PlayGameState> {
     }
 
     @Override
-    public boolean init() {
+    public boolean init(@NonNull PlayGameState state) {
         for (val renderer : this.rendererMappings.values()) {
             if (renderer.init()) {
                 return true;
@@ -50,13 +50,13 @@ public class PlayGameStateRenderer implements ILWJGLRenderer<PlayGameState> {
     }
 
     @Override
-    public void draw(@NonNull LWJGLCamera camera, @NonNull PlayGameState playGameState) {
-        val player = playGameState.getPlayer();
+    public void draw(@NonNull LWJGLCamera camera, @NonNull PlayGameState state) {
+        val player = state.getPlayer();
         val cameraX = player.getX() - camera.getViewportWidth() / 16;
         val cameraY = player.getY() - camera.getViewportHeight() / 16;
         camera.setPosition(cameraX, cameraY);
 
-        val world = playGameState.getWorld();
+        val world = state.getWorld();
         this.levelRenderer.draw(camera, world.getCurrentLevel());
 
         for (val object : world.getObjectManager().getObjects()) {
@@ -65,11 +65,7 @@ public class PlayGameStateRenderer implements ILWJGLRenderer<PlayGameState> {
                 renderer.draw(camera, object);
             }
         }
-    }
 
-    @Override
-    public void postDraw(@NonNull LWJGLCamera camera, @NonNull PlayGameState state) {
-        val world = state.getWorld();
         this.levelRenderer.postDraw(camera, world.getCurrentLevel());
 
         for (val object : world.getObjectManager().getObjects()) {
@@ -119,7 +115,7 @@ public class PlayGameStateRenderer implements ILWJGLRenderer<PlayGameState> {
     }
 
     @Override
-    public void destroy() {
+    public void destroy(@NonNull PlayGameState state) {
         this.levelRenderer.destroy();
     }
 }

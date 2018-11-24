@@ -58,4 +58,12 @@ public abstract class ProfileMenuEvent implements IEvent {
     public static class Added extends ProfileMenuEvent {
         @NonNull @Getter private final Profile profile;
     }
+
+    /**
+     * Viesti joka lähetetään kun jokin profiili on poistettu.
+     */
+    @RequiredArgsConstructor
+    public static class Removed extends ProfileMenuEvent {
+        @Getter private final int profileId;
+    }
 }

@@ -79,6 +79,7 @@ public class ProfileSelectState extends GameState {
     private void onRemove(@NonNull ProfileMenuEvent.Remove event) {
         try {
             getGame().getProfileDao().removeById(event.getId());
+            getEventSystem().fire(new ProfileMenuEvent.Removed(event.getId()));
         } catch (SQLException e) {
             ProfileSelectState.LOG.error("Creating profile failed, trying to shut down gracefully.");
             ProfileSelectState.LOG.error("Cause: {}", e.getMessage());
