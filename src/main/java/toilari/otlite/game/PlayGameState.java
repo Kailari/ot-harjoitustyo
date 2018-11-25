@@ -10,8 +10,10 @@ import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.AnimalCharacter;
 import toilari.otlite.game.world.entities.characters.PlayerCharacter;
+import toilari.otlite.game.world.entities.characters.abilities.AttackAbility;
 import toilari.otlite.game.world.entities.characters.abilities.EndTurnAbility;
 import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
+import toilari.otlite.game.world.entities.characters.abilities.components.AttackControllerComponent;
 import toilari.otlite.game.world.entities.characters.abilities.components.EndTurnControllerComponent;
 import toilari.otlite.game.world.entities.characters.abilities.components.MoveControllerComponent;
 import toilari.otlite.game.world.level.Level;
@@ -46,6 +48,7 @@ public class PlayGameState extends GameState {
 
         this.player = new PlayerCharacter();
         this.player.addAbility(new MoveAbility(this.player, 0), new MoveControllerComponent.Player(this.player));
+        this.player.addAbility(new AttackAbility(this.player, 1), new AttackControllerComponent.Player(this.player));
         this.player.addAbility(new EndTurnAbility(this.player, 99), new EndTurnControllerComponent.Player(this.player, getGame().getActiveProfile().getSettings().isAutoEndTurn()));
         this.world.getObjectManager().spawn(this.player);
         this.player.setTilePos(5, 3);

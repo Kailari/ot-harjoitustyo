@@ -9,8 +9,6 @@ import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.abilities.IAbility;
 import toilari.otlite.game.world.entities.characters.abilities.components.IControllerComponent;
-import toilari.otlite.game.world.entities.characters.controller.CharacterController;
-import toilari.otlite.game.world.level.Tile;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -34,6 +32,28 @@ public abstract class AbstractCharacter extends GameObject {
     public <A extends IAbility<A, C>, C extends IControllerComponent<A>> void addAbility(A ability, IControllerComponent<A> component) {
         this.abilities.add(ability);
         this.controller.registerComponent(ability, component);
+    }
+
+    /**
+     * Hakee toimintoluokkaa vastaavan ohjainkomponentin jos tällä hahmolla on yhteensopiva toiminto.
+     *
+     * @param abilityClass toiminnon luokka
+     * @param <A>          toiminnon tyyppi
+     * @param <C>          ohjainkomponentin tyyppi
+     * @return <code>null</code> jos komponenttia ei löydy, muulloin löydetty komponentti
+     */
+    public <A extends IAbility<A, C>, C extends IControllerComponent<A>> C getComponent(Class<? extends A> abilityClass) {
+        for (val ability : this.abilities) {
+            if (ability.getClass().equals(abilityClass)) {
+                // The horrific addAbility signature makes sure that this operation is actually checked as long as
+                // system isn't purposedly tricked using type-casting magic to believing that incompatible types are
+                // compatible. Thus if this line throws, it's an error somewhere else.
+                // noinspection unchecked
+                return (C) this.controller.getComponentFor(ability);
+            }
+        }
+
+        return null;
     }
 
     protected AbstractCharacter(@NonNull CharacterAttributes attributes) {
@@ -69,9 +89,15 @@ public abstract class AbstractCharacter extends GameObject {
             return;
         }
 
-        this.abilities.stream()
-            .sorted(Comparator.comparingInt(IAbility::getPriority))
-            .forEach((a) -> handleAbility(turnManager, a));
+        this.abilities.sort(Comparator.comparingInt(IAbility::getPriority));
+        for (val ability : this.abilities) {
+            // addAbility signature makes sure that abilities are always compatible with their associated components.
+            // Thus, we can sefely ignore this warning.
+            // noinspection unchecked
+            if (handleAbility(turnManager, ability)) {
+                break;
+            }
+        }
     }
 
     public void updateAfterTurn() {
@@ -82,86 +108,27 @@ public abstract class AbstractCharacter extends GameObject {
         }
     }
 
-    private <A extends IAbility<A, C>, C extends IControllerComponent<A>> void handleAbility(@NonNull TurnObjectManager turnManager, @NonNull A ability) {
+    private <A extends IAbility<A, C>, C extends IControllerComponent<A>> boolean handleAbility(@NonNull TurnObjectManager turnManager, @NonNull A ability) {
         if (ability.isOnCooldown()) {
-            return;
+            return false;
         }
 
         val component = this.controller.getComponentFor(ability);
         component.updateInput();
 
         val cost = ability.getCost();
-        if (component.wants(ability) && canAfford(turnManager, cost)) {
+        if (component.wants() && canAfford(turnManager, cost)) {
             if (ability.perform(this.controller, component)) {
                 turnManager.spendActionPoints(cost);
                 ability.setOnCooldown();
+                return true;
             }
         }
+
+        return false;
     }
 
     private boolean canAfford(TurnObjectManager turnManager, int cost) {
         return turnManager.getRemainingActionPoints() >= cost;
-    }
-
-
-    /**
-     * Yrittää hyökätä annettuun suuntaan.
-     *
-     * @param dx siirtymä x-akselilla
-     * @param dy siirtymä y-akselilla
-     * @return <code>true</code> jos hyökkäys tapahtui, muulloin <code>false</code>
-     */
-    private boolean attack(int dx, int dy) {
-        if (dx == 0 && dy == 0) {
-            return false;
-        }
-
-        int newX = getX() / Tile.SIZE_IN_WORLD + dx;
-        int newY = getY() / Tile.SIZE_IN_WORLD + dy;
-
-        if (!canAttack(newX, newY)) {
-            return false;
-        }
-
-        attack((AbstractCharacter) getWorld().getObjectAt(newX, newY), this.getAttributes().getAttackDamage(this.levels));
-        return true;
-    }
-
-    /**
-     * Testaa voiko hahmo hyökätä annettuun suuntaan. Hyökkääminen onnistuu jos koordinaateista löytyy toinen hahmo,
-     * jota ei vielä ole poistettu.
-     *
-     * @param x tarkistettava x-koordinaatti
-     * @param y tarkistettava y-koordinaatti
-     * @return <code>true</code> jos voidaan hyökätä, muulloin <code>false</code>
-     */
-    public boolean canAttack(int x, int y) {
-        val objectAtTarget = getWorld().getObjectAt(x, y);
-        return objectAtTarget instanceof AbstractCharacter && !objectAtTarget.isRemoved();
-
-    }
-
-    /**
-     * Tekee kohteeseen annetun määrän vahinkopisteitä.
-     *
-     * @param target kohde jota vahingoitetaan
-     * @param amount vahingon määrä
-     */
-    protected void attack(@NonNull AbstractCharacter target, float amount) {
-        if (target.isRemoved()) {
-            return;
-        }
-
-        float current = target.getHealth();
-        target.setHealth(Math.max(0, current - amount));
-
-        this.lastAttackTime = System.currentTimeMillis();
-        this.lastAttackAmount = current - target.getHealth();
-        this.lastAttackTarget = target;
-
-        if (target.isDead()) {
-            target.setHealth(0.0f);
-            target.remove();
-        }
     }
 }

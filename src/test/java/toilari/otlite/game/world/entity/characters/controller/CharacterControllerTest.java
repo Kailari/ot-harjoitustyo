@@ -6,7 +6,7 @@
 //import toilari.otlite.game.world.entities.TurnObjectManager;
 //import toilari.otlite.game.world.entities.characters.AbstractCharacter;
 //import toilari.otlite.game.world.entities.characters.CharacterAttributes;
-//import toilari.otlite.game.world.entities.characters.controller.CharacterController;
+//import toilari.otlite.game.world.entities.characters.CharacterController;
 //
 //import static org.junit.jupiter.api.Assertions.*;
 //

@@ -3,7 +3,9 @@ package toilari.otlite.view.lwjgl.renderer;
 import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.dao.TextureDAO;
+import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.entities.characters.AbstractCharacter;
+import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
 import toilari.otlite.game.world.level.Tile;
 import toilari.otlite.view.lwjgl.AnimatedSprite;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
@@ -62,15 +64,16 @@ public class PlayerRenderer extends CharacterRenderer {
         val x = character.getX() / Tile.SIZE_IN_WORLD;
         val y = character.getY() / Tile.SIZE_IN_WORLD;
 
-        drawArrow(camera, character, x, y, -1, 0, 1);
-        drawArrow(camera, character, x, y, 1, 0, 0);
-        drawArrow(camera, character, x, y, 0, -1, 2);
-        drawArrow(camera, character, x, y, 0, 1, 3);
+        for (val direction : Direction.asIterable()) {
+            drawArrow(camera, character, x, y, direction, direction.ordinal());
+        }
     }
 
-    private void drawArrow(@NonNull LWJGLCamera camera, @NonNull AbstractCharacter character, int x, int y, int dx, int dy, int frame) {
-        val canMove = true; //character.canMoveTo(dx, dy);
+    private void drawArrow(@NonNull LWJGLCamera camera, @NonNull AbstractCharacter character, int x, int y, Direction direction, int frame) {
+        val canMove = character.getComponent(MoveAbility.class).canMoveTo(direction, 1);
 
+        val dx = direction.getDx();
+        val dy = direction.getDy();
         val isEnemy = character.getWorld().getObjectAt(x + dx, y + dy) instanceof AbstractCharacter;
         if (isEnemy) {
             frame = 5;

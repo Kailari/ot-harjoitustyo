@@ -20,7 +20,7 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
     }
 
     @Override
-    public boolean wants(@NonNull MoveAbility ability) {
+    public boolean wants() {
         return getInputDirection() != Direction.NONE;
     }
 
@@ -127,7 +127,7 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
      * Tekoälyn ohjainkomponentti.
      */
     public static class AI extends MoveControllerComponent {
-        private final Random random = new Random();
+        private final Random random;
         private Direction[] availableDirections = new Direction[4];
         int nDirections;
 
@@ -152,6 +152,7 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
          */
         public AI(@NonNull AbstractCharacter character, long seed) {
             super(character);
+            this.random = new Random(seed);
         }
 
         @Override

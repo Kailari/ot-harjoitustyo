@@ -2,9 +2,10 @@ package toilari.otlite.game.world.entities.characters.abilities;
 
 import lombok.NonNull;
 import lombok.val;
+import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.entities.characters.AbstractCharacter;
 import toilari.otlite.game.world.entities.characters.abilities.components.MoveControllerComponent;
-import toilari.otlite.game.world.entities.characters.controller.CharacterController;
+import toilari.otlite.game.world.entities.characters.CharacterController;
 
 public class MoveAbility extends AbstractAbility<MoveAbility, MoveControllerComponent> {
     public MoveAbility(@NonNull AbstractCharacter character, int priority) {
@@ -36,6 +37,7 @@ public class MoveAbility extends AbstractAbility<MoveAbility, MoveControllerComp
 
             getCharacter().getWorld().getTileAt(oldX, oldY).onCharacterExit(oldX, oldY, getCharacter());
             getCharacter().getWorld().getTileAt(newX, newY).onCharacterEnter(newX, newY, getCharacter());
+
             return true;
         }
 

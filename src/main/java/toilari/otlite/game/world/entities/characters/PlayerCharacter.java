@@ -1,9 +1,6 @@
 package toilari.otlite.game.world.entities.characters;
 
 import lombok.Getter;
-import lombok.NonNull;
-import lombok.val;
-import toilari.otlite.game.profile.tracking.Statistics;
 
 public class PlayerCharacter extends AbstractCharacter {
     @Getter private long deathTime;
@@ -31,16 +28,6 @@ public class PlayerCharacter extends AbstractCharacter {
 
     public PlayerCharacter(CharacterAttributes attributes) {
         super(attributes);
-    }
-
-    @Override
-    public void attack(@NonNull AbstractCharacter target, float amount) {
-        super.attack(target, amount);
-
-        if (target.isDead()) {
-            val game = getWorld().getObjectManager().getGameState().getGame();
-            game.getStatistics().increment(Statistics.KILLS, game.getActiveProfile().getId());
-        }
     }
 
     @Override

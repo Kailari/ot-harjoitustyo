@@ -1,4 +1,4 @@
-package toilari.otlite.game.world.entities.characters.controller;
+package toilari.otlite.game.world.entities.characters;
 
 import lombok.Getter;
 import lombok.NonNull;

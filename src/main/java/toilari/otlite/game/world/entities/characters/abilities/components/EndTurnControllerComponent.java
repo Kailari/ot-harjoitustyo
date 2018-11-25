@@ -17,7 +17,7 @@ public abstract class EndTurnControllerComponent extends AbstractControllerCompo
     }
 
     @Override
-    public boolean wants(@NonNull EndTurnAbility ability) {
+    public boolean wants() {
         return this.wantsToEndTurn;
     }
 

@@ -3,7 +3,7 @@ package toilari.otlite.game.world.entities.characters.abilities;
 import lombok.NonNull;
 import toilari.otlite.game.world.entities.characters.AbstractCharacter;
 import toilari.otlite.game.world.entities.characters.abilities.components.EndTurnControllerComponent;
-import toilari.otlite.game.world.entities.characters.controller.CharacterController;
+import toilari.otlite.game.world.entities.characters.CharacterController;
 
 public class EndTurnAbility extends AbstractAbility<EndTurnAbility, EndTurnControllerComponent> {
     public EndTurnAbility(AbstractCharacter character, int priority) {

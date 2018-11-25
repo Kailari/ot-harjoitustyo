@@ -2,7 +2,7 @@ package toilari.otlite.game.world.entities.characters.abilities;
 
 import lombok.NonNull;
 import toilari.otlite.game.world.entities.characters.abilities.components.IControllerComponent;
-import toilari.otlite.game.world.entities.characters.controller.CharacterController;
+import toilari.otlite.game.world.entities.characters.CharacterController;
 
 public interface IAbility<T extends IAbility<T, C>, C extends IControllerComponent<T>> {
     int getPriority();
