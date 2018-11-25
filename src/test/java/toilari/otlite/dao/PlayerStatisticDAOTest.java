@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import toilari.otlite.dao.database.Database;
 import toilari.otlite.dao.util.FileHelper;
-import toilari.otlite.game.profile.tracking.Statistics;
+import toilari.otlite.game.profile.statistics.Statistics;
 
 import java.io.IOException;
 import java.nio.file.Files;

@@ -1,13 +1,6 @@
-package toilari.otlite.game.profile.tracking;
+package toilari.otlite.game.profile.statistics;
 
-import lombok.Getter;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import toilari.otlite.dao.ProfileDAO;
-import toilari.otlite.dao.PlayerStatisticDAO;
-import toilari.otlite.game.profile.Profile;
-
-import java.sql.SQLException;
 
 /**
  * Seurattava statistiikka. Esim. liikuttujen ruutujen määrä, lyötyjen mörköjen lukumäärä, yms.

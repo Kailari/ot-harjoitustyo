@@ -1,4 +1,4 @@
-package toilari.otlite.game.profile.tracking;
+package toilari.otlite.game.profile.statistics;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;

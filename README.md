@@ -5,6 +5,7 @@ Kurssin *"Ohjelmistotekniikka"* harjoitustyönä tuotettu yksinkertainen rogueli
 
 ## Dokumentaatio
 - [vaatimusmäärittely](documentation/vaatimusmaarittely.md)
+- [arkkitehtuuri](documentation/arkkitehtuuri.md)
 - [tuntikirjanpito](documentation/tuntikirjanpito.md)
 
 ## Releaset
