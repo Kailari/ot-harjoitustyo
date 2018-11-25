@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import toilari.otlite.dao.util.FileHelper;
 import toilari.otlite.dao.util.TextFileHelper;
-import toilari.otlite.dao.util.TileAdapter;
+import toilari.otlite.dao.serialization.TileAdapter;
 import toilari.otlite.game.world.level.KillTile;
 import toilari.otlite.game.world.level.NormalTile;
 import toilari.otlite.game.world.level.Tile;

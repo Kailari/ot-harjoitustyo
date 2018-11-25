@@ -91,15 +91,16 @@ public class PlayGameState extends GameState {
     private Level createLevel(TileMapping tileMappings) {
         final byte w = tileMappings.getIndex("wall");
         final byte f = tileMappings.getIndex("floor");
+        final byte g = tileMappings.getIndex("grass");
         final byte h = tileMappings.getIndex("hole");
         final byte[] indices = new byte[]{
             w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w,
-            w, f, f, f, w, f, f, w, f, w, h, h, h, f, f, w,
-            w, f, f, f, w, f, w, w, w, f, h, f, h, f, f, w,
+            w, g, g, g, w, f, f, w, f, w, h, h, h, f, f, w,
+            w, g, g, f, w, f, w, w, w, f, h, f, h, f, f, w,
             w, h, h, f, f, f, f, w, f, f, h, h, h, f, f, w,
             w, h, h, f, f, f, f, f, f, f, f, f, f, f, f, w,
-            w, f, f, f, h, f, f, w, f, f, f, f, f, f, f, w,
-            w, f, f, f, f, f, f, h, f, f, f, f, f, f, f, w,
+            w, f, f, f, h, f, f, w, f, f, f, f, f, g, g, w,
+            w, f, f, g, g, f, f, h, f, g, g, f, g, g, g, w,
             w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w,
         };
 

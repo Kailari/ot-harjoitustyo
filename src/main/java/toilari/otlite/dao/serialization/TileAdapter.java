@@ -1,4 +1,4 @@
-package toilari.otlite.dao.util;
+package toilari.otlite.dao.serialization;
 
 import com.google.gson.*;
 import lombok.NonNull;
