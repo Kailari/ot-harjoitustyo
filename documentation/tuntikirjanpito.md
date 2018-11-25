@@ -26,3 +26,5 @@
 |22.11| 4h     | Testien lisäilyä/parantelua/siivoilua. Hieman pelilogiikkaa. |
 |23.11| 4h     | Valikon käyttöliittymä ja muuta pienempää renderöintiin liittyvää. Vuoro- ja toimintojärjestelmien rungon hiomista. Ohjaimien toimintaa järkevämmäksi. |
 |23.11| 2h     | Testejä, testejä, testejä. ...testejä unohtamatta! |
+|24.11| 4h     | Hahmojen toiminnot komponentteihin. |
+|25.11| 1h     | Testien korjailua ja pientä hienosäätöä komponentteihin. |
