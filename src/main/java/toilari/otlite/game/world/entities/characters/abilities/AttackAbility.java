@@ -4,7 +4,6 @@ import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.game.event.CharacterEvent;
 import toilari.otlite.game.world.entities.characters.AbstractCharacter;
-import toilari.otlite.game.world.entities.characters.CharacterController;
 import toilari.otlite.game.world.entities.characters.abilities.components.AttackControllerComponent;
 
 public class AttackAbility extends AbstractAbility<AttackAbility, AttackControllerComponent> {
@@ -23,7 +22,7 @@ public class AttackAbility extends AbstractAbility<AttackAbility, AttackControll
     }
 
     @Override
-    public boolean perform(@NonNull CharacterController controller, @NonNull AttackControllerComponent component) {
+    public boolean perform(@NonNull AttackControllerComponent component) {
         val target = component.getTarget();
         if (target == null || target.isRemoved()) {
             return false;

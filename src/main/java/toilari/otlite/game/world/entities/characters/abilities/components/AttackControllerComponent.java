@@ -35,7 +35,7 @@ public abstract class AttackControllerComponent extends AbstractControllerCompon
 
         public Player(@NonNull AbstractCharacter character) {
             super(character);
-            this.moveComponent = character.getComponent(MoveAbility.class);
+            this.moveComponent = character.getAbilities().getComponent(MoveAbility.class);
 
             if (this.moveComponent == null) {
                 throw new IllegalStateException("Attack component requires Move component on player! Make sure move component is added first.");

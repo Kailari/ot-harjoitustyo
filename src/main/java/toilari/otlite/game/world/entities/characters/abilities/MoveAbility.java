@@ -2,10 +2,8 @@ package toilari.otlite.game.world.entities.characters.abilities;
 
 import lombok.NonNull;
 import lombok.val;
-import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.entities.characters.AbstractCharacter;
 import toilari.otlite.game.world.entities.characters.abilities.components.MoveControllerComponent;
-import toilari.otlite.game.world.entities.characters.CharacterController;
 
 public class MoveAbility extends AbstractAbility<MoveAbility, MoveControllerComponent> {
     public MoveAbility(@NonNull AbstractCharacter character, int priority) {
@@ -23,7 +21,7 @@ public class MoveAbility extends AbstractAbility<MoveAbility, MoveControllerComp
     }
 
     @Override
-    public boolean perform(CharacterController controller, MoveControllerComponent component) {
+    public boolean perform(MoveControllerComponent component) {
         val direction = component.getInputDirection();
 
         if (component.canMoveTo(direction, 1)) {

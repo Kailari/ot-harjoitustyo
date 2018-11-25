@@ -70,7 +70,7 @@ public class PlayerRenderer extends CharacterRenderer {
     }
 
     private void drawArrow(@NonNull LWJGLCamera camera, @NonNull AbstractCharacter character, int x, int y, Direction direction, int frame) {
-        val canMove = character.getComponent(MoveAbility.class).canMoveTo(direction, 1);
+        val canMove = character.getAbilities().getComponent(MoveAbility.class).canMoveTo(direction, 1);
 
         val dx = direction.getDx();
         val dy = direction.getDy();

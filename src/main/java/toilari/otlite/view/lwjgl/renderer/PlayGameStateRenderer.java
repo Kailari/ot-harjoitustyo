@@ -119,7 +119,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
 
     private void drawTurnStatus(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, @NonNull World world, int x, int y) {
         val str = state.getGame().getActiveProfile().getName()
-            + "\nTurn: " + state.getPlayer().getController().getTurnsTaken();
+            + "\nTurn: " + state.getPlayer().getTurnsTaken();
         this.textRenderer.draw(camera, x + 2, y + 2, 0.25f, 0.65f, 0.25f, 4, str);
 
         String apStr = "Waiting...";

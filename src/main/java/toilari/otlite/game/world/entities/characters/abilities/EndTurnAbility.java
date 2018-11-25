@@ -3,7 +3,6 @@ package toilari.otlite.game.world.entities.characters.abilities;
 import lombok.NonNull;
 import toilari.otlite.game.world.entities.characters.AbstractCharacter;
 import toilari.otlite.game.world.entities.characters.abilities.components.EndTurnControllerComponent;
-import toilari.otlite.game.world.entities.characters.CharacterController;
 
 public class EndTurnAbility extends AbstractAbility<EndTurnAbility, EndTurnControllerComponent> {
     public EndTurnAbility(AbstractCharacter character, int priority) {
@@ -16,7 +15,7 @@ public class EndTurnAbility extends AbstractAbility<EndTurnAbility, EndTurnContr
     }
 
     @Override
-    public boolean perform(@NonNull CharacterController controller, @NonNull EndTurnControllerComponent component) {
+    public boolean perform(@NonNull EndTurnControllerComponent component) {
         getCharacter().getWorld().getObjectManager().nextTurn();
         component.setWantsToEndTurn(false);
         return true;

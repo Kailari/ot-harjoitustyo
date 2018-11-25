@@ -78,7 +78,7 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
          *
          * @return -1 vasemmalle, 1 oikealle, 0 paikallaan
          */
-        private int getMoveInputX() {
+        public int getMoveInputX() {
             val right = Input.getHandler().isKeyDown(Key.RIGHT) ? 1 : 0;
             val left = Input.getHandler().isKeyDown(Key.LEFT) ? -1 : 0;
             return right + left;
@@ -90,7 +90,7 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
          *
          * @return -1 ylös, 1 alas, 0 paikallaan
          */
-        private int getMoveInputY() {
+        public int getMoveInputY() {
             val down = Input.getHandler().isKeyDown(Key.DOWN) ? 1 : 0;
             val up = Input.getHandler().isKeyDown(Key.UP) ? -1 : 0;
             return down + up;

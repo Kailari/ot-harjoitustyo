@@ -2,7 +2,7 @@ package toilari.otlite.game.world.entities;
 
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.val;
+import lombok.var;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.characters.AbstractCharacter;
 
@@ -56,10 +56,7 @@ public class TurnObjectManager extends ObjectManager {
 
         this.remainingActionPoints = getActiveCharacter().getAttributes().getActionPoints(getActiveCharacter().getLevels());
 
-        val controller = getActiveCharacter().getController();
-        if (controller != null) {
-            controller.beginTurn();
-        }
+        getActiveCharacter().beginTurn();
     }
 
     /**
@@ -103,8 +100,10 @@ public class TurnObjectManager extends ObjectManager {
     public void spawn(@NonNull GameObject object) {
         super.spawn(object);
         if (object instanceof AbstractCharacter) {
+            var wasEmpty = this.characters.isEmpty();
+
             this.characters.add(this.turn, (AbstractCharacter) object);
-            if (this.characters.size() != 1) {
+            if (!wasEmpty) {
                 this.turn++;
             } else {
                 this.turn = -1;

@@ -22,7 +22,7 @@ public abstract class AbstractAbility<A extends AbstractAbility<A, C>, C extends
     }
 
     @Override
-    public void setOnCooldown() {
+    public void putOnCooldown() {
         this.cooldownTimer = this.getCooldownLength();
     }
 
