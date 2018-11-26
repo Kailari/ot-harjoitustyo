@@ -31,6 +31,11 @@ public abstract class EndTurnControllerComponent extends AbstractControllerCompo
         }
     }
 
+    @Override
+    public void abilityPerformed(EndTurnAbility ability) {
+        setWantsToEndTurn(false);
+    }
+
     /**
      * Pelaajan vuoronlopetuskyvyn ohjainkomponentti.
      */

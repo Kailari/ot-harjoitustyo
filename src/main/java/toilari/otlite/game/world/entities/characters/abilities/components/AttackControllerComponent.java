@@ -17,6 +17,11 @@ public abstract class AttackControllerComponent extends AbstractControllerCompon
         super(character);
     }
 
+    @Override
+    public void abilityPerformed(AttackAbility ability) {
+        setTarget(null);
+    }
+
     /**
      * Pelaajan hyökkäämiskyvyn ohjainkomponentti.
      */

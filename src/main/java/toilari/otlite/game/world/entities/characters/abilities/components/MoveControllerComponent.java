@@ -42,6 +42,11 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
         }
     }
 
+    @Override
+    public void abilityPerformed(MoveAbility ability) {
+        this.inputX = this.inputY = 0;
+    }
+
     /**
      * Pelaajan ohjainkomponentti.
      */

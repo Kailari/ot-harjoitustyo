@@ -26,7 +26,6 @@ public class EndTurnAbility extends AbstractAbility<EndTurnAbility, EndTurnContr
     @Override
     public boolean perform(@NonNull EndTurnControllerComponent component) {
         getCharacter().getWorld().getObjectManager().nextTurn();
-        component.setWantsToEndTurn(false);
         return true;
     }
 

@@ -113,6 +113,7 @@ public class CharacterObject extends GameObject implements IHealthHandler {
             if (ability.perform(component)) {
                 turnManager.spendActionPoints(cost);
                 ability.putOnCooldown();
+                component.abilityPerformed(ability);
                 return true;
             }
         }
