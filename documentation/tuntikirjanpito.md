@@ -28,3 +28,5 @@
 |23.11| 2h     | Testejä, testejä, testejä. ...testejä unohtamatta! |
 |24.11| 4h     | Hahmojen toiminnot komponentteihin. |
 |25.11| 1h     | Testien korjailua ja pientä hienosäätöä komponentteihin. |
+|26.11| 1h     | Checkstylevirheitä oli kertynyt taas, fix'd. |
+|26.11| 1h     | Hahmojen ja hahmojen kykyjen testejä. |
