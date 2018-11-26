@@ -62,7 +62,7 @@ public class PlayGameState extends GameState {
     }
 
     private void createSheep(int x, int y) {
-        var sheep = new CharacterObject(new CharacterAttributes(5, 2, 0,
+        var sheep = new CharacterObject(new CharacterAttributes(0, 2, 0,
             0.1f, 0.1f, 0.001f, 0.0f, 0.0f,
             0.1f, 0.01f, 0.0f, 0.1f,
             5.0f, 0.1f, 0.5f, 0.001f));
