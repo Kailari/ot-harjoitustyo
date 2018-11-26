@@ -2,6 +2,7 @@ package toilari.otlite.game.world.entities.characters.abilities.components;
 
 import lombok.*;
 import toilari.otlite.game.util.Direction;
+import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.AttackAbility;
 import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
@@ -10,27 +11,10 @@ import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
  * Hyökkäämiskyvyn ohjainkomponentti.
  */
 public abstract class AttackControllerComponent extends AbstractControllerComponent<AttackAbility> {
-    @Getter @Setter(AccessLevel.PROTECTED) private CharacterObject target;
+    @Getter @Setter(AccessLevel.PROTECTED) private GameObject target;
 
-    private AttackControllerComponent(@NonNull CharacterObject character) {
+    protected AttackControllerComponent(@NonNull CharacterObject character) {
         super(character);
-    }
-
-    /**
-     * Testaa voiko hahmo hyökätä annettuihin koordinaatteihin. Hyökkääminen onnistuu jos koordinaateista löytyy toinen
-     * hahmo jota ei ole merkattu poistetuksi.
-     *
-     * @param x tarkistettava x-koordinaatti
-     * @param y tarkistettava y-koordinaatti
-     * @return <code>true</code> jos voidaan hyökätä, muulloin <code>false</code>
-     */
-    boolean canAttack(int x, int y) {
-        if (getCharacter().getTileX() == x && getCharacter().getTileY() == y) {
-            return false;
-        }
-
-        val objectAtTarget = getCharacter().getWorld().getObjectAt(x, y);
-        return objectAtTarget instanceof CharacterObject && !objectAtTarget.isRemoved();
     }
 
     /**
@@ -67,8 +51,8 @@ public abstract class AttackControllerComponent extends AbstractControllerCompon
 
             val targetX = getCharacter().getTileX() + direction.getDx();
             val targetY = getCharacter().getTileY() + direction.getDy();
-            if (canAttack(targetX, targetY)) {
-                setTarget((CharacterObject) getCharacter().getWorld().getObjectAt(targetX, targetY));
+            if (ability.canAttack(targetX, targetY)) {
+                setTarget(getCharacter().getWorld().getObjectAt(targetX, targetY));
                 return true;
             }
 

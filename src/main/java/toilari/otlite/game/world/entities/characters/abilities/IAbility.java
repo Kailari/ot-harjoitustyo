@@ -34,7 +34,8 @@ public interface IAbility<A extends IAbility<A, C>, C extends IControllerCompone
      * Onko kyky jäähtymässä? Jäähtymässä olevia kykyjä ei yritetä suorittaa, vaan sen sijaan niiden jäähtymisajastinta
      * lasketaan kunkin vuoron lopuksi, kunnes ne ovat taas käytettävissä ajastimen päästessä nollaan
      *
-     * @return onko
+     * @return onko kyky jäähtymässä
+     * @see #getRemainingCooldown()
      * @see #putOnCooldown()
      * @see #getCooldownLength()
      * @see #reduceCooldownTimer()
@@ -42,9 +43,21 @@ public interface IAbility<A extends IAbility<A, C>, C extends IControllerCompone
     boolean isOnCooldown();
 
     /**
+     * Kertoo kauanko kyky on vielä jäähtymässä.
+     *
+     * @return montako vuoroa kyky on vielä jäähtymässä
+     * @see #isOnCooldown()
+     * @see #putOnCooldown()
+     * @see #getCooldownLength()
+     * @see #reduceCooldownTimer()
+     */
+    int getRemainingCooldown();
+
+    /**
      * Asettaa kyvyn jäähtymään. Asettaa jäähtymisajastimen arvoksi {@link #getCooldownLength()} arvon
      *
      * @see #isOnCooldown()
+     * @see #getRemainingCooldown()
      * @see #reduceCooldownTimer()
      * @see #getCooldownLength()
      */
@@ -53,7 +66,9 @@ public interface IAbility<A extends IAbility<A, C>, C extends IControllerCompone
     /**
      * Vähentää jäähtymisajastimen arvoa yhdellä.
      *
+     * @throws IllegalStateException jos jäähtymisajastin menisi negatiiviseksi
      * @see #isOnCooldown()
+     * @see #getRemainingCooldown()
      * @see #putOnCooldown()
      * @see #getCooldownLength()
      */
@@ -64,6 +79,7 @@ public interface IAbility<A extends IAbility<A, C>, C extends IControllerCompone
      *
      * @return kyvyn jäähtymisajastimen kesto
      * @see #isOnCooldown()
+     * @see #getRemainingCooldown()
      * @see #putOnCooldown()
      * @see #reduceCooldownTimer()
      */

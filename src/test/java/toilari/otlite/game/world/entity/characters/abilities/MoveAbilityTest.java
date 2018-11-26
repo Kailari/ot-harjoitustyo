@@ -19,12 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MoveAbilityTest {
     @Test
-    @SuppressWarnings("ConstantConditions")
-    void constructorThrowsIfCharacterIsNull() {
-        assertThrows(NullPointerException.class, () -> new MoveAbility(null, 0));
-    }
-
-    @Test
     void getCooldownLengthMatchesCharacterAttributes() {
         val character = new FakeCharacterObject();
         val ability = new MoveAbility(character, 0);

@@ -5,6 +5,7 @@ import lombok.val;
 import toilari.otlite.dao.TextureDAO;
 import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
+import toilari.otlite.game.world.entities.characters.abilities.AttackAbility;
 import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
 import toilari.otlite.game.world.level.Tile;
 import toilari.otlite.view.lwjgl.AnimatedSprite;
@@ -74,17 +75,17 @@ public class PlayerRenderer extends CharacterRenderer {
 
         val dx = direction.getDx();
         val dy = direction.getDy();
-        val isEnemy = character.getWorld().getObjectAt(x + dx, y + dy) instanceof CharacterObject;
-        if (isEnemy) {
+        val canAttack = character.getAbilities().getAbility(AttackAbility.class).canAttack(x + dx, y + dy);
+        if (canAttack) {
             frame = 5;
         } else if (!canMove) {
             frame = 4;
         }
         val isDangerous = (canMove && character.getWorld().getCurrentLevel().getTileAt(x + dx, y + dy).isDangerous());
 
-        float r = isEnemy || isDangerous ? 0.85f : 0.85f;
-        float g = isEnemy || isDangerous ? 0.2f : 0.95f;
-        float b = isEnemy || isDangerous ? 0.2f : 0.85f;
+        float r = canAttack || isDangerous ? 0.85f : 0.85f;
+        float g = canAttack || isDangerous ? 0.2f : 0.95f;
+        float b = canAttack || isDangerous ? 0.2f : 0.85f;
         this.arrows.draw(camera, (x + dx) * Tile.SIZE_IN_WORLD + 2, (y + dy) * Tile.SIZE_IN_WORLD + 2, frame, r, g, b);
     }
 }

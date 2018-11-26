@@ -6,6 +6,7 @@ import toilari.otlite.dao.TextureDAO;
 import toilari.otlite.game.PlayGameState;
 import toilari.otlite.game.event.CharacterEvent;
 import toilari.otlite.game.world.World;
+import toilari.otlite.game.world.entities.IHealthHandler;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.PlayerCharacterObject;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
@@ -189,7 +190,8 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
     private void onCharacterDamage(@NonNull CharacterEvent.Damage event) {
         val x = event.getTarget().getX() + PlayGameStateRenderer.DAMAGE_LABEL_OFFSET_X;
         val y = event.getTarget().getY() + PlayGameStateRenderer.DAMAGE_LABEL_OFFSET_Y;
-        this.damageInstances.add(new DamageInstance(event.getAmount(), x, y, System.currentTimeMillis(), PlayGameStateRenderer.DAMAGE_LABEL_DURATION, event.getTarget().isDead()));
+        val killingBlow = event.getTarget() instanceof IHealthHandler && ((IHealthHandler) event.getTarget()).isDead();
+        this.damageInstances.add(new DamageInstance(event.getAmount(), x, y, System.currentTimeMillis(), PlayGameStateRenderer.DAMAGE_LABEL_DURATION, killingBlow));
     }
 
 

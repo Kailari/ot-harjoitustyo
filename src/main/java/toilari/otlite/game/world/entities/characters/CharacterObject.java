@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import toilari.otlite.game.world.entities.GameObject;
+import toilari.otlite.game.world.entities.IHealthHandler;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.abilities.IAbility;
 import toilari.otlite.game.world.entities.characters.abilities.components.IControllerComponent;
@@ -14,10 +15,13 @@ import toilari.otlite.game.world.entities.characters.abilities.components.IContr
  * Hahmo pelimaailmassa.
  */
 @Slf4j
-public class CharacterObject extends GameObject {
+public class CharacterObject extends GameObject implements IHealthHandler {
     @Getter private transient int turnsTaken;
 
-    @Getter @Setter private float health;
+    // Overrides IHealthHandler get/setHealth
+    @Getter(onMethod = @__({@Override})) @Setter(onMethod = @__({@Override}))
+    private float health;
+
     @Getter private final CharacteAbilities abilities;
     @Getter private final CharacterAttributes attributes;
     @Getter private final CharacterLevels levels;
@@ -56,6 +60,7 @@ public class CharacterObject extends GameObject {
      *
      * @return <code>true</code> jos hahmon terveyspisteet ovat likimain nolla
      */
+    @Override
     public boolean isDead() {
         return this.health < 0.000001f;
     }

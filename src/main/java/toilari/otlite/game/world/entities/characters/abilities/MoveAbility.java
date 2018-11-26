@@ -16,7 +16,7 @@ public class MoveAbility extends AbstractAbility<MoveAbility, MoveControllerComp
      * @param character hahmo jolle kyky lisätään
      * @param priority  kyvyn prioriteetti
      */
-    public MoveAbility(@NonNull CharacterObject character, int priority) {
+    public MoveAbility(CharacterObject character, int priority) {
         super(character, priority);
     }
 
