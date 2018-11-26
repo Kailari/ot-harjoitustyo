@@ -18,7 +18,7 @@ import java.util.Random;
 public abstract class MoveControllerComponent extends AbstractControllerComponent<MoveAbility> {
     @Setter(AccessLevel.PROTECTED) private int inputX, inputY;
 
-    private MoveControllerComponent(@NonNull CharacterObject character) {
+    protected MoveControllerComponent(@NonNull CharacterObject character) {
         super(character);
     }
 

@@ -54,7 +54,7 @@ public class MoveAbility extends AbstractAbility<MoveAbility, MoveControllerComp
 
     @Override
     public int getCooldownLength() {
-        return 0;
+        return getCharacter().getAttributes().getMoveCooldown();
     }
 
     @Override
