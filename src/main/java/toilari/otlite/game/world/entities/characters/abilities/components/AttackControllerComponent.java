@@ -1,6 +1,7 @@
 package toilari.otlite.game.world.entities.characters.abilities.components;
 
 import lombok.*;
+import toilari.otlite.game.profile.statistics.Statistics;
 import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
@@ -63,6 +64,20 @@ public abstract class AttackControllerComponent extends AbstractControllerCompon
 
             setTarget(null);
             return false;
+        }
+
+        @Override
+        public void abilityPerformed(AttackAbility ability) {
+            super.abilityPerformed(ability);
+
+            val state = getCharacter().getWorld().getObjectManager().getGameState();
+            if (state != null) {
+                state.getGame().getStatistics().increment(Statistics.ATTACKS_PERFORMED, state.getGame().getActiveProfile().getId());
+                state.getGame().getStatistics().incrementBy(Statistics.DAMAGE_DEALT, ability.getLastAttackDamage(), state.getGame().getActiveProfile().getId());
+                if (ability.isLastAttackKill()) {
+                    state.getGame().getStatistics().increment(Statistics.KILLS, state.getGame().getActiveProfile().getId());
+                }
+            }
         }
     }
 

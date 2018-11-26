@@ -1,5 +1,6 @@
 package toilari.otlite.game.world.entities.characters.abilities;
 
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.game.event.CharacterEvent;
@@ -12,6 +13,9 @@ import toilari.otlite.game.world.entities.characters.abilities.components.Attack
  * Hahmon kyky hyökätä.
  */
 public class AttackAbility extends AbstractAbility<AttackAbility, AttackControllerComponent> {
+    @Getter private boolean lastAttackKill;
+    @Getter private float lastAttackDamage;
+
     /**
      * Luo uuden kyvyn.
      *
@@ -62,29 +66,34 @@ public class AttackAbility extends AbstractAbility<AttackAbility, AttackControll
 
     @Override
     public boolean perform(@NonNull AttackControllerComponent component) {
+        this.lastAttackKill = false;
+        this.lastAttackDamage = 0.0f;
+
         val target = component.getTarget();
         if (!canAttack(target)) {
             return false;
         }
 
         val amount = getCharacter().getAttributes().getAttackDamage(getCharacter().getLevels());
-
         if (target instanceof IHealthHandler) {
-            val targetWithHealth = (IHealthHandler) target;
-            float current = targetWithHealth.getHealth();
-            targetWithHealth.setHealth(Math.max(0, current - amount));
-
-
-            if (targetWithHealth.isDead()) {
-                targetWithHealth.setHealth(0.0f);
-                target.remove();
-            }
-
+            this.lastAttackDamage = amount;
+            dealDamage(target, (IHealthHandler) target, amount);
         }
 
         if (hasEventSystem()) {
             getEventSystem().fire(new CharacterEvent.Damage(getCharacter(), target, amount));
         }
         return true;
+    }
+
+    private void dealDamage(GameObject target, IHealthHandler targetWithHealth, float amount) {
+        float current = targetWithHealth.getHealth();
+        targetWithHealth.setHealth(Math.max(0, current - amount));
+
+        if (targetWithHealth.isDead()) {
+            targetWithHealth.setHealth(0.0f);
+            target.remove();
+            this.lastAttackKill = true;
+        }
     }
 }

@@ -109,14 +109,16 @@ public class PlayerStatisticDAO {
      *
      * @param profileId   pelaajaprofiili jonka tietoja muokataan
      * @param statisticId kasvatettavan statistiikan ID
+     * @param amount
      * @throws SQLException jos tietokannan käsittelyssä tapahtuu virhe
      */
-    public void increment(int profileId, int statisticId) throws SQLException {
+    public void incrementBy(int profileId, int statisticId, double amount) throws SQLException {
         try (val connection = getDatabase().getConnection();
              val statement = connection.prepareStatement(
-                 "UPDATE PlayerStatistics SET value = value + 1 WHERE profile_id = ? AND statistic_id = ?")) {
-            statement.setInt(1, profileId);
-            statement.setInt(2, statisticId);
+                 "UPDATE PlayerStatistics SET value = value + ? WHERE profile_id = ? AND statistic_id = ?")) {
+            statement.setDouble(1, amount);
+            statement.setInt(2, profileId);
+            statement.setInt(3, statisticId);
             statement.executeUpdate();
         }
     }

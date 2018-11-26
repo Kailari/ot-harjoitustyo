@@ -5,7 +5,12 @@ import lombok.NonNull;
 
 public enum Statistics {
     KILLS("Kills", 0, 0.0),
-    TILES_MOVED("Tiles Moved", 1, 0.0);
+    ATTACKS_PERFORMED("Attacks Performed", 4, 0.0),
+    DAMAGE_DEALT("Damage Dealt", 3, 0.0),
+
+    TILES_MOVED("Tiles Moved", 1, 0.0),
+    TURNS_PLAYED("Turns Played", 2, 0.0),
+    ;
 
     @Getter private final String name;
     @Getter private final int id;

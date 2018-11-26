@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.val;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
+import toilari.otlite.game.profile.statistics.Statistics;
 import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
@@ -101,6 +102,16 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
             }
 
             this.isHolding = rawInputX != 0 || rawInputY != 0;
+        }
+
+        @Override
+        public void abilityPerformed(MoveAbility ability) {
+            super.abilityPerformed(ability);
+
+            val state = getCharacter().getWorld().getObjectManager().getGameState();
+            if (state != null) {
+                state.getGame().getStatistics().increment(Statistics.TILES_MOVED, state.getGame().getActiveProfile().getId());
+            }
         }
     }
 

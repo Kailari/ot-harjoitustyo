@@ -91,8 +91,12 @@ public class StatisticsManager {
      * @throws NullPointerException jos haettava statistiikka on <code>null</code>
      */
     public void increment(@NonNull Statistics key, int profileId) {
+        incrementBy(key, 1.0, profileId);
+    }
+
+    public void incrementBy(Statistics key, double amount, int profileId) {
         try {
-            this.playerStatistics.increment(profileId, key.getId());
+            this.playerStatistics.incrementBy(profileId, key.getId(), amount);
         } catch (SQLException e) {
             LOG.warn("Could not increment statistic {} for profile {}", key.getName(), profileId);
         }

@@ -159,7 +159,7 @@ class PlayerStatisticDAOTest {
         val profile = new ProfileDAO(database, new SettingsDAO(ROOT.toString())).findByName("Kissa");
         val dao = new PlayerStatisticDAO(database);
 
-        dao.increment(profile.getId(), Statistics.KILLS.getId());
+        dao.incrementBy(profile.getId(), Statistics.KILLS.getId(), 1.0);
         try (val connection = database.getConnection();
              val statement = connection.prepareStatement(
                  "SELECT value FROM PlayerStatistics WHERE profile_id = ? AND statistic_id = ?")) {
@@ -178,7 +178,7 @@ class PlayerStatisticDAOTest {
         val profile = new ProfileDAO(database, new SettingsDAO(ROOT.toString())).findByName("Kissa");
         val dao = new PlayerStatisticDAO(database);
 
-        dao.increment(profile.getId(), Statistics.KILLS.getId());
+        dao.incrementBy(profile.getId(), Statistics.KILLS.getId(), 1.0);
         try (val connection = database.getConnection();
              val statement = connection.prepareStatement(
                  "SELECT value AS value_koira FROM PlayerStatistics WHERE profile_id = 2 AND statistic_id = ?")) {

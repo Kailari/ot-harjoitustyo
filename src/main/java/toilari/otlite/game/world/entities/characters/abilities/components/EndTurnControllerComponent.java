@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.val;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
+import toilari.otlite.game.profile.statistics.Statistics;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.EndTurnAbility;
 
@@ -75,6 +76,16 @@ public abstract class EndTurnControllerComponent extends AbstractControllerCompo
             }
 
             this.isHolding = input;
+        }
+
+        @Override
+        public void abilityPerformed(EndTurnAbility ability) {
+            super.abilityPerformed(ability);
+
+            val state = getCharacter().getWorld().getObjectManager().getGameState();
+            if (state != null) {
+                state.getGame().getStatistics().increment(Statistics.TURNS_PLAYED, state.getGame().getActiveProfile().getId());
+            }
         }
     }
 
