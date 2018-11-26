@@ -10,13 +10,26 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Gson adapteri tilejen sarjoittamiseen polymorfisesti.
+ */
 public class TileAdapter implements JsonDeserializer<Tile> {
     private final Map<String, Class<? extends Tile>> registeredTileTypes = new HashMap<>();
 
+    /**
+     * Luo uuden adapterin ja antaa sille vakioruutuluokan jota käytetään jos sarjoitettava objekti ei määrittele
+     * tyyppiä erikseen.
+     */
     public TileAdapter() {
         registerTileType("default", NormalTile.class);
     }
 
+    /**
+     * Rekisteröi sarjoituksessa käytettävälle tunnukselle ruutuluokan.
+     *
+     * @param key       tunnus jota voidaan käyttää JSON-tiedostossa
+     * @param tileClass tunnusta vastaava luokka
+     */
     public void registerTileType(@NonNull String key, @NonNull Class<? extends Tile> tileClass) {
         this.registeredTileTypes.put(key.toLowerCase(), tileClass);
     }

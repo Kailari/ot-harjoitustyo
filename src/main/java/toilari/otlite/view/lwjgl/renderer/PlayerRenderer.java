@@ -4,7 +4,7 @@ import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.dao.TextureDAO;
 import toilari.otlite.game.util.Direction;
-import toilari.otlite.game.world.entities.characters.AbstractCharacter;
+import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
 import toilari.otlite.game.world.level.Tile;
 import toilari.otlite.view.lwjgl.AnimatedSprite;
@@ -41,7 +41,7 @@ public class PlayerRenderer extends CharacterRenderer {
     }
 
     @Override
-    public void draw(@NonNull LWJGLCamera camera, @NonNull AbstractCharacter character) {
+    public void draw(@NonNull LWJGLCamera camera, @NonNull CharacterObject character) {
         if (character.getWorld().getObjectManager().getRemainingActionPoints() > 0) {
             this.setCurrentFrame((int) (System.currentTimeMillis() % 1000 / 500));
         } else {
@@ -51,7 +51,7 @@ public class PlayerRenderer extends CharacterRenderer {
     }
 
     @Override
-    public void postDraw(@NonNull LWJGLCamera camera, @NonNull AbstractCharacter character) {
+    public void postDraw(@NonNull LWJGLCamera camera, @NonNull CharacterObject character) {
         if (character.getWorld().getObjectManager().isCharactersTurn(character)
             && character.getWorld().getObjectManager().getRemainingActionPoints() > 0) {
             drawActionVisualizers(camera, character);
@@ -60,7 +60,7 @@ public class PlayerRenderer extends CharacterRenderer {
         super.postDraw(camera, character);
     }
 
-    private void drawActionVisualizers(@NonNull LWJGLCamera camera, @NonNull AbstractCharacter character) {
+    private void drawActionVisualizers(@NonNull LWJGLCamera camera, @NonNull CharacterObject character) {
         val x = character.getX() / Tile.SIZE_IN_WORLD;
         val y = character.getY() / Tile.SIZE_IN_WORLD;
 
@@ -69,12 +69,12 @@ public class PlayerRenderer extends CharacterRenderer {
         }
     }
 
-    private void drawArrow(@NonNull LWJGLCamera camera, @NonNull AbstractCharacter character, int x, int y, Direction direction, int frame) {
-        val canMove = character.getAbilities().getComponent(MoveAbility.class).canMoveTo(direction, 1);
+    private void drawArrow(@NonNull LWJGLCamera camera, @NonNull CharacterObject character, int x, int y, Direction direction, int frame) {
+        val canMove = character.getAbilities().getAbility(MoveAbility.class).canMoveTo(direction, 1);
 
         val dx = direction.getDx();
         val dy = direction.getDy();
-        val isEnemy = character.getWorld().getObjectAt(x + dx, y + dy) instanceof AbstractCharacter;
+        val isEnemy = character.getWorld().getObjectAt(x + dx, y + dy) instanceof CharacterObject;
         if (isEnemy) {
             frame = 5;
         } else if (!canMove) {

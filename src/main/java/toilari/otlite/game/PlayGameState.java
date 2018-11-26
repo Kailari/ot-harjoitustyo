@@ -8,8 +8,9 @@ import lombok.var;
 import toilari.otlite.dao.TileDAO;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.TurnObjectManager;
-import toilari.otlite.game.world.entities.characters.AnimalCharacter;
-import toilari.otlite.game.world.entities.characters.PlayerCharacter;
+import toilari.otlite.game.world.entities.characters.CharacterAttributes;
+import toilari.otlite.game.world.entities.characters.CharacterObject;
+import toilari.otlite.game.world.entities.characters.PlayerCharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.AttackAbility;
 import toilari.otlite.game.world.entities.characters.abilities.EndTurnAbility;
 import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
@@ -25,7 +26,7 @@ import toilari.otlite.game.world.level.TileMapping;
 @Slf4j
 public class PlayGameState extends GameState {
     @Getter @NonNull private final World world;
-    @Getter private PlayerCharacter player;
+    @Getter private PlayerCharacterObject player;
 
     /**
      * Luo uuden pelitila-instanssin.
@@ -46,32 +47,29 @@ public class PlayGameState extends GameState {
 
         LOG.info("Initialization finished.");
 
-        this.player = new PlayerCharacter();
+        this.player = new PlayerCharacterObject();
         this.player.addAbility(new MoveAbility(this.player, 0), new MoveControllerComponent.Player(this.player));
         this.player.addAbility(new AttackAbility(this.player, 1), new AttackControllerComponent.Player(this.player));
         this.player.addAbility(new EndTurnAbility(this.player, 99), new EndTurnControllerComponent.Player(this.player, getGame().getActiveProfile().getSettings().isAutoEndTurn()));
         this.world.getObjectManager().spawn(this.player);
         this.player.setTilePos(5, 3);
 
-        var sheep = new AnimalCharacter();
-        this.world.getObjectManager().spawn(sheep);
-        sheep.addAbility(new MoveAbility(sheep, 0), new MoveControllerComponent.AI(sheep));
-        sheep.addAbility(new EndTurnAbility(sheep, 99), new EndTurnControllerComponent.AI(sheep));
-        sheep.setTilePos(5, 1);
-
-        sheep = new AnimalCharacter();
-        this.world.getObjectManager().spawn(sheep);
-        sheep.addAbility(new MoveAbility(sheep, 0), new MoveControllerComponent.AI(sheep));
-        sheep.addAbility(new EndTurnAbility(sheep, 99), new EndTurnControllerComponent.AI(sheep));
-        sheep.setTilePos(8, 1);
-
-        sheep = new AnimalCharacter();
-        this.world.getObjectManager().spawn(sheep);
-        sheep.addAbility(new MoveAbility(sheep, 0), new MoveControllerComponent.AI(sheep));
-        sheep.addAbility(new EndTurnAbility(sheep, 99), new EndTurnControllerComponent.AI(sheep));
-        sheep.setTilePos(11, 2);
+        createSheep(5, 1);
+        createSheep(8, 1);
+        createSheep(11, 2);
 
         return false;
+    }
+
+    private void createSheep(int x, int y) {
+        var sheep = new CharacterObject(new CharacterAttributes(5, 2, 0,
+            0.1f, 0.1f, 0.001f, 0.0f, 0.0f,
+            0.1f, 0.01f, 0.0f, 0.1f,
+            5.0f, 0.1f, 0.5f, 0.001f));
+        this.world.getObjectManager().spawn(sheep);
+        sheep.addAbility(new MoveAbility(sheep, 0), new MoveControllerComponent.AI(sheep));
+        sheep.addAbility(new EndTurnAbility(sheep, 99), new EndTurnControllerComponent.AI(sheep));
+        sheep.setTilePos(x, y);
     }
 
     private void loadAssets() {

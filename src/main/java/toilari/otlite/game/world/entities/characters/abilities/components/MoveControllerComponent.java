@@ -7,55 +7,31 @@ import lombok.val;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
 import toilari.otlite.game.util.Direction;
-import toilari.otlite.game.world.entities.characters.AbstractCharacter;
+import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
 
 import java.util.Random;
 
+/**
+ * Liikkumiskyvyn ohjainkomponentti.
+ */
 public abstract class MoveControllerComponent extends AbstractControllerComponent<MoveAbility> {
     @Setter(AccessLevel.PROTECTED) private int inputX, inputY;
 
-    public MoveControllerComponent(@NonNull AbstractCharacter character) {
+    private MoveControllerComponent(@NonNull CharacterObject character) {
         super(character);
     }
 
     @Override
-    public boolean wants() {
+    public boolean wants(MoveAbility ability) {
         return getInputDirection() != Direction.NONE;
     }
 
     /**
-     * Tarkistaa voiko hahmo liikkua annettuun suuntaan.
+     * Hakee suunnan johon hahmo haluaa liikkua.
      *
-     * @param direction suunta johon liikutaan
-     * @param tiles     montako ruutua siirrytään
-     * @return <code>true</code> jos liikkuminen on mahdollista
+     * @return suunta johon hahmo haluaa liikkua
      */
-    public boolean canMoveTo(Direction direction, int tiles) {
-        if (tiles == 0) {
-            return false;
-        }
-
-        int newX = getCharacter().getTileX() + direction.getDx();
-        int newY = getCharacter().getTileY() + direction.getDy();
-
-        val world = getCharacter().getWorld();
-        if (!world.getCurrentLevel().isWithinBounds(newX, newY)) {
-            return false;
-        }
-
-        val tileAtTarget = world.getCurrentLevel().getTileAt(newX, newY);
-        val objectAtTarget = world.getObjectAt(newX, newY);
-
-        val tileIsWalkable = !tileAtTarget.isWall();
-
-        if (tileIsWalkable) {
-            return objectAtTarget == null || objectAtTarget.isRemoved();
-        }
-
-        return false;
-    }
-
     public Direction getInputDirection() {
         if (this.inputX != 0) {
             return this.inputX > 0 ? Direction.RIGHT : Direction.LEFT;
@@ -102,12 +78,12 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
          * @param character pelihahmo jonka toimintoja halutaan ohjata
          * @throws NullPointerException jos hahmo on <code>null</code>
          */
-        public Player(@NonNull AbstractCharacter character) {
+        public Player(@NonNull CharacterObject character) {
             super(character);
         }
 
         @Override
-        public void updateInput() {
+        public void updateInput(MoveAbility ability) {
             int rawInputX = getMoveInputX();
             int rawInputY = getMoveInputY();
 
@@ -138,7 +114,7 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
          * @param character pelihahmo jonka toimintoja halutaan ohjata
          * @throws NullPointerException jos hahmo on <code>null</code>
          */
-        public AI(@NonNull AbstractCharacter character) {
+        public AI(@NonNull CharacterObject character) {
             this(character, System.currentTimeMillis());
         }
 
@@ -150,14 +126,14 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
          * @param seed      satunnaislukugeneraattorin siemenluku
          * @throws NullPointerException jos hahmo on <code>null</code>
          */
-        public AI(@NonNull AbstractCharacter character, long seed) {
+        public AI(@NonNull CharacterObject character, long seed) {
             super(character);
             this.random = new Random(seed);
         }
 
         @Override
-        public void updateInput() {
-            refreshMoveDirections();
+        public void updateInput(MoveAbility ability) {
+            refreshMoveDirections(ability);
             if (this.nDirections == 0) {
                 setInputX(0);
                 setInputY(0);
@@ -169,14 +145,14 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
             setInputY(direction.getDy());
         }
 
-        private void refreshMoveDirections() {
+        private void refreshMoveDirections(@NonNull MoveAbility ability) {
             val level = getCharacter().getWorld().getCurrentLevel();
             val x = getCharacter().getTileX();
             val y = getCharacter().getTileY();
 
             this.nDirections = 0;
             for (val direction : Direction.asIterable()) {
-                if (canMoveTo(direction, 1) && !level.getTileAt(x + direction.getDx(), y + direction.getDy()).isDangerous()) {
+                if (ability.canMoveTo(direction, 1) && !level.getTileAt(x + direction.getDx(), y + direction.getDy()).isDangerous()) {
                     this.availableDirections[this.nDirections++] = direction;
                 }
             }

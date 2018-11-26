@@ -14,7 +14,7 @@ import toilari.otlite.game.world.entities.characters.abilities.components.IContr
  * Hahmo pelimaailmassa.
  */
 @Slf4j
-public abstract class AbstractCharacter extends GameObject {
+public class CharacterObject extends GameObject {
     @Getter private transient int turnsTaken;
 
     @Getter @Setter private float health;
@@ -22,11 +22,24 @@ public abstract class AbstractCharacter extends GameObject {
     @Getter private final CharacterAttributes attributes;
     @Getter private final CharacterLevels levels;
 
+    /**
+     * Lisää hahmolle uuden kyvyn.
+     *
+     * @param ability   kyky joka lisätään
+     * @param component kyvystä vastaava ohjainkomponentti
+     * @param <A>       kyvyn tyyppi
+     * @param <C>       ohjainkomponentin tyyppi
+     */
     public <A extends IAbility<A, C>, C extends IControllerComponent<A>> void addAbility(A ability, IControllerComponent<A> component) {
         this.abilities.addAbility(ability, component);
     }
 
-    protected AbstractCharacter(@NonNull CharacterAttributes attributes) {
+    /**
+     * Luo uuden hahmon ja antaa sille annetunmukaiset aloitusattribuutit.
+     *
+     * @param attributes hahmon attribuutit
+     */
+    public CharacterObject(@NonNull CharacterAttributes attributes) {
         this.attributes = attributes;
         this.levels = new CharacterLevels();
         this.abilities = new CharacteAbilities();
@@ -48,6 +61,13 @@ public abstract class AbstractCharacter extends GameObject {
     }
 
     /**
+     * Kutsutaan kun vuoro alkaa.
+     */
+    public void beginTurn() {
+        this.turnsTaken++;
+    }
+
+    /**
      * Päivitysrutiini jota kutsutaan vain hahmon omalla vuorolla.
      *
      * @param turnManager objekti-/vuoromanageri jolla hahmojen vuoroja hallinnoidaan
@@ -64,7 +84,10 @@ public abstract class AbstractCharacter extends GameObject {
         }
     }
 
-    public void updateAfterTurn() {
+    /**
+     * Kutsutaan kun vuoro päättyy.
+     */
+    public void endTurn() {
         for (val ability : this.abilities.getAbilitiesSortedByPriority()) {
             if (ability.isOnCooldown()) {
                 ability.reduceCooldownTimer();
@@ -94,12 +117,5 @@ public abstract class AbstractCharacter extends GameObject {
 
     private boolean canAfford(TurnObjectManager turnManager, int cost) {
         return turnManager.getRemainingActionPoints() >= cost;
-    }
-
-    /**
-     * Kutsutaan kun ohjatun hahmon vuoro alkaa.
-     */
-    public void beginTurn() {
-        this.turnsTaken++;
     }
 }

@@ -1,11 +1,20 @@
 package toilari.otlite.game.world.entities.characters.abilities;
 
 import lombok.NonNull;
-import toilari.otlite.game.world.entities.characters.AbstractCharacter;
+import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.components.EndTurnControllerComponent;
 
+/**
+ * Hahmon kyky lopettaa vuoro.
+ */
 public class EndTurnAbility extends AbstractAbility<EndTurnAbility, EndTurnControllerComponent> {
-    public EndTurnAbility(AbstractCharacter character, int priority) {
+    /**
+     * Luo uuden kyvyn.
+     *
+     * @param character hahmo jolle kyky lisätään
+     * @param priority  kyvyn prioriteetti
+     */
+    public EndTurnAbility(CharacterObject character, int priority) {
         super(character, priority);
     }
 

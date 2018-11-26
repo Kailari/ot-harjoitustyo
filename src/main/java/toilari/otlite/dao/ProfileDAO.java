@@ -176,7 +176,7 @@ public class ProfileDAO {
 
     private Profile createInstance(ResultSet result) throws SQLException {
         val name = result.getString("name");
-        val settings = this.settingsDao.loadByName(name);
+        val settings = this.settingsDao.loadByProfileName(name);
 
         return new Profile(
             result.getInt("id"),

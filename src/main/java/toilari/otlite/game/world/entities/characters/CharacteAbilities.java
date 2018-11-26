@@ -52,13 +52,26 @@ public class CharacteAbilities {
      * @return <code>null</code> jos komponenttia ei löydy, muulloin löydetty komponentti
      */
     public <A extends IAbility<A, C>, C extends IControllerComponent<A>> C getComponent(Class<? extends A> abilityClass) {
+        val ability = getAbility(abilityClass);
+        return ability == null ? null : getComponentResponsibleFor(ability);
+    }
+
+    /**
+     * Hakee tyyppiä vastaavan hahmon kyvyn jos tällä hahmolla on yhteensopiva kyky.
+     *
+     * @param abilityClass kyvyn luokka
+     * @param <A>          kyvyn tyyppi
+     * @param <C>          ohjainkomponentin tyyppi
+     * @return <code>null</code> jos kykyä ei löydy, muulloin löydetty kyky
+     */
+    public <A extends IAbility<A, C>, C extends IControllerComponent<A>> A getAbility(Class<? extends A> abilityClass) {
         for (val ability : this.abilities) {
             if (ability.getClass().equals(abilityClass)) {
                 // The horrific addAbility signature makes sure that this operation is actually checked as long as
                 // system isn't purposedly tricked using type-casting magic to believing that incompatible types are
                 // compatible. Thus if this line throws, it's an error somewhere else.
                 // noinspection unchecked
-                return (C) getComponentResponsibleFor(ability);
+                return (A) ability;
             }
         }
 

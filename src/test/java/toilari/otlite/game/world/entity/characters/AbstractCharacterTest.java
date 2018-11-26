@@ -4,7 +4,7 @@
 //import org.junit.jupiter.api.Test;
 //import toilari.otlite.game.world.World;
 //import toilari.otlite.game.world.entities.TurnObjectManager;
-//import toilari.otlite.game.world.entities.characters.AbstractCharacter;
+//import toilari.otlite.game.world.entities.characters.CharacterObject;
 //import toilari.otlite.game.world.entities.characters.CharacterAttributes;
 //import toilari.otlite.game.world.level.Level;
 //import toilari.otlite.game.world.level.NormalTile;
@@ -290,7 +290,7 @@
 //        return new Level(8, 8, tileMappings, indices);
 //    }
 //
-//    private static class TestCharacter extends AbstractCharacter {
+//    private static class TestCharacter extends CharacterObject {
 //        TestCharacter(CharacterAttributes attributes) {
 //            super(attributes);
 //        }

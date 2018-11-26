@@ -4,17 +4,17 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.var;
 import toilari.otlite.game.world.World;
-import toilari.otlite.game.world.entities.characters.AbstractCharacter;
+import toilari.otlite.game.world.entities.characters.CharacterObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Objektimanageri, joka lisää vuoropohjaista toiminnallisuutta. Hallinnoi {@link AbstractCharacter pelihahmojen}
+ * Objektimanageri, joka lisää vuoropohjaista toiminnallisuutta. Hallinnoi {@link CharacterObject pelihahmojen}
  * vuoroja ja tarjoaa metodit vuoron päättämiseen yms.
  */
 public class TurnObjectManager extends ObjectManager {
-    private final List<AbstractCharacter> characters = new ArrayList<>();
+    private final List<CharacterObject> characters = new ArrayList<>();
     @Getter private int totalTurn;
     @Getter private int remainingActionPoints;
     private int turn;
@@ -43,7 +43,7 @@ public class TurnObjectManager extends ObjectManager {
      */
     public void nextTurn() {
         if (getActiveCharacter() != null) {
-            getActiveCharacter().updateAfterTurn();
+            getActiveCharacter().endTurn();
         }
 
         this.turn++;
@@ -64,7 +64,7 @@ public class TurnObjectManager extends ObjectManager {
      *
      * @return hahmo jonka vuoro nyt on, <code>null</code> jos hahmoja ei ole
      */
-    public AbstractCharacter getActiveCharacter() {
+    public CharacterObject getActiveCharacter() {
         return this.turn < 0 || this.characters.isEmpty() ? null : this.characters.get(this.turn);
     }
 
@@ -74,7 +74,7 @@ public class TurnObjectManager extends ObjectManager {
      * @param character hahmo joka tarkistetaan
      * @return <code>true</code> jos on hahmon vuoro, muutoin <code>false</code>
      */
-    public boolean isCharactersTurn(AbstractCharacter character) {
+    public boolean isCharactersTurn(CharacterObject character) {
         return !this.characters.isEmpty() && getActiveCharacter().equals(character);
     }
 
@@ -99,10 +99,10 @@ public class TurnObjectManager extends ObjectManager {
     @Override
     public void spawn(@NonNull GameObject object) {
         super.spawn(object);
-        if (object instanceof AbstractCharacter) {
+        if (object instanceof CharacterObject) {
             var wasEmpty = this.characters.isEmpty();
 
-            this.characters.add(this.turn, (AbstractCharacter) object);
+            this.characters.add(this.turn, (CharacterObject) object);
             if (!wasEmpty) {
                 this.turn++;
             } else {
@@ -116,7 +116,7 @@ public class TurnObjectManager extends ObjectManager {
     @Override
     protected void remove(GameObject object) {
         super.remove(object);
-        if (object instanceof AbstractCharacter) {
+        if (object instanceof CharacterObject) {
 
             int index = this.characters.indexOf(object);
             if (index != -1) {

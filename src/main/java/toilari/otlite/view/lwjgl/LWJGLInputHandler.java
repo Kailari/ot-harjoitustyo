@@ -12,8 +12,8 @@ import toilari.otlite.game.input.Key;
 public class LWJGLInputHandler implements IInputHandler {
     private final long windowHandle;
 
-    private static final double[] MOUSE_X = new double[1];
-    private static final double[] MOUSE_Y = new double[1];
+    private final double[] mouseX = new double[1];
+    private final double[] mouseY = new double[1];
 
 
     @Override
@@ -23,14 +23,14 @@ public class LWJGLInputHandler implements IInputHandler {
 
     @Override
     public int mouseX() {
-        GLFW.glfwGetCursorPos(this.windowHandle, MOUSE_X, MOUSE_Y);
-        return (int) Math.floor(MOUSE_X[0]);
+        GLFW.glfwGetCursorPos(this.windowHandle, this.mouseX, this.mouseY);
+        return (int) Math.floor(this.mouseX[0]);
     }
 
     @Override
     public int mouseY() {
-        GLFW.glfwGetCursorPos(this.windowHandle, MOUSE_X, MOUSE_Y);
-        return (int) Math.floor(MOUSE_Y[0]);
+        GLFW.glfwGetCursorPos(this.windowHandle, this.mouseX, this.mouseY);
+        return (int) Math.floor(this.mouseY[0]);
     }
 
     @Override

@@ -5,6 +5,9 @@ import lombok.Getter;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+/**
+ * Suunta pelimaailmassa.
+ */
 public enum Direction {
     UP(0, -1),
     RIGHT(1, 0),
@@ -19,6 +22,11 @@ public enum Direction {
         this.dy = dy;
     }
 
+    /**
+     * Palauttaa suunnat iteroitavana järjestyksessä <code>ylös, oikealle, alas, vasempaan</code>.
+     *
+     * @return suunnat iteroitavana
+     */
     public static Iterable<Direction> asIterable() {
         return new IterableDirection();
     }

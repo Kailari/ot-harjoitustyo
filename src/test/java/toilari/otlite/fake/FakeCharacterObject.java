@@ -1,14 +1,14 @@
 package toilari.otlite.fake;
 
-import toilari.otlite.game.world.entities.characters.AbstractCharacter;
+import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.CharacterAttributes;
 
-public class FakeCharacter extends AbstractCharacter {
-    public FakeCharacter(CharacterAttributes attributes) {
+public class FakeCharacterObject extends CharacterObject {
+    public FakeCharacterObject(CharacterAttributes attributes) {
         super(attributes);
     }
 
-    public FakeCharacter() {
+    public FakeCharacterObject() {
         super(new CharacterAttributes(
             2,
             2,

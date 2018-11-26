@@ -3,7 +3,7 @@ package toilari.otlite.game.world.level;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import toilari.otlite.game.world.entities.characters.AbstractCharacter;
+import toilari.otlite.game.world.entities.characters.CharacterObject;
 
 import java.util.Objects;
 
@@ -52,7 +52,7 @@ public abstract class Tile {
      * @param character hahmo joka juuri astui ruutuun
      * @throws NullPointerException jos <code>character</code> on null
      */
-    public void onCharacterEnter(int x, int y, @NonNull AbstractCharacter character) {
+    public void onCharacterEnter(int x, int y, @NonNull CharacterObject character) {
     }
 
     /**
@@ -63,7 +63,7 @@ public abstract class Tile {
      * @param character hahmo joka juuri astui pois ruudusta
      * @throws NullPointerException jos <code>character</code> on null
      */
-    public void onCharacterExit(int x, int y, @NonNull AbstractCharacter character) {
+    public void onCharacterExit(int x, int y, @NonNull CharacterObject character) {
     }
 
     @Override

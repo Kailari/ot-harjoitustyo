@@ -6,28 +6,34 @@ import lombok.Setter;
 import lombok.val;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
-import toilari.otlite.game.world.entities.characters.AbstractCharacter;
+import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.EndTurnAbility;
 
+/**
+ * Vuoronlopetuskyvyn ohjainkomponentti.
+ */
 public abstract class EndTurnControllerComponent extends AbstractControllerComponent<EndTurnAbility> {
     @Setter @Getter private boolean wantsToEndTurn;
 
-    private EndTurnControllerComponent(@NonNull AbstractCharacter character) {
+    private EndTurnControllerComponent(@NonNull CharacterObject character) {
         super(character);
     }
 
     @Override
-    public boolean wants() {
+    public boolean wants(EndTurnAbility ability) {
         return this.wantsToEndTurn;
     }
 
     @Override
-    public void updateInput() {
+    public void updateInput(EndTurnAbility ability) {
         if (getCharacter().isRemoved() || getCharacter().isDead()) {
             this.wantsToEndTurn = true;
         }
     }
 
+    /**
+     * Pelaajan vuoronlopetuskyvyn ohjainkomponentti.
+     */
     public static class Player extends EndTurnControllerComponent {
         private final boolean autoEndTurn;
         private boolean isHolding;
@@ -36,14 +42,20 @@ public abstract class EndTurnControllerComponent extends AbstractControllerCompo
             return Input.getHandler().isKeyDown(Key.SPACE);
         }
 
-        public Player(AbstractCharacter character, boolean autoEndTurn) {
+        /**
+         * Luo uuden ohjainkomponentin.
+         *
+         * @param character   hahmo jolle komponentti lisätään
+         * @param autoEndTurn lopetetaanko voro automaattisesti kun toimintopisteet loppuvat
+         */
+        public Player(CharacterObject character, boolean autoEndTurn) {
             super(character);
             this.autoEndTurn = autoEndTurn;
         }
 
         @Override
-        public void updateInput() {
-            super.updateInput();
+        public void updateInput(EndTurnAbility ability) {
+            super.updateInput(ability);
 
             if (isWantsToEndTurn()) {
                 return;
@@ -61,6 +73,9 @@ public abstract class EndTurnControllerComponent extends AbstractControllerCompo
         }
     }
 
+    /**
+     * Tekoälyn vuoronlopetuskyvyn ohjainkomponentti.
+     */
     public static class AI extends EndTurnControllerComponent {
         private int updateTicksWaited;
         private int prevRemaining = -1;
@@ -71,12 +86,17 @@ public abstract class EndTurnControllerComponent extends AbstractControllerCompo
             this.updateTicksWaited = 0;
         }
 
-        public AI(@NonNull AbstractCharacter character) {
+        /**
+         * Luo uuden ohjainkomponentin.
+         *
+         * @param character hahmo jolle komponentti lisätään
+         */
+        public AI(@NonNull CharacterObject character) {
             super(character);
         }
 
         @Override
-        public void updateInput() {
+        public void updateInput(EndTurnAbility ability) {
             val remaining = getCharacter().getWorld().getObjectManager().getRemainingActionPoints();
             if (remaining == this.prevRemaining) {
                 this.updateTicksWaited++;

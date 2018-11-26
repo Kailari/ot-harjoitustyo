@@ -8,25 +8,57 @@ import toilari.otlite.dao.database.Database;
 
 import java.sql.SQLException;
 
+/**
+ * Statistiikkamanageri. Hallinnoi pelaajaprofiilien statistiikkatietoja
+ */
 @Slf4j
 public class StatisticsManager {
     private final PlayerStatisticDAO playerStatistics;
 
+    /**
+     * Luo uuden statistiikkamanagerin käyttäen annettua tietokantaa tiedon tallennukseen.
+     *
+     * @param database tietokanta johon tiedot tallennetaan
+     * @throws SQLException jos tietokannan käsittelyssä tapahtuu virhe
+     */
     public StatisticsManager(@NonNull Database database) throws SQLException {
         this.playerStatistics = new PlayerStatisticDAO(database);
     }
 
+    /**
+     * Lisää pelaajaprofiilin tietokantaan jos sitä ei vielä ole siellä.
+     *
+     * @param profileId lisättävän profiilin ID
+     * @throws SQLException jos tietokannan käsittelyssä tapahtuu virhe
+     */
     public void startTrackingProfile(int profileId) throws SQLException {
         for (val stat : Statistics.values()) {
             this.playerStatistics.addButDoNotReplace(profileId, stat.getId(), stat.getDefaultValue());
         }
     }
 
-    public long getLong(Statistics key, int profileId) {
-        return (long) getDouble(key, profileId);
+    /**
+     * Hakee statistiikkatiedon kokonaislukuna.
+     *
+     * @param key       haettava tieto
+     * @param profileId profiili jonka tietoa haetaan
+     * @return statistiikan nykyinen arvo tai -1 jos hakeminen ei onnistunut
+     * @throws NullPointerException jos haettava statistiikka on <code>null</code>
+     */
+    public long getLong(@NonNull Statistics key, int profileId) {
+        val d = getDouble(key, profileId);
+        return Double.isNaN(d) ? -1 : (long) d;
     }
 
-    public double getDouble(Statistics key, int profileId) {
+    /**
+     * Hakee statistiikkatiedon liukulukuna.
+     *
+     * @param key       haettava tieto
+     * @param profileId profiili jonka tietoa haetaan
+     * @return statistiikan nykyinen arvo tai <code>NaN</code> jos hakeminen ei onnistu
+     * @throws NullPointerException jos haettava statistiikka on <code>null</code>
+     */
+    public double getDouble(@NonNull Statistics key, int profileId) {
         try {
             return this.playerStatistics.get(profileId, key.getId());
         } catch (SQLException e) {
@@ -35,7 +67,15 @@ public class StatisticsManager {
         }
     }
 
-    public void set(Statistics key, int profileId, double value) {
+    /**
+     * Asettaa statistiikkatiedolle uuden arvon.
+     *
+     * @param key       tieto jonka arvo asetetaan
+     * @param profileId profiili jonka tietoa päivitetään
+     * @param value     uusi arvo
+     * @throws NullPointerException jos haettava statistiikka on <code>null</code>
+     */
+    public void set(@NonNull Statistics key, int profileId, double value) {
         try {
             this.playerStatistics.update(key.getId(), profileId, value);
         } catch (SQLException e) {
@@ -43,7 +83,14 @@ public class StatisticsManager {
         }
     }
 
-    public void increment(Statistics key, int profileId) {
+    /**
+     * Kasvattaa statistiikkatiedon arvoa yhdellä.
+     *
+     * @param key       tieto jonka arvoa kasvatetaan
+     * @param profileId profiili jonka tietoa päivitetään
+     * @throws NullPointerException jos haettava statistiikka on <code>null</code>
+     */
+    public void increment(@NonNull Statistics key, int profileId) {
         try {
             this.playerStatistics.increment(profileId, key.getId());
         } catch (SQLException e) {

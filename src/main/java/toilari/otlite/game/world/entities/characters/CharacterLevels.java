@@ -3,10 +3,21 @@ package toilari.otlite.game.world.entities.characters;
 import lombok.Getter;
 import lombok.NonNull;
 
+/**
+ * Apuluokka hahmon attribuuttien käsittelyyn.
+ */
 public class CharacterLevels {
     @Getter private final int xpLevel;
     private final int[] attributeLevels = new int[]{1, 1, 1, 1, 1, 1, 1, 1};
 
+    /**
+     * Hakee attribuutin tason.
+     *
+     * @param attribute attribuutti joka taso haetaan
+     * @return attribuutin taso
+     * @throws NullPointerException     jos attribuutti on <code>null</code>
+     * @throws IllegalArgumentException jos attribuutti on {@link Attribute#MAX}
+     */
     public int getAttributeLevel(@NonNull Attribute attribute) {
         if (attribute == Attribute.MAX) {
             throw new IllegalArgumentException("MAX is not a valid Attribute!");
@@ -15,6 +26,15 @@ public class CharacterLevels {
         return this.attributeLevels[attribute.ordinal()];
     }
 
+    /**
+     * Asettaa attribuutin tason.
+     *
+     * @param attribute attribuutti joka taso asetetaan
+     * @param level     attribuutin uusi taso
+     * @throws NullPointerException     jos attribuutti on <code>null</code>
+     * @throws IllegalArgumentException jos taso ei ole välillä [1..10]
+     * @throws IllegalArgumentException jos attribuutti on {@link Attribute#MAX}
+     */
     public void setAttributeLevel(@NonNull Attribute attribute, int level) {
         if (attribute == Attribute.MAX) {
             throw new IllegalArgumentException("MAX is not a valid Attribute!");
@@ -27,10 +47,22 @@ public class CharacterLevels {
         this.attributeLevels[attribute.ordinal()] = level;
     }
 
+
+    /**
+     * Kasvattaa attribuutin tasoa yhdellä.
+     *
+     * @param attribute attribuutti joka tasoa kasvatetaan
+     * @throws NullPointerException     jos attribuutti on <code>null</code>
+     * @throws IllegalArgumentException jos taso ei ole välillä [1..10]
+     * @throws IllegalArgumentException jos attribuutti on {@link Attribute#MAX}
+     */
     public void levelUpAttribute(@NonNull Attribute attribute) {
         setAttributeLevel(attribute, getAttributeLevel(attribute) + 1);
     }
 
+    /**
+     * Luo uuden hahmon attribuuttiolion ja asettaa kaikkien attribuuttien tasoksi 1.
+     */
     public CharacterLevels() {
         this.xpLevel = 0;
 

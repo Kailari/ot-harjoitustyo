@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import toilari.otlite.dao.TextureDAO;
-import toilari.otlite.game.world.entities.characters.AbstractCharacter;
+import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.level.Tile;
 import toilari.otlite.view.lwjgl.AnimatedSprite;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
@@ -16,7 +16,7 @@ import toilari.otlite.view.renderer.IRenderer;
 /**
  * Piirtäjä pelihahmojen piirtämiseen.
  */
-public class CharacterRenderer implements IRenderer<AbstractCharacter, LWJGLCamera> {
+public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera> {
     private static final int DAMAGE_LABEL_DURATION = 1000;
     private static final int DAMAGE_LABEL_OFFSET = Tile.SIZE_IN_WORLD;
 
@@ -61,7 +61,7 @@ public class CharacterRenderer implements IRenderer<AbstractCharacter, LWJGLCame
     }
 
     @Override
-    public void draw(@NonNull LWJGLCamera camera, @NonNull AbstractCharacter character) {
+    public void draw(@NonNull LWJGLCamera camera, @NonNull CharacterObject character) {
         this.sprite.draw(camera, character.getX(), character.getY(), getCurrentFrame(), 1.0f, 1.0f, 1.0f);
     }
 

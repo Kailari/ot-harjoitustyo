@@ -5,6 +5,9 @@ import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.game.input.Input;
 
+/**
+ * Painike käyttöliittymässä.
+ */
 public class UIButton {
     @Getter private final int width;
     @Getter private final int height;
@@ -36,6 +39,22 @@ public class UIButton {
     private boolean mouseWasDown;
     private float r, g, b;
 
+    /**
+     * Luo uuden painikkeen.
+     *
+     * @param width   painikkeen leveys
+     * @param height  painikkeen korkeus
+     * @param size    painikkeen tekstuurin skaalaus
+     * @param text    painikkeen teksti
+     * @param texture painikkeen tekstuuri
+     * @param idleR   värisävyn punainen komponentti
+     * @param idleG   värisävyn vihreä komponentti
+     * @param idleB   värisävyn sininen komponentti
+     * @param hoverR  värisävyn punainen komponentti kursorin ollessa painikkeen päällä
+     * @param hoverG  värisävyn vihreä komponentti kursorin ollessa painikkeen päällä
+     * @param hoverB  värisävyn sininen komponentti kursorin ollessa painikkeen päällä
+     * @param onClick takaisinkutsu jota kutsutaan kun painiketta painetaan
+     */
     public UIButton(int width, int height, int size, @NonNull String text, @NonNull Texture texture, float idleR, float idleG, float idleB, float hoverR, float hoverG, float hoverB, Action onClick) {
         this.width = width;
         this.height = height;
@@ -65,6 +84,15 @@ public class UIButton {
         this.botRight = new Sprite(texture, 4, 4, 4, 4, size, size);
     }
 
+    /**
+     * Piirtää painikkeen.
+     *
+     * @param camera       kamera jonka näkökulmasta piiretään
+     * @param textRenderer tekstipiirtäjä jota käytetään tekstin piirtämiseen
+     * @param fontSize     fonttikoko
+     * @param x            painikkeen x-koordinaatti
+     * @param y            painikkeen y-koordinaatti
+     */
     public void draw(@NonNull LWJGLCamera camera, @NonNull TextRenderer textRenderer, int fontSize, int x, int y) {
         updateMouse(camera, x, y);
 
@@ -113,7 +141,13 @@ public class UIButton {
         }
     }
 
+    /**
+     * Takaisinkutsu joka kutsutaan kun painiketta painetaan.
+     */
     public interface Action {
+        /**
+         * Mitä tapahtuu kun painiketta painetaan painamalla painiketta.
+         */
         void perform();
     }
 }

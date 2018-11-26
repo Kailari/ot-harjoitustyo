@@ -2,7 +2,7 @@ package toilari.otlite.game.world.entity.characters.abilities.components;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import toilari.otlite.fake.FakeCharacter;
+import toilari.otlite.fake.FakeCharacterObject;
 import toilari.otlite.fake.FakeInputHandler;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
@@ -22,7 +22,7 @@ class PlayerEndTurnAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacter();
+        val character = new FakeCharacterObject();
         character.addAbility(new EndTurnAbility(character, 0), new EndTurnControllerComponent.Player(character, false));
         manager.spawn(character);
 
@@ -38,7 +38,7 @@ class PlayerEndTurnAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacter();
+        val character = new FakeCharacterObject();
         character.addAbility(new EndTurnAbility(character, 0), new EndTurnControllerComponent.Player(character, true));
         manager.spawn(character);
 
@@ -54,7 +54,7 @@ class PlayerEndTurnAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacter();
+        val character = new FakeCharacterObject();
         character.addAbility(new EndTurnAbility(character, 0), new EndTurnControllerComponent.Player(character, false));
         manager.spawn(character);
 
@@ -69,7 +69,7 @@ class PlayerEndTurnAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacter();
+        val character = new FakeCharacterObject();
         character.addAbility(new EndTurnAbility(character, 0), new EndTurnControllerComponent.Player(character, false));
         manager.spawn(character);
 
@@ -82,6 +82,6 @@ class PlayerEndTurnAbilityTest {
     @Test
     @SuppressWarnings("ConstantConditions")
     void performThrowsWhenGivenNullArgument() {
-        assertThrows(NullPointerException.class, () -> new EndTurnAbility(new FakeCharacter(), 0).perform(null));
+        assertThrows(NullPointerException.class, () -> new EndTurnAbility(new FakeCharacterObject(), 0).perform(null));
     }
 }

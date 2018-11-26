@@ -2,11 +2,14 @@ package toilari.otlite.game.world.entities.characters;
 
 import lombok.Getter;
 
-public class PlayerCharacter extends AbstractCharacter {
+public class PlayerCharacterObject extends CharacterObject {
     @Getter private long deathTime;
 
-    public PlayerCharacter() {
-        this(new CharacterAttributes(
+    /**
+     * TODO: Hankkiudu tästä luokasta eroon kunhan hahmojen lukeminen tiedostosta onnistuu.
+     */
+    public PlayerCharacterObject() {
+        super(new CharacterAttributes(
             1,
             2,
             0,
@@ -24,10 +27,6 @@ public class PlayerCharacter extends AbstractCharacter {
             0.5f,
             0.001f
         ));
-    }
-
-    public PlayerCharacter(CharacterAttributes attributes) {
-        super(attributes);
     }
 
     @Override

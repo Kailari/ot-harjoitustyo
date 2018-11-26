@@ -8,6 +8,9 @@ import toilari.otlite.dao.TextureDAO;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Piirtää tekstiä ruudulle.
+ */
 public class TextRenderer {
     private static final String AVAILABLE_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ.!?-+/\\";
     private static final Map<Character, Integer> CHAR_TO_FRAME = new HashMap<>();
@@ -24,6 +27,14 @@ public class TextRenderer {
 
     private final AnimatedSprite[] font;
 
+    /**
+     * Luo uuden piirtäjän.
+     *
+     * @param textures    DAO jolla tarvittavat tekstuurit ladataan
+     * @param minFontSize minimifonttikoko
+     * @param maxFontSize maksimifonttikoko
+     * @throws NullPointerException jos dao on <code>null</code>
+     */
     public TextRenderer(@NonNull TextureDAO textures, int minFontSize, int maxFontSize) {
         this.maxFontSize = maxFontSize;
         this.minFontSize = minFontSize;
@@ -37,12 +48,23 @@ public class TextRenderer {
         }
     }
 
+    /**
+     * Piirtää merkkijonon ruudulle.
+     *
+     * @param camera kamera jonka näkökulmasta piiretään
+     * @param x      tekstin x-koordinaatti
+     * @param y      tekstin y-koordinaatti
+     * @param r      värisävyn punainen komponentti
+     * @param g      värisävyn vihreä komponentti
+     * @param b      värisävyn sininen komponentti
+     * @param size   fonttikoko
+     * @param string piirrettävä merkkijono
+     */
     public void draw(@NonNull LWJGLCamera camera, int x, int y, float r, float g, float b, int size, @NonNull String string) {
         size = Math.max(this.minFontSize, Math.min(this.maxFontSize, size));
         string = string.toUpperCase();
 
-        var destX = x;
-        var destY = y;
+        var destX = x, destY = y;
         for (int i = 0; i < string.length(); i++) {
             val c = string.charAt(i);
 
@@ -53,11 +75,11 @@ public class TextRenderer {
                 destX = x;
                 destY += size;
                 continue;
-            } else if (!CHAR_TO_FRAME.containsKey(c)) {
+            } else if (!TextRenderer.CHAR_TO_FRAME.containsKey(c)) {
                 continue;
             }
 
-            this.font[size - 1].draw(camera, destX, destY, CHAR_TO_FRAME.get(c), r, g, b);
+            this.font[size - 1].draw(camera, destX, destY, TextRenderer.CHAR_TO_FRAME.get(c), r, g, b);
             destX += size;
         }
     }

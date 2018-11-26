@@ -3,11 +3,20 @@ package toilari.otlite.game.world.entities.characters.abilities;
 import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.game.event.CharacterEvent;
-import toilari.otlite.game.world.entities.characters.AbstractCharacter;
+import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.components.AttackControllerComponent;
 
+/**
+ * Hahmon kyky hyökätä.
+ */
 public class AttackAbility extends AbstractAbility<AttackAbility, AttackControllerComponent> {
-    public AttackAbility(AbstractCharacter character, int priority) {
+    /**
+     * Luo uuden kyvyn.
+     *
+     * @param character hahmo jolle kyky lisätään
+     * @param priority  kyvyn prioriteetti
+     */
+    public AttackAbility(CharacterObject character, int priority) {
         super(character, priority);
     }
 

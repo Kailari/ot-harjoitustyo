@@ -13,16 +13,32 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * DAO profiilikohtaisten asetusten noutamiseen JSON-tiedostoista.
+ */
 @Slf4j
 public class SettingsDAO {
     private final Gson gson = new GsonBuilder().create();
     private final Path root;
 
+    /**
+     * Luo uuden DAO:n joka etsii asetustiedostoja annetusta polusta.
+     *
+     * @param root polku josta tallennustiedostoja etsitään
+     * @throws NullPointerException jos polku on <code>null</code>
+     */
     public SettingsDAO(@NonNull String root) {
         this.root = Paths.get(root);
     }
 
-    public Settings loadByName(@NonNull String name) {
+    /**
+     * Lataa asetustiedoston annetun pelaajanimen mukaan.
+     *
+     * @param name profiilin nimi jonka asetukset haetaan
+     * @return <code>null</code> jos asetustiedostoa ei löytynyt, muulloin ladattu asetustiedosto
+     * @throws NullPointerException jos nimi on <code>null</code>
+     */
+    public Settings loadByProfileName(@NonNull String name) {
         val filename = nameToKey(name);
         val path = this.root.resolve(filename);
         if (!FileHelper.fileExists(path.toString())) {
@@ -42,7 +58,7 @@ public class SettingsDAO {
         }
     }
 
-    public String nameToKey(@NonNull String name) {
+    private String nameToKey(@NonNull String name) {
         return name.replaceAll("[^A-Za-z0-9 ]", "") + ".sav";
     }
 }

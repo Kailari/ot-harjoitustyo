@@ -89,6 +89,12 @@ public class CharacterAttributes {
             base + luckBonus);
     }
 
+    /**
+     * Hahmon kyky vastustaa tönäisyjä.
+     *
+     * @param levels hahmon attribuuttien tilat
+     * @return montako prosenttia tönäisystä tulee jättää huomiotta
+     */
     public float getKnockbackResistance(@NonNull CharacterLevels levels) {
         val strengthModifier = Attribute.Strength.getKnockbackResistance(levels.getAttributeLevel(Attribute.STRENGTH));
         return Math.min(
@@ -96,6 +102,12 @@ public class CharacterAttributes {
             this.baseKnockbackResistance * (1.0f + strengthModifier));
     }
 
+    /**
+     * Hahmon kyky vastustaa "pelko"-statusefektiä.
+     *
+     * @param levels hahmon attribuuttien tilat
+     * @return montako prosenttia efektin todennäköisyydestä tulee jättää huomiotta
+     */
     public float getFearResistance(@NonNull CharacterLevels levels) {
         val charismaModifier = Attribute.Charisma.getFearResistanceModifier(levels.getAttributeLevel(Attribute.CHARISMA));
         val wisdomModifier = Attribute.Wisdom.getFearResistance(levels.getAttributeLevel(Attribute.WISDOM));

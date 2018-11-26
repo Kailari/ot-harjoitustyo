@@ -2,14 +2,17 @@ package toilari.otlite.game.world.entities.characters.abilities.components;
 
 import lombok.*;
 import toilari.otlite.game.util.Direction;
-import toilari.otlite.game.world.entities.characters.AbstractCharacter;
+import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.AttackAbility;
 import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
 
+/**
+ * Hyökkäämiskyvyn ohjainkomponentti.
+ */
 public abstract class AttackControllerComponent extends AbstractControllerComponent<AttackAbility> {
-    @Getter @Setter(AccessLevel.PROTECTED) private AbstractCharacter target;
+    @Getter @Setter(AccessLevel.PROTECTED) private CharacterObject target;
 
-    private AttackControllerComponent(@NonNull AbstractCharacter character) {
+    private AttackControllerComponent(@NonNull CharacterObject character) {
         super(character);
     }
 
@@ -27,13 +30,21 @@ public abstract class AttackControllerComponent extends AbstractControllerCompon
         }
 
         val objectAtTarget = getCharacter().getWorld().getObjectAt(x, y);
-        return objectAtTarget instanceof AbstractCharacter && !objectAtTarget.isRemoved();
+        return objectAtTarget instanceof CharacterObject && !objectAtTarget.isRemoved();
     }
 
+    /**
+     * Pelaajan hyökkäämiskyvyn ohjainkomponentti.
+     */
     public static class Player extends AttackControllerComponent {
         private final MoveControllerComponent moveComponent;
 
-        public Player(@NonNull AbstractCharacter character) {
+        /**
+         * Luo uuden ohjainkomponentin.
+         *
+         * @param character hahmo jolle komponentti lisätään
+         */
+        public Player(@NonNull CharacterObject character) {
             super(character);
             this.moveComponent = character.getAbilities().getComponent(MoveAbility.class);
 
@@ -43,11 +54,11 @@ public abstract class AttackControllerComponent extends AbstractControllerCompon
         }
 
         @Override
-        public void updateInput() {
+        public void updateInput(AttackAbility ability) {
         }
 
         @Override
-        public boolean wants() {
+        public boolean wants(AttackAbility ability) {
             val direction = this.moveComponent.getInputDirection();
             if (direction == Direction.NONE) {
                 setTarget(null);
@@ -57,7 +68,7 @@ public abstract class AttackControllerComponent extends AbstractControllerCompon
             val targetX = getCharacter().getTileX() + direction.getDx();
             val targetY = getCharacter().getTileY() + direction.getDy();
             if (canAttack(targetX, targetY)) {
-                setTarget((AbstractCharacter) getCharacter().getWorld().getObjectAt(targetX, targetY));
+                setTarget((CharacterObject) getCharacter().getWorld().getObjectAt(targetX, targetY));
                 return true;
             }
 
@@ -66,18 +77,26 @@ public abstract class AttackControllerComponent extends AbstractControllerCompon
         }
     }
 
+    /**
+     * Tekoälyn hyökkäämiskyvyn ohjainkomponentti.
+     */
     public static class AI extends AttackControllerComponent {
-        public AI(@NonNull AbstractCharacter character) {
+        /**
+         * Luo uuden ohjainkomponentin.
+         *
+         * @param character hahmo jolle komponentti lisätään
+         */
+        public AI(@NonNull CharacterObject character) {
             super(character);
         }
 
         @Override
-        public void updateInput() {
+        public void updateInput(AttackAbility ability) {
 
         }
 
         @Override
-        public boolean wants() {
+        public boolean wants(AttackAbility ability) {
             return false;
         }
     }

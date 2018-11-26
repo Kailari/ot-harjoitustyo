@@ -53,11 +53,12 @@ public class Game {
      * Luo uuden peli-instanssin.
      *
      * @param defaultState oletuspelitila joka asetetaan aktiiviseksi pelin suorituksen {@link #init() alkaessa}
+     * @param savePath     hakemisto johon tallennustiedostot tulee säilöä
      * @throws NullPointerException jos oletustila on <code>null</code>
      */
-    public Game(@NonNull GameState defaultState, @NonNull String saveDataPath) {
+    public Game(@NonNull GameState defaultState, @NonNull String savePath) {
         this.defaultGameState = defaultState;
-        this.saveDataPath = saveDataPath;
+        this.saveDataPath = savePath;
     }
 
     /**
