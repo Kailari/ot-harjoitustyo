@@ -101,10 +101,10 @@ public class CharacterObject extends GameObject {
         }
 
         val component = this.abilities.getComponentResponsibleFor(ability);
-        component.updateInput();
+        component.updateInput(ability);
 
         val cost = ability.getCost();
-        if (component.wants() && canAfford(turnManager, cost)) {
+        if (component.wants(ability) && canAfford(turnManager, cost)) {
             if (ability.perform(component)) {
                 turnManager.spendActionPoints(cost);
                 ability.putOnCooldown();

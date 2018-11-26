@@ -7,6 +7,7 @@ import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
 import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.entities.characters.PlayerCharacterObject;
+import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
 import toilari.otlite.game.world.entities.characters.abilities.components.MoveControllerComponent;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -48,20 +49,24 @@ class MoveAbilityPlayerControlComponentTest {
     @Test
     void wantsMoveReturnsFalseIfInputNoInput() {
         Input.init(new FakeInputHandler());
-        val component = new MoveControllerComponent.Player(new PlayerCharacterObject());
+        val player = new PlayerCharacterObject();
+        val ability = new MoveAbility(player, 0);
+        val component = new MoveControllerComponent.Player(player);
 
 
-        component.updateInput();
-        assertFalse(component.wants());
+        component.updateInput(ability);
+        assertFalse(component.wants(ability));
     }
 
     @Test
     void getInputDirectionReturnsNoneAfterSecondUpdateWhenInputIsHeldPressed() {
         Input.init(new FakeInputHandler(Key.RIGHT, Key.DOWN));
-        val component = new MoveControllerComponent.Player(new PlayerCharacterObject());
+        val player = new PlayerCharacterObject();
+        val ability = new MoveAbility(player, 0);
+        val component = new MoveControllerComponent.Player(player);
 
-        component.updateInput();
-        component.updateInput();
+        component.updateInput(ability);
+        component.updateInput(ability);
         assertEquals(Direction.NONE, component.getInputDirection());
     }
 }

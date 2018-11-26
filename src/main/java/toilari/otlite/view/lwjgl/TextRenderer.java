@@ -63,8 +63,7 @@ public class TextRenderer {
     public void draw(@NonNull LWJGLCamera camera, int x, int y, float r, float g, float b, int size, @NonNull String string) {
         size = Math.max(this.minFontSize, Math.min(this.maxFontSize, size));
         string = string.toUpperCase();
-
-        var destX = x, destY = y;
+        int destX = x, destY = y;
         for (int i = 0; i < string.length(); i++) {
             val c = string.charAt(i);
 
