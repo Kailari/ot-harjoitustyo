@@ -148,18 +148,24 @@ public class CharacterAbilities {
      *
      * @return iteroitava lista jossa hahmon kyvyt
      */
-    Iterable<IAbility> getAbilitiesSortedByPriority() {
+    public Iterable<IAbility> getAbilitiesSortedByPriority() {
         return this.abilities;
     }
 
-    public void cloneAbilitiesFrom(CharacterAbilities template) {
+
+    /**
+     * Kopioi kyvyt toisesta instanssista.
+     *
+     * @param template instanssi joka kopioidaan
+     */
+    public void cloneAbilitiesFrom(@NonNull CharacterAbilities template) {
         for (val abilityTemplate : template.getAbilitiesSortedByPriority()) {
             val componentTemplate = template.getComponent(abilityTemplate.getClass());
 
-            AbilityComponentEntry<?, IControllerComponent<?>> entry = (AbilityComponentEntry<?, IControllerComponent<?>>) ABILITY_ENTRIES_BY_CLASS.get(abilityTemplate.getClass());
+            AbilityComponentEntry<?, IControllerComponent<?>> entry = (AbilityComponentEntry<?, IControllerComponent<?>>) CharacterAbilities.ABILITY_ENTRIES_BY_CLASS.get(abilityTemplate.getClass());
             val instanceComponentFactory = entry.getFactories().get(componentTemplate.getClass());
             val instanceComponent = instanceComponentFactory.apply(componentTemplate);
-            val instanceAbility = ABILITY_FACTORIES.get(abilityTemplate.getClass()).get();
+            val instanceAbility = CharacterAbilities.ABILITY_FACTORIES.get(abilityTemplate.getClass()).get();
             instanceAbility.setPriority(abilityTemplate.getPriority());
 
             addAbilityUnsafe(instanceAbility, instanceComponent);

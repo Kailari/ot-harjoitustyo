@@ -40,6 +40,11 @@ public abstract class EndTurnControllerComponent extends AbstractControllerCompo
         @Setter private boolean autoEndTurn;
         private boolean isHolding;
 
+        /**
+         * Luo uuden komponentin kopioimalla sen annetusta komponentista.
+         *
+         * @param template kopioitava komponentti
+         */
         public Player(EndTurnControllerComponent template) {
             this.autoEndTurn = ((EndTurnControllerComponent.Player) template).autoEndTurn;
         }

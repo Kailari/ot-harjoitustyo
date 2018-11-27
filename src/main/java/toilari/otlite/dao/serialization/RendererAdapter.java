@@ -4,7 +4,6 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -15,11 +14,23 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Sarjoitusadapteri piirtäjien määritystiedostojen parsimiseen.
+ */
 @Slf4j
 public class RendererAdapter implements JsonDeserializer<IRenderer> {
     private final Map<String, RendererEntry<?, ?>> renderers = new HashMap<>();
     private final TextureDAO textureDAO;
 
+    /**
+     * Rekisteröi uuden piirtäjän.
+     *
+     * @param key             määritystiedostoissa käytettävä piirtäjän luokan tunnus
+     * @param rendererFactory tehdas jolla piirtäjiä saadaan tuotettua
+     * @param contextClass    piirtokontekstiluokka jolla piirtäjän tarkemmat tiedot saadaan
+     * @param <R>             piirtäjän tyyppi
+     * @param <C>             piirtokontekstin tyyppi
+     */
     public <R extends IRenderer, C> void registerRenderer(
         @NonNull String key,
         @NonNull RendererFactory<R, C> rendererFactory,
@@ -28,6 +39,11 @@ public class RendererAdapter implements JsonDeserializer<IRenderer> {
         this.renderers.put(key, new RendererEntry<>(rendererFactory, contextClass));
     }
 
+    /**
+     * Luo uuden piirtäjien sarjoitusadapterin.
+     *
+     * @param textureDAO dao jolla piirtäjät voivat ladata tekstuureja
+     */
     public RendererAdapter(@NonNull TextureDAO textureDAO) {
         this.textureDAO = textureDAO;
     }
@@ -55,21 +71,20 @@ public class RendererAdapter implements JsonDeserializer<IRenderer> {
         return entry.createRenderer(this.textureDAO, renderContext);
     }
 
-    public static class RendererEntry<R extends IRenderer, C> {
-        @Getter private final RendererFactory<R, C> factory;
-        @Getter private final Class<? extends C> contextClass;
-
-        public RendererEntry(@NonNull RendererFactory<R, C> factory, @NonNull Class<? extends C> contextClass) {
-            this.factory = factory;
-            this.contextClass = contextClass;
-        }
-
-        public R createRenderer(TextureDAO textureDAO, Object context) {
-            return this.factory.provide(textureDAO, (C) context);
-        }
-    }
-
+    /**
+     * Tehdas jolla piirtäjiä voidaan tuottaa.
+     *
+     * @param <R> piirtäjän tyyppi
+     * @param <C> piirtokontekstin tyyppi
+     */
     public interface RendererFactory<R extends IRenderer, C> {
+        /**
+         * Tuottaa uuden piirtäjän.
+         *
+         * @param textures tekstuuridao piirtäjän tekstuurien lataamiseen
+         * @param context  piirtokonteksti
+         * @return uusi piirtäjä jolle on asetettu annettu konteksti
+         */
         R provide(TextureDAO textures, C context);
     }
 }

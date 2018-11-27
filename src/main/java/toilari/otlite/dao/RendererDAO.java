@@ -17,11 +17,21 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Path;
 
+/**
+ * Lataa piirtäjiä määritystiedostoista.
+ */
 @Slf4j
 public class RendererDAO extends AutoDiscoverFileDAO<IRenderer> {
     private static final String[] EXTENSIONS = {"json", "renderer"};
     private final Gson gson;
 
+    /**
+     * Luo uuden daon piirtäjien lataamista varten.
+     *
+     * @param root       juurihakemisto josta piirtäjiä etsitään
+     * @param textureDAO tekstuuridao piirtäjien tekstuurien lataamiseen
+     * @throws NullPointerException jos polku tai dao on <code>null</code>
+     */
     public RendererDAO(@NonNull String root, @NonNull TextureDAO textureDAO) {
         super(root);
         val typeAdapter = new RendererAdapter(textureDAO);
@@ -35,7 +45,7 @@ public class RendererDAO extends AutoDiscoverFileDAO<IRenderer> {
     @NonNull
     @Override
     protected String[] getFileExtensions() {
-        return EXTENSIONS;
+        return RendererDAO.EXTENSIONS;
     }
 
     @Override

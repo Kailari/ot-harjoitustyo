@@ -94,6 +94,14 @@ public class StatisticsManager {
         incrementBy(key, 1.0, profileId);
     }
 
+    /**
+     * Kasvattaa statistiikkatiedon arvoa annetulla arvolla.
+     *
+     * @param key       tieto jonka arvoa kasvatetaan
+     * @param amount    kuinka paljon arvoa kasvatetaan
+     * @param profileId profiili jonka tietoa päivitetään
+     * @throws NullPointerException jos haettava statistiikka on <code>null</code>
+     */
     public void incrementBy(Statistics key, double amount, int profileId) {
         try {
             this.playerStatistics.incrementBy(profileId, key.getId(), amount);

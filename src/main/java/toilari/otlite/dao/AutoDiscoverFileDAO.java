@@ -48,10 +48,14 @@ public abstract class AutoDiscoverFileDAO<T> extends CachingDAO<T, Path> impleme
         return super.getAll();
     }
 
-    public T get(String path) {
-        if (path == null) {
-            return null;
-        }
+    /**
+     * Lataa annetussa (merkkijono) polussa olevan tiedoston.
+     *
+     * @param path polku josta tiedosto ladataan
+     * @return ladattu tiedosto tai <code>null</code> jos lataaminen epäonnistuu
+     * @throws NullPointerException jos polku on <code>null</code>
+     */
+    public T get(@NonNull String path) {
         return get(this.contentRoot.resolve(path));
     }
 }

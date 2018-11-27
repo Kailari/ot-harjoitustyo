@@ -109,7 +109,7 @@ public class PlayerStatisticDAO {
      *
      * @param profileId   pelaajaprofiili jonka tietoja muokataan
      * @param statisticId kasvatettavan statistiikan ID
-     * @param amount
+     * @param amount      arvo jolla statistiikkatietoa kasvatetaan
      * @throws SQLException jos tietokannan käsittelyssä tapahtuu virhe
      */
     public void incrementBy(int profileId, int statisticId, double amount) throws SQLException {

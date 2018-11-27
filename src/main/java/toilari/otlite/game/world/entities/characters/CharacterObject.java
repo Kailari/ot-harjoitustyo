@@ -40,6 +40,12 @@ public class CharacterObject extends GameObject implements IHealthHandler {
         this.abilities.addAbility(ability, component);
     }
 
+    /**
+     * Luo uuden hahmon asettaen sille attribuuttien ja tasojen oletusarvot.
+     *
+     * @param attributes attribuuttien arvot
+     * @param levels     attribuuttien tasot
+     */
     public CharacterObject(@NonNull CharacterAttributes attributes, @NonNull CharacterLevels levels) {
         this.attributes = attributes;
         this.levels = levels;

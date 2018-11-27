@@ -100,6 +100,23 @@ public class ObjectManager {
     }
 
     /**
+     * Lisää kopion peliobjektista pelimaailmaan.
+     *
+     * @param template kopioitava peliobjekti
+     * @return lisätty peliobjekti
+     */
+    public CharacterObject spawnTemplate(@NonNull CharacterObject template) {
+        val attributes = new CharacterAttributes(template.getAttributes());
+        val levels = new CharacterLevels(template.getLevels());
+        val instance = new CharacterObject(attributes, levels);
+        instance.getAbilities().cloneAbilitiesFrom(template.getAbilities());
+        instance.setRendererID(template.getRendererID());
+        instance.setHealth(template.getHealth());
+        spawn(instance);
+        return instance;
+    }
+
+    /**
      * Läpikäy objektit ja tuhoaa kaikki jotka on merkattu poistetuiksi.
      */
     private void deleteRemoved() {
@@ -114,16 +131,5 @@ public class ObjectManager {
 
     protected void remove(GameObject object) {
         this.objects.remove(object);
-    }
-
-    public CharacterObject spawnTemplate(CharacterObject template) {
-        val attributes = new CharacterAttributes(template.getAttributes());
-        val levels = new CharacterLevels(template.getLevels());
-        val instance = new CharacterObject(attributes, levels);
-        instance.getAbilities().cloneAbilitiesFrom(template.getAbilities());
-        instance.setRendererID(template.getRendererID());
-        instance.setHealth(template.getHealth());
-        spawn(instance);
-        return instance;
     }
 }

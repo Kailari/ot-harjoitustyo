@@ -11,6 +11,13 @@ import toilari.otlite.game.world.entities.characters.abilities.IAbility;
  */
 public interface IControllerComponent<A extends IAbility> {
     /**
+     * Alustaa komponentin ja asettaa ohjatun hahmon.
+     *
+     * @param character hahmo jonka kykyä ohjataan
+     */
+    void init(@NonNull CharacterObject character);
+
+    /**
      * Haluaako hahmo käyttää ohjattavaa kykyä.
      *
      * @param ability kyky jota ohjataan
@@ -33,6 +40,4 @@ public interface IControllerComponent<A extends IAbility> {
      * @param ability kyky jota ohjataan
      */
     void abilityPerformed(A ability);
-
-    void init(@NonNull CharacterObject character);
 }

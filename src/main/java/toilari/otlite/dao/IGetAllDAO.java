@@ -3,7 +3,7 @@ package toilari.otlite.dao;
 import java.util.Collection;
 
 /**
- * DAO joka tarjoaa metodin {@link #getAll()}
+ * DAO joka tarjoaa metodin {@link #getAll()}.
  *
  * @param <T> ladattavien oliojen tyyppi
  */

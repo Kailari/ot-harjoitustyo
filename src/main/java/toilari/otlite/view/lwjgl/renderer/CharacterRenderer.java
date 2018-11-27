@@ -21,6 +21,12 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
     @Getter(AccessLevel.PROTECTED) private Texture fontTexture;
     @Getter(AccessLevel.PROTECTED) private AnimatedSprite sprite;
 
+    /**
+     * Luo uuden hahmopiirtäjän.
+     *
+     * @param textureDAO tekstuuridao jolla piirtäjä luodaan.
+     * @param context    piirtokonteksti
+     */
     public CharacterRenderer(TextureDAO textureDAO, Context context) {
         this.textureDAO = textureDAO;
         this.context = context;
@@ -76,5 +82,4 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
         this.texture.destroy();
         this.fontTexture.destroy();
     }
-
 }
