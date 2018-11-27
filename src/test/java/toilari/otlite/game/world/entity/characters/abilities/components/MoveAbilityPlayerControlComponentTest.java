@@ -2,11 +2,11 @@ package toilari.otlite.game.world.entity.characters.abilities.components;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import toilari.otlite.fake.FakeCharacterObject;
 import toilari.otlite.fake.FakeInputHandler;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
 import toilari.otlite.game.util.Direction;
-import toilari.otlite.game.world.entities.characters.PlayerCharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
 import toilari.otlite.game.world.entities.characters.abilities.components.MoveControllerComponent;
 
@@ -49,7 +49,7 @@ class MoveAbilityPlayerControlComponentTest {
     @Test
     void wantsMoveReturnsFalseIfInputNoInput() {
         Input.init(new FakeInputHandler());
-        val player = new PlayerCharacterObject();
+        val player = new FakeCharacterObject();
         val ability = new MoveAbility();
         ability.init(player, 0);
         val component = new MoveControllerComponent.Player();
@@ -63,7 +63,7 @@ class MoveAbilityPlayerControlComponentTest {
     @Test
     void getInputDirectionReturnsNoneAfterSecondUpdateWhenInputIsHeldPressed() {
         Input.init(new FakeInputHandler(Key.RIGHT, Key.DOWN));
-        val player = new PlayerCharacterObject();
+        val player = new FakeCharacterObject();
         val ability = new MoveAbility();
         ability.init(player, 0);
         val component = new MoveControllerComponent.Player();

@@ -1,7 +1,7 @@
 package toilari.otlite.fake;
 
-import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.CharacterAttributes;
+import toilari.otlite.game.world.entities.characters.CharacterObject;
 
 public class FakeCharacterObject extends CharacterObject {
     public FakeCharacterObject(CharacterAttributes attributes) {
@@ -9,7 +9,7 @@ public class FakeCharacterObject extends CharacterObject {
     }
 
     public FakeCharacterObject() {
-        super(new CharacterAttributes(
+        super(new CharacterAttributes(1, 0, 1, 0, 10,
             2,
             2,
             0,

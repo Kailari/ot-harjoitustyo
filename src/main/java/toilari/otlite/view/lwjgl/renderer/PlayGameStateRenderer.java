@@ -7,8 +7,6 @@ import toilari.otlite.game.PlayGameState;
 import toilari.otlite.game.event.CharacterEvent;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.IHealthHandler;
-import toilari.otlite.game.world.entities.characters.CharacterObject;
-import toilari.otlite.game.world.entities.characters.PlayerCharacterObject;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.TextRenderer;
 import toilari.otlite.view.renderer.IRenderer;
@@ -27,7 +25,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
     private static final int DAMAGE_LABEL_OFFSET_Y = 2;
     private static final int DAMAGE_LABEL_DISTANCE = 8;
     // TODO: mapping class for these to get rid of unchecked code
-    @NonNull private final Map<Class, IRenderer> rendererMappings = new HashMap<>();
+    @NonNull private final Map<String, IRenderer> rendererMappings = new HashMap<>();
     private final TextureDAO textureDao;
 
     private List<DamageInstance> damageInstances;
@@ -44,8 +42,8 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
     public PlayGameStateRenderer(@NonNull TextureDAO textureDao) {
         this.textureDao = textureDao;
         this.levelRenderer = new LevelRenderer(this.textureDao, "tileset.png", 8, 8);
-        this.rendererMappings.put(PlayerCharacterObject.class, new PlayerRenderer(this.textureDao));
-        this.rendererMappings.put(CharacterObject.class, new CharacterRenderer(this.textureDao, "sheep.png", 1));
+        this.rendererMappings.put("player", new PlayerRenderer(this.textureDao));
+        this.rendererMappings.put("character", new CharacterRenderer(this.textureDao, "sheep.png", 1));
     }
 
     @Override
@@ -87,7 +85,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         this.levelRenderer.draw(camera, world.getCurrentLevel());
 
         for (val object : world.getObjectManager().getObjects()) {
-            val renderer = this.rendererMappings.get(object.getClass());
+            val renderer = this.rendererMappings.get(object.getRendererID());
             if (renderer != null) {
                 renderer.draw(camera, object);
             }
@@ -99,7 +97,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         this.levelRenderer.postDraw(camera, world.getCurrentLevel());
 
         for (val object : world.getObjectManager().getObjects()) {
-            val renderer = this.rendererMappings.get(object.getClass());
+            val renderer = this.rendererMappings.get(object.getRendererID());
             if (renderer != null) {
                 renderer.postDraw(camera, object);
             }
@@ -130,7 +128,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
             if (remaining == 0) {
                 apStr = "Press <SPACE> to end turn";
             } else {
-                apStr = "AP: " + String.valueOf(remaining) + "/" + String.valueOf(total);
+                apStr = "AP: " + remaining + "/" + total;
             }
         }
 

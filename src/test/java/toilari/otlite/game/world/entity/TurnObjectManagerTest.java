@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import toilari.otlite.fake.FakeCharacterObject;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.TurnObjectManager;
-import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.CharacterAttributes;
+import toilari.otlite.game.world.entities.characters.CharacterObject;
 
 import java.util.Random;
 
@@ -25,7 +25,12 @@ class TurnObjectManagerTest {
         val world = new World(manager);
         world.init();
 
-        val character = new TestCharacterObject(new CharacterAttributes(
+        val character = new FakeCharacterObject(new CharacterAttributes(
+            1,
+            0,
+            1,
+            0,
+            10,
             1336, // LVL 1 DEX gives 1 AP more, thus results in 1337 AP
             2,
             0,
@@ -54,7 +59,7 @@ class TurnObjectManagerTest {
         val world = new World(manager);
         world.init();
 
-        val character = new TestCharacterObject();
+        val character = new FakeCharacterObject();
         manager.spawn(character);
 
         assertThrows(IllegalArgumentException.class, () -> manager.spendActionPoints(100));
@@ -66,7 +71,7 @@ class TurnObjectManagerTest {
         val world = new World(manager);
         world.init();
 
-        val character = new TestCharacterObject();
+        val character = new FakeCharacterObject();
         manager.spawn(character);
 
         assertThrows(IllegalArgumentException.class, () -> manager.spendActionPoints(-1));
@@ -78,7 +83,7 @@ class TurnObjectManagerTest {
         val world = new World(manager);
         world.init();
 
-        val character = new TestCharacterObject();
+        val character = new FakeCharacterObject();
         manager.spawn(character);
 
         manager.spendActionPoints(1);
@@ -91,7 +96,7 @@ class TurnObjectManagerTest {
 
     @Test
     void isCharactersTurnRetunsFalseWhenThereAreNoCharacters() {
-        assertFalse(new TurnObjectManager().isCharactersTurn(new TestCharacterObject()));
+        assertFalse(new TurnObjectManager().isCharactersTurn(new FakeCharacterObject()));
     }
 
     @Test
@@ -105,7 +110,7 @@ class TurnObjectManagerTest {
         val world = new World(manager);
         world.init();
 
-        val character = new TestCharacterObject();
+        val character = new FakeCharacterObject();
         manager.nextTurn();
         manager.nextTurn();
         manager.nextTurn();
@@ -121,7 +126,7 @@ class TurnObjectManagerTest {
         val world = new World(manager);
         world.init();
 
-        val character = new TestCharacterObject();
+        val character = new FakeCharacterObject();
         manager.spawn(character);
 
         assertEquals(character, manager.getActiveCharacter());
@@ -133,7 +138,7 @@ class TurnObjectManagerTest {
         val world = new World(manager);
         world.init();
 
-        val character = new TestCharacterObject();
+        val character = new FakeCharacterObject();
         manager.spawn(character);
 
         for (int i = 0; i < 100; i++) {
@@ -148,9 +153,9 @@ class TurnObjectManagerTest {
         val world = new World(manager);
         world.init();
 
-        val a = new TestCharacterObject();
-        val b = new TestCharacterObject();
-        val c = new TestCharacterObject();
+        val a = new FakeCharacterObject();
+        val b = new FakeCharacterObject();
+        val c = new FakeCharacterObject();
         manager.spawn(a);
         manager.spawn(b);
         manager.spawn(c);
@@ -174,9 +179,9 @@ class TurnObjectManagerTest {
         val world = new World(manager);
         world.init();
 
-        val a = new TestCharacterObject();
-        val b = new TestCharacterObject();
-        val c = new TestCharacterObject();
+        val a = new FakeCharacterObject();
+        val b = new FakeCharacterObject();
+        val c = new FakeCharacterObject();
         manager.spawn(a);
         manager.spawn(b);
         manager.spawn(c);
@@ -196,10 +201,10 @@ class TurnObjectManagerTest {
         val world = new World(manager);
         world.init();
 
-        val characters = new TestCharacterObject[1000];
+        val characters = new FakeCharacterObject[1000];
         int nRemoved = 0;
         for (int i = 0; i < characters.length; i++) {
-            characters[i] = new TestCharacterObject();
+            characters[i] = new FakeCharacterObject();
             manager.spawn(characters[i]);
         }
 
@@ -234,10 +239,10 @@ class TurnObjectManagerTest {
         val world = new World(manager);
         world.init();
 
-        val characters = new TestCharacterObject[1000];
+        val characters = new FakeCharacterObject[1000];
         int nRemoved = 0;
         for (int i = 0; i < characters.length; i++) {
-            characters[i] = new TestCharacterObject();
+            characters[i] = new FakeCharacterObject();
             manager.spawn(characters[i]);
         }
 
@@ -279,10 +284,10 @@ class TurnObjectManagerTest {
         val world = new World(manager);
         world.init();
 
-        val characters = new TestCharacterObject[1000];
+        val characters = new FakeCharacterObject[1000];
         int nRemoved = 0;
         for (int i = 0; i < characters.length; i++) {
-            characters[i] = new TestCharacterObject();
+            characters[i] = new FakeCharacterObject();
             manager.spawn(characters[i]);
         }
 
@@ -331,33 +336,5 @@ class TurnObjectManagerTest {
         manager.update();
 
         assertTrue(manager.isCharactersTurn(b));
-    }
-
-
-    private class TestCharacterObject extends CharacterObject {
-        TestCharacterObject(CharacterAttributes attributes) {
-            super(attributes);
-        }
-
-        TestCharacterObject() {
-            super(new CharacterAttributes(
-                2, // 2 + LVL 1 DEX bonus (1 AP) => 3 AP total
-                2,
-                0,
-                0.1f,
-                0.0f,
-                0.001f,
-                0.0f,
-                0.0f,
-                1.0f,
-                0.1f,
-                0.0f,
-                0.1f,
-                10.0f,
-                0.1f,
-                0.5f,
-                0.001f
-            ));
-        }
     }
 }

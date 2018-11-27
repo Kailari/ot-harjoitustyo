@@ -1,4 +1,8 @@
 {
+  "rendererID": "player",
+  "attributes": {
+    "baseActionPoints": 1
+  },
   "abilities": {
     "move": {
       "priority": 0,

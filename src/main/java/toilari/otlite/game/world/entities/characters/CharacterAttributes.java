@@ -1,14 +1,12 @@
 package toilari.otlite.game.world.entities.characters;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.val;
+import lombok.*;
 
 /**
  * Hahmon attribuutit. Hahmokohtaiset perusmääreet jotka määrittävät hahmon kyvyt.
  */
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class CharacterAttributes {
     private static final float FEAR_RESISTANCE_CAP = 0.95f;
     private static final float KNOCKBACK_RESISTANCE_CAP = 0.975f;
@@ -163,31 +161,31 @@ public class CharacterAttributes {
         return this.baseCriticalHitDamage + (1.0f + wisdomModifier);
     }
 
-    @Getter private final int moveCost = 1;
-    @Getter private final int moveCooldown = 0;
-    @Getter private final int attackCost = 1;
-    @Getter private final int attackCooldown = 0;
+    @Getter private int moveCost = 1;
+    @Getter private int moveCooldown = 0;
+    @Getter private int attackCost = 1;
+    @Getter private int attackCooldown = 0;
 
-    @Getter private final int xpReward = 1;
+    @Getter private int xpReward = 1;
 
-    private final int baseActionPoints;
-    private final int baseHealthRegenDelay;
+    private int baseActionPoints = 0;
+    private int baseHealthRegenDelay = 0;
 
-    private final int baseArmor;
-    private final float armorGain;
-    private final float baseEvasion;
-    private final float evasionGain;
+    private int baseArmor = 0;
+    private float armorGain = 0.05f;
+    private float baseEvasion = 0.01f;
+    private float evasionGain = 0.001f;
 
-    private final float baseKnockbackResistance;
-    private final float baseFearResistance;
+    private float baseKnockbackResistance = 0.0f;
+    private float baseFearResistance = 0.0f;
 
-    private final float baseAttackDamage;
-    private final float attackDamageGain;
-    private final float baseCriticalHitChance;
-    private final float baseCriticalHitDamage;
+    private float baseAttackDamage = 1.0f;
+    private float attackDamageGain = 0.01f;
+    private float baseCriticalHitChance = 0.01f;
+    private float baseCriticalHitDamage = 0.30f;
 
-    private final float baseHealth;
-    private final float healthGain;
-    private final float baseHealthRegen;
-    private final float healthRegenGain;
+    private float baseHealth = 10.0f;
+    private float healthGain = 0.01f;
+    private float baseHealthRegen = 0.50f;
+    private float healthRegenGain = 0.01f;
 }

@@ -12,6 +12,8 @@ import java.util.Objects;
 public class GameObject {
     private static int idCounter;
 
+    @Getter @Setter private String rendererID;
+
     @Getter private final int id;
     @Getter private boolean spawned;
     @Getter private boolean removed;

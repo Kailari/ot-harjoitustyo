@@ -61,34 +61,18 @@ public class CharacterAdapter implements JsonDeserializer<CharacterObject> {
         val characterAttributes = (CharacterAttributes) context.deserialize(jsonObj.getAsJsonObject("attributes"), CharacterAttributes.class);
         val characterLevels = (CharacterLevels) context.deserialize(jsonObj.getAsJsonObject("levels"), CharacterLevels.class);
 
-        val character = new CharacterObject(characterAttributes == null ? constructDefaultAttributes() : characterAttributes, characterLevels == null ? new CharacterLevels() : characterLevels);
+        val character = new CharacterObject(characterAttributes == null ? new CharacterAttributes() : characterAttributes, characterLevels == null ? new CharacterLevels() : characterLevels);
+
+        val rendererIDPrimitive = jsonObj.getAsJsonPrimitive("rendererID");
+        if (rendererIDPrimitive != null) {
+            character.setRendererID(rendererIDPrimitive.getAsString());
+        }
 
         for (val pair : resultPairs) {
             character.addAbility(pair.ability, pair.component);
         }
 
         return character;
-    }
-
-    private CharacterAttributes constructDefaultAttributes() {
-        return new CharacterAttributes(
-            1,
-            2,
-            0,
-            0.1f,
-            0.0f,
-            0.001f,
-            0.0f,
-            0.0f,
-            1.0f,
-            0.1f,
-            0.0f,
-            0.1f,
-            10.0f,
-            0.1f,
-            0.5f,
-            0.001f
-        );
     }
 
     public <A extends IAbility<A, C>, C extends IControllerComponent<A>> Entry<A, C> registerAbility(
