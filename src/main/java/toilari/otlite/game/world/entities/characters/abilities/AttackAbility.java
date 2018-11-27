@@ -1,6 +1,7 @@
 package toilari.otlite.game.world.entities.characters.abilities;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.game.event.CharacterEvent;
@@ -12,9 +13,18 @@ import toilari.otlite.game.world.entities.characters.abilities.components.Attack
 /**
  * Hahmon kyky hyökätä.
  */
+@NoArgsConstructor
 public class AttackAbility extends AbstractAbility<AttackAbility, AttackControllerComponent> {
     @Getter private boolean lastAttackKill;
     @Getter private float lastAttackDamage;
+
+    /**
+     * Kopioi kyvyn templaatista.
+     *
+     * @param template kyky joka kopioidaan
+     */
+    public AttackAbility(AttackAbility template) {
+    }
 
     /**
      * Testaa voiko hahmo hyökätä annettuihin koordinaatteihin.

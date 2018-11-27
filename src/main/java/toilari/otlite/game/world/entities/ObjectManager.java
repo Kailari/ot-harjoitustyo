@@ -4,8 +4,11 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.game.PlayGameState;
-import toilari.otlite.game.world.level.Tile;
 import toilari.otlite.game.world.World;
+import toilari.otlite.game.world.entities.characters.CharacterAttributes;
+import toilari.otlite.game.world.entities.characters.CharacterLevels;
+import toilari.otlite.game.world.entities.characters.CharacterObject;
+import toilari.otlite.game.world.level.Tile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,5 +114,16 @@ public class ObjectManager {
 
     protected void remove(GameObject object) {
         this.objects.remove(object);
+    }
+
+    public CharacterObject spawnTemplate(CharacterObject template) {
+        val attributes = new CharacterAttributes(template.getAttributes());
+        val levels = new CharacterLevels(template.getLevels());
+        val instance = new CharacterObject(attributes, levels);
+        instance.getAbilities().cloneAbilitiesFrom(template.getAbilities());
+        instance.setRendererID(template.getRendererID());
+        instance.setHealth(template.getHealth());
+        spawn(instance);
+        return instance;
     }
 }

@@ -1,5 +1,6 @@
 package toilari.otlite.game.world.entities.characters.abilities;
 
+import lombok.NoArgsConstructor;
 import lombok.val;
 import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.entities.characters.abilities.components.MoveControllerComponent;
@@ -7,6 +8,7 @@ import toilari.otlite.game.world.entities.characters.abilities.components.MoveCo
 /**
  * Hahmon kyky liikkua.
  */
+@NoArgsConstructor
 public class MoveAbility extends AbstractAbility<MoveAbility, MoveControllerComponent> {
     /**
      * Tarkistaa voiko hahmo liikkua annettuun suuntaan.

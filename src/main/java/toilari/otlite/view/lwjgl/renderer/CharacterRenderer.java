@@ -1,15 +1,10 @@
 package toilari.otlite.view.lwjgl.renderer;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 import toilari.otlite.dao.TextureDAO;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
-import toilari.otlite.game.world.level.Tile;
 import toilari.otlite.view.lwjgl.AnimatedSprite;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
-import toilari.otlite.view.lwjgl.TextRenderer;
 import toilari.otlite.view.lwjgl.Texture;
 import toilari.otlite.view.renderer.IRenderer;
 
@@ -17,52 +12,63 @@ import toilari.otlite.view.renderer.IRenderer;
  * Piirtäjä pelihahmojen piirtämiseen.
  */
 public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera> {
-    private static final int DAMAGE_LABEL_DURATION = 1000;
-    private static final int DAMAGE_LABEL_OFFSET = Tile.SIZE_IN_WORLD;
-
     @Getter(AccessLevel.PROTECTED) @NonNull private final TextureDAO textureDAO;
 
-    @NonNull private final String filename;
-    private final int frames;
+    private final Context context;
 
     @Getter @Setter(AccessLevel.PROTECTED) private int currentFrame;
-
     @Getter(AccessLevel.PROTECTED) private Texture texture;
     @Getter(AccessLevel.PROTECTED) private Texture fontTexture;
     @Getter(AccessLevel.PROTECTED) private AnimatedSprite sprite;
-    @Getter(AccessLevel.PROTECTED) private TextRenderer textRenderer;
 
-    /**
-     * Luo uuden piirtäjän. Olettaa että annetussa tekstuurissa on kaikki framet ladottuna vaakasuunnassa vierekkäin.
-     *
-     * @param textureDAO      DAO jolla tekstuuri saadaan ladattua
-     * @param textureFilename polku tekstuuriin jolla hahmo piirretään
-     * @param frames          montako framea tekstuurissa on
-     * @throws NullPointerException jos dao tai tiedostopolku on <code>null</code>
-     */
-    public CharacterRenderer(@NonNull TextureDAO textureDAO,
-                             @NonNull String textureFilename,
-                             int frames) {
+    public CharacterRenderer(TextureDAO textureDAO, Context context) {
         this.textureDAO = textureDAO;
-        this.filename = textureFilename;
-        this.frames = frames;
+        this.context = context;
     }
 
     @Override
     public boolean init() {
-        this.texture = this.textureDAO.load(this.filename);
+        this.texture = this.textureDAO.load(this.context.texture);
         this.fontTexture = this.textureDAO.load("font.png");
 
-        this.sprite = new AnimatedSprite(this.texture, this.frames, 8, 8);
-
-        this.textRenderer = new TextRenderer(this.textureDAO, 1, 8);
-
+        this.sprite = new AnimatedSprite(this.texture, this.context.nFrames, this.context.width, this.context.height);
         return false;
     }
 
     @Override
     public void draw(@NonNull LWJGLCamera camera, @NonNull CharacterObject character) {
-        this.sprite.draw(camera, character.getX(), character.getY(), getCurrentFrame(), 1.0f, 1.0f, 1.0f);
+        val isOwnTurn = character.getWorld().getObjectManager().isCharactersTurn(character);
+        val hasActionPoints = character.getWorld().getObjectManager().getRemainingActionPoints() > 0;
+
+        int frame;
+        frame = getFrame(isOwnTurn, hasActionPoints);
+
+        float r, g, b;
+        if (this.context.color != null && this.context.color.length == 3) {
+            r = this.context.color[0];
+            g = this.context.color[1];
+            b = this.context.color[2];
+        } else {
+            r = g = b = 1.0f;
+        }
+        this.sprite.draw(camera, character.getX(), character.getY(), frame, r, g, b);
+    }
+
+    private int getFrame(boolean isOwnTurn, boolean hasActionPoints) {
+        int frame;
+        float frameDuration = this.context.framesPerSecond == 0 ? 0 : 1000f / this.context.framesPerSecond;
+        if (isOwnTurn && hasActionPoints) {
+            float totalDuration = frameDuration * this.context.walkFrames.length;
+            int subFrame = (int) (System.currentTimeMillis() % totalDuration / frameDuration);
+
+            frame = this.context.walkFrames[subFrame];
+        } else {
+            float totalDuration = frameDuration * this.context.idleFrames.length;
+            int subFrame = (int) (System.currentTimeMillis() % totalDuration / frameDuration);
+
+            frame = this.context.idleFrames[subFrame];
+        }
+        return frame;
     }
 
     @Override
@@ -70,4 +76,5 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
         this.texture.destroy();
         this.fontTexture.destroy();
     }
+
 }

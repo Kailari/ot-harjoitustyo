@@ -2,7 +2,6 @@ package toilari.otlite.dao;
 
 import lombok.NonNull;
 import toilari.otlite.dao.util.FileHelper;
-import toilari.otlite.game.world.entities.characters.CharacterObject;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -50,6 +49,9 @@ public abstract class AutoDiscoverFileDAO<T> extends CachingDAO<T, Path> impleme
     }
 
     public T get(String path) {
+        if (path == null) {
+            return null;
+        }
         return get(this.contentRoot.resolve(path));
     }
 }

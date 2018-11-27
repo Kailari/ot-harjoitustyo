@@ -1,9 +1,6 @@
 package toilari.otlite.game.world.entities.characters.abilities.components;
 
-import lombok.AccessLevel;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.val;
+import lombok.*;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
 import toilari.otlite.game.profile.statistics.Statistics;
@@ -46,8 +43,18 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
     /**
      * Pelaajan ohjainkomponentti.
      */
+    @NoArgsConstructor
     public static class Player extends MoveControllerComponent {
         private boolean isHolding;
+
+        /**
+         * Kopio komponentin toisesta kopmponentista.
+         *
+         * @param template komponentti josta kopioidaan
+         */
+        public Player(MoveControllerComponent template) {
+            this.isHolding = false;
+        }
 
         /**
          * Hakee raa'an liikesyötteen x-aksellilla. Arvo on parsimaton näppäimistösyöte eikä ota kantaa
@@ -127,6 +134,15 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
          */
         public AI(long seed) {
             this.random = new Random(seed);
+        }
+
+        /**
+         * Kopio komponentin toisesta komponentista.
+         *
+         * @param template komponentti josta kopioidaan
+         */
+        public AI(MoveControllerComponent template) {
+            this.random = new Random();
         }
 
         @Override

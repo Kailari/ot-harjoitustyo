@@ -2,6 +2,7 @@ package toilari.otlite.view.lwjgl.renderer;
 
 import lombok.NonNull;
 import lombok.val;
+import toilari.otlite.dao.RendererDAO;
 import toilari.otlite.dao.TextureDAO;
 import toilari.otlite.game.PlayGameState;
 import toilari.otlite.game.event.CharacterEvent;
@@ -9,12 +10,9 @@ import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.IHealthHandler;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.TextRenderer;
-import toilari.otlite.view.renderer.IRenderer;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Piirtäjä pelitilan piirtämiseen. Vastaa maailman
@@ -25,8 +23,8 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
     private static final int DAMAGE_LABEL_OFFSET_Y = 2;
     private static final int DAMAGE_LABEL_DISTANCE = 8;
     // TODO: mapping class for these to get rid of unchecked code
-    @NonNull private final Map<String, IRenderer> rendererMappings = new HashMap<>();
     private final TextureDAO textureDao;
+    private final RendererDAO renderers;
 
     private List<DamageInstance> damageInstances;
     private List<DamageInstance> damageInstancesSwap;
@@ -42,13 +40,14 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
     public PlayGameStateRenderer(@NonNull TextureDAO textureDao) {
         this.textureDao = textureDao;
         this.levelRenderer = new LevelRenderer(this.textureDao, "tileset.png", 8, 8);
-        this.rendererMappings.put("player", new PlayerRenderer(this.textureDao));
-        this.rendererMappings.put("character", new CharacterRenderer(this.textureDao, "sheep.png", 1));
+
+        this.renderers = new RendererDAO("content/renderers/", this.textureDao);
+        this.renderers.discoverAndLoadAll();
     }
 
     @Override
     public boolean init(@NonNull PlayGameState state) {
-        for (val renderer : this.rendererMappings.values()) {
+        for (val renderer : this.renderers.getAll()) {
             if (renderer.init()) {
                 return true;
             }
@@ -85,7 +84,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         this.levelRenderer.draw(camera, world.getCurrentLevel());
 
         for (val object : world.getObjectManager().getObjects()) {
-            val renderer = this.rendererMappings.get(object.getRendererID());
+            val renderer = this.renderers.get(object.getRendererID());
             if (renderer != null) {
                 renderer.draw(camera, object);
             }
@@ -97,7 +96,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         this.levelRenderer.postDraw(camera, world.getCurrentLevel());
 
         for (val object : world.getObjectManager().getObjects()) {
-            val renderer = this.rendererMappings.get(object.getRendererID());
+            val renderer = this.renderers.get(object.getRendererID());
             if (renderer != null) {
                 renderer.postDraw(camera, object);
             }

@@ -1,5 +1,5 @@
 {
-  "rendererID": "player",
+  "rendererID": "player.json",
   "attributes": {
     "baseActionPoints": 1
   },

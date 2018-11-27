@@ -1,0 +1,19 @@
+{
+  "texture": "sheep.png",
+  "nFrames": 1,
+  "walkFrames": [
+    0
+  ],
+  "idleFrames": [
+    0
+  ],
+  "framesPerSecond": 0,
+  "color": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "width": 8,
+  "height": 8,
+  "class": "character"
+}

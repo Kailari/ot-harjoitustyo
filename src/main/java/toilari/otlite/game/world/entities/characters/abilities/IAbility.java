@@ -16,7 +16,20 @@ import toilari.otlite.game.world.entities.characters.abilities.components.MoveCo
  * @see IControllerComponent
  */
 public interface IAbility<A extends IAbility<A, C>, C extends IControllerComponent<A>> {
+    /**
+     * Alustaa kyvyn ja asetaa hahmon jonka kyky tämä on.
+     *
+     * @param character hahmo jonka kyky tämä on
+     * @param priority  kyvyn prioriteetti
+     */
     void init(@NonNull CharacterObject character, int priority);
+
+    /**
+     * Asettaa kyvyn prioriteetin.
+     *
+     * @param priority uusi prioriteetti
+     */
+    void setPriority(int priority);
 
     /**
      * Toiminnon prioriteetti. Hahmon omalla vuorolla kykyjä yritetään suorittaa prioriteetin mukaan järjestyksessä

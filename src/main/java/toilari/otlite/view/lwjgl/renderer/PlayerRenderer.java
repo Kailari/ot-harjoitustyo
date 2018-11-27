@@ -13,17 +13,18 @@ import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.Texture;
 
 public class PlayerRenderer extends CharacterRenderer {
-    private Texture icons;
-    private AnimatedSprite arrows;
+    private transient Texture icons;
+    private transient AnimatedSprite arrows;
 
     /**
      * Luo uuden piirtäjän pelaajan piirtämiseen.
      *
      * @param textureDAO DAO jolla tekstuuri saadaan ladattua
+     * @param context    piirrettävän olion tiedot
      * @throws NullPointerException jos dao on <code>null</code>
      */
-    public PlayerRenderer(@NonNull TextureDAO textureDAO) {
-        super(textureDAO, "white_knight.png", 6);
+    public PlayerRenderer(TextureDAO textureDAO, Context context) {
+        super(textureDAO, context);
     }
 
     @Override
@@ -39,16 +40,6 @@ public class PlayerRenderer extends CharacterRenderer {
     public void destroy() {
         super.destroy();
         this.icons.destroy();
-    }
-
-    @Override
-    public void draw(@NonNull LWJGLCamera camera, @NonNull CharacterObject character) {
-        if (character.getWorld().getObjectManager().getRemainingActionPoints() > 0) {
-            this.setCurrentFrame((int) (System.currentTimeMillis() % 1000 / 500));
-        } else {
-            this.setCurrentFrame(2 + (int) (System.currentTimeMillis() % (500 * 4) / 500));
-        }
-        super.draw(camera, character);
     }
 
     @Override

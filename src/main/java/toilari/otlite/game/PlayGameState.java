@@ -9,12 +9,9 @@ import toilari.otlite.dao.CharacterDAO;
 import toilari.otlite.dao.TileDAO;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.TurnObjectManager;
-import toilari.otlite.game.world.entities.characters.CharacterAttributes;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.EndTurnAbility;
-import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
 import toilari.otlite.game.world.entities.characters.abilities.components.EndTurnControllerComponent;
-import toilari.otlite.game.world.entities.characters.abilities.components.MoveControllerComponent;
 import toilari.otlite.game.world.level.Level;
 import toilari.otlite.game.world.level.TileMapping;
 
@@ -45,41 +42,25 @@ public class PlayGameState extends GameState {
 
         LOG.info("Initialization finished.");
 
-        val dao = new CharacterDAO("content/characters/");
-        this.player = dao.get("player.json");
+        val characters = new CharacterDAO("content/characters/");
+        this.player = characters.get("player.json");
         val eta = this.player.getAbilities().getComponent(EndTurnAbility.class);
         if (eta instanceof EndTurnControllerComponent.Player) {
             ((EndTurnControllerComponent.Player) eta).setAutoEndTurn(getGame().getActiveProfile().getSettings().isAutoEndTurn());
         }
-
         this.world.getObjectManager().spawn(this.player);
         this.player.setTilePos(5, 3);
 
-        createSheep(5, 1);
-        createSheep(8, 1);
-        createSheep(11, 2);
+        var sheep = characters.get("sheep.json");
+        createSheep(5, 1, sheep);
+        createSheep(8, 1, sheep);
+        createSheep(11, 2, sheep);
 
         return false;
     }
 
-    private void createSheep(int x, int y) {
-        var sheep = new CharacterObject(new CharacterAttributes(1, 0, 999, 999, 10, 0, 2, 0,
-            0.1f, 0.1f, 0.001f, 0.0f, 0.0f,
-            0.1f, 0.01f, 0.0f, 0.1f,
-            5.0f, 0.1f, 0.5f, 0.001f));
-        this.world.getObjectManager().spawn(sheep);
-        sheep.setRendererID("character");
-        val ability = new MoveAbility();
-        val component = new MoveControllerComponent.AI();
-        ability.init(sheep, 0);
-        component.init(sheep);
-        sheep.addAbility(ability, component);
-
-        val ability2 = new EndTurnAbility();
-        val component2 = new EndTurnControllerComponent.AI();
-        ability2.init(sheep, 99);
-        component2.init(sheep);
-        sheep.addAbility(ability2, component2);
+    private void createSheep(int x, int y, CharacterObject template) {
+        val sheep = this.world.getObjectManager().spawnTemplate(template);
         sheep.setTilePos(x, y);
     }
 

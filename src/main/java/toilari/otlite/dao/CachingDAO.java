@@ -1,5 +1,7 @@
 package toilari.otlite.dao;
 
+import lombok.val;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +23,12 @@ public abstract class CachingDAO<T, K> implements IGetDAO<T, K>, IGetAllDAO<T> {
     @Override
     public T get(K key) {
         if (!this.loaded.containsKey(key)) {
-            this.loaded.put(key, load(key));
+            val loaded = load(key);
+            if (loaded == null) {
+                return null;
+            }
+
+            this.loaded.put(key, loaded);
         }
 
         return this.loaded.get(key);

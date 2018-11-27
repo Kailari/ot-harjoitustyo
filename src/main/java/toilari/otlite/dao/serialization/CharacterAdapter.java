@@ -1,10 +1,9 @@
 package toilari.otlite.dao.serialization;
 
 import com.google.gson.*;
-import lombok.Getter;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import toilari.otlite.game.world.entities.characters.CharacterAbilities;
 import toilari.otlite.game.world.entities.characters.CharacterAttributes;
 import toilari.otlite.game.world.entities.characters.CharacterLevels;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
@@ -13,89 +12,83 @@ import toilari.otlite.game.world.entities.characters.abilities.components.IContr
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Gson adapteri hahmojen ja hahmojen komponenttien sarjoittamiseen.
  */
 @Slf4j
 public class CharacterAdapter implements JsonDeserializer<CharacterObject> {
-    private final Map<String, Entry<?, ?>> entries = new HashMap<>();
-
     @Override
     public CharacterObject deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         val jsonObj = json.getAsJsonObject();
+
+        val characterAttributes = getAttributes(context, jsonObj);
+        val characterLevels = getLevels(context, jsonObj);
+        val character = new CharacterObject(characterAttributes, characterLevels);
+
         val abilities = jsonObj.getAsJsonObject("abilities");
-
-        val resultPairs = new ArrayList<Pair>();
-
-        for (val key : abilities.keySet()) {
-            val abilityObj = abilities.getAsJsonObject(key);
-            val abilityEntry = this.entries.get(key);
-
-            if (abilityObj == null || abilityEntry == null) {
-                LOG.warn("Unknown ability class \"{}\"", key);
-                continue;
-            }
-
-            val componentObj = (JsonObject) abilityObj.remove("component");
-            if (componentObj == null) {
-                LOG.warn("Could not find component-tag for ability \"{}\"", key);
-                continue;
-            }
-
-            val componentClassPrimitive = componentObj.getAsJsonPrimitive("class");
-            if (componentClassPrimitive == null) {
-                LOG.warn("Could not find class-primitive for component in \"{}\"", key);
-                continue;
-            }
-
-            val componentClass = abilityEntry.getComponentClasses().get(componentClassPrimitive.getAsString());
-
-            val ability = (IAbility<?, ?>) context.deserialize(abilityObj, abilityEntry.getAbilityClass());
-            val component = (IControllerComponent<?>) context.deserialize(componentObj, componentClass);
-            resultPairs.add(new Pair(ability, component));
+        if (abilities != null) {
+            deserializeAbilities(context, abilities, character);
         }
-
-        val characterAttributes = (CharacterAttributes) context.deserialize(jsonObj.getAsJsonObject("attributes"), CharacterAttributes.class);
-        val characterLevels = (CharacterLevels) context.deserialize(jsonObj.getAsJsonObject("levels"), CharacterLevels.class);
-
-        val character = new CharacterObject(characterAttributes == null ? new CharacterAttributes() : characterAttributes, characterLevels == null ? new CharacterLevels() : characterLevels);
 
         val rendererIDPrimitive = jsonObj.getAsJsonPrimitive("rendererID");
         if (rendererIDPrimitive != null) {
             character.setRendererID(rendererIDPrimitive.getAsString());
         }
 
-        for (val pair : resultPairs) {
-            character.addAbility(pair.ability, pair.component);
-        }
-
         return character;
     }
 
-    public <A extends IAbility<A, C>, C extends IControllerComponent<A>> Entry<A, C> registerAbility(
-        @NonNull String key,
-        @NonNull Class<? extends A> abilityClass) {
-
-        val entry = new Entry<A, C>(abilityClass);
-        this.entries.put(key, entry);
-        return entry;
+    private CharacterLevels getLevels(JsonDeserializationContext context, JsonObject jsonObj) {
+        CharacterLevels levels = context.deserialize(jsonObj.getAsJsonObject("levels"), CharacterLevels.class);
+        return levels == null ? new CharacterLevels() : levels;
     }
 
-    public static class Entry<A extends IAbility<A, C>, C extends IControllerComponent<A>> {
-        @Getter private final Class<? extends A> abilityClass;
-        @Getter private final Map<String, Class<? extends C>> componentClasses = new HashMap<>();
+    private CharacterAttributes getAttributes(JsonDeserializationContext context, JsonObject jsonObj) {
+        CharacterAttributes attributes = context.deserialize(jsonObj.getAsJsonObject("attributes"), CharacterAttributes.class);
+        return attributes == null ? new CharacterAttributes() : attributes;
+    }
 
-        public Entry(@NonNull Class<? extends A> abilityClass) {
-            this.abilityClass = abilityClass;
+    private void deserializeAbilities(JsonDeserializationContext context, JsonObject abilities, CharacterObject character) {
+        val resultPairs = new ArrayList<Pair>();
+        for (val key : abilities.keySet()) {
+            val abilityObj = abilities.getAsJsonObject(key);
+            val abilityEntry = CharacterAbilities.getAbilityEntries().get(key);
+
+            if (abilityObj == null || abilityEntry == null) {
+                LOG.warn("Unknown ability class \"{}\"", key);
+                continue;
+            }
+
+            IControllerComponent component = deserializeComponent(key, abilityObj, abilityEntry, context);
+            if (component == null) {
+                continue;
+            }
+
+            val ability = (IAbility<?, ?>) context.deserialize(abilityObj, abilityEntry.getAbilityClass());
+            resultPairs.add(new Pair(ability, component));
         }
 
-        public Entry<A, C> addComponent(String key, Class<? extends C> componentClass) {
-            this.componentClasses.put(key, componentClass);
-            return this;
+        for (val pair : resultPairs) {
+            character.addAbility(pair.ability, pair.component);
         }
+    }
+
+    private IControllerComponent deserializeComponent(String key, JsonObject abilityObj, AbilityComponentEntry<?, ?> abilityEntry, JsonDeserializationContext context) {
+        val componentObj = (JsonObject) abilityObj.remove("component");
+        if (componentObj == null) {
+            LOG.warn("Could not find component-tag for ability \"{}\"", key);
+            return null;
+        }
+
+        val componentClassPrimitive = componentObj.getAsJsonPrimitive("class");
+        if (componentClassPrimitive == null) {
+            LOG.warn("Could not find class-primitive for component in \"{}\"", key);
+            return null;
+        }
+
+        val componentClass = abilityEntry.getComponentClasses().get(componentClassPrimitive.getAsString());
+        return context.deserialize(componentObj, componentClass);
     }
 
     private static class Pair<A extends IAbility<A, C>, C extends IControllerComponent<A>> {

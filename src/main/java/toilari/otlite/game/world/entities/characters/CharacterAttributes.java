@@ -162,30 +162,60 @@ public class CharacterAttributes {
     }
 
     @Getter private int moveCost = 1;
+
     @Getter private int moveCooldown = 0;
     @Getter private int attackCost = 1;
     @Getter private int attackCooldown = 0;
-
     @Getter private int xpReward = 1;
 
     private int baseActionPoints = 0;
-    private int baseHealthRegenDelay = 0;
 
+    private int baseHealthRegenDelay = 0;
     private int baseArmor = 0;
+
     private float armorGain = 0.05f;
     private float baseEvasion = 0.01f;
     private float evasionGain = 0.001f;
-
     private float baseKnockbackResistance = 0.0f;
-    private float baseFearResistance = 0.0f;
 
+    private float baseFearResistance = 0.0f;
     private float baseAttackDamage = 1.0f;
+
     private float attackDamageGain = 0.01f;
     private float baseCriticalHitChance = 0.01f;
     private float baseCriticalHitDamage = 0.30f;
-
     private float baseHealth = 10.0f;
+
     private float healthGain = 0.01f;
     private float baseHealthRegen = 0.50f;
     private float healthRegenGain = 0.01f;
+
+    /**
+     * Kopioi attribuutit uuteen instanssiin.
+     *
+     * @param attributes templaatti josta kopioidaan
+     */
+    public CharacterAttributes(CharacterAttributes attributes) {
+        this.moveCost = attributes.moveCost;
+        this.moveCooldown = attributes.moveCooldown;
+        this.attackCost = attributes.attackCost;
+        this.attackCooldown = attributes.attackCooldown;
+        this.xpReward = attributes.xpReward;
+        this.baseActionPoints = attributes.baseActionPoints;
+        this.baseHealthRegenDelay = attributes.baseHealthRegenDelay;
+        this.baseArmor = attributes.baseArmor;
+        this.armorGain = attributes.armorGain;
+        this.baseEvasion = attributes.baseEvasion;
+        this.evasionGain = attributes.evasionGain;
+        this.baseKnockbackResistance = attributes.baseKnockbackResistance;
+        this.baseFearResistance = attributes.baseFearResistance;
+        this.baseAttackDamage = attributes.baseAttackDamage;
+        this.attackDamageGain = attributes.attackDamageGain;
+        this.baseCriticalHitChance = attributes.baseCriticalHitChance;
+        this.baseCriticalHitDamage = attributes.baseCriticalHitDamage;
+        this.baseHealth = attributes.baseHealth;
+        this.healthGain = attributes.healthGain;
+        this.baseHealthRegen = attributes.baseHealthRegen;
+        this.healthRegenGain = attributes.healthRegenGain;
+    }
 }

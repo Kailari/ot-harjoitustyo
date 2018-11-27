@@ -100,7 +100,7 @@ class MoveAbilityTest {
 
         val characterB = new FakeCharacterObject();
         val abilityB = new MoveAbility();
-        abilityA.init(characterA, 0);
+        abilityB.init(characterB, 0);
         characterB.setTilePos(3, 2);
         manager.spawn(characterB);
 

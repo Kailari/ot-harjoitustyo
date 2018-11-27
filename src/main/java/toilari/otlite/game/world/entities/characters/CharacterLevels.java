@@ -11,6 +11,16 @@ public class CharacterLevels {
     private final int[] attributeLevels = new int[]{1, 1, 1, 1, 1, 1, 1, 1};
 
     /**
+     * Kopio tasot uuteen olioon.
+     *
+     * @param template templaatti josta kopioidaan
+     */
+    public CharacterLevels(CharacterLevels template) {
+        this.xpLevel = template.xpLevel;
+        System.arraycopy(template.attributeLevels, 0, this.attributeLevels, 0, 8);
+    }
+
+    /**
      * Hakee attribuutin tason.
      *
      * @param attribute attribuutti joka taso haetaan

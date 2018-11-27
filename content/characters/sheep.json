@@ -1,0 +1,21 @@
+{
+  "rendererID": "sheep.json",
+  "attributes": {
+    "baseActionPoints": 0,
+    "baseHealth": 5.0
+  },
+  "abilities": {
+    "move": {
+      "priority": 0,
+      "component": {
+        "class": "animal"
+      }
+    },
+    "end_turn": {
+      "priority": 99,
+      "component": {
+        "class": "ai"
+      }
+    }
+  }
+}

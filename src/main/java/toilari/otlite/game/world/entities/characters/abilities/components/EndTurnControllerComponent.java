@@ -1,13 +1,12 @@
 package toilari.otlite.game.world.entities.characters.abilities.components;
 
 import lombok.Getter;
-import lombok.NonNull;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
 import toilari.otlite.game.profile.statistics.Statistics;
-import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.EndTurnAbility;
 
 /**
@@ -36,9 +35,14 @@ public abstract class EndTurnControllerComponent extends AbstractControllerCompo
     /**
      * Pelaajan vuoronlopetuskyvyn ohjainkomponentti.
      */
+    @NoArgsConstructor
     public static class Player extends EndTurnControllerComponent {
         @Setter private boolean autoEndTurn;
         private boolean isHolding;
+
+        public Player(EndTurnControllerComponent template) {
+            this.autoEndTurn = ((EndTurnControllerComponent.Player) template).autoEndTurn;
+        }
 
         private boolean getEndTurnInput() {
             return Input.getHandler().isKeyDown(Key.SPACE);
@@ -80,6 +84,14 @@ public abstract class EndTurnControllerComponent extends AbstractControllerCompo
     public static class AI extends EndTurnControllerComponent {
         private int updateTicksWaited;
         private int prevRemaining = -1;
+
+        /**
+         * Kopioi komponentin toisesta komponentista.
+         *
+         * @param template komponentti josta kopioidaan
+         */
+        public AI(EndTurnControllerComponent template) {
+        }
 
         @Override
         public void setWantsToEndTurn(boolean wantsToEndTurn) {

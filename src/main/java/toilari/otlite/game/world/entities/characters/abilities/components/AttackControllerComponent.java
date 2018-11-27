@@ -26,6 +26,14 @@ public abstract class AttackControllerComponent extends AbstractControllerCompon
         private MoveControllerComponent moveComponent;
 
         /**
+         * Kopioi komponentin toisesta komponentista.
+         *
+         * @param template komponentti josta kopioidaan
+         */
+        public Player(AttackControllerComponent template) {
+        }
+
+        /**
          * Luo uuden ohjainkomponentin.
          *
          * @param character hahmo jolle komponentti lisätään
