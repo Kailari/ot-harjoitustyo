@@ -31,4 +31,5 @@
 |26.11|    1 h | Checkstylevirheitä oli kertynyt taas, fix'd. |
 |26.11|    1 h | Hahmojen ja hahmojen kykyjen testejä. |
 |26.11|    3 h | Hahmojen parsimista JSON:sta. |
-| **yhteensä** | 65h ||
+|27.11|    6 h | Hahmojen ja piirtäjien parsimista JSON:sta. |
+| **yhteensä** | 71 h ||
