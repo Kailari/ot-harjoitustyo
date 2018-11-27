@@ -7,7 +7,6 @@ import toilari.otlite.fake.FakeCharacterObject;
 import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.TurnObjectManager;
-import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
 import toilari.otlite.game.world.entities.characters.abilities.components.MoveControllerComponent;
 import toilari.otlite.game.world.level.Level;
@@ -15,20 +14,24 @@ import toilari.otlite.game.world.level.NormalTile;
 import toilari.otlite.game.world.level.Tile;
 import toilari.otlite.game.world.level.TileMapping;
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class MoveAbilityTest {
     @Test
     void getCooldownLengthMatchesCharacterAttributes() {
         val character = new FakeCharacterObject();
-        val ability = new MoveAbility(character, 0);
+        val ability = new MoveAbility();
+        ability.init(character, 0);
         assertEquals(character.getAttributes().getMoveCooldown(), ability.getCooldownLength());
     }
 
     @Test
     void getCostMatchesCharacterAttributes() {
         val character = new FakeCharacterObject();
-        val ability = new MoveAbility(character, 0);
+        val ability = new MoveAbility();
+        ability.init(character, 0);
         assertEquals(character.getAttributes().getMoveCost(), ability.getCost());
     }
 
@@ -40,12 +43,14 @@ class MoveAbilityTest {
         world.init();
 
         val characterAtTopLeft = new FakeCharacterObject();
-        val abilityAtTopLeft = new MoveAbility(characterAtTopLeft, 0);
+        val abilityAtTopLeft = new MoveAbility();
+        abilityAtTopLeft.init(characterAtTopLeft, 0);
         characterAtTopLeft.setTilePos(0, 0);
         manager.spawn(characterAtTopLeft);
 
         val characterAtBottomRight = new FakeCharacterObject();
-        val abilityAtBottomRight = new MoveAbility(characterAtBottomRight, 0);
+        val abilityAtBottomRight = new MoveAbility();
+        abilityAtBottomRight.init(characterAtBottomRight, 0);
         characterAtBottomRight.setTilePos(7, 7);
         manager.spawn(characterAtBottomRight);
 
@@ -63,12 +68,14 @@ class MoveAbilityTest {
         world.init();
 
         val characterAtTopLeft = new FakeCharacterObject();
-        val abilityAtTopLeft = new MoveAbility(characterAtTopLeft, 0);
+        val abilityAtTopLeft = new MoveAbility();
+        abilityAtTopLeft.init(characterAtTopLeft, 0);
         characterAtTopLeft.setTilePos(0, 0);
         manager.spawn(characterAtTopLeft);
 
         val characterAtBottomRight = new FakeCharacterObject();
-        val abilityAtBottomRight = new MoveAbility(characterAtBottomRight, 0);
+        val abilityAtBottomRight = new MoveAbility();
+        abilityAtBottomRight.init(characterAtBottomRight, 0);
         characterAtBottomRight.setTilePos(7, 7);
         manager.spawn(characterAtBottomRight);
 
@@ -86,12 +93,14 @@ class MoveAbilityTest {
         world.init();
 
         val characterA = new FakeCharacterObject();
-        val abilityA = new MoveAbility(characterA, 0);
+        val abilityA = new MoveAbility();
+        abilityA.init(characterA, 0);
         characterA.setTilePos(2, 2);
         manager.spawn(characterA);
 
         val characterB = new FakeCharacterObject();
-        val abilityB = new MoveAbility(characterB, 0);
+        val abilityB = new MoveAbility();
+        abilityA.init(characterA, 0);
         characterB.setTilePos(3, 2);
         manager.spawn(characterB);
 
@@ -107,7 +116,8 @@ class MoveAbilityTest {
         world.init();
 
         val character = new FakeCharacterObject();
-        val ability = new MoveAbility(character, 0);
+        val ability = new MoveAbility();
+        ability.init(character, 0);
         character.setTilePos(2, 2);
         manager.spawn(character);
 
@@ -122,7 +132,8 @@ class MoveAbilityTest {
         world.init();
 
         val character = new FakeCharacterObject();
-        val ability = new MoveAbility(character, 0);
+        val ability = new MoveAbility();
+        ability.init(character, 0);
         character.setTilePos(2, 2);
         manager.spawn(character);
 
@@ -137,7 +148,8 @@ class MoveAbilityTest {
         world.init();
 
         val character = new FakeCharacterObject();
-        val ability = new MoveAbility(character, 0);
+        val ability = new MoveAbility();
+        ability.init(character, 0);
         character.setTilePos(2, 2);
         manager.spawn(character);
 
@@ -152,7 +164,8 @@ class MoveAbilityTest {
         world.init();
 
         val characterA = new FakeCharacterObject();
-        val abilityA = new MoveAbility(characterA, 0);
+        val abilityA = new MoveAbility();
+        abilityA.init(characterA, 0);
         characterA.setTilePos(2, 2);
         manager.spawn(characterA);
 
@@ -173,8 +186,9 @@ class MoveAbilityTest {
         world.init();
 
         val character = new FakeCharacterObject();
-        val ability = new MoveAbility(character, 0);
-        val component = new TestMoveControllerComponent(character, Direction.RIGHT);
+        val ability = new MoveAbility();
+        ability.init(character, 0);
+        val component = new TestMoveControllerComponent(Direction.RIGHT);
         character.setTilePos(1, 2);
         manager.spawn(character);
 
@@ -192,8 +206,9 @@ class MoveAbilityTest {
         world.init();
 
         val character = new FakeCharacterObject();
-        val ability = new MoveAbility(character, 0);
-        val component = new TestMoveControllerComponent(character, Direction.RIGHT);
+        val ability = new MoveAbility();
+        ability.init(character, 0);
+        val component = new TestMoveControllerComponent(Direction.RIGHT);
         character.setTilePos(1, 2);
         manager.spawn(character);
 
@@ -208,8 +223,9 @@ class MoveAbilityTest {
         world.init();
 
         val character = new FakeCharacterObject();
-        val ability = new MoveAbility(character, 0);
-        val component = new TestMoveControllerComponent(character, Direction.LEFT);
+        val ability = new MoveAbility();
+        ability.init(character, 0);
+        val component = new TestMoveControllerComponent(Direction.LEFT);
         character.setTilePos(1, 1);
         manager.spawn(character);
 
@@ -227,8 +243,9 @@ class MoveAbilityTest {
         world.init();
 
         val character = new FakeCharacterObject();
-        val ability = new MoveAbility(character, 0);
-        val component = new TestMoveControllerComponent(character, Direction.LEFT);
+        val ability = new MoveAbility();
+        ability.init(character, 0);
+        val component = new TestMoveControllerComponent(Direction.LEFT);
         character.setTilePos(1, 1);
         manager.spawn(character);
 
@@ -243,8 +260,9 @@ class MoveAbilityTest {
         world.init();
 
         val character = new FakeCharacterObject();
-        val ability = new MoveAbility(character, 0);
-        val component = new TestMoveControllerComponent(character, Direction.RIGHT);
+        val ability = new MoveAbility();
+        ability.init(character, 0);
+        val component = new TestMoveControllerComponent(Direction.RIGHT);
         character.setTilePos(1, 2);
         manager.spawn(character);
 
@@ -264,8 +282,9 @@ class MoveAbilityTest {
         world.init();
 
         val character = new FakeCharacterObject();
-        val ability = new MoveAbility(character, 0);
-        val component = new TestMoveControllerComponent(character, Direction.RIGHT);
+        val ability = new MoveAbility();
+        ability.init(character, 0);
+        val component = new TestMoveControllerComponent(Direction.RIGHT);
         character.setTilePos(1, 2);
         manager.spawn(character);
 
@@ -282,11 +301,11 @@ class MoveAbilityTest {
 
 
     private static Level createLevel() {
-        val tileMappings = new TileMapping(() -> new Tile[]{
+        val tileMappings = new TileMapping(() -> Arrays.asList(new Tile[]{
             new NormalTile(true, false, 0, "wall"),
             new NormalTile(false, false, 1, "floor"),
             new NormalTile(false, true, 2, "hole"),
-        });
+        }));
 
         val w = tileMappings.getIndex("wall");
         val f = tileMappings.getIndex("floor");
@@ -308,8 +327,7 @@ class MoveAbilityTest {
     private class TestMoveControllerComponent extends MoveControllerComponent {
         private Direction direction;
 
-        private TestMoveControllerComponent(CharacterObject character, Direction direction) {
-            super(character);
+        private TestMoveControllerComponent(Direction direction) {
             this.direction = direction;
         }
 

@@ -8,7 +8,6 @@ import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
 import toilari.otlite.game.profile.statistics.Statistics;
 import toilari.otlite.game.util.Direction;
-import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
 
 import java.util.Random;
@@ -18,10 +17,6 @@ import java.util.Random;
  */
 public abstract class MoveControllerComponent extends AbstractControllerComponent<MoveAbility> {
     @Setter(AccessLevel.PROTECTED) private int inputX, inputY;
-
-    protected MoveControllerComponent(@NonNull CharacterObject character) {
-        super(character);
-    }
 
     @Override
     public boolean wants(MoveAbility ability) {
@@ -78,16 +73,6 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
             return down + up;
         }
 
-        /**
-         * Luo uuden pelaajan ohjainkomponentin. Komponentti käyttää syötteenä näppäimistöltä saatua pelaajan syötettä.
-         *
-         * @param character pelihahmo jonka toimintoja halutaan ohjata
-         * @throws NullPointerException jos hahmo on <code>null</code>
-         */
-        public Player(@NonNull CharacterObject character) {
-            super(character);
-        }
-
         @Override
         public void updateInput(MoveAbility ability) {
             int rawInputX = getMoveInputX();
@@ -127,23 +112,20 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
         /**
          * Luo uuden tekoälyohjainkomponentin ja asettaa automaattisesti sen satunnaislukugeneraattorille siemenluvun.
          *
-         * @param character pelihahmo jonka toimintoja halutaan ohjata
          * @throws NullPointerException jos hahmo on <code>null</code>
          */
-        public AI(@NonNull CharacterObject character) {
-            this(character, System.currentTimeMillis());
+        public AI() {
+            this(System.currentTimeMillis());
         }
 
 
         /**
          * Luo uuden tekoälyohjainkomponentin.
          *
-         * @param character pelihahmo jonka toimintoja halutaan ohjata
-         * @param seed      satunnaislukugeneraattorin siemenluku
+         * @param seed satunnaislukugeneraattorin siemenluku
          * @throws NullPointerException jos hahmo on <code>null</code>
          */
-        public AI(@NonNull CharacterObject character, long seed) {
-            super(character);
+        public AI(long seed) {
             this.random = new Random(seed);
         }
 

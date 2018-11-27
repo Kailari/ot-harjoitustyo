@@ -1,0 +1,22 @@
+{
+  "abilities": {
+    "move": {
+      "priority": 0,
+      "component": {
+        "class": "player"
+      }
+    },
+    "attack": {
+      "priority": 1,
+      "component": {
+        "class": "player"
+      }
+    },
+    "end_turn": {
+      "priority": 99,
+      "component": {
+        "class": "player"
+      }
+    }
+  }
+}

@@ -16,10 +16,6 @@ import toilari.otlite.game.world.entities.characters.abilities.EndTurnAbility;
 public abstract class EndTurnControllerComponent extends AbstractControllerComponent<EndTurnAbility> {
     @Setter @Getter private boolean wantsToEndTurn;
 
-    private EndTurnControllerComponent(@NonNull CharacterObject character) {
-        super(character);
-    }
-
     @Override
     public boolean wants(EndTurnAbility ability) {
         return this.wantsToEndTurn;
@@ -41,22 +37,11 @@ public abstract class EndTurnControllerComponent extends AbstractControllerCompo
      * Pelaajan vuoronlopetuskyvyn ohjainkomponentti.
      */
     public static class Player extends EndTurnControllerComponent {
-        private final boolean autoEndTurn;
+        @Setter private boolean autoEndTurn;
         private boolean isHolding;
 
         private boolean getEndTurnInput() {
             return Input.getHandler().isKeyDown(Key.SPACE);
-        }
-
-        /**
-         * Luo uuden ohjainkomponentin.
-         *
-         * @param character   hahmo jolle komponentti lisätään
-         * @param autoEndTurn lopetetaanko voro automaattisesti kun toimintopisteet loppuvat
-         */
-        public Player(CharacterObject character, boolean autoEndTurn) {
-            super(character);
-            this.autoEndTurn = autoEndTurn;
         }
 
         @Override
@@ -100,15 +85,6 @@ public abstract class EndTurnControllerComponent extends AbstractControllerCompo
         public void setWantsToEndTurn(boolean wantsToEndTurn) {
             super.setWantsToEndTurn(wantsToEndTurn);
             this.updateTicksWaited = 0;
-        }
-
-        /**
-         * Luo uuden ohjainkomponentin.
-         *
-         * @param character hahmo jolle komponentti lisätään
-         */
-        public AI(@NonNull CharacterObject character) {
-            super(character);
         }
 
         @Override

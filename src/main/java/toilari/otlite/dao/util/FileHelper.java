@@ -26,19 +26,19 @@ public class FileHelper {
      * Etsii annetusta polusta kaikki tiedostot joilla on annettu pääte ja palauttaa
      * ne {@link Stream streamina}.
      *
-     * @param path      Polku josta etsitään
-     * @param extension tiedostopääte
+     * @param path       polku josta etsitään
+     * @param extensions tiedostopääte
      * @return <code>Stream&lt;Path&gt;</code> jossa löydettyjen tiedostojen polut.
      * Tyhjä jos tiedostoja ei löytynyt
      * @throws NullPointerException jos polku tai tiedostopääte on <code>null</code>
      */
-    public static Stream<Path> discoverFiles(@NonNull Path path, @NonNull String extension) {
-        if (extension.startsWith(".")) {
+    public static Stream<Path> discoverFiles(@NonNull Path path, String... extensions) {
+        if (Arrays.stream(extensions).anyMatch(s -> s.startsWith("."))) {
             throw new IllegalArgumentException("omit the initial '.' of the extension. (e.g. \"txt\", not \".txt\")");
         }
 
         try {
-            return Files.find(path, 1, (p, attr) -> FileHelper.extensionFilter(extension, p, attr));
+            return Files.find(path, 1, (p, attr) -> FileHelper.extensionFilter(extensions, p, attr));
         } catch (IOException e) {
             LOG.error("Could not access path {}", path);
             return Arrays.stream(new Path[0]);
@@ -119,7 +119,8 @@ public class FileHelper {
         return new File(path).exists();
     }
 
-    private static boolean extensionFilter(String extension, Path path, BasicFileAttributes attributes) {
-        return attributes.isRegularFile() && path.normalize().toString().toLowerCase().endsWith("." + extension);
+    private static boolean extensionFilter(String[] extensions, Path path, BasicFileAttributes attributes) {
+        val pathStr = path.normalize().toString().toLowerCase();
+        return attributes.isRegularFile() && Arrays.stream(extensions).anyMatch(extension -> pathStr.endsWith("." + extension));
     }
 }

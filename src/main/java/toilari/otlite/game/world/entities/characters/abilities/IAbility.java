@@ -1,6 +1,7 @@
 package toilari.otlite.game.world.entities.characters.abilities;
 
 import lombok.NonNull;
+import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.components.IControllerComponent;
 import toilari.otlite.game.world.entities.characters.abilities.components.MoveControllerComponent;
 
@@ -15,6 +16,8 @@ import toilari.otlite.game.world.entities.characters.abilities.components.MoveCo
  * @see IControllerComponent
  */
 public interface IAbility<A extends IAbility<A, C>, C extends IControllerComponent<A>> {
+    void init(@NonNull CharacterObject character, int priority);
+
     /**
      * Toiminnon prioriteetti. Hahmon omalla vuorolla kykyjä yritetään suorittaa prioriteetin mukaan järjestyksessä
      * pienimmästä suurimpaan ja kullakin päivityskerralla suoritetaan korkeintaan yksi kyky.

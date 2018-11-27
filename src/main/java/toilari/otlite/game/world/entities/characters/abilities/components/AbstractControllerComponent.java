@@ -7,9 +7,13 @@ import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.AbstractAbility;
 
 public abstract class AbstractControllerComponent<A extends AbstractAbility> implements IControllerComponent<A> {
-    @Getter(AccessLevel.PROTECTED) @NonNull private final CharacterObject character;
+    @Getter(AccessLevel.PROTECTED) private transient CharacterObject character;
 
-    protected AbstractControllerComponent(@NonNull CharacterObject character) {
+    @Override
+    public void init(@NonNull CharacterObject character) {
+        if (this.character != null) {
+            throw new IllegalStateException("Initializing already initialized controller component");
+        }
         this.character = character;
     }
 }

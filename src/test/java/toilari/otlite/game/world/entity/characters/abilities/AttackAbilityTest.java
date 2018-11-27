@@ -17,14 +17,16 @@ class AttackAbilityTest {
     @Test
     void getCooldownLengthMatchesCharacterAttributes() {
         val character = new FakeCharacterObject();
-        val ability = new AttackAbility(character, 0);
+        val ability = new AttackAbility();
+        ability.init(character, 0);
         assertEquals(character.getAttributes().getAttackCooldown(), ability.getCooldownLength());
     }
 
     @Test
     void getCostMatchesCharacterAttributes() {
         val character = new FakeCharacterObject();
-        val ability = new AttackAbility(character, 0);
+        val ability = new AttackAbility();
+        ability.init(character, 0);
         assertEquals(character.getAttributes().getAttackCost(), ability.getCost());
     }
 
@@ -36,7 +38,8 @@ class AttackAbilityTest {
 
         val character = new FakeCharacterObject();
         character.setTilePos(6, 9);
-        val ability = new AttackAbility(character, 0);
+        val ability = new AttackAbility();
+        ability.init(character, 0);
         manager.spawn(character);
 
         assertFalse(ability.canAttack(character));
@@ -50,7 +53,8 @@ class AttackAbilityTest {
 
         val character = new FakeCharacterObject();
         character.setTilePos(6, 9);
-        val ability = new AttackAbility(character, 0);
+        val ability = new AttackAbility();
+        ability.init(character, 0);
         manager.spawn(character);
 
         assertFalse(ability.canAttack(null));
@@ -64,7 +68,8 @@ class AttackAbilityTest {
 
         val character = new FakeCharacterObject();
         character.setTilePos(6, 9);
-        val ability = new AttackAbility(character, 0);
+        val ability = new AttackAbility();
+        ability.init(character, 0);
         manager.spawn(character);
 
         val other = new GameObject();
@@ -82,7 +87,8 @@ class AttackAbilityTest {
 
         val character = new FakeCharacterObject();
         character.setTilePos(6, 9);
-        val ability = new AttackAbility(character, 0);
+        val ability = new AttackAbility();
+        ability.init(character, 0);
         manager.spawn(character);
 
         assertFalse(ability.canAttack(new GameObject()));
@@ -96,7 +102,8 @@ class AttackAbilityTest {
 
         val character = new FakeCharacterObject();
         character.setTilePos(6, 9);
-        val ability = new AttackAbility(character, 0);
+        val ability = new AttackAbility();
+        ability.init(character, 0);
         manager.spawn(character);
 
         val other = new FakeCharacterObject();
@@ -114,7 +121,8 @@ class AttackAbilityTest {
 
         val character = new FakeCharacterObject();
         character.setTilePos(6, 9);
-        val ability = new AttackAbility(character, 0);
+        val ability = new AttackAbility();
+        ability.init(character, 0);
         manager.spawn(character);
 
         val other = new FakeCharacterObject();
@@ -133,7 +141,8 @@ class AttackAbilityTest {
 
         val character = new FakeCharacterObject();
         character.setTilePos(6, 9);
-        val ability = new AttackAbility(character, 0);
+        val ability = new AttackAbility();
+        ability.init(character, 0);
         manager.spawn(character);
 
         val other = new FakeCharacterObject();
@@ -150,7 +159,8 @@ class AttackAbilityTest {
 
         val character = new FakeCharacterObject();
         character.setTilePos(6, 9);
-        val ability = new AttackAbility(character, 0);
+        val ability = new AttackAbility();
+        ability.init(character, 0);
         manager.spawn(character);
 
         assertFalse(ability.canAttack(6, 9));
@@ -164,7 +174,8 @@ class AttackAbilityTest {
 
         val character = new FakeCharacterObject();
         character.setTilePos(6, 9);
-        val ability = new AttackAbility(character, 0);
+        val ability = new AttackAbility();
+        ability.init(character, 0);
         manager.spawn(character);
 
         assertFalse(ability.canAttack(9, 6));
@@ -178,7 +189,8 @@ class AttackAbilityTest {
 
         val character = new FakeCharacterObject();
         character.setTilePos(6, 9);
-        val ability = new AttackAbility(character, 0);
+        val ability = new AttackAbility();
+        ability.init(character, 0);
         manager.spawn(character);
 
         val other = new GameObject();
@@ -197,7 +209,8 @@ class AttackAbilityTest {
 
         val character = new FakeCharacterObject();
         character.setTilePos(6, 9);
-        val ability = new AttackAbility(character, 0);
+        val ability = new AttackAbility();
+        ability.init(character, 0);
         manager.spawn(character);
 
         val other = new FakeCharacterObject();
@@ -216,7 +229,8 @@ class AttackAbilityTest {
 
         val character = new FakeCharacterObject();
         character.setTilePos(6, 9);
-        val ability = new AttackAbility(character, 0);
+        val ability = new AttackAbility();
+        ability.init(character, 0);
         manager.spawn(character);
 
         val other = new FakeCharacterObject();
@@ -236,7 +250,8 @@ class AttackAbilityTest {
 
         val character = new FakeCharacterObject();
         character.setTilePos(6, 9);
-        val ability = new AttackAbility(character, 0);
+        val ability = new AttackAbility();
+        ability.init(character, 0);
         manager.spawn(character);
 
         val other = new FakeCharacterObject();
@@ -249,9 +264,8 @@ class AttackAbilityTest {
     @Test
     @SuppressWarnings("ConstantConditions")
     void performThrowsIfComponentIsNull() {
-        val character = new FakeCharacterObject();
         assertThrows(NullPointerException.class,
-            () -> new AttackAbility(character, 0).perform(null));
+            () -> new AttackAbility().perform(null));
     }
 
     @Test
@@ -261,10 +275,11 @@ class AttackAbilityTest {
         world.init();
 
         val character = new FakeCharacterObject();
-        val ability = new AttackAbility(character, 0);
+        val ability = new AttackAbility();
+        ability.init(character, 0);
         manager.spawn(character);
 
-        val component = new TestAttackControllerComponent(character, null);
+        val component = new TestAttackControllerComponent(null);
         assertFalse(ability.perform(component));
     }
 
@@ -275,14 +290,15 @@ class AttackAbilityTest {
         world.init();
 
         val character = new FakeCharacterObject();
-        val ability = new AttackAbility(character, 0);
+        val ability = new AttackAbility();
+        ability.init(character, 0);
         manager.spawn(character);
 
         val other = new GameObject();
         manager.spawn(other);
         other.remove();
 
-        val component = new TestAttackControllerComponent(character, other);
+        val component = new TestAttackControllerComponent(other);
         assertFalse(ability.perform(component));
     }
 
@@ -293,14 +309,15 @@ class AttackAbilityTest {
         world.init();
 
         val character = new FakeCharacterObject();
-        val ability = new AttackAbility(character, 0);
+        val ability = new AttackAbility();
+        ability.init(character, 0);
         manager.spawn(character);
 
         val other = new FakeCharacterObject();
         manager.spawn(other);
         other.setHealth(0.0f);
 
-        val component = new TestAttackControllerComponent(character, other);
+        val component = new TestAttackControllerComponent(other);
         assertFalse(ability.perform(component));
     }
 
@@ -311,7 +328,8 @@ class AttackAbilityTest {
         world.init();
 
         val character = new FakeCharacterObject();
-        val ability = new AttackAbility(character, 0);
+        val ability = new AttackAbility();
+        ability.init(character, 0);
         manager.spawn(character);
 
         val other = new FakeCharacterObject();
@@ -319,7 +337,7 @@ class AttackAbilityTest {
         other.setHealth(0.0f);
         other.remove();
 
-        val component = new TestAttackControllerComponent(character, other);
+        val component = new TestAttackControllerComponent(other);
         assertFalse(ability.perform(component));
     }
 
@@ -330,13 +348,14 @@ class AttackAbilityTest {
         world.init();
 
         val character = new FakeCharacterObject();
-        val ability = new AttackAbility(character, 0);
+        val ability = new AttackAbility();
+        ability.init(character, 0);
         manager.spawn(character);
 
         val other = new FakeCharacterObject();
         manager.spawn(other);
 
-        val component = new TestAttackControllerComponent(character, other);
+        val component = new TestAttackControllerComponent(other);
         assertTrue(ability.perform(component));
     }
 
@@ -347,13 +366,14 @@ class AttackAbilityTest {
         world.init();
 
         val character = new FakeCharacterObject();
-        val ability = new AttackAbility(character, 0);
+        val ability = new AttackAbility();
+        ability.init(character, 0);
         manager.spawn(character);
 
         val other = new FakeCharacterObject();
         manager.spawn(other);
 
-        val component = new TestAttackControllerComponent(character, other);
+        val component = new TestAttackControllerComponent(other);
         ability.perform(component);
 
         assertEquals(9.0f, other.getHealth());
@@ -366,13 +386,14 @@ class AttackAbilityTest {
         world.init();
 
         val character = new FakeCharacterObject();
-        val ability = new AttackAbility(character, 0);
+        val ability = new AttackAbility();
+        ability.init(character, 0);
         manager.spawn(character);
 
         val other = new FakeCharacterObject();
         manager.spawn(other);
 
-        val component = new TestAttackControllerComponent(character, other);
+        val component = new TestAttackControllerComponent(other);
         for (int i = 0; i < 10; i++) {
             ability.perform(component);
         }
@@ -384,8 +405,7 @@ class AttackAbilityTest {
     private class TestAttackControllerComponent extends AttackControllerComponent {
         private GameObject target;
 
-        private TestAttackControllerComponent(CharacterObject character, GameObject target) {
-            super(character);
+        private TestAttackControllerComponent(GameObject target) {
             this.target = target;
         }
 

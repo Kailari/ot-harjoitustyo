@@ -17,7 +17,7 @@ class MoveAbilityPlayerControlComponentTest {
     @Test
     void getMoveInputXReturnsOneWhenInputHandlerOutputsRight() {
         Input.init(new FakeInputHandler(Key.RIGHT));
-        val component = new MoveControllerComponent.Player(new PlayerCharacterObject());
+        val component = new MoveControllerComponent.Player();
 
         assertEquals(1, component.getMoveInputX());
     }
@@ -25,7 +25,7 @@ class MoveAbilityPlayerControlComponentTest {
     @Test
     void getMoveInputXReturnsMinusOneWhenInputHandlerOutputsLeft() {
         Input.init(new FakeInputHandler(Key.LEFT));
-        val component = new MoveControllerComponent.Player(new PlayerCharacterObject());
+        val component = new MoveControllerComponent.Player();
 
         assertEquals(-1, component.getMoveInputX());
     }
@@ -33,7 +33,7 @@ class MoveAbilityPlayerControlComponentTest {
     @Test
     void getMoveInputYReturnsMinusOneWhenInputHandlerOutputsUp() {
         Input.init(new FakeInputHandler(Key.UP));
-        val component = new MoveControllerComponent.Player(new PlayerCharacterObject());
+        val component = new MoveControllerComponent.Player();
 
         assertEquals(-1, component.getMoveInputY());
     }
@@ -41,7 +41,7 @@ class MoveAbilityPlayerControlComponentTest {
     @Test
     void getMoveInputYReturnsOneWhenInputHandlerOutputsDown() {
         Input.init(new FakeInputHandler(Key.DOWN));
-        val component = new MoveControllerComponent.Player(new PlayerCharacterObject());
+        val component = new MoveControllerComponent.Player();
 
         assertEquals(1, component.getMoveInputY());
     }
@@ -50,8 +50,10 @@ class MoveAbilityPlayerControlComponentTest {
     void wantsMoveReturnsFalseIfInputNoInput() {
         Input.init(new FakeInputHandler());
         val player = new PlayerCharacterObject();
-        val ability = new MoveAbility(player, 0);
-        val component = new MoveControllerComponent.Player(player);
+        val ability = new MoveAbility();
+        ability.init(player, 0);
+        val component = new MoveControllerComponent.Player();
+        component.init(player);
 
 
         component.updateInput(ability);
@@ -62,8 +64,10 @@ class MoveAbilityPlayerControlComponentTest {
     void getInputDirectionReturnsNoneAfterSecondUpdateWhenInputIsHeldPressed() {
         Input.init(new FakeInputHandler(Key.RIGHT, Key.DOWN));
         val player = new PlayerCharacterObject();
-        val ability = new MoveAbility(player, 0);
-        val component = new MoveControllerComponent.Player(player);
+        val ability = new MoveAbility();
+        ability.init(player, 0);
+        val component = new MoveControllerComponent.Player();
+        component.init(player);
 
         component.updateInput(ability);
         component.updateInput(ability);

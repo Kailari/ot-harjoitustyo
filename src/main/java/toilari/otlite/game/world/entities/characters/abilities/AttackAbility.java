@@ -17,16 +17,6 @@ public class AttackAbility extends AbstractAbility<AttackAbility, AttackControll
     @Getter private float lastAttackDamage;
 
     /**
-     * Luo uuden kyvyn.
-     *
-     * @param character hahmo jolle kyky lisätään
-     * @param priority  kyvyn prioriteetti
-     */
-    public AttackAbility(CharacterObject character, int priority) {
-        super(character, priority);
-    }
-
-    /**
      * Testaa voiko hahmo hyökätä annettuihin koordinaatteihin.
      *
      * @param x tarkistettava x-koordinaatti

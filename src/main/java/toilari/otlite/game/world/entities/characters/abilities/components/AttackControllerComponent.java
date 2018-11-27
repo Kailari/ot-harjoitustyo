@@ -14,10 +14,6 @@ import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
 public abstract class AttackControllerComponent extends AbstractControllerComponent<AttackAbility> {
     @Getter @Setter(AccessLevel.PROTECTED) private GameObject target;
 
-    protected AttackControllerComponent(@NonNull CharacterObject character) {
-        super(character);
-    }
-
     @Override
     public void abilityPerformed(AttackAbility ability) {
         setTarget(null);
@@ -27,15 +23,16 @@ public abstract class AttackControllerComponent extends AbstractControllerCompon
      * Pelaajan hyökkäämiskyvyn ohjainkomponentti.
      */
     public static class Player extends AttackControllerComponent {
-        private final MoveControllerComponent moveComponent;
+        private MoveControllerComponent moveComponent;
 
         /**
          * Luo uuden ohjainkomponentin.
          *
          * @param character hahmo jolle komponentti lisätään
          */
-        public Player(@NonNull CharacterObject character) {
-            super(character);
+        @Override
+        public void init(@NonNull CharacterObject character) {
+            super.init(character);
             this.moveComponent = character.getAbilities().getComponent(MoveAbility.class);
 
             if (this.moveComponent == null) {
@@ -85,15 +82,6 @@ public abstract class AttackControllerComponent extends AbstractControllerCompon
      * Tekoälyn hyökkäämiskyvyn ohjainkomponentti.
      */
     public static class AI extends AttackControllerComponent {
-        /**
-         * Luo uuden ohjainkomponentin.
-         *
-         * @param character hahmo jolle komponentti lisätään
-         */
-        public AI(@NonNull CharacterObject character) {
-            super(character);
-        }
-
         @Override
         public void updateInput(AttackAbility ability) {
 

@@ -1,6 +1,7 @@
 package toilari.otlite.game.world.entities.characters.abilities.components;
 
 import lombok.NonNull;
+import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.IAbility;
 
 /**
@@ -32,4 +33,6 @@ public interface IControllerComponent<A extends IAbility> {
      * @param ability kyky jota ohjataan
      */
     void abilityPerformed(A ability);
+
+    void init(@NonNull CharacterObject character);
 }

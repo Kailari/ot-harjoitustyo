@@ -17,12 +17,14 @@ import toilari.otlite.game.world.entities.characters.abilities.components.IContr
 @Slf4j
 public class CharacterObject extends GameObject implements IHealthHandler {
     @Getter private transient int turnsTaken;
+    @Getter private transient long deathTime;
+
 
     // Overrides IHealthHandler get/setHealth
     @Getter(onMethod = @__({@Override})) @Setter(onMethod = @__({@Override}))
     private float health;
 
-    @Getter private final CharacteAbilities abilities;
+    @Getter private final CharacterAbilities abilities;
     @Getter private final CharacterAttributes attributes;
     @Getter private final CharacterLevels levels;
 
@@ -38,6 +40,13 @@ public class CharacterObject extends GameObject implements IHealthHandler {
         this.abilities.addAbility(ability, component);
     }
 
+    public CharacterObject(@NonNull CharacterAttributes attributes, @NonNull CharacterLevels levels) {
+        this.attributes = attributes;
+        this.levels = levels;
+
+        this.abilities = new CharacterAbilities();
+    }
+
     /**
      * Luo uuden hahmon ja antaa sille annetunmukaiset aloitusattribuutit.
      *
@@ -46,13 +55,18 @@ public class CharacterObject extends GameObject implements IHealthHandler {
     public CharacterObject(@NonNull CharacterAttributes attributes) {
         this.attributes = attributes;
         this.levels = new CharacterLevels();
-        this.abilities = new CharacteAbilities();
+        this.abilities = new CharacterAbilities();
     }
 
     @Override
     public void init() {
         super.init();
         this.health = getAttributes().getMaxHealth(this.levels);
+
+        for (val ability : this.abilities.getAbilitiesSortedByPriority()) {
+            ability.init(this, 0);
+            this.abilities.getComponentResponsibleFor(ability).init(this);
+        }
     }
 
     /**
@@ -98,6 +112,13 @@ public class CharacterObject extends GameObject implements IHealthHandler {
                 ability.reduceCooldownTimer();
             }
         }
+    }
+
+
+    @Override
+    public void remove() {
+        this.deathTime = System.currentTimeMillis();
+        super.remove();
     }
 
     private <A extends IAbility<A, C>, C extends IControllerComponent<A>> boolean handleAbility(@NonNull TurnObjectManager turnManager, @NonNull A ability) {

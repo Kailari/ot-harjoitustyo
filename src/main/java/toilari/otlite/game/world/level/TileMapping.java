@@ -2,7 +2,7 @@ package toilari.otlite.game.world.level;
 
 import lombok.NonNull;
 import lombok.val;
-import toilari.otlite.dao.ITileDAO;
+import toilari.otlite.dao.IGetAllDAO;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,10 +25,12 @@ public class TileMapping {
      * @param dao DAO jolla ruututyypit haetaan
      * @throws NullPointerException jos dao on null
      */
-    public TileMapping(@NonNull ITileDAO dao) {
-        this.tiles = dao.getTiles();
-        for (byte i = 0; i < this.tiles.length; i++) {
-            this.idToIndex.put(this.tiles[i].getId(), i);
+    public TileMapping(@NonNull IGetAllDAO<Tile> dao) {
+        val loaded = dao.getAll();
+        this.tiles = loaded.toArray(new Tile[0]);
+
+        for (byte j = 0; j < this.tiles.length; j++) {
+            this.idToIndex.put(this.tiles[j].getId(), j);
         }
     }
 

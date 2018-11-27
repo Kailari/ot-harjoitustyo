@@ -26,7 +26,7 @@ import java.util.*;
  * Etuna tästä saadaan esimerkiksi se että aina jos kyvyn luokka/tyyppi on tiedossa, on pääsy käytettäväksi määritellyn
  * ohjainkomponentin julkisiin metodeihin helppoa, eikä tyyppimuunnoksia useimmissa tapauksissa tarvita.
  */
-public class CharacteAbilities {
+public class CharacterAbilities {
     private final Map<Class<? extends IAbility>, IControllerComponent> components = new HashMap<>();
     private final SortedSet<IAbility> abilities = new TreeSet<>(Comparator.comparingInt(IAbility::getPriority));
 

@@ -1,25 +1,13 @@
 package toilari.otlite.game.world.entities.characters.abilities;
 
-import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.game.util.Direction;
-import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.components.MoveControllerComponent;
 
 /**
  * Hahmon kyky liikkua.
  */
 public class MoveAbility extends AbstractAbility<MoveAbility, MoveControllerComponent> {
-    /**
-     * Luo uuden kyvyn.
-     *
-     * @param character hahmo jolle kyky lisätään
-     * @param priority  kyvyn prioriteetti
-     */
-    public MoveAbility(CharacterObject character, int priority) {
-        super(character, priority);
-    }
-
     /**
      * Tarkistaa voiko hahmo liikkua annettuun suuntaan.
      *

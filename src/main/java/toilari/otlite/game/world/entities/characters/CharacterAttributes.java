@@ -167,6 +167,9 @@ public class CharacterAttributes {
     @Getter private final int moveCooldown = 0;
     @Getter private final int attackCost = 1;
     @Getter private final int attackCooldown = 0;
+
+    @Getter private final int xpReward = 1;
+
     private final int baseActionPoints;
     private final int baseHealthRegenDelay;
 

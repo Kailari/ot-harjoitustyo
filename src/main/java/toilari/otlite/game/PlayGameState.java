@@ -5,16 +5,15 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import lombok.var;
+import toilari.otlite.dao.CharacterDAO;
 import toilari.otlite.dao.TileDAO;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.CharacterAttributes;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.PlayerCharacterObject;
-import toilari.otlite.game.world.entities.characters.abilities.AttackAbility;
 import toilari.otlite.game.world.entities.characters.abilities.EndTurnAbility;
 import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
-import toilari.otlite.game.world.entities.characters.abilities.components.AttackControllerComponent;
 import toilari.otlite.game.world.entities.characters.abilities.components.EndTurnControllerComponent;
 import toilari.otlite.game.world.entities.characters.abilities.components.MoveControllerComponent;
 import toilari.otlite.game.world.level.Level;
@@ -26,7 +25,7 @@ import toilari.otlite.game.world.level.TileMapping;
 @Slf4j
 public class PlayGameState extends GameState {
     @Getter @NonNull private final World world;
-    @Getter private PlayerCharacterObject player;
+    @Getter private CharacterObject player;
 
     /**
      * Luo uuden pelitila-instanssin.
@@ -47,10 +46,9 @@ public class PlayGameState extends GameState {
 
         LOG.info("Initialization finished.");
 
-        this.player = new PlayerCharacterObject();
-        this.player.addAbility(new MoveAbility(this.player, 0), new MoveControllerComponent.Player(this.player));
-        this.player.addAbility(new AttackAbility(this.player, 1), new AttackControllerComponent.Player(this.player));
-        this.player.addAbility(new EndTurnAbility(this.player, 99), new EndTurnControllerComponent.Player(this.player, getGame().getActiveProfile().getSettings().isAutoEndTurn()));
+        val dao = new CharacterDAO("content/characters/");
+        this.player = dao.get("player.json");
+
         this.world.getObjectManager().spawn(this.player);
         this.player.setTilePos(5, 3);
 
@@ -67,8 +65,17 @@ public class PlayGameState extends GameState {
             0.1f, 0.01f, 0.0f, 0.1f,
             5.0f, 0.1f, 0.5f, 0.001f));
         this.world.getObjectManager().spawn(sheep);
-        sheep.addAbility(new MoveAbility(sheep, 0), new MoveControllerComponent.AI(sheep));
-        sheep.addAbility(new EndTurnAbility(sheep, 99), new EndTurnControllerComponent.AI(sheep));
+        val ability = new MoveAbility();
+        val component = new MoveControllerComponent.AI();
+        ability.init(sheep, 0);
+        component.init(sheep);
+        sheep.addAbility(ability, component);
+
+        val ability2 = new EndTurnAbility();
+        val component2 = new EndTurnControllerComponent.AI();
+        ability2.init(sheep, 99);
+        component2.init(sheep);
+        sheep.addAbility(ability2, component2);
         sheep.setTilePos(x, y);
     }
 

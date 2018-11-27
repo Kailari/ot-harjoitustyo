@@ -8,14 +8,14 @@ import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.components.AbstractControllerComponent;
 
 public abstract class AbstractAbility<A extends AbstractAbility<A, C>, C extends AbstractControllerComponent<A>> implements IAbility<A, C> {
-    @Getter(AccessLevel.PROTECTED) private final CharacterObject character;
-    @Getter private final int priority;
+    @Getter(AccessLevel.PROTECTED) private CharacterObject character;
+    @Getter private int priority = 0;
     private int cooldownTimer;
 
-
-    protected AbstractAbility(@NonNull CharacterObject character, int priority) {
-        this.character = character;
+    @Override
+    public void init(@NonNull CharacterObject character, int priority) {
         this.priority = priority;
+        this.character = character;
     }
 
     @Override

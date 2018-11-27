@@ -3,7 +3,6 @@ package toilari.otlite.game.world.entities.characters;
 import lombok.Getter;
 
 public class PlayerCharacterObject extends CharacterObject {
-    @Getter private long deathTime;
 
     /**
      * TODO: Hankkiudu tästä luokasta eroon kunhan hahmojen lukeminen tiedostosta onnistuu.
@@ -29,9 +28,4 @@ public class PlayerCharacterObject extends CharacterObject {
         ));
     }
 
-    @Override
-    public void remove() {
-        this.deathTime = System.currentTimeMillis();
-        super.remove();
-    }
 }

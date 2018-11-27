@@ -3,7 +3,6 @@ package toilari.otlite.dao;
 import lombok.val;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import toilari.otlite.dao.util.FileHelper;
 import toilari.otlite.game.world.level.NormalTile;
@@ -13,7 +12,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,13 +34,6 @@ class TileDAOTest {
         new NormalTile(false, true, 2, "hole")
     };
 
-    private TileDAO dao;
-
-    /**
-     * Luodaan testien vaatimat hakemistot ja .json-tiedostot.
-     *
-     * @throws IOException jos kansioiden tai .json tiedostojen luonti epäonnistuu
-     */
     @BeforeAll
     static void beforeAll() throws IOException {
         Files.createDirectories(ROOT);
@@ -52,76 +43,60 @@ class TileDAOTest {
         }
     }
 
-    /**
-     * Luodaan testien vaatimat .json-tiedostot ennen kunkin testin suorittamista.
-     */
-    @BeforeEach
-    void beforeEach() {
-        this.dao = new TileDAO("target/test-temp/content/tiles/");
-        this.dao.discoverAndLoadAll();
+    @AfterAll
+    static void afterAll() {
+        FileHelper.deleteDirectoryAndChildren(ROOT);
     }
 
-    /**
-     * Testaa ettei konstruktori hyväksy virheellisiä parametreja.
-     */
     @Test
     @SuppressWarnings("ConstantConditions")
     void constructorThrowsWithNullRoot() {
         assertThrows(NullPointerException.class, () -> new TileDAO(null));
     }
 
-    /**
-     * Testaa että kaikki määritetyt ruudut löydetään.
-     */
     @Test
     void tileDAOHasAllDefinedTiles() {
-        assertEquals(CORRECT_TILES.length, this.dao.getTiles().length);
+        val dao = new TileDAO("target/test-temp/content/tiles/");
+        dao.discoverAndLoadAll();
+
+        assertEquals(CORRECT_TILES.length, dao.getAll().size());
     }
 
-    /**
-     * Testaa että kaikki määritetyt ruudut löytyvät oikeilla kenttien arvoilla.
-     */
     @Test
     void tileDAOHasCorrectTiles() {
-        val tiles = Arrays.asList(this.dao.getTiles());
+        val dao = new TileDAO("target/test-temp/content/tiles/");
+        dao.discoverAndLoadAll();
+
+        val tiles = dao.getAll();
         for (val correct : CORRECT_TILES) {
             assertTrue(tiles.contains(correct));
         }
     }
 
-    /**
-     * Testaa ettei DAO:sta löydy null-tilejä.
-     */
     @Test
     void tileDAOHasNoNullTiles() {
-        for (val t : this.dao.getTiles()) {
+        val dao = new TileDAO("target/test-temp/content/tiles/");
+        dao.discoverAndLoadAll();
+
+        for (val t : dao.getAll()) {
             assertNotNull(t);
         }
     }
 
-    /**
-     * Testaa ettei tryLoad hyväksy virheellisiä parametreja.
-     */
     @Test
     @SuppressWarnings("ConstantConditions")
     void tryLoadThrowsWithNullPath() {
-        assertThrows(NullPointerException.class, () -> this.dao.tryLoad(null));
+        val dao = new TileDAO("target/test-temp/content/tiles/");
+        dao.discoverAndLoadAll();
+
+        assertThrows(NullPointerException.class, () -> dao.load(null));
     }
 
-    /**
-     * Testaa että {@link TileDAO#tryLoad(Path)} palauttaa <code>null</code> kun
-     * tiedostoa ei löydy.
-     */
     @Test
     void tryLoadReturnsNullOnFileThatDoesNotExist() {
-        assertNull(this.dao.tryLoad(Paths.get("No/This/Path/Does/Not/Exist/Either.nope")));
-    }
+        val dao = new TileDAO("target/test-temp/content/tiles/");
+        dao.discoverAndLoadAll();
 
-    /**
-     * Poistetaan väliaikaiset tiedostot.
-     */
-    @AfterAll
-    static void afterAll() {
-        FileHelper.deleteDirectoryAndChildren(ROOT);
+        assertNull(dao.load(Paths.get("No/This/Path/Does/Not/Exist/Either.nope")));
     }
 }
