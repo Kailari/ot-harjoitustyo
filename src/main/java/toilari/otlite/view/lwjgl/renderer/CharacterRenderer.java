@@ -17,7 +17,6 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
     private final Context context;
 
     @Getter @Setter(AccessLevel.PROTECTED) private int currentFrameTime = 0;
-    @Getter @Setter(AccessLevel.PROTECTED) private long lastFrameTime;
     @Getter(AccessLevel.PROTECTED) private Texture texture;
     @Getter(AccessLevel.PROTECTED) private Texture fontTexture;
     @Getter(AccessLevel.PROTECTED) private AnimatedSprite sprite;
@@ -39,7 +38,6 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
         this.fontTexture = this.textureDAO.load("font.png");
 
         this.sprite = new AnimatedSprite(this.texture, this.context.nFrames, this.context.width, this.context.height);
-        this.lastFrameTime = System.currentTimeMillis();
         return false;
     }
 
@@ -48,8 +46,7 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
         val isOwnTurn = character.getWorld().getObjectManager().isCharactersTurn(character);
         val hasActionPoints = character.getWorld().getObjectManager().getRemainingActionPoints() > 0;
 
-        int frame;
-        frame = getFrame(isOwnTurn, hasActionPoints);
+        int frame = getFrame(isOwnTurn, hasActionPoints);
 
         float r, g, b;
         if (this.context.color != null && this.context.color.length == 3) {
