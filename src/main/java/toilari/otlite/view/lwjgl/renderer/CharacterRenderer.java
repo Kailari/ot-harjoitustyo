@@ -16,7 +16,8 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
 
     private final Context context;
 
-    @Getter @Setter(AccessLevel.PROTECTED) private int currentFrame;
+    @Getter @Setter(AccessLevel.PROTECTED) private int currentFrameTime = 0;
+    @Getter @Setter(AccessLevel.PROTECTED) private long lastFrameTime;
     @Getter(AccessLevel.PROTECTED) private Texture texture;
     @Getter(AccessLevel.PROTECTED) private Texture fontTexture;
     @Getter(AccessLevel.PROTECTED) private AnimatedSprite sprite;
@@ -38,6 +39,7 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
         this.fontTexture = this.textureDAO.load("font.png");
 
         this.sprite = new AnimatedSprite(this.texture, this.context.nFrames, this.context.width, this.context.height);
+        this.lastFrameTime = System.currentTimeMillis();
         return false;
     }
 
@@ -62,15 +64,16 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
 
     private int getFrame(boolean isOwnTurn, boolean hasActionPoints) {
         int frame;
+        int time = (int) System.currentTimeMillis();
         float frameDuration = this.context.framesPerSecond == 0 ? 0 : 1000f / this.context.framesPerSecond;
         if (isOwnTurn && hasActionPoints) {
             float totalDuration = frameDuration * this.context.walkFrames.length;
-            int subFrame = (int) (System.currentTimeMillis() % totalDuration / frameDuration);
+            int subFrame = (int) ((time % totalDuration) / frameDuration);
 
             frame = this.context.walkFrames[subFrame];
         } else {
             float totalDuration = frameDuration * this.context.idleFrames.length;
-            int subFrame = (int) (System.currentTimeMillis() % totalDuration / frameDuration);
+            int subFrame = (int) ((time % totalDuration) / frameDuration);
 
             frame = this.context.idleFrames[subFrame];
         }
