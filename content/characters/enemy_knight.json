@@ -1,0 +1,27 @@
+{
+  "rendererID": "dark_knight.json",
+  "attributes": {
+    "baseActionPoints": 0,
+    "baseHealth": 7.5
+  },
+  "abilities": {
+    "attack": {
+      "priority": 0,
+      "component": {
+        "class": "attack_adjacent_if_possible"
+      }
+    },
+    "move": {
+      "priority": 1,
+      "component": {
+        "class": "animal"
+      }
+    },
+    "end_turn": {
+      "priority": 99,
+      "component": {
+        "class": "ai"
+      }
+    }
+  }
+}

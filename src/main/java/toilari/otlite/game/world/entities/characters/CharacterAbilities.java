@@ -53,7 +53,9 @@ public class CharacterAbilities {
             .addComponent("ai", EndTurnControllerComponent.AI.class, EndTurnControllerComponent.AI::new);
 
         registerAbility("attack", AttackAbility.class, AttackAbility::new)
-            .addComponent("player", AttackControllerComponent.Player.class, AttackControllerComponent.Player::new);
+            .addComponent("player", AttackControllerComponent.Player.class, AttackControllerComponent.Player::new)
+            .addComponent("attack_adjacent_if_possible", AttackControllerComponent.AIAlwaysAttackAdjacentIfPossible.class, AttackControllerComponent.AIAlwaysAttackAdjacentIfPossible::new)
+        ;
     }
 
     private static <A extends IAbility<A, C>, C extends IControllerComponent<A>> AbilityComponentEntry<A, C> registerAbility(String key, Class<? extends A> abilityClass, Supplier<A> abilityFactory) {

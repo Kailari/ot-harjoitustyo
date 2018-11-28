@@ -30,7 +30,7 @@ public class PlayerRenderer extends CharacterRenderer {
     @Override
     public boolean init() {
         super.init();
-        this.icons = getTextureDAO().load("icons.png");
+        this.icons = getTextureDAO().get("icons.png");
         this.arrows = new AnimatedSprite(this.icons, 6, 4, 4);
 
         return false;

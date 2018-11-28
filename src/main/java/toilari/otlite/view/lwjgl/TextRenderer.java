@@ -39,7 +39,7 @@ public class TextRenderer {
         this.maxFontSize = maxFontSize;
         this.minFontSize = minFontSize;
 
-        val texture = textures.load("font.png");
+        val texture = textures.get("font.png");
         int size = minFontSize;
 
         this.font = new AnimatedSprite[maxFontSize - minFontSize + 1];

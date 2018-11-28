@@ -21,7 +21,7 @@ import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
  * DAO tekstuurien lataamiseen kuvatiedostoista.
  */
 @Slf4j
-public class TextureDAO {
+public class TextureDAO extends CachingDAO<Texture, String> {
     @NonNull private final Path root;
 
     /**
@@ -41,7 +41,8 @@ public class TextureDAO {
      * @return <code>null</code> jos kuvatiedostoa ei löydy, muulloin ladatusta kuvatiedostosta luotu tekstuuri
      * @throws NullPointerException jos polku on <code>null</code>
      */
-    public Texture load(@NonNull String path) {
+    @Override
+    protected Texture load(@NonNull String path) {
         int handle = generateGLTexture();
 
         int width, height;

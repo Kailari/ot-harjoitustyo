@@ -89,15 +89,41 @@ public abstract class AttackControllerComponent extends AbstractControllerCompon
     /**
      * Tekoälyn hyökkäämiskyvyn ohjainkomponentti.
      */
-    public static class AI extends AttackControllerComponent {
+    public static class AIAlwaysAttackAdjacentIfPossible extends AttackControllerComponent {
+        /**
+         * Kopio komponentin templaatista.
+         *
+         * @param template komponentti josta kopioidaan
+         */
+        public AIAlwaysAttackAdjacentIfPossible(AttackControllerComponent template) {
+        }
+
         @Override
         public void updateInput(AttackAbility ability) {
+            val world = getCharacter().getWorld();
+            val manager = world.getObjectManager();
+            val player = manager.getGameState().getPlayer();
 
+            setTarget(null);
+            for (val direction : Direction.asIterable()) {
+                val x = getCharacter().getTileX() + direction.getDx();
+                val y = getCharacter().getTileY() + direction.getDy();
+                val possibleTarget = world.getObjectAt(x, y);
+                if (possibleTarget != null && possibleTarget.equals(player)) {
+                    setTarget(player);
+                    break;
+                }
+            }
         }
 
         @Override
         public boolean wants(AttackAbility ability) {
-            return false;
+            return getTarget() != null;
+        }
+
+        @Override
+        public void abilityPerformed(AttackAbility ability) {
+            super.abilityPerformed(ability);
         }
     }
 }

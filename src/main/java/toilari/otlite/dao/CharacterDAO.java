@@ -37,6 +37,11 @@ public class CharacterDAO extends AutoDiscoverFileDAO<CharacterObject> {
     }
 
     @Override
+    public CharacterObject get(@NonNull String path) {
+        return super.get(path + ".json");
+    }
+
+    @Override
     protected CharacterObject load(Path path) {
         try (Reader reader = TextFileHelper.getReader(path)) {
             return this.gson.fromJson(reader, CharacterObject.class);

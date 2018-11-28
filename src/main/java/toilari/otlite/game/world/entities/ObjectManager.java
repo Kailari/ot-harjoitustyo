@@ -104,6 +104,7 @@ public class ObjectManager {
      *
      * @param template kopioitava peliobjekti
      * @return lisätty peliobjekti
+     * @throws NullPointerException jos templaatti on <code>null</code>
      */
     public CharacterObject spawnTemplate(@NonNull CharacterObject template) {
         val attributes = new CharacterAttributes(template.getAttributes());
@@ -114,6 +115,21 @@ public class ObjectManager {
         instance.setHealth(template.getHealth());
         spawn(instance);
         return instance;
+    }
+
+    /**
+     * Lisää kopion peliobjektista pelimaailmaan ja asettaa sille sijainnin.
+     *
+     * @param template kopioitava peliobjekti
+     * @param x        uuden objekin x-koordinaatti
+     * @param y        uuden objekin y-koordinaatti
+     * @return uusi objekti
+     * @throws NullPointerException jos templaatti on <code>null</code>
+     */
+    public CharacterObject spawnTemplateAt(@NonNull CharacterObject template, int x, int y) {
+        val spawned = spawnTemplate(template);
+        spawned.setTilePos(x, y);
+        return spawned;
     }
 
     /**

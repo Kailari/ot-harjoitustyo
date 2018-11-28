@@ -43,7 +43,7 @@ public class PlayGameState extends GameState {
         LOG.info("Initialization finished.");
 
         val characters = new CharacterDAO("content/characters/");
-        this.player = characters.get("player.json");
+        this.player = characters.get("player");
         val eta = this.player.getAbilities().getComponent(EndTurnAbility.class);
         if (eta instanceof EndTurnControllerComponent.Player) {
             ((EndTurnControllerComponent.Player) eta).setAutoEndTurn(getGame().getActiveProfile().getSettings().isAutoEndTurn());
@@ -51,17 +51,16 @@ public class PlayGameState extends GameState {
         this.world.getObjectManager().spawn(this.player);
         this.player.setTilePos(5, 3);
 
-        var sheep = characters.get("sheep.json");
-        createSheep(5, 1, sheep);
-        createSheep(8, 1, sheep);
-        createSheep(11, 2, sheep);
+        var sheep = characters.get("sheep");
+        this.world.getObjectManager().spawnTemplateAt(sheep, 5, 1);
+        this.world.getObjectManager().spawnTemplateAt(sheep, 8, 1);
+        this.world.getObjectManager().spawnTemplateAt(sheep, 11, 2);
+
+        var knight = characters.get("enemy_knight");
+        this.world.getObjectManager().spawnTemplateAt(knight, 13, 2);
+        this.world.getObjectManager().spawnTemplateAt(knight, 8, 4);
 
         return false;
-    }
-
-    private void createSheep(int x, int y, CharacterObject template) {
-        val sheep = this.world.getObjectManager().spawnTemplate(template);
-        sheep.setTilePos(x, y);
     }
 
     private void loadAssets() {

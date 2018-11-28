@@ -40,7 +40,7 @@ public class LevelRenderer implements ILWJGLRenderer<Level> {
 
     @Override
     public boolean init() {
-        this.tileset = this.textureDAO.load(this.textureFilename);
+        this.tileset = this.textureDAO.get(this.textureFilename);
         int tileWidth = this.tileset.getWidth() / tilesetColumns;
         int tileHeight = this.tileset.getHeight() / tilesetRows;
 

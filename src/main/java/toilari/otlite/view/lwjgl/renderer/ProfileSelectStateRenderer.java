@@ -71,7 +71,7 @@ public class ProfileSelectStateRenderer implements ILWJGLGameStateRenderer<Profi
     @Override
     public boolean init(@NonNull ProfileSelectState state) {
         this.state = state;
-        this.uiTexture = this.textureDAO.load("ui.png");
+        this.uiTexture = this.textureDAO.get("ui.png");
         this.textRenderer = new TextRenderer(this.textureDAO, 1, 16);
 
         if (refreshProfileList(state)) {

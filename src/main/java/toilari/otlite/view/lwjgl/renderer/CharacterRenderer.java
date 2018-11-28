@@ -2,9 +2,11 @@ package toilari.otlite.view.lwjgl.renderer;
 
 import lombok.*;
 import toilari.otlite.dao.TextureDAO;
+import toilari.otlite.game.input.Input;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.view.lwjgl.AnimatedSprite;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
+import toilari.otlite.view.lwjgl.TextRenderer;
 import toilari.otlite.view.lwjgl.Texture;
 import toilari.otlite.view.renderer.IRenderer;
 
@@ -19,6 +21,7 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
     @Getter @Setter(AccessLevel.PROTECTED) private int currentFrameTime = 0;
     @Getter(AccessLevel.PROTECTED) private Texture texture;
     @Getter(AccessLevel.PROTECTED) private Texture fontTexture;
+    @Getter(AccessLevel.PROTECTED) private TextRenderer textRenderer;
     @Getter(AccessLevel.PROTECTED) private AnimatedSprite sprite;
 
     /**
@@ -34,8 +37,9 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
 
     @Override
     public boolean init() {
-        this.texture = this.textureDAO.load(this.context.texture);
-        this.fontTexture = this.textureDAO.load("font.png");
+        this.texture = this.textureDAO.get(this.context.texture);
+        this.fontTexture = this.textureDAO.get("font.png");
+        this.textRenderer = new TextRenderer(this.textureDAO, 1, 16);
 
         this.sprite = new AnimatedSprite(this.texture, this.context.nFrames, this.context.width, this.context.height);
         return false;
@@ -57,6 +61,28 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
             r = g = b = 1.0f;
         }
         this.sprite.draw(camera, character.getX(), character.getY(), frame, r, g, b);
+    }
+
+    @Override
+    public void postDraw(@NonNull LWJGLCamera camera, @NonNull CharacterObject character) {
+        val mx = Input.getHandler().mouseX() / camera.getPixelsPerUnit();
+        val my = Input.getHandler().mouseY() / camera.getPixelsPerUnit();
+
+        val sx = character.getX() - camera.getPosition().x;
+        val sy = character.getY() - camera.getPosition().y;
+        val isHovering = mx >= sx && mx <= sx + this.context.width
+            && my >= sy && my <= sy + this.context.height;
+
+        if (isHovering) {
+            val size = 2;
+            val current = character.getHealth();
+            val max = character.getAttributes().getMaxHealth(character.getLevels());
+            val str = current + "/" + max;
+
+            val x = character.getX() + this.context.width / 2 - (size * str.length()) / 2;
+            val y = character.getY() + this.context.height + 1;
+            this.textRenderer.draw(camera, x, y, 0.85f, 0.25f, 0.25f, size, str);
+        }
     }
 
     private int getFrame(boolean isOwnTurn, boolean hasActionPoints) {
