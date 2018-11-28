@@ -195,7 +195,7 @@ public class CharacterAttributes {
      *
      * @param attributes templaatti josta kopioidaan
      */
-    public CharacterAttributes(CharacterAttributes attributes) {
+    public CharacterAttributes(@NonNull CharacterAttributes attributes) {
         this.moveCost = attributes.moveCost;
         this.moveCooldown = attributes.moveCooldown;
         this.attackCost = attributes.attackCost;
