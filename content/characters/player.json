@@ -10,8 +10,14 @@
         "class": "player"
       }
     },
-    "attack": {
+    "kick": {
       "priority": 1,
+      "component": {
+        "class": "player"
+      }
+    },
+    "attack": {
+      "priority": 2,
       "component": {
         "class": "player"
       }

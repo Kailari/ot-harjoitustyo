@@ -13,6 +13,15 @@ public interface IInputHandler {
     boolean isKeyDown(Key key);
 
     /**
+     * Painettiinko näppäin juuri pohjaan.
+     *
+     * @param key näppäinkoodi jonka tila tarkistetaan
+     * @return <code>true</code> jos näppäin on painettuna eikä ollut painettuna viime päivityksen yhteydessä, muutoin <code>false</code>
+     */
+    boolean isKeyPressed(Key key);
+
+
+    /**
      * Hakee hiiren x-koordinaatin suhteessa ikkunan vasempaan yläkulmaan.
      *
      * @return hiiren x-koordinaatti
@@ -33,4 +42,9 @@ public interface IInputHandler {
      * @return <code>true</code> jos nappi on pohjassa
      */
     boolean isMouseDown(int button);
+
+    /**
+     * Päivittää syötekäsittelijän tilan.
+     */
+    void update();
 }

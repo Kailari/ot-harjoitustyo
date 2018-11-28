@@ -1,6 +1,7 @@
 package toilari.otlite.game.world.level;
 
 import lombok.NonNull;
+import toilari.otlite.game.event.CharacterEvent;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 
 /**
@@ -23,6 +24,9 @@ public class KillTile extends Tile {
     @Override
     public void onCharacterEnter(int x, int y, @NonNull CharacterObject character) {
         character.setHealth(0.0f);
+        if (character.getWorld().getObjectManager().getGameState() != null) {
+            character.getWorld().getObjectManager().getGameState().getEventSystem().fire(new CharacterEvent.Damage(character, character, 100000.0f));
+        }
         character.remove();
     }
 }

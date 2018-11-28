@@ -19,6 +19,11 @@ public class FakeInputHandler implements IInputHandler {
     }
 
     @Override
+    public boolean isKeyPressed(Key key) {
+        return false;
+    }
+
+    @Override
     public int mouseX() {
         return 0;
     }
@@ -31,5 +36,9 @@ public class FakeInputHandler implements IInputHandler {
     @Override
     public boolean isMouseDown(int button) {
         return false;
+    }
+
+    @Override
+    public void update() {
     }
 }

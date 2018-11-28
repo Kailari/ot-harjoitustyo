@@ -169,19 +169,26 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
     }
 
     private void drawPopupText(@NonNull LWJGLCamera camera, DamageInstance instance) {
+        int size = 4;
         float dt = (System.currentTimeMillis() - instance.timestamp) / (float) instance.duration;
         int offsetY = -Math.round(dt * PlayGameStateRenderer.DAMAGE_LABEL_DISTANCE);
         int offsetX = 0;
 
         String msg;
         if (instance.killingBlow) {
-            msg = "rekt";
-            offsetX -= 6;
+            if (instance.amount > 99999f) {
+                msg = "AAaAaa!";
+                size = 3;
+                offsetX -= 9;
+            } else {
+                msg = "rekt";
+                offsetX -= 6;
+            }
         } else {
             msg = String.valueOf(Math.round(instance.amount));
         }
 
-        this.textRenderer.draw(camera, instance.x + offsetX, instance.y + offsetY, 0.8f, 0.1f, 0.1f, 4, msg);
+        this.textRenderer.draw(camera, instance.x + offsetX, instance.y + offsetY, 0.8f, 0.1f, 0.1f, size, msg);
     }
 
     private void onCharacterDamage(@NonNull CharacterEvent.Damage event) {

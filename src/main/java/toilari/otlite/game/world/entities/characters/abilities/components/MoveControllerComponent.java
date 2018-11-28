@@ -45,15 +45,12 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
      */
     @NoArgsConstructor
     public static class Player extends MoveControllerComponent {
-        private boolean isHolding;
-
         /**
          * Kopio komponentin toisesta kopmponentista.
          *
          * @param template komponentti josta kopioidaan
          */
         public Player(MoveControllerComponent template) {
-            this.isHolding = false;
         }
 
         /**
@@ -63,8 +60,8 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
          * @return -1 vasemmalle, 1 oikealle, 0 paikallaan
          */
         public int getMoveInputX() {
-            val right = Input.getHandler().isKeyDown(Key.RIGHT) ? 1 : 0;
-            val left = Input.getHandler().isKeyDown(Key.LEFT) ? -1 : 0;
+            val right = Input.getHandler().isKeyPressed(Key.RIGHT) ? 1 : 0;
+            val left = Input.getHandler().isKeyPressed(Key.LEFT) ? -1 : 0;
             return right + left;
         }
 
@@ -75,25 +72,15 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
          * @return -1 ylös, 1 alas, 0 paikallaan
          */
         public int getMoveInputY() {
-            val down = Input.getHandler().isKeyDown(Key.DOWN) ? 1 : 0;
-            val up = Input.getHandler().isKeyDown(Key.UP) ? -1 : 0;
+            val down = Input.getHandler().isKeyPressed(Key.DOWN) ? 1 : 0;
+            val up = Input.getHandler().isKeyPressed(Key.UP) ? -1 : 0;
             return down + up;
         }
 
         @Override
         public void updateInput(MoveAbility ability) {
-            int rawInputX = getMoveInputX();
-            int rawInputY = getMoveInputY();
-
-            if (this.isHolding) {
-                setInputX(0);
-                setInputY(0);
-            } else {
-                setInputX(rawInputX);
-                setInputY(rawInputY);
-            }
-
-            this.isHolding = rawInputX != 0 || rawInputY != 0;
+            setInputX(getMoveInputX());
+            setInputY(getMoveInputY());
         }
 
         @Override

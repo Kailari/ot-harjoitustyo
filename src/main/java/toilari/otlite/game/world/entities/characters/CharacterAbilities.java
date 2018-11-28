@@ -4,14 +4,8 @@ import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.dao.serialization.AbilityComponentEntry;
 import toilari.otlite.dao.serialization.CharacterAdapter;
-import toilari.otlite.game.world.entities.characters.abilities.AttackAbility;
-import toilari.otlite.game.world.entities.characters.abilities.EndTurnAbility;
-import toilari.otlite.game.world.entities.characters.abilities.IAbility;
-import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
-import toilari.otlite.game.world.entities.characters.abilities.components.AttackControllerComponent;
-import toilari.otlite.game.world.entities.characters.abilities.components.EndTurnControllerComponent;
-import toilari.otlite.game.world.entities.characters.abilities.components.IControllerComponent;
-import toilari.otlite.game.world.entities.characters.abilities.components.MoveControllerComponent;
+import toilari.otlite.game.world.entities.characters.abilities.*;
+import toilari.otlite.game.world.entities.characters.abilities.components.*;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -54,8 +48,10 @@ public class CharacterAbilities {
 
         registerAbility("attack", AttackAbility.class, AttackAbility::new)
             .addComponent("player", AttackControllerComponent.Player.class, AttackControllerComponent.Player::new)
-            .addComponent("attack_adjacent_if_possible", AttackControllerComponent.AIAlwaysAttackAdjacentIfPossible.class, AttackControllerComponent.AIAlwaysAttackAdjacentIfPossible::new)
-        ;
+            .addComponent("attack_adjacent_if_possible", AttackControllerComponent.AIAlwaysAttackAdjacentIfPossible.class, AttackControllerComponent.AIAlwaysAttackAdjacentIfPossible::new);
+
+        registerAbility("kick", KickAbility.class, KickAbility::new)
+            .addComponent("player", KickControllerComponent.Player.class, KickControllerComponent.Player::new);
     }
 
     private static <A extends IAbility<A, C>, C extends IControllerComponent<A>> AbilityComponentEntry<A, C> registerAbility(String key, Class<? extends A> abilityClass, Supplier<A> abilityFactory) {

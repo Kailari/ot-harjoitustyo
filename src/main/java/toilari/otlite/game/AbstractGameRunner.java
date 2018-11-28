@@ -98,6 +98,7 @@ public abstract class AbstractGameRunner<T extends Camera> {
         Input.init(createInputHandler());
 
         while (this.game.isRunning()) {
+            Input.getHandler().update();
             this.game.update();
             display(this.camera);
         }

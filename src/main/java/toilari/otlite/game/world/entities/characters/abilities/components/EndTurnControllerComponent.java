@@ -38,7 +38,6 @@ public abstract class EndTurnControllerComponent extends AbstractControllerCompo
     @NoArgsConstructor
     public static class Player extends EndTurnControllerComponent {
         @Setter private boolean autoEndTurn;
-        private boolean isHolding;
 
         /**
          * Luo uuden komponentin kopioimalla sen annetusta komponentista.
@@ -50,7 +49,7 @@ public abstract class EndTurnControllerComponent extends AbstractControllerCompo
         }
 
         private boolean getEndTurnInput() {
-            return Input.getHandler().isKeyDown(Key.SPACE);
+            return Input.getHandler().isKeyPressed(Key.SPACE);
         }
 
         @Override
@@ -65,11 +64,9 @@ public abstract class EndTurnControllerComponent extends AbstractControllerCompo
 
             val manager = getCharacter().getWorld().getObjectManager();
             val outOfActions = manager.getRemainingActionPoints() <= 0;
-            if ((outOfActions && this.autoEndTurn) || (!this.isHolding && input)) {
+            if ((outOfActions && this.autoEndTurn) || input) {
                 setWantsToEndTurn(true);
             }
-
-            this.isHolding = input;
         }
 
         @Override
