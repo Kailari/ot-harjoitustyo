@@ -3,6 +3,13 @@
 ## Mikä?
 Kurssin *"Ohjelmistotekniikka"* harjoitustyönä tuotettu yksinkertainen roguelite-henkinen luolaseikkailu, jossa lätkitään mörköjä turpaan ja otetaan turpaan kahta kovemmin.
 
+## Apua! Koodissa on 9001 virhettä puuttuvista metodeista kun avaan tiedoston X editorissa Y!
+Kehitysympäristösi ei todennäköisesti ymmärrä lombokilla ([*Project Lombok*](https://projectlombok.org)) generoituja gettreitä/settereitä/konstruktoreita ym. syntaksisokeria. Projekti käyttää lobokia generoimaan gettereitä yms. boilerplaten vähentämiseksi ja koodin luettavuuden parantamiseksi. Varjopuolena on kuitenkin etteivät editorit löydä generoituja metodeja, sillä ne eivät ole olemassa ennen kuin maven kääntämisen yhteydessä *delombokoi* koodin, generoiden edellämainitut metodit. (Generoitu koodi löytyy kääntämisen jälkeen polusta `target/generated-sources/delombok`).
+
+Hätä ei suinkaan ole tämän näköinen sillä useimpiin kehitysympäristöihin löytyy lombok-liitännäinen, joka auttaa editoria havaitsemaan lombokilla generoidut metodit jo ennen kääntämistä.
+
+*TL;DR: Puttuvat metodit generoidaan kääntämisen yhteydessä, jos haluat editorin sisällä virheistä eroon lataa lombok-liitännäinen.*
+
 ## Dokumentaatio
 - [vaatimusmäärittely](documentation/vaatimusmaarittely.md)
 - [arkkitehtuuri](documentation/arkkitehtuuri.md)
