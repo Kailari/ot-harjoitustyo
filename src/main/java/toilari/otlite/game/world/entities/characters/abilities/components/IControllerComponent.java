@@ -10,6 +10,8 @@ import toilari.otlite.game.world.entities.characters.abilities.IAbility;
  * @param <A> ohjattavan kyvyn tyyppi
  */
 public interface IControllerComponent<A extends IAbility> {
+    boolean isHidden();
+
     /**
      * Alustaa komponentin ja asettaa ohjatun hahmon.
      *

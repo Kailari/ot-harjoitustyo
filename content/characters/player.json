@@ -23,14 +23,16 @@
       }
     },
     "kick": {
-      "priority": 1,
+      "priority": 2,
       "component": {
+        "visibleOnHud": true,
         "class": "player"
       }
     },
     "attack": {
-      "priority": 2,
+      "priority": 1,
       "component": {
+        "visibleOnHud": true,
         "class": "player"
       }
     },

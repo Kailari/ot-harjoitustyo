@@ -14,7 +14,6 @@ import toilari.otlite.game.AbstractGameRunner;
 import toilari.otlite.game.Game;
 import toilari.otlite.game.input.IInputHandler;
 import toilari.otlite.view.renderer.IGameStateRenderer;
-import toilari.otlite.view.renderer.IRenderer;
 
 import java.util.Map;
 
@@ -40,8 +39,8 @@ public class LWJGLGameRunner extends AbstractGameRunner<LWJGLCamera> {
      */
     public LWJGLGameRunner(@NonNull Game game, @NonNull Map<Class, IGameStateRenderer> stateRendererMappings) {
         super(game, stateRendererMappings);
-        this.windowWidth = 800;
-        this.windowHeight = 600;
+        this.windowWidth = 1024;
+        this.windowHeight = 768;
 
         this.windowHandle = NULL;
     }
@@ -99,6 +98,7 @@ public class LWJGLGameRunner extends AbstractGameRunner<LWJGLCamera> {
     private void initWindow() {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        //glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -109,7 +109,7 @@ public class LWJGLGameRunner extends AbstractGameRunner<LWJGLCamera> {
         GLFWWindowSizeCallback
             .create((handle, width, height) -> getCamera().resizeViewport(width, height))
             .set(this.windowHandle);
-        
+
     }
 
     private boolean initVideoMode() {

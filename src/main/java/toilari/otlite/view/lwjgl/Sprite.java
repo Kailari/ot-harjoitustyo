@@ -133,7 +133,7 @@ public class Sprite {
      * @param b      värisävyn sininen komponentti
      * @throws NullPointerException jos kamera on <code>null</code>
      */
-    public void draw(@NonNull LWJGLCamera camera, int x, int y, float r, float g, float b) {
+    public void draw(@NonNull LWJGLCamera camera, float x, float y, float r, float g, float b) {
         this.texture.bind();
         getShader().use();
 

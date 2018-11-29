@@ -9,6 +9,13 @@ import toilari.otlite.game.world.entities.characters.abilities.AbstractAbility;
 public abstract class AbstractControllerComponent<A extends AbstractAbility> implements IControllerComponent<A> {
     @Getter(AccessLevel.PROTECTED) private transient CharacterObject character;
 
+    @Getter private boolean visibleOnHud = false;
+
+    @Override
+    public boolean isHidden() {
+        return !this.visibleOnHud;
+    }
+
     @Override
     public void init(@NonNull CharacterObject character) {
         if (this.character != null) {

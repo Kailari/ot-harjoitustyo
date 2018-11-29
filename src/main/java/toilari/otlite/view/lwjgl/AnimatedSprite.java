@@ -45,7 +45,7 @@ public class AnimatedSprite {
      * @param b      värisävyn sininen komponentti
      * @throws NullPointerException jos kamera on <code>null</code>
      */
-    public void draw(@NonNull LWJGLCamera camera, int x, int y, int frame, float r, float g, float b) {
+    public void draw(@NonNull LWJGLCamera camera, float x, float y, int frame, float r, float g, float b) {
         this.frames[frame].draw(camera, x, y, r, g, b);
     }
 }

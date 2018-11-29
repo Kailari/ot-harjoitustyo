@@ -6,10 +6,12 @@ import toilari.otlite.dao.RendererDAO;
 import toilari.otlite.dao.TextureDAO;
 import toilari.otlite.game.PlayGameState;
 import toilari.otlite.game.event.CharacterEvent;
-import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.IHealthHandler;
+import toilari.otlite.game.world.entities.characters.abilities.IAbility;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
+import toilari.otlite.view.lwjgl.Sprite;
 import toilari.otlite.view.lwjgl.TextRenderer;
+import toilari.otlite.view.lwjgl.Texture;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +28,13 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
     private final TextureDAO textureDao;
     private final RendererDAO renderers;
 
-    private List<DamageInstance> damageInstances;
-    private List<DamageInstance> damageInstancesSwap;
+    private List<DamageInstance> damageInstances, damageInstancesSwap;
+
+    private Texture abilityBackgroundTexture;
 
     private LevelRenderer levelRenderer;
     private TextRenderer textRenderer;
+    private Sprite abilityBackground;
 
     /**
      * Luo uuden pelitilapiirtäjän.
@@ -55,8 +59,11 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
 
         this.damageInstances = new ArrayList<>();
         this.damageInstancesSwap = new ArrayList<>();
-        this.textRenderer = new TextRenderer(this.textureDao, 1, 8);
+        this.textRenderer = new TextRenderer(this.textureDao, 1, 16);
         state.getEventSystem().subscribeTo(CharacterEvent.Damage.class, this::onCharacterDamage);
+
+        this.abilityBackgroundTexture = this.textureDao.get("ability_background.png");
+        this.abilityBackground = new Sprite(this.abilityBackgroundTexture, 0, 0, 16, 16, 16, 16);
 
         return this.levelRenderer.init();
     }
@@ -68,8 +75,8 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         drawWorld(camera, state);
         postDrawWorld(camera, state);
 
-        drawUI(camera, state);
         drawPopupTexts(camera);
+        drawUI(camera, state);
     }
 
     private void makeCameraFollowPlayer(@NonNull LWJGLCamera camera, @NonNull PlayGameState state) {
@@ -104,18 +111,20 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
     }
 
     private void drawUI(@NonNull LWJGLCamera camera, @NonNull PlayGameState state) {
-        val world = state.getWorld();
         int x = Math.round(camera.getPosition().x);
         int y = Math.round(camera.getPosition().y);
 
-        drawTurnStatus(camera, state, world, x, y);
+        drawTurnStatus(camera, state, x, y);
+        drawAbilityBar(camera, state, x, y);
 
         if (state.getPlayer().isDead()) {
             drawDeathMessage(camera, state, x, y);
         }
+
     }
 
-    private void drawTurnStatus(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, @NonNull World world, int x, int y) {
+    private void drawTurnStatus(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, int x, int y) {
+        val world = state.getWorld();
         val str = state.getGame().getActiveProfile().getName()
             + "\nTurn: " + state.getPlayer().getTurnsTaken();
         this.textRenderer.draw(camera, x + 2, y + 2, 0.25f, 0.65f, 0.25f, 4, str);
@@ -132,6 +141,32 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         }
 
         this.textRenderer.draw(camera, x + 2, y + 2 + 8, 0.65f, 0.25f, 0.25f, 2, apStr);
+    }
+
+    private void drawAbilityBar(LWJGLCamera camera, @NonNull PlayGameState state, int x, int y) {
+        val abilities = state.getPlayer().getAbilities().getAbilitiesSortedByPriority();
+        int i = 0;
+        for (val ability : abilities) {
+            if (!state.getPlayer().getAbilities().getComponent(ability.getClass()).isHidden()) {
+                drawAbility(camera, ability, i++, x, y);
+            }
+        }
+    }
+
+    private void drawAbility(LWJGLCamera camera, IAbility ability, int index, int x, int y) {
+        val xx = 2 + x + index * (16 + 2);
+        val yy = y + (int) (camera.getViewportHeight() / camera.getPixelsPerUnit()) - 16 - 2;
+
+        val r = ability.isOnCooldown() ? 0.85f : 1.0f;
+        val g = ability.isOnCooldown() ? 0.15f : 1.0f;
+        val b = ability.isOnCooldown() ? 0.15f : 1.0f;
+        this.abilityBackground.draw(camera, xx, yy, r, g, b);
+
+        this.textRenderer.draw(camera, xx + 1, yy + 16 - 5.5f, 0.5f, 0.5f, 0.5f, 4, String.valueOf(index + 1));
+
+        if (ability.isOnCooldown()) {
+            this.textRenderer.draw(camera, xx, yy, 0.85f, 0.85f, 0.85f, 16, String.valueOf(ability.getRemainingCooldown()));
+        }
     }
 
     private void drawDeathMessage(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, int x, int y) {
@@ -202,6 +237,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
     @Override
     public void destroy(@NonNull PlayGameState state) {
         this.levelRenderer.destroy();
+        this.abilityBackgroundTexture.destroy();
     }
 
     private static class DamageInstance {
