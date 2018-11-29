@@ -55,7 +55,6 @@ class MoveAbilityPlayerControlComponentTest {
         val component = new MoveControllerComponent.Player();
         component.init(player);
 
-
         component.updateInput(ability);
         assertFalse(component.wants(ability));
     }
@@ -70,6 +69,7 @@ class MoveAbilityPlayerControlComponentTest {
         component.init(player);
 
         component.updateInput(ability);
+        Input.getHandler().update();
         component.updateInput(ability);
         assertEquals(Direction.NONE, component.getInputDirection());
     }

@@ -3,6 +3,18 @@
   "attributes": {
     "baseActionPoints": 1
   },
+  "levels": {
+    "attributeLevels": [
+      2,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
   "abilities": {
     "move": {
       "priority": 0,

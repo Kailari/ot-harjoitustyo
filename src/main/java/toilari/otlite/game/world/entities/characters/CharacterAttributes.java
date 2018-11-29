@@ -24,8 +24,8 @@ public class CharacterAttributes {
      */
     public float getMaxHealth(@NonNull CharacterLevels levels) {
         val base = this.baseHealth + levels.getXpLevel() * this.healthGain;
-        val enduranceModifier = Attribute.Endurance.getHealthModifier(levels.getAttributeLevel(Attribute.ENDURANCE));
-        val vitalityModifier = Attribute.Vitality.getHealthModifier(levels.getAttributeLevel(Attribute.VITALITY));
+        val enduranceModifier = Attribute.Endurance.getHealthModifier(levels);
+        val vitalityModifier = Attribute.Vitality.getHealthModifier(levels);
         return base * (1.0f + enduranceModifier + vitalityModifier);
     }
 
@@ -41,7 +41,7 @@ public class CharacterAttributes {
      */
     public float getHealthRegen(@NonNull CharacterLevels levels) {
         val base = this.baseHealthRegen + levels.getXpLevel() * this.healthRegenGain;
-        val vitalityModifier = Attribute.Vitality.getHealthRegenModifier(levels.getAttributeLevel(Attribute.VITALITY));
+        val vitalityModifier = Attribute.Vitality.getHealthRegenModifier(levels);
         return base * (1.0f + vitalityModifier);
     }
 
@@ -53,7 +53,7 @@ public class CharacterAttributes {
      * @return viive kauanko vielä kestää ennen kuin hahmon terveyspisteet alkavat palautua
      */
     public int getHealthRegenDelay(@NonNull CharacterLevels levels) {
-        val vitalityPart = Attribute.Vitality.getHealthRegenDelay(levels.getAttributeLevel(Attribute.VITALITY));
+        val vitalityPart = Attribute.Vitality.getHealthRegenDelay(levels);
         return this.baseHealthRegenDelay + vitalityPart;
     }
 
@@ -69,7 +69,7 @@ public class CharacterAttributes {
      */
     public float getArmor(@NonNull CharacterLevels levels) {
         val base = this.baseArmor + levels.getXpLevel() * this.armorGain;
-        val enduranceBonus = Attribute.Endurance.getArmorModifier(levels.getAttributeLevel(Attribute.ENDURANCE));
+        val enduranceBonus = Attribute.Endurance.getArmorModifier(levels);
         return base * (1.0f * enduranceBonus);
     }
 
@@ -81,7 +81,7 @@ public class CharacterAttributes {
      */
     public float getEvasion(@NonNull CharacterLevels levels) {
         val base = this.baseEvasion + levels.getXpLevel() * evasionGain;
-        val luckBonus = Attribute.Luck.getEvasion(levels.getAttributeLevel(Attribute.LUCK));
+        val luckBonus = Attribute.Luck.getEvasion(levels);
         return Math.min(
             CharacterAttributes.EVASION_CAP,
             base + luckBonus);
@@ -94,7 +94,7 @@ public class CharacterAttributes {
      * @return montako prosenttia tönäisystä tulee jättää huomiotta
      */
     public float getKnockbackResistance(@NonNull CharacterLevels levels) {
-        val strengthModifier = Attribute.Strength.getKnockbackResistance(levels.getAttributeLevel(Attribute.STRENGTH));
+        val strengthModifier = Attribute.Strength.getKnockbackResistance(levels);
         return Math.min(
             CharacterAttributes.KNOCKBACK_RESISTANCE_CAP,
             this.baseKnockbackResistance * (1.0f + strengthModifier));
@@ -107,8 +107,8 @@ public class CharacterAttributes {
      * @return montako prosenttia efektin todennäköisyydestä tulee jättää huomiotta
      */
     public float getFearResistance(@NonNull CharacterLevels levels) {
-        val charismaModifier = Attribute.Charisma.getFearResistanceModifier(levels.getAttributeLevel(Attribute.CHARISMA));
-        val wisdomModifier = Attribute.Wisdom.getFearResistance(levels.getAttributeLevel(Attribute.WISDOM));
+        val charismaModifier = Attribute.Charisma.getFearResistanceModifier(levels);
+        val wisdomModifier = Attribute.Wisdom.getFearResistance(levels);
         return Math.min(
             CharacterAttributes.FEAR_RESISTANCE_CAP,
             (this.baseFearResistance + wisdomModifier) * (1.0f + charismaModifier));
@@ -122,8 +122,8 @@ public class CharacterAttributes {
      * @return hahmon toimintopisteiden määrä, kaikki määreet huomioiden
      */
     public int getActionPoints(@NonNull CharacterLevels levels) {
-        val base = this.baseActionPoints + Attribute.Dexterity.getActionPoints(levels.getAttributeLevel(Attribute.DEXTERITY));
-        val bonus = Attribute.Wisdom.getActionPoints(levels.getAttributeLevel(Attribute.WISDOM));
+        val base = this.baseActionPoints + Attribute.Dexterity.getActionPoints(levels);
+        val bonus = Attribute.Wisdom.getActionPoints(levels);
         return base + (bonus > 0 ? bonus : 0);
     }
 
@@ -135,7 +135,7 @@ public class CharacterAttributes {
      */
     public float getAttackDamage(@NonNull CharacterLevels levels) {
         val base = this.baseAttackDamage + levels.getXpLevel() * this.attackDamageGain;
-        val strengthModifier = Attribute.Strength.getDamageModifier(levels.getAttributeLevel(Attribute.STRENGTH));
+        val strengthModifier = Attribute.Strength.getDamageModifier(levels);
         return base * (1.0f + strengthModifier);
     }
 
@@ -146,7 +146,7 @@ public class CharacterAttributes {
      * @return todennäköisyys että hahmo tekee kriittisen osuman
      */
     public float getCriticalHitChance(@NonNull CharacterLevels levels) {
-        val luckBonus = Attribute.Luck.getCriticalHitChance(levels.getAttributeLevel(Attribute.LUCK));
+        val luckBonus = Attribute.Luck.getCriticalHitChance(levels);
         return this.baseCriticalHitChance + luckBonus;
     }
 
@@ -157,7 +157,7 @@ public class CharacterAttributes {
      * @return todennäköisyys että hahmo tekee kriittisen osuman
      */
     public float getCriticalHitDamage(@NonNull CharacterLevels levels) {
-        val wisdomModifier = Attribute.Wisdom.getCriticalHitDamageModifier(levels.getAttributeLevel(Attribute.WISDOM));
+        val wisdomModifier = Attribute.Wisdom.getCriticalHitDamageModifier(levels);
         return this.baseCriticalHitDamage + (1.0f + wisdomModifier);
     }
 

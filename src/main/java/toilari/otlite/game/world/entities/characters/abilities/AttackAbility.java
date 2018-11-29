@@ -19,14 +19,6 @@ public class AttackAbility extends AbstractAbility<AttackAbility, AttackControll
     @Getter private float lastAttackDamage;
 
     /**
-     * Kopioi kyvyn templaatista.
-     *
-     * @param template kyky joka kopioidaan
-     */
-    public AttackAbility(AttackAbility template) {
-    }
-
-    /**
      * Testaa voiko hahmo hyökätä annettuihin koordinaatteihin.
      *
      * @param x tarkistettava x-koordinaatti
@@ -66,15 +58,15 @@ public class AttackAbility extends AbstractAbility<AttackAbility, AttackControll
 
     @Override
     public boolean perform(@NonNull AttackControllerComponent component) {
-        this.lastAttackKill = false;
-        this.lastAttackDamage = 0.0f;
-
         val target = component.getTarget();
         if (!canAttack(target)) {
             return false;
         }
 
-        val amount = getCharacter().getAttributes().getAttackDamage(getCharacter().getLevels());
+        this.lastAttackKill = false;
+        this.lastAttackDamage = 0.0f;
+
+        val amount = calculateDamage();
         if (target instanceof IHealthHandler) {
             this.lastAttackDamage = amount;
             dealDamage(target, (IHealthHandler) target, amount);
@@ -84,6 +76,10 @@ public class AttackAbility extends AbstractAbility<AttackAbility, AttackControll
             getEventSystem().fire(new CharacterEvent.Damage(getCharacter(), target, amount));
         }
         return true;
+    }
+
+    protected float calculateDamage() {
+        return getCharacter().getAttributes().getAttackDamage(getCharacter().getLevels());
     }
 
     private void dealDamage(GameObject target, IHealthHandler targetWithHealth, float amount) {

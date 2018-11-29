@@ -8,6 +8,7 @@ import java.util.List;
 
 public class FakeInputHandler implements IInputHandler {
     private final List<Key> pressedKeys;
+    private int updatesCalled;
 
     public FakeInputHandler(Key... pressedKeys) {
         this.pressedKeys = Arrays.asList(pressedKeys);
@@ -20,7 +21,7 @@ public class FakeInputHandler implements IInputHandler {
 
     @Override
     public boolean isKeyPressed(Key key) {
-        return false;
+        return this.updatesCalled == 0 && this.pressedKeys.contains(key);
     }
 
     @Override
@@ -40,5 +41,6 @@ public class FakeInputHandler implements IInputHandler {
 
     @Override
     public void update() {
+        this.updatesCalled++;
     }
 }

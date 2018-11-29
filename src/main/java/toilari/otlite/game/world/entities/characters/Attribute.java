@@ -1,5 +1,8 @@
 package toilari.otlite.game.world.entities.characters;
 
+import lombok.NonNull;
+import lombok.val;
+
 public enum Attribute {
     STRENGTH,
     ENDURANCE,
@@ -24,13 +27,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static float getDamageModifier(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static float getDamageModifier(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(STRENGTH);
+            validateLevel(level);
 
             return Strength.DAMAGE_MODIFIER[level - 1];
         }
@@ -38,13 +40,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static float getKnockbackResistance(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static float getKnockbackResistance(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(STRENGTH);
+            validateLevel(level);
 
             return Strength.KNOCKBACK_RESISTANCE[level - 1];
         }
@@ -52,13 +53,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static int getKickKnockbackMin(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static int getKickKnockbackMin(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(STRENGTH);
+            validateLevel(level);
 
             return Strength.KICK_KNOCKBACK_MIN[level - 1];
         }
@@ -66,13 +66,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static int getKickKnockbackMax(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static int getKickKnockbackMax(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(STRENGTH);
+            validateLevel(level);
 
             return Strength.KICK_KNOCKBACK_MAX[level - 1];
         }
@@ -80,13 +79,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static int getKickCost(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static int getKickCost(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(STRENGTH);
+            validateLevel(level);
 
             return Strength.KICK_COST[level - 1];
         }
@@ -94,13 +92,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static int getKickCooldown(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static int getKickCooldown(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(STRENGTH);
+            validateLevel(level);
 
             return Strength.KICK_COOLDOWN[level - 1];
         }
@@ -113,13 +110,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static float getArmorModifier(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static float getArmorModifier(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(ENDURANCE);
+            validateLevel(level);
 
             return Endurance.ARMOR_MODIFIER[level - 1];
         }
@@ -127,13 +123,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static float getHealthModifier(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static float getHealthModifier(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(ENDURANCE);
+            validateLevel(level);
 
             return Endurance.HEALTH_MODIFIER[level - 1];
         }
@@ -147,13 +142,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static float getHealthModifier(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static float getHealthModifier(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(VITALITY);
+            validateLevel(level);
 
             return Vitality.HEALTH_MODIFIER[level - 1];
         }
@@ -161,13 +155,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static float getHealthRegenModifier(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static float getHealthRegenModifier(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(VITALITY);
+            validateLevel(level);
 
             return Vitality.REGEN_MODIFIER[level - 1];
         }
@@ -175,13 +168,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static int getHealthRegenDelay(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static int getHealthRegenDelay(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(VITALITY);
+            validateLevel(level);
 
             return Vitality.REGEN_DELAY[level - 1];
         }
@@ -196,13 +188,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static int getActionPoints(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static int getActionPoints(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(DEXTERITY);
+            validateLevel(level);
 
             return Dexterity.ACTION_POINTS[level - 1];
         }
@@ -210,13 +201,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static int getLeapRange(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static int getLeapRange(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(DEXTERITY);
+            validateLevel(level);
 
             return Dexterity.LEAP_RANGE[level - 1];
         }
@@ -224,13 +214,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static int getLeapCost(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static int getLeapCost(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(DEXTERITY);
+            validateLevel(level);
 
             return Dexterity.LEAP_COST[level - 1];
         }
@@ -238,13 +227,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static int getLeapCooldown(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static int getLeapCooldown(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(DEXTERITY);
+            validateLevel(level);
 
             return Dexterity.LEAP_COOLDOWN[level - 1];
         }
@@ -260,13 +248,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static float getFearResistanceModifier(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static float getFearResistanceModifier(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(CHARISMA);
+            validateLevel(level);
 
             return Charisma.FEAR_RESISTANCE_MODIFIER[level - 1];
         }
@@ -274,13 +261,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static int getWarcryRange(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static int getWarcryRange(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(CHARISMA);
+            validateLevel(level);
 
             return Charisma.WARCRY_RANGE[level - 1];
         }
@@ -288,13 +274,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static int getWarcryCost(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static int getWarcryCost(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(CHARISMA);
+            validateLevel(level);
 
             return Charisma.WARCRY_COST[level - 1];
         }
@@ -302,13 +287,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static int getWarcryCooldown(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static int getWarcryCooldown(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(CHARISMA);
+            validateLevel(level);
 
             return Charisma.WARCRY_COOLDOWN[level - 1];
         }
@@ -316,13 +300,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static float getWarcryFearChance(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static float getWarcryFearChance(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(CHARISMA);
+            validateLevel(level);
 
             return Charisma.WARCRY_FEAR_CHANCE[level - 1];
         }
@@ -335,13 +318,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static float getPotionPotencyModifier(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static float getPotionPotencyModifier(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(INTELLIGENCE);
+            validateLevel(level);
 
             return Intelligence.POTION_POTENCY_MODIFIER[level - 1];
         }
@@ -349,13 +331,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static float getXpBonus(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static float getXpBonus(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(INTELLIGENCE);
+            validateLevel(level);
 
             return Intelligence.XP_BONUS[level - 1];
         }
@@ -369,13 +350,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static float getFearResistance(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static float getFearResistance(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(WISDOM);
+            validateLevel(level);
 
             return Wisdom.FEAR_RESISTANCE[level - 1];
         }
@@ -383,13 +363,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static float getCriticalHitDamageModifier(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static float getCriticalHitDamageModifier(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(WISDOM);
+            validateLevel(level);
 
             return Wisdom.CRITICAL_HIT_DAMAGE_MODIFIER[level - 1];
         }
@@ -397,13 +376,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static int getActionPoints(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        static int getActionPoints(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(WISDOM);
+            validateLevel(level);
 
             return Wisdom.ACTION_POINTS[level - 1];
         }
@@ -416,13 +394,12 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static float getCriticalHitChance(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static float getCriticalHitChance(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(LUCK);
+            validateLevel(level);
 
             return Luck.CRITICAL_HIT_CHANCE[level - 1];
         }
@@ -430,15 +407,20 @@ public enum Attribute {
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
-         * @param level attribuutin taso jota vastaava bonus haetaan
+         * @param levels attribuuttien tasot
          * @return tasoa vastaava bonus
          */
-        public static float getEvasion(int level) {
-            if (level < 1 || level > 10) {
-                throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
-            }
+        public static float getEvasion(@NonNull CharacterLevels levels) {
+            val level = levels.getAttributeLevel(LUCK);
+            validateLevel(level);
 
             return Luck.EVASION[level - 1];
+        }
+    }
+
+    private static void validateLevel(int level) {
+        if (level < 1 || level > 10) {
+            throw new IllegalArgumentException("Attribute level must be within bounds [1,10]");
         }
     }
 }

@@ -76,6 +76,7 @@ class PlayerEndTurnAbilityTest {
         manager.spawn(character);
 
         manager.update();
+        Input.getHandler().update();
         manager.update();
 
         assertEquals(1, manager.getTotalTurn());
