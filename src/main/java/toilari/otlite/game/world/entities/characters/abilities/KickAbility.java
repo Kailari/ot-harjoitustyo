@@ -5,11 +5,11 @@ import lombok.val;
 import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.entities.characters.Attribute;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
-import toilari.otlite.game.world.entities.characters.abilities.components.KickControllerComponent;
+import toilari.otlite.game.world.entities.characters.abilities.components.AbstractAttackControllerComponent;
 
 import java.util.Random;
 
-public class KickAbility extends AbstractAbility<KickAbility, KickControllerComponent> {
+public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAttackControllerComponent<KickAbility>> {
     private final Random random;
 
     public KickAbility() {
@@ -27,7 +27,7 @@ public class KickAbility extends AbstractAbility<KickAbility, KickControllerComp
      * @param direction suunta johon potkaistaan
      * @return <code>true</code> jos hahmo voi potkaista, muulloin <code>false</code>
      */
-    public boolean canKick(@NonNull Direction direction) {
+    public boolean canPerformOn(@NonNull Direction direction) {
         if (getCharacter().getLevels().getAttributeLevel(Attribute.STRENGTH) < 2) {
             return false;
         }
@@ -72,12 +72,12 @@ public class KickAbility extends AbstractAbility<KickAbility, KickControllerComp
     }
 
     @Override
-    public boolean perform(@NonNull KickControllerComponent component) {
-        if (!canKick(component.getTargetDirection()) || component.getTarget() == null) {
+    public boolean perform(@NonNull AbstractAttackControllerComponent<KickAbility> component) {
+        if (!canPerformOn(component.getTargetDirection()) || component.getTarget() == null) {
             return false;
         }
 
-        int knockbackAmount = calculateKnockbackAmount(component);
+        int knockbackAmount = calculateKnockbackAmount(component.getTargetDirection());
         val oldX = component.getTarget().getTileX();
         val oldY = component.getTarget().getTileY();
         val newX = oldX + component.getTargetDirection().getDx() * knockbackAmount;
@@ -92,9 +92,9 @@ public class KickAbility extends AbstractAbility<KickAbility, KickControllerComp
         return true;
     }
 
-    private int calculateKnockbackAmount(@NonNull KickControllerComponent component) {
+    private int calculateKnockbackAmount(Direction direction) {
         val min = Attribute.Strength.getKickKnockbackMin(getCharacter().getLevels());
-        val max = numberOfFreeTilesInDirection(component.getTargetDirection(), Attribute.Strength.getKickKnockbackMax(getCharacter().getLevels()));
+        val max = numberOfFreeTilesInDirection(direction, Attribute.Strength.getKickKnockbackMax(getCharacter().getLevels()));
         return Math.round(min + (this.random.nextFloat() * (max - min)));
     }
 

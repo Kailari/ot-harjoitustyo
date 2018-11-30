@@ -49,9 +49,14 @@ public class PlayGameState extends GameState {
             ((EndTurnControllerComponent.Player) eta).setAutoEndTurn(getGame().getActiveProfile().getSettings().isAutoEndTurn());
         }
         this.world.getObjectManager().spawn(this.player);
-        this.player.setTilePos(5, 3);
+        this.player.setTilePos(5, 4);
 
         var sheep = characters.get("sheep");
+        this.world.getObjectManager().spawnTemplateAt(sheep, 5, 3);
+        this.world.getObjectManager().spawnTemplateAt(sheep, 5, 5);
+        this.world.getObjectManager().spawnTemplateAt(sheep, 6, 4);
+        this.world.getObjectManager().spawnTemplateAt(sheep, 4, 4);
+
         this.world.getObjectManager().spawnTemplateAt(sheep, 5, 1);
         this.world.getObjectManager().spawnTemplateAt(sheep, 8, 1);
         this.world.getObjectManager().spawnTemplateAt(sheep, 11, 2);

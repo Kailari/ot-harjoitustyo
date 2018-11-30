@@ -9,6 +9,7 @@ import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.AttackAbility;
+import toilari.otlite.game.world.entities.characters.abilities.components.AbstractAttackControllerComponent;
 import toilari.otlite.game.world.entities.characters.abilities.components.AttackControllerComponent;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -402,7 +403,7 @@ class AttackAbilityTest {
     }
 
 
-    private class TestAttackControllerComponent extends AttackControllerComponent {
+    private class TestAttackControllerComponent extends AbstractAttackControllerComponent<AttackAbility> {
         private GameObject target;
 
         private TestAttackControllerComponent(GameObject target) {

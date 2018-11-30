@@ -8,7 +8,7 @@ import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.AttackAbility;
 import toilari.otlite.game.world.entities.characters.abilities.KickAbility;
 import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
-import toilari.otlite.game.world.entities.characters.abilities.components.KickControllerComponent;
+import toilari.otlite.game.world.entities.characters.abilities.components.AbstractAttackControllerComponent;
 import toilari.otlite.game.world.level.Tile;
 import toilari.otlite.view.lwjgl.AnimatedSprite;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
@@ -62,13 +62,18 @@ public class PlayerRenderer extends CharacterRenderer {
             drawArrow(camera, character, x, y, direction, direction.ordinal());
         }
 
-        KickControllerComponent kickComponent;
-        if ((kickComponent = character.getAbilities().getComponent(KickAbility.class)) != null) {
-            drawKickVisualizer(camera, kickComponent, character);
+        val kickComponent = character.getAbilities().getComponent(KickAbility.class);
+        if (kickComponent != null) {
+            drawKickVisualizer(camera, kickComponent);
+        }
+
+        val attackComponent = character.getAbilities().getComponent(AttackAbility.class);
+        if (attackComponent != null) {
+            drawKickVisualizer(camera, attackComponent);
         }
     }
 
-    private void drawKickVisualizer(LWJGLCamera camera, KickControllerComponent component, CharacterObject character) {
+    private void drawKickVisualizer(LWJGLCamera camera, AbstractAttackControllerComponent component) {
         val target = component.getTarget();
         if (target == null) {
             return;

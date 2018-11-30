@@ -48,10 +48,11 @@ public class CharacterAbilities {
 
         registerAbility("attack", AttackAbility.class, AttackAbility::new)
             .addComponent("player", AttackControllerComponent.Player.class, AttackControllerComponent.Player::new)
-            .addComponent("attack_adjacent_if_possible", AttackControllerComponent.AIAlwaysAttackAdjacentIfPossible.class, AttackControllerComponent.AIAlwaysAttackAdjacentIfPossible::new);
+            .addComponent("attack_adjacent_if_possible", AttackControllerComponent.AlwaysAttackAdjacentIfPossible.class, AttackControllerComponent.AlwaysAttackAdjacentIfPossible::new);
 
         registerAbility("kick", KickAbility.class, KickAbility::new)
-            .addComponent("player", KickControllerComponent.Player.class, KickControllerComponent.Player::new);
+            .addComponent("player", KickControllerComponent.Player.class, KickControllerComponent.Player::new)
+            .addComponent("attack_adjacent_if_possible", KickControllerComponent.AlwaysAttackAdjacentIfPossible.class, KickControllerComponent.AlwaysAttackAdjacentIfPossible::new);
     }
 
     private static <A extends IAbility<A, C>, C extends IControllerComponent<A>> AbilityComponentEntry<A, C> registerAbility(String key, Class<? extends A> abilityClass, Supplier<A> abilityFactory) {
