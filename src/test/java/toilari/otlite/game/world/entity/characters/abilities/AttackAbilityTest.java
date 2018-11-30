@@ -1,4 +1,3 @@
-/*
 package toilari.otlite.game.world.entity.characters.abilities;
 
 import lombok.NonNull;
@@ -8,10 +7,10 @@ import toilari.otlite.fake.FakeCharacterObject;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.TurnObjectManager;
-import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.AttackAbility;
+import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbility;
 import toilari.otlite.game.world.entities.characters.abilities.components.AbstractAttackControllerComponent;
-import toilari.otlite.game.world.entities.characters.abilities.components.AttackControllerComponent;
+import toilari.otlite.game.world.entities.characters.abilities.components.TargetSelectorControllerComponent;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -266,8 +265,7 @@ class AttackAbilityTest {
     @Test
     @SuppressWarnings("ConstantConditions")
     void performThrowsIfComponentIsNull() {
-        assertThrows(NullPointerException.class,
-            () -> new AttackAbility().perform(null));
+        assertThrows(NullPointerException.class, () -> new AttackAbility().perform(null));
     }
 
     @Test
@@ -277,11 +275,16 @@ class AttackAbilityTest {
         world.init();
 
         val character = new FakeCharacterObject();
+        val selectorAbility = new TargetSelectorAbility();
+        val selectorComponent = new TestTargetSelectorControllerComponent(null);
         val ability = new AttackAbility();
-        ability.init(character, 0);
-        manager.spawn(character);
+        ability.setPriority(1);
+        val component = new TestAttackControllerComponent();
 
-        val component = new TestAttackControllerComponent(null);
+        character.addAbility(selectorAbility, selectorComponent);
+        character.addAbility(ability, component);
+
+        manager.spawn(character);
         assertFalse(ability.perform(component));
     }
 
@@ -291,16 +294,22 @@ class AttackAbilityTest {
         val world = new World(manager);
         world.init();
 
+        val other = new FakeCharacterObject();
+        manager.spawn(other);
+
         val character = new FakeCharacterObject();
+        val selectorAbility = new TargetSelectorAbility();
+        val selectorComponent = new TestTargetSelectorControllerComponent(other);
         val ability = new AttackAbility();
-        ability.init(character, 0);
+        ability.setPriority(1);
+        val component = new TestAttackControllerComponent();
+
+        character.addAbility(selectorAbility, selectorComponent);
+        character.addAbility(ability, component);
+
         manager.spawn(character);
 
-        val other = new GameObject();
-        manager.spawn(other);
         other.remove();
-
-        val component = new TestAttackControllerComponent(other);
         assertFalse(ability.perform(component));
     }
 
@@ -310,16 +319,23 @@ class AttackAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacterObject();
-        val ability = new AttackAbility();
-        ability.init(character, 0);
-        manager.spawn(character);
-
         val other = new FakeCharacterObject();
         manager.spawn(other);
+
+        val character = new FakeCharacterObject();
+        val selectorAbility = new TargetSelectorAbility();
+        val selectorComponent = new TestTargetSelectorControllerComponent(other);
+        val ability = new AttackAbility();
+        ability.setPriority(1);
+        val component = new TestAttackControllerComponent();
+
+        character.addAbility(selectorAbility, selectorComponent);
+        character.addAbility(ability, component);
+
+        manager.spawn(character);
+
         other.setHealth(0.0f);
 
-        val component = new TestAttackControllerComponent(other);
         assertFalse(ability.perform(component));
     }
 
@@ -329,17 +345,24 @@ class AttackAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacterObject();
-        val ability = new AttackAbility();
-        ability.init(character, 0);
-        manager.spawn(character);
-
         val other = new FakeCharacterObject();
         manager.spawn(other);
+
+        val character = new FakeCharacterObject();
+        val selectorAbility = new TargetSelectorAbility();
+        val selectorComponent = new TestTargetSelectorControllerComponent(other);
+        val ability = new AttackAbility();
+        ability.setPriority(1);
+        val component = new TestAttackControllerComponent();
+
+        character.addAbility(selectorAbility, selectorComponent);
+        character.addAbility(ability, component);
+
+        manager.spawn(character);
+
         other.setHealth(0.0f);
         other.remove();
 
-        val component = new TestAttackControllerComponent(other);
         assertFalse(ability.perform(component));
     }
 
@@ -349,15 +372,21 @@ class AttackAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacterObject();
-        val ability = new AttackAbility();
-        ability.init(character, 0);
-        manager.spawn(character);
-
         val other = new FakeCharacterObject();
         manager.spawn(other);
 
-        val component = new TestAttackControllerComponent(other);
+        val character = new FakeCharacterObject();
+        val selectorAbility = new TargetSelectorAbility();
+        val selectorComponent = new TestTargetSelectorControllerComponent(other);
+        val ability = new AttackAbility();
+        ability.setPriority(1);
+        val component = new TestAttackControllerComponent();
+
+        character.addAbility(selectorAbility, selectorComponent);
+        character.addAbility(ability, component);
+
+        manager.spawn(character);
+
         assertTrue(ability.perform(component));
     }
 
@@ -367,17 +396,22 @@ class AttackAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacterObject();
-        val ability = new AttackAbility();
-        ability.init(character, 0);
-        manager.spawn(character);
-
         val other = new FakeCharacterObject();
         manager.spawn(other);
 
-        val component = new TestAttackControllerComponent(other);
-        ability.perform(component);
+        val character = new FakeCharacterObject();
+        val selectorAbility = new TargetSelectorAbility();
+        val selectorComponent = new TestTargetSelectorControllerComponent(other);
+        val ability = new AttackAbility();
+        ability.setPriority(1);
+        val component = new TestAttackControllerComponent();
 
+        character.addAbility(selectorAbility, selectorComponent);
+        character.addAbility(ability, component);
+
+        manager.spawn(character);
+
+        ability.perform(component);
         assertEquals(9.0f, other.getHealth());
     }
 
@@ -387,15 +421,20 @@ class AttackAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacterObject();
-        val ability = new AttackAbility();
-        ability.init(character, 0);
-        manager.spawn(character);
-
         val other = new FakeCharacterObject();
         manager.spawn(other);
 
-        val component = new TestAttackControllerComponent(other);
+        val character = new FakeCharacterObject();
+        val selectorAbility = new TargetSelectorAbility();
+        val selectorComponent = new TestTargetSelectorControllerComponent(other);
+        val ability = new AttackAbility();
+        ability.setPriority(1);
+        val component = new TestAttackControllerComponent();
+
+        character.addAbility(selectorAbility, selectorComponent);
+        character.addAbility(ability, component);
+
+        manager.spawn(character);
         for (int i = 0; i < 10; i++) {
             ability.perform(component);
         }
@@ -405,25 +444,23 @@ class AttackAbilityTest {
 
 
     private class TestAttackControllerComponent extends AbstractAttackControllerComponent<AttackAbility> {
-        private GameObject target;
-
-        private TestAttackControllerComponent(GameObject target) {
-            this.target = target;
-        }
-
-        @Override
-        public GameObject getTarget() {
-            return this.target;
-        }
-
         @Override
         public boolean wants(@NonNull AttackAbility ability) {
             return true;
         }
 
         @Override
-        public void updateInput(@NonNull AttackAbility ability) {
+        protected void doUpdateInput(@NonNull AttackAbility ability) {
+        }
+    }
+
+    private class TestTargetSelectorControllerComponent extends TargetSelectorControllerComponent {
+        private TestTargetSelectorControllerComponent(GameObject target) {
+            setTarget(target);
+        }
+
+        @Override
+        public void updateInput(@NonNull TargetSelectorAbility ability) {
         }
     }
 }
-*/

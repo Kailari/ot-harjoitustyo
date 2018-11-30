@@ -19,7 +19,7 @@ import java.util.Objects;
 public abstract class TargetSelectorControllerComponent extends AbstractControllerComponent<TargetSelectorAbility> {
     @Getter(AccessLevel.PROTECTED) private transient ITargetedAbility[] abilities;
     @Getter(AccessLevel.PROTECTED) private transient ITargetedAbility active;
-    @Getter @Setter(AccessLevel.PROTECTED) private transient GameObject target;
+    @Getter @Setter private transient GameObject target;
     @Getter private transient Direction targetDirection;
 
     private transient Iterator<Direction> directionIterator;
