@@ -12,8 +12,13 @@ import java.util.Random;
 /**
  * Liikkumiskyvyn ohjainkomponentti.
  */
+@NoArgsConstructor
 public abstract class MoveControllerComponent extends AbstractControllerComponent<MoveAbility> {
     @Setter(AccessLevel.PROTECTED) private int inputX, inputY;
+
+    protected MoveControllerComponent(AbstractControllerComponent<MoveAbility> template) {
+        super(template);
+    }
 
     @Override
     public boolean wants(MoveAbility ability) {
@@ -40,6 +45,10 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
         this.inputX = this.inputY = 0;
     }
 
+    @Override
+    public void reset() {
+    }
+
     /**
      * Pelaajan ohjainkomponentti.
      */
@@ -51,6 +60,7 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
          * @param template komponentti josta kopioidaan
          */
         public Player(MoveControllerComponent template) {
+            super(template);
         }
 
         /**
@@ -98,30 +108,9 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
      * Tekoälyn ohjainkomponentti.
      */
     public static class AI extends MoveControllerComponent {
-        private final Random random;
-        private Direction[] availableDirections = new Direction[4];
-        int nDirections;
-
-
-        /**
-         * Luo uuden tekoälyohjainkomponentin ja asettaa automaattisesti sen satunnaislukugeneraattorille siemenluvun.
-         *
-         * @throws NullPointerException jos hahmo on <code>null</code>
-         */
-        public AI() {
-            this(System.currentTimeMillis());
-        }
-
-
-        /**
-         * Luo uuden tekoälyohjainkomponentin.
-         *
-         * @param seed satunnaislukugeneraattorin siemenluku
-         * @throws NullPointerException jos hahmo on <code>null</code>
-         */
-        public AI(long seed) {
-            this.random = new Random(seed);
-        }
+        private transient final Random random;
+        private transient Direction[] availableDirections = new Direction[4];
+        private transient int nDirections;
 
         /**
          * Kopio komponentin toisesta komponentista.
@@ -129,6 +118,7 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
          * @param template komponentti josta kopioidaan
          */
         public AI(MoveControllerComponent template) {
+            super(template);
             this.random = new Random();
         }
 

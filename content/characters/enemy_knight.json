@@ -5,14 +5,20 @@
     "baseHealth": 7.5
   },
   "abilities": {
-    "attack": {
+    "target_selector": {
       "priority": 0,
       "component": {
         "class": "attack_adjacent_if_possible"
       }
     },
-    "move": {
+    "attack": {
       "priority": 1,
+      "component": {
+        "class": "ai"
+      }
+    },
+    "move": {
+      "priority": 2,
       "component": {
         "class": "animal"
       }

@@ -17,20 +17,20 @@
   },
   "abilities": {
     "move": {
-      "priority": 0,
+      "priority": 1,
       "component": {
         "class": "player"
       }
     },
-    "kick": {
+    "attack": {
       "priority": 2,
       "component": {
         "visibleOnHud": true,
         "class": "player"
       }
     },
-    "attack": {
-      "priority": 1,
+    "kick": {
+      "priority": 3,
       "component": {
         "visibleOnHud": true,
         "class": "player"
@@ -38,6 +38,12 @@
     },
     "end_turn": {
       "priority": 99,
+      "component": {
+        "class": "player"
+      }
+    },
+    "target_selector": {
+      "priority": 0,
       "component": {
         "class": "player"
       }

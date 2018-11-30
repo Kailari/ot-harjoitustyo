@@ -10,6 +10,11 @@ import toilari.otlite.game.world.entities.characters.abilities.IAbility;
  * @param <A> ohjattavan kyvyn tyyppi
  */
 public interface IControllerComponent<A extends IAbility> {
+    /**
+     * Onko ohjaimen kyky näkyvissä toimintopalkissa jos ohjattava hahmo on pelaaja.
+     *
+     * @return false jos kyky näkyy, muulloin true
+     */
     boolean isHidden();
 
     /**
@@ -42,4 +47,9 @@ public interface IControllerComponent<A extends IAbility> {
      * @param ability kyky jota ohjataan
      */
     void abilityPerformed(A ability);
+
+    /**
+     * Siivoaa ohjaimen vuoron lopuksi.
+     */
+    void reset();
 }

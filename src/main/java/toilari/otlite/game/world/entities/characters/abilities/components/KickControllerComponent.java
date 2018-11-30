@@ -1,7 +1,6 @@
 package toilari.otlite.game.world.entities.characters.abilities.components;
 
-import toilari.otlite.game.input.Input;
-import toilari.otlite.game.input.Key;
+import lombok.NonNull;
 import toilari.otlite.game.world.entities.characters.abilities.KickAbility;
 
 public class KickControllerComponent {
@@ -12,21 +11,23 @@ public class KickControllerComponent {
          * @param template komponentti josta kopioidaan
          */
         public Player(AbstractAttackControllerComponent<KickAbility> template) {
-        }
-
-        @Override
-        protected boolean getAbilityInput() {
-            return Input.getHandler().isKeyPressed(Key.TWO);
+            super(template);
         }
     }
 
-    public static class AlwaysAttackAdjacentIfPossible extends AlwaysAttackAdjacentIfPossibleControllerComponent<KickAbility> {
+    public static class AI extends AbstractAttackControllerComponent<KickAbility> {
         /**
          * Kopioi komponentin templaatista.
          *
          * @param template komponentti josta kopioidaan
          */
-        public AlwaysAttackAdjacentIfPossible(AbstractAttackControllerComponent<KickAbility> template) {
+        public AI(AbstractAttackControllerComponent<KickAbility> template) {
+            super(template);
+        }
+
+        @Override
+        protected void doUpdateInput(@NonNull KickAbility ability) {
+            setWantsPerform(getTargetSelector().getTarget() != null);
         }
     }
 }

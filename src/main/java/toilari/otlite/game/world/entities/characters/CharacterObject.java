@@ -11,6 +11,8 @@ import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.abilities.IAbility;
 import toilari.otlite.game.world.entities.characters.abilities.components.IControllerComponent;
 
+import java.util.stream.StreamSupport;
+
 /**
  * Hahmo pelimaailmassa.
  */
@@ -104,6 +106,10 @@ public class CharacterObject extends GameObject implements IHealthHandler {
             // Thus, we can sefely ignore this warning.
             // noinspection unchecked
             if (handleAbility(turnManager, ability)) {
+                StreamSupport.stream(this.abilities.getAbilitiesSortedByPriority().spliterator(), false)
+                    .map(a -> getAbilities().getComponentResponsibleFor(a))
+                    .forEach(c -> ((IControllerComponent) c).reset());
+
                 break;
             }
         }
@@ -114,6 +120,8 @@ public class CharacterObject extends GameObject implements IHealthHandler {
      */
     public void endTurn() {
         for (val ability : this.abilities.getAbilitiesSortedByPriority()) {
+            this.abilities.getComponentResponsibleFor(ability).reset();
+
             if (ability.isOnCooldown()) {
                 ability.reduceCooldownTimer();
             }

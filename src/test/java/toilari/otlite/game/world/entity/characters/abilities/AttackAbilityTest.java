@@ -1,3 +1,4 @@
+/*
 package toilari.otlite.game.world.entity.characters.abilities;
 
 import lombok.NonNull;
@@ -425,3 +426,4 @@ class AttackAbilityTest {
         }
     }
 }
+*/

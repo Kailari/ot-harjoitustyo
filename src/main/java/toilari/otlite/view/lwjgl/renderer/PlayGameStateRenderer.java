@@ -2,12 +2,15 @@ package toilari.otlite.view.lwjgl.renderer;
 
 import lombok.NonNull;
 import lombok.val;
+import lombok.var;
 import toilari.otlite.dao.RendererDAO;
 import toilari.otlite.dao.TextureDAO;
 import toilari.otlite.game.PlayGameState;
 import toilari.otlite.game.event.CharacterEvent;
 import toilari.otlite.game.world.entities.IHealthHandler;
 import toilari.otlite.game.world.entities.characters.abilities.IAbility;
+import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbility;
+import toilari.otlite.game.world.entities.characters.abilities.components.TargetSelectorControllerComponent;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.Sprite;
 import toilari.otlite.view.lwjgl.TextRenderer;
@@ -148,18 +151,19 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         int i = 0;
         for (val ability : abilities) {
             if (!state.getPlayer().getAbilities().getComponent(ability.getClass()).isHidden()) {
-                drawAbility(camera, ability, i++, x, y);
+                val ts = state.getPlayer().getAbilities().getComponent(TargetSelectorAbility.class);
+                drawAbility(camera, ability, ts, i++, x, y);
             }
         }
     }
 
-    private void drawAbility(LWJGLCamera camera, IAbility ability, int index, int x, int y) {
+    private void drawAbility(LWJGLCamera camera, IAbility ability, TargetSelectorControllerComponent ts, int index, int x, int y) {
         val xx = 2 + x + index * (16 + 2);
         val yy = y + (int) (camera.getViewportHeight() / camera.getPixelsPerUnit()) - 16 - 2;
 
-        val r = ability.isOnCooldown() ? 0.85f : 1.0f;
-        val g = ability.isOnCooldown() ? 0.15f : 1.0f;
-        val b = ability.isOnCooldown() ? 0.15f : 1.0f;
+        val r = ability.isOnCooldown() ? 0.85f : (ts.isActive(ability) ? 0.15f : 1.0f);
+        val g = ability.isOnCooldown() ? 0.15f : (ts.isActive(ability) ? 0.85f : 1.0f);
+        val b = ability.isOnCooldown() ? 0.15f : (ts.isActive(ability) ? 0.15f : 1.0f);
         this.abilityBackground.draw(camera, xx, yy, r, g, b);
 
         this.textRenderer.draw(camera, xx + 1, yy + 16 - 5.5f, 0.5f, 0.5f, 0.5f, 4, String.valueOf(index + 1));
@@ -180,8 +184,8 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         val dt = Math.min(1, (System.currentTimeMillis() - state.getPlayer().getDeathTime()) / 5000.0f);
         this.textRenderer.draw(
             camera,
-            x + (w / 2) - (len * size) / 2,
-            y + (h / 2) - (size / 2) + (int) Math.floor((h / 2f + size) - dt * (h / 2f + size)),
+            x + (w / 2f) - (len * size) / 2f,
+            y + (h / 2f) - (size / 2f) + ((h / 2f + size) - dt * (h / 2f + size)),
             0.65f, 0.25f, 0.25f,
             size,
             ded);
@@ -206,8 +210,8 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
     private void drawPopupText(@NonNull LWJGLCamera camera, DamageInstance instance) {
         int size = 4;
         float dt = (System.currentTimeMillis() - instance.timestamp) / (float) instance.duration;
-        int offsetY = -Math.round(dt * PlayGameStateRenderer.DAMAGE_LABEL_DISTANCE);
-        int offsetX = 0;
+        var offsetY = -dt * PlayGameStateRenderer.DAMAGE_LABEL_DISTANCE;
+        var offsetX = 0f;
 
         String msg;
         if (instance.killingBlow) {

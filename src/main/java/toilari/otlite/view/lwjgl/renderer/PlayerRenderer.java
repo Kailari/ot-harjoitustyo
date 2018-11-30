@@ -74,13 +74,13 @@ public class PlayerRenderer extends CharacterRenderer {
     }
 
     private void drawKickVisualizer(LWJGLCamera camera, AbstractAttackControllerComponent component) {
-        val target = component.getTarget();
+        val target = component.getTargetSelector().getTarget();
         if (target == null) {
             return;
         }
 
         val x = target.getX() + 2;
-        val y = target.getY() - 9 - Math.round(3 * (float) Math.sin((int) System.currentTimeMillis() / 250.0f));
+        val y = target.getY() - 6 - (1.5f * (float) Math.sin((int) System.currentTimeMillis() / 125.0f));
         this.arrows.draw(camera, x, y, 2, 0.25f, 0.65f, 0.25f);
     }
 

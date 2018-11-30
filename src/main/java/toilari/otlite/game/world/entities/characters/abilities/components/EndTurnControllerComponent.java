@@ -12,8 +12,13 @@ import toilari.otlite.game.world.entities.characters.abilities.EndTurnAbility;
 /**
  * Vuoronlopetuskyvyn ohjainkomponentti.
  */
+@NoArgsConstructor
 public abstract class EndTurnControllerComponent extends AbstractControllerComponent<EndTurnAbility> {
     @Setter @Getter private boolean wantsToEndTurn;
+
+    protected EndTurnControllerComponent(AbstractControllerComponent<EndTurnAbility> template) {
+        super(template);
+    }
 
     @Override
     public boolean wants(EndTurnAbility ability) {
@@ -32,6 +37,11 @@ public abstract class EndTurnControllerComponent extends AbstractControllerCompo
         setWantsToEndTurn(false);
     }
 
+    @Override
+    public void reset() {
+        setWantsToEndTurn(false);
+    }
+
     /**
      * Pelaajan vuoronlopetuskyvyn ohjainkomponentti.
      */
@@ -45,6 +55,7 @@ public abstract class EndTurnControllerComponent extends AbstractControllerCompo
          * @param template kopioitava komponentti
          */
         public Player(EndTurnControllerComponent template) {
+            super(template);
             this.autoEndTurn = ((EndTurnControllerComponent.Player) template).autoEndTurn;
         }
 
@@ -93,6 +104,7 @@ public abstract class EndTurnControllerComponent extends AbstractControllerCompo
          * @param template komponentti josta kopioidaan
          */
         public AI(EndTurnControllerComponent template) {
+            super(template);
         }
 
         @Override

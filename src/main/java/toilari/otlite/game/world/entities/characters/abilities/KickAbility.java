@@ -3,6 +3,8 @@ package toilari.otlite.game.world.entities.characters.abilities;
 import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.game.util.Direction;
+import toilari.otlite.game.world.entities.GameObject;
+import toilari.otlite.game.world.entities.IHealthHandler;
 import toilari.otlite.game.world.entities.characters.Attribute;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.components.AbstractAttackControllerComponent;
@@ -27,7 +29,8 @@ public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAtta
      * @param direction suunta johon potkaistaan
      * @return <code>true</code> jos hahmo voi potkaista, muulloin <code>false</code>
      */
-    public boolean canPerformOn(@NonNull Direction direction) {
+    @Override
+    public boolean canPerformOn(GameObject target, Direction direction) {
         if (getCharacter().getLevels().getAttributeLevel(Attribute.STRENGTH) < 2) {
             return false;
         }
@@ -36,7 +39,7 @@ public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAtta
             return false;
         }
 
-        return hasTarget(direction) && tileBehindTargetIsFree(direction, 1);
+        return hasTarget(direction);
     }
 
     private boolean tileBehindTargetIsFree(Direction direction, int delta) {
@@ -73,23 +76,45 @@ public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAtta
 
     @Override
     public boolean perform(@NonNull AbstractAttackControllerComponent<KickAbility> component) {
-        if (!canPerformOn(component.getTargetDirection()) || component.getTarget() == null) {
+        val target = component.getTargetSelector().getTarget();
+        val direction = component.getTargetSelector().getTargetDirection();
+        if (!canPerformOn(direction) || target == null) {
             return false;
         }
 
-        int knockbackAmount = calculateKnockbackAmount(component.getTargetDirection());
-        val oldX = component.getTarget().getTileX();
-        val oldY = component.getTarget().getTileY();
-        val newX = oldX + component.getTargetDirection().getDx() * knockbackAmount;
-        val newY = oldY + component.getTargetDirection().getDy() * knockbackAmount;
-        component.getTarget().setTilePos(newX, newY);
 
-        if (component.getTarget() instanceof CharacterObject) {
-            component.getTarget().getWorld().getTileAt(oldX, oldY).onCharacterExit(oldX, oldY, (CharacterObject) component.getTarget());
-            component.getTarget().getWorld().getTileAt(newX, newY).onCharacterEnter(newX, newY, (CharacterObject) component.getTarget());
+        if (tileBehindTargetIsFree(direction, 1)) {
+            if (target instanceof IHealthHandler) {
+                dealDamage(target, (IHealthHandler) target, calculateDamage() * 0.5f);
+                if (((IHealthHandler) target).isDead()) {
+                    return true;
+                }
+            }
+
+            int knockbackAmount = calculateKnockbackAmount(component.getTargetSelector().getTargetDirection());
+            knockBackTarget(target, direction, knockbackAmount);
+        } else {
+            dealDamage(target, (IHealthHandler) target, calculateDamage() * 1.5f);
         }
 
         return true;
+    }
+
+    private void knockBackTarget(GameObject target, Direction direction, int knockbackAmount) {
+        if (knockbackAmount <= 0) {
+            return;
+        }
+
+        val oldX = target.getTileX();
+        val oldY = target.getTileY();
+        val newX = oldX + direction.getDx() * knockbackAmount;
+        val newY = oldY + direction.getDy() * knockbackAmount;
+        target.setTilePos(newX, newY);
+
+        if (target instanceof CharacterObject) {
+            target.getWorld().getTileAt(oldX, oldY).onCharacterExit(oldX, oldY, (CharacterObject) target);
+            target.getWorld().getTileAt(newX, newY).onCharacterEnter(newX, newY, (CharacterObject) target);
+        }
     }
 
     private int calculateKnockbackAmount(Direction direction) {

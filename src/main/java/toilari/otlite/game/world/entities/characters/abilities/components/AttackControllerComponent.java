@@ -1,7 +1,7 @@
 package toilari.otlite.game.world.entities.characters.abilities.components;
 
-import toilari.otlite.game.input.Input;
-import toilari.otlite.game.input.Key;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import toilari.otlite.game.world.entities.characters.abilities.AttackAbility;
 
 /**
@@ -15,21 +15,24 @@ public class AttackControllerComponent {
          * @param template komponentti josta kopioidaan
          */
         public Player(AbstractAttackControllerComponent<AttackAbility> template) {
-        }
-
-        @Override
-        protected boolean getAbilityInput() {
-            return Input.getHandler().isKeyPressed(Key.ONE);
+            super(template);
         }
     }
 
-    public static class AlwaysAttackAdjacentIfPossible extends AlwaysAttackAdjacentIfPossibleControllerComponent<AttackAbility> {
+    @NoArgsConstructor
+    public static class AI extends AbstractAttackControllerComponent<AttackAbility> {
         /**
          * Kopioi komponentin templaatista.
          *
          * @param template komponentti josta kopioidaan
          */
-        public AlwaysAttackAdjacentIfPossible(AbstractAttackControllerComponent<AttackAbility> template) {
+        public AI(AbstractControllerComponent<AttackAbility> template) {
+            super(template);
+        }
+
+        @Override
+        protected void doUpdateInput(@NonNull AttackAbility ability) {
+            setWantsPerform(getTargetSelector().getTarget() != null);
         }
     }
 }

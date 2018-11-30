@@ -88,6 +88,10 @@ public class CharacterAdapter implements JsonDeserializer<CharacterObject> {
         }
 
         val componentClass = abilityEntry.getComponentClasses().get(componentClassPrimitive.getAsString());
+        if (componentClass == null) {
+            LOG.warn("Unknown component class: " + componentClassPrimitive.getAsString());
+            return null;
+        }
         return context.deserialize(componentObj, componentClass);
     }
 

@@ -15,7 +15,10 @@ import toilari.otlite.game.world.entities.characters.abilities.components.Abstra
  * Hahmon kyky hyökätä.
  */
 @NoArgsConstructor
-public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C>, C extends AbstractAttackControllerComponent<A>> extends AbstractAbility<A, C> {
+public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C>, C extends AbstractAttackControllerComponent<A>>
+    extends AbstractAbility<A, C>
+    implements ITargetedAbility<A, C> {
+
     @Getter private boolean lastAttackKill;
     @Getter private float lastAttackDamage;
 
@@ -60,7 +63,7 @@ public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C
 
     @Override
     public boolean perform(@NonNull C component) {
-        val target = component.getTarget();
+        val target = component.getTargetSelector().getTarget();
         if (!canAttack(target)) {
             return false;
         }
@@ -74,9 +77,6 @@ public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C
             dealDamage(target, (IHealthHandler) target, amount);
         }
 
-        if (hasEventSystem()) {
-            getEventSystem().fire(new CharacterEvent.Damage(getCharacter(), target, amount));
-        }
         return true;
     }
 
@@ -92,6 +92,10 @@ public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C
             targetWithHealth.setHealth(0.0f);
             target.remove();
             this.lastAttackKill = true;
+        }
+
+        if (target instanceof CharacterObject && hasEventSystem()) {
+            getEventSystem().fire(new CharacterEvent.Damage(getCharacter(), target, amount));
         }
     }
 }

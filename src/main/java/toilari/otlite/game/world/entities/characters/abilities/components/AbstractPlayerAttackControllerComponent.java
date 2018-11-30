@@ -4,7 +4,6 @@ import lombok.val;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
 import toilari.otlite.game.profile.statistics.Statistics;
-import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.entities.characters.abilities.AbstractAttackAbility;
 
 /**
@@ -13,32 +12,22 @@ import toilari.otlite.game.world.entities.characters.abilities.AbstractAttackAbi
  * @param <A> kyvyn tyyppi
  */
 public abstract class AbstractPlayerAttackControllerComponent<A extends AbstractAttackAbility> extends AbstractAttackControllerComponent<A> {
+    protected AbstractPlayerAttackControllerComponent(AbstractControllerComponent<A> template) {
+        super(template);
+    }
+
     @Override
-    public void updateInput(A ability) {
-        boolean inputSwitchTarget = getAbilityInput();
+    public void doUpdateInput(A ability) {
         boolean inputPerform = getPerformInput();
 
-        if (!ability.canPerformOn(getTargetDirection())) {
-            setTarget(null);
-            setTargetDirection(Direction.NONE);
-        }
-
-        if (inputSwitchTarget) {
-            if (getTarget() == null) {
-                resetTargetSearchDirection();
-            }
-
-            findNewTarget(ability);
-        } else if (inputPerform) {
-            setWantsPerform(getTarget() != null);
+        if (inputPerform) {
+            setWantsPerform(getTargetSelector().getTarget() != null);
         }
     }
 
     protected boolean getPerformInput() {
         return Input.getHandler().isKeyPressed(Key.SPACE);
     }
-
-    protected abstract boolean getAbilityInput();
 
     @Override
     public void abilityPerformed(A ability) {

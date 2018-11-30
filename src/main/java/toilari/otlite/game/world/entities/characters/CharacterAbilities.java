@@ -38,6 +38,10 @@ public class CharacterAbilities {
     }
 
     static {
+        registerAbility("target_selector", TargetSelectorAbility.class, TargetSelectorAbility::new)
+            .addComponent("player", TargetSelectorControllerComponent.Player.class, TargetSelectorControllerComponent.Player::new)
+            .addComponent("attack_adjacent_if_possible", TargetSelectorControllerComponent.AlwaysAttackAdjacentIfPossible.class, TargetSelectorControllerComponent.AlwaysAttackAdjacentIfPossible::new);
+
         registerAbility("move", MoveAbility.class, MoveAbility::new)
             .addComponent("player", MoveControllerComponent.Player.class, MoveControllerComponent.Player::new)
             .addComponent("animal", MoveControllerComponent.AI.class, MoveControllerComponent.AI::new);
@@ -48,11 +52,11 @@ public class CharacterAbilities {
 
         registerAbility("attack", AttackAbility.class, AttackAbility::new)
             .addComponent("player", AttackControllerComponent.Player.class, AttackControllerComponent.Player::new)
-            .addComponent("attack_adjacent_if_possible", AttackControllerComponent.AlwaysAttackAdjacentIfPossible.class, AttackControllerComponent.AlwaysAttackAdjacentIfPossible::new);
+            .addComponent("ai", AttackControllerComponent.AI.class, AttackControllerComponent.AI::new);
 
         registerAbility("kick", KickAbility.class, KickAbility::new)
             .addComponent("player", KickControllerComponent.Player.class, KickControllerComponent.Player::new)
-            .addComponent("attack_adjacent_if_possible", KickControllerComponent.AlwaysAttackAdjacentIfPossible.class, KickControllerComponent.AlwaysAttackAdjacentIfPossible::new);
+            .addComponent("ai", KickControllerComponent.AI.class, KickControllerComponent.AI::new);
     }
 
     private static <A extends IAbility<A, C>, C extends IControllerComponent<A>> AbilityComponentEntry<A, C> registerAbility(String key, Class<? extends A> abilityClass, Supplier<A> abilityFactory) {

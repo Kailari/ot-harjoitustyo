@@ -3,67 +3,62 @@ package toilari.otlite.game.world.entities.characters.abilities.components;
 import lombok.*;
 import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.entities.GameObject;
+import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.AbstractAttackAbility;
+import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbility;
 
-import java.util.Iterator;
+@NoArgsConstructor
+public abstract class AbstractAttackControllerComponent<A extends AbstractAttackAbility>
+    extends AbstractControllerComponent<A>
+    implements ITargetedControllerComponent<A> {
 
-public abstract class AbstractAttackControllerComponent<A extends AbstractAttackAbility> extends AbstractControllerComponent<A> {
-    @Getter @Setter(AccessLevel.PROTECTED) private transient GameObject target;
     @Getter @Setter(AccessLevel.PROTECTED) private transient boolean wantsPerform;
-    @Setter(AccessLevel.PROTECTED) private transient Direction targetDirection = Direction.NONE;
-    private transient Iterator<Direction> directionIterator;
+    @Getter private transient TargetSelectorControllerComponent targetSelector;
 
-    /**
-     * Hakee nykyisen suunnan johon kykyä ollaan käyttämässä.
-     *
-     * @return suunta johon kykyä ollaan käyttämässä tai NONE jos ei olla
-     */
-    @NonNull
-    public Direction getTargetDirection() {
-        if (this.targetDirection == null) {
-            this.targetDirection = Direction.NONE;
+    protected AbstractAttackControllerComponent(AbstractControllerComponent<A> template) {
+        super(template);
+    }
+
+    protected abstract void doUpdateInput(@NonNull A ability);
+
+    @Override
+    public final void updateInput(@NonNull A ability) {
+        if (!this.targetSelector.isActive(ability)) {
+            return;
         }
-        return this.targetDirection;
+
+        doUpdateInput(ability);
+    }
+
+    @Override
+    public void init(@NonNull CharacterObject character) {
+        super.init(character);
+        this.targetSelector = character.getAbilities().getComponent(TargetSelectorAbility.class);
+
+        if (this.targetSelector == null) {
+            throw new IllegalStateException("The component \"" + getClass().getSimpleName() + "\" requires a TargetSelector on the object to function!");
+        }
     }
 
     @Override
     public boolean wants(@NonNull A ability) {
-        return getTarget() != null && isWantsPerform();
+        return getTargetSelector().getTarget() != null && isWantsPerform();
     }
 
     @Override
     public void abilityPerformed(A ability) {
-        setTarget(null);
-        setTargetDirection(Direction.NONE);
+        this.targetSelector.abilityPerformed(getCharacter().getAbilities().getAbility(TargetSelectorAbility.class));
         setWantsPerform(false);
     }
 
-    protected void findNewTarget(@NonNull A ability) {
-        val x = getCharacter().getTileX();
-        val y = getCharacter().getTileY();
-        setTargetDirection(this.directionIterator.next());
 
-        for (int i = 0; i < 4; i++, setTargetDirection(this.directionIterator.next())) {
-            val targetX = x + getTargetDirection().getDx();
-            val targetY = y + getTargetDirection().getDy();
-            val targetCandidate = getCharacter().getWorld().getObjectAt(targetX, targetY);
-
-            if (targetCandidate != null && ability.canPerformOn(getTargetDirection()) && wantsPerformOn(getTargetDirection())) {
-                setTarget(targetCandidate);
-                return;
-            }
-        }
-
-        setTargetDirection(Direction.NONE);
-        setTarget(null);
+    @Override
+    public boolean wantsPerformOn(GameObject target, Direction direction) {
+        return direction != Direction.NONE;
     }
 
-    protected boolean wantsPerformOn(Direction targetDirection) {
-        return targetDirection != Direction.NONE;
+    @Override
+    public void reset() {
+        this.wantsPerform = false;
     }
-
-    protected void resetTargetSearchDirection() {
-        this.directionIterator = Direction.asLoopingIterator();
-    }
-
 }
