@@ -19,25 +19,13 @@ import java.util.Objects;
 public abstract class TargetSelectorControllerComponent extends AbstractControllerComponent<TargetSelectorAbility> {
     @Getter(AccessLevel.PROTECTED) private transient ITargetedAbility[] abilities;
     @Getter(AccessLevel.PROTECTED) private transient ITargetedAbility active;
-    @Getter @Setter private transient GameObject target;
+    @Getter private transient GameObject target;
     @Getter private transient Direction targetDirection;
 
     private transient Iterator<Direction> directionIterator;
 
-    protected TargetSelectorControllerComponent(TargetSelectorControllerComponent template) {
-        super(template);
-    }
-
     public boolean isActive(IAbility ability) {
         return Objects.equals(this.active, ability);
-    }
-
-    protected void setActive(int abilityIndex) {
-        if (abilityIndex < 0 || abilityIndex >= this.abilities.length) {
-            this.active = null;
-        } else {
-            this.active = this.abilities[abilityIndex];
-        }
     }
 
     public void setActive(ITargetedAbility ability) {
@@ -46,6 +34,11 @@ public abstract class TargetSelectorControllerComponent extends AbstractControll
         }
 
         this.active = ability;
+    }
+
+
+    protected TargetSelectorControllerComponent(TargetSelectorControllerComponent template) {
+        super(template);
     }
 
     @Override
@@ -72,6 +65,18 @@ public abstract class TargetSelectorControllerComponent extends AbstractControll
         this.active = null;
         this.target = null;
         this.targetDirection = Direction.NONE;
+    }
+
+    protected boolean isActive(int i) {
+        return hasAbility(i) && isActive(this.abilities[i]);
+    }
+
+    protected void setActive(int abilityIndex) {
+        if (abilityIndex < 0 || abilityIndex >= this.abilities.length) {
+            this.active = null;
+        } else {
+            this.active = this.abilities[abilityIndex];
+        }
     }
 
     protected boolean hasAbility(int i) {
@@ -126,35 +131,17 @@ public abstract class TargetSelectorControllerComponent extends AbstractControll
         return null;
     }
 
+    protected void setTarget(GameObject target, Direction direction) {
+        this.target = target;
+        this.targetDirection = direction;
+        this.directionIterator = Direction.asLoopingIterator(direction);
+    }
+
     @Override
     public void reset() {
         this.target = null;
         this.targetDirection = Direction.NONE;
         this.active = null;
-    }
-
-    @NoArgsConstructor
-    public static class Player extends TargetSelectorControllerComponent {
-        private final Key[] abilityKeys = {Key.ONE, Key.TWO, Key.THREE, Key.FOUR, Key.FIVE, Key.SIX, Key.SEVEN, Key.EIGHT, Key.NINE, Key.ZERO};
-
-        public Player(TargetSelectorControllerComponent template) {
-            super(template);
-        }
-
-        @Override
-        public void updateInput(@NonNull TargetSelectorAbility ability) {
-            for (int i = 0; i < this.abilityKeys.length; i++) {
-                if (Input.getHandler().isKeyPressed(this.abilityKeys[i]) && hasAbility(i) && notOnCooldown(i) && canAfford(i)) {
-                    setActive(i);
-                    findNewTarget();
-                    if (getTarget() == null) {
-                        setActive(-1);
-                    }
-                }
-            }
-
-            // TODO Arrow keys to switch target
-        }
     }
 
     @NoArgsConstructor
@@ -169,17 +156,17 @@ public abstract class TargetSelectorControllerComponent extends AbstractControll
             val manager = world.getObjectManager();
             val player = manager.getGameState().getPlayer();
 
-            setActive(0);
+            setActive(0); // FIXME: Sets first ability as active (blindly assumes that first ability is the target selector)
 
             for (val direction : Direction.asIterable()) {
                 val candidate = findTargetInDirection(direction);
                 if (Objects.equals(player, candidate)) {
-                    setTarget(player);
+                    setTarget(player, direction);
                     return;
                 }
             }
 
-            setTarget(null);
+            setTarget(null, Direction.NONE);
         }
     }
 }

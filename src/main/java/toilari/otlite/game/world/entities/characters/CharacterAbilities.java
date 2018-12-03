@@ -39,7 +39,7 @@ public class CharacterAbilities {
 
     static {
         registerAbility("target_selector", TargetSelectorAbility.class, TargetSelectorAbility::new)
-            .addComponent("player", TargetSelectorControllerComponent.Player.class, TargetSelectorControllerComponent.Player::new)
+            .addComponent("player", PlayerTargetSelectorComponent.class, PlayerTargetSelectorComponent::new)
             .addComponent("attack_adjacent_if_possible", TargetSelectorControllerComponent.AlwaysAttackAdjacentIfPossible.class, TargetSelectorControllerComponent.AlwaysAttackAdjacentIfPossible::new);
 
         registerAbility("move", MoveAbility.class, MoveAbility::new)

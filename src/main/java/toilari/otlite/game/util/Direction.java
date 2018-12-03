@@ -28,7 +28,7 @@ public enum Direction {
      * @return suunnat iteroitavana
      */
     public static Iterable<Direction> asIterable() {
-        return new IterableDirection(false);
+        return new IterableDirection(false, NONE);
     }
 
     /**
@@ -37,15 +37,20 @@ public enum Direction {
      * @return loputon iteraattori joka iteroi suuntia
      */
     public static Iterator<Direction> asLoopingIterator() {
-        return new IterableDirection(true);
+        return asLoopingIterator(NONE);
+    }
+
+    public static Iterator<Direction> asLoopingIterator(Direction startingDirection) {
+        return new IterableDirection(true, startingDirection);
     }
 
     private static final class IterableDirection implements Iterator<Direction>, Iterable<Direction> {
         private final boolean looping;
-        private Direction current = NONE;
+        private Direction current;
 
-        public IterableDirection(boolean looping) {
+        public IterableDirection(boolean looping, Direction startingDirection) {
             this.looping = looping;
+            this.current = startingDirection;
         }
 
         @Override

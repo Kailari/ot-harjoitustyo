@@ -4,6 +4,7 @@ import lombok.NonNull;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import toilari.otlite.fake.FakeCharacterObject;
+import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.TurnObjectManager;
@@ -456,7 +457,7 @@ class AttackAbilityTest {
 
     private class TestTargetSelectorControllerComponent extends TargetSelectorControllerComponent {
         private TestTargetSelectorControllerComponent(GameObject target) {
-            setTarget(target);
+            setTarget(target, Direction.RIGHT);
         }
 
         @Override
