@@ -12,6 +12,11 @@ public abstract class AbstractAbility<A extends AbstractAbility<A, C>, C extends
     @Getter(AccessLevel.PROTECTED) private CharacterObject character;
     @Getter @Setter private int priority = 0;
     private int cooldownTimer;
+    @Getter private String name;
+
+    protected AbstractAbility(String name) {
+        this.name = name;
+    }
 
     @Override
     public void init(@NonNull CharacterObject character, int priority) {

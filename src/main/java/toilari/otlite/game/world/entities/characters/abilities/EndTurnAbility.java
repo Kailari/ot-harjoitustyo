@@ -1,14 +1,16 @@
 package toilari.otlite.game.world.entities.characters.abilities;
 
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import toilari.otlite.game.world.entities.characters.abilities.components.EndTurnControllerComponent;
 
 /**
  * Hahmon kyky lopettaa vuoro.
  */
-@NoArgsConstructor
 public class EndTurnAbility extends AbstractAbility<EndTurnAbility, EndTurnControllerComponent> {
+    public EndTurnAbility() {
+        super("End turn");
+    }
+
     @Override
     public int getCost() {
         return 0;

@@ -166,6 +166,8 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         val b = ability.isOnCooldown() ? 0.15f : (ts.isActive(ability) ? 0.15f : 1.0f);
         this.abilityBackground.draw(camera, xx, yy, r, g, b);
 
+        this.textRenderer.draw(camera, xx, yy - (2.75f + ability.getName().chars().filter(c -> c == '\n').count() * 2.75f), 1.0f, 1.0f, 1.0f, 2, ability.getName());
+
         this.textRenderer.draw(camera, xx + 1, yy + 16 - 5.5f, 0.5f, 0.5f, 0.5f, 4, String.valueOf(index + 1));
 
         if (ability.isOnCooldown()) {

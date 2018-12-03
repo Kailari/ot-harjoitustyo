@@ -4,6 +4,10 @@ import lombok.NonNull;
 import toilari.otlite.game.world.entities.characters.abilities.components.TargetSelectorControllerComponent;
 
 public class TargetSelectorAbility extends AbstractAbility<TargetSelectorAbility, TargetSelectorControllerComponent> {
+    public TargetSelectorAbility() {
+        super("Select Target");
+    }
+
     @Override
     public int getCost() {
         return 0;

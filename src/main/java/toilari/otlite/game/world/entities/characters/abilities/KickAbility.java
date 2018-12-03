@@ -15,11 +15,16 @@ public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAtta
     private final Random random;
 
     public KickAbility() {
-        this.random = new Random();
+        this(new Random());
     }
 
     public KickAbility(long seed) {
-        this.random = new Random(seed);
+        this(new Random(seed));
+    }
+
+    private KickAbility(@NonNull Random random) {
+        super("Kick");
+        this.random = random;
     }
 
 

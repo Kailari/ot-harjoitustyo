@@ -24,6 +24,7 @@
     },
     "attack": {
       "priority": 2,
+      "name": "Basic\nAttack",
       "component": {
         "visibleOnHud": true,
         "class": "player"
@@ -31,6 +32,7 @@
     },
     "kick": {
       "priority": 3,
+      "name": "Kick",
       "component": {
         "visibleOnHud": true,
         "class": "player"

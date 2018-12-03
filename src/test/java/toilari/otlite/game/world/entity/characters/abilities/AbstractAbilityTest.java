@@ -85,6 +85,7 @@ class AbstractAbilityTest {
 
     private class TestAbility extends AbstractAbility<TestAbility, AbstractControllerComponent<TestAbility>> {
         TestAbility(CharacterObject character, int priority) {
+            super("Test");
             init(character, priority);
         }
 

@@ -14,13 +14,16 @@ import toilari.otlite.game.world.entities.characters.abilities.components.Abstra
 /**
  * Hahmon kyky hyökätä.
  */
-@NoArgsConstructor
 public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C>, C extends AbstractAttackControllerComponent<A>>
     extends AbstractAbility<A, C>
     implements ITargetedAbility<A, C> {
 
     @Getter private boolean lastAttackKill;
     @Getter private float lastAttackDamage;
+
+    protected AbstractAttackAbility(@NonNull String name) {
+        super(name);
+    }
 
     /**
      * Tarkistaa voiko hahmo hyökätä annettuun suuntaan.

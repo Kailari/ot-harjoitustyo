@@ -110,4 +110,11 @@ public interface IAbility<A extends IAbility<A, C>, C extends IControllerCompone
      * @throws NullPointerException jos komponentti on <code>null</code>
      */
     boolean perform(@NonNull C component);
+
+    /**
+     * Palauttaa kyvyn nimen.
+     *
+     * @return kyvyn nimi joka voidaan esim. printata käyttöliitymään
+     */
+    @NonNull String getName();
 }
