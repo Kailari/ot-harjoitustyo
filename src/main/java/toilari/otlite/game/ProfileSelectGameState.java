@@ -3,8 +3,8 @@ package toilari.otlite.game;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import toilari.otlite.game.event.MenuEvent;
 import toilari.otlite.game.event.ProfileMenuEvent;
-import toilari.otlite.game.world.entities.TurnObjectManager;
 
 import java.sql.SQLException;
 
@@ -12,10 +12,10 @@ import java.sql.SQLException;
  * Pelin käynnistyessä avautuva tila, jossa pelaaja valitsee profiilin jolla pelataan.
  */
 @Slf4j
-public class ProfileSelectState extends GameState {
+public class ProfileSelectGameState extends GameState {
     @Override
     public boolean init() {
-        getEventSystem().subscribeTo(ProfileMenuEvent.Quit.class, (e) -> getGame().setRunning(false));
+        getEventSystem().subscribeTo(MenuEvent.Quit.class, (e) -> getGame().setRunning(false));
         getEventSystem().subscribeTo(ProfileMenuEvent.Add.class, this::onAdd);
         getEventSystem().subscribeTo(ProfileMenuEvent.Remove.class, this::onRemove);
         getEventSystem().subscribeTo(ProfileMenuEvent.Select.class, this::onSelect);
@@ -44,7 +44,7 @@ public class ProfileSelectState extends GameState {
     private void onAdd(@NonNull ProfileMenuEvent.Add event) {
         try {
             if (getGame().getProfileDao().profileWithNameExists(event.getName())) {
-                ProfileSelectState.LOG.warn("Profile with given name already exists!");
+                ProfileSelectGameState.LOG.warn("Profile with given name already exists!");
                 getEventSystem().fire(new ProfileMenuEvent.InvalidName());
                 return;
             }
@@ -55,8 +55,8 @@ public class ProfileSelectState extends GameState {
                 getEventSystem().fire(new ProfileMenuEvent.Added(profile));
             }
         } catch (SQLException e) {
-            ProfileSelectState.LOG.error("Creating profile failed, trying to shut down gracefully.");
-            ProfileSelectState.LOG.error("Cause: {}", e.getMessage());
+            ProfileSelectGameState.LOG.error("Creating profile failed, trying to shut down gracefully.");
+            ProfileSelectGameState.LOG.error("Cause: {}", e.getMessage());
 
             getGame().setRunning(false);
         }
@@ -67,10 +67,11 @@ public class ProfileSelectState extends GameState {
             val profile = getGame().getProfileDao().findById(event.getId());
 
             getGame().setActiveProfile(profile);
-            getGame().changeState(new PlayGameState(new TurnObjectManager()));
+            //getGame().changeState(new PlayGameState(new TurnObjectManager()));
+            getGame().changeState(new MainMenuGameState());
         } catch (SQLException e) {
-            ProfileSelectState.LOG.error("Selecting profile failed, trying to shut down gracefully.");
-            ProfileSelectState.LOG.error("Cause: {}", e.getMessage());
+            ProfileSelectGameState.LOG.error("Selecting profile failed, trying to shut down gracefully.");
+            ProfileSelectGameState.LOG.error("Cause: {}", e.getMessage());
 
             getGame().setRunning(false);
         }
@@ -81,8 +82,8 @@ public class ProfileSelectState extends GameState {
             getGame().getProfileDao().removeById(event.getId());
             getEventSystem().fire(new ProfileMenuEvent.Removed(event.getId()));
         } catch (SQLException e) {
-            ProfileSelectState.LOG.error("Creating profile failed, trying to shut down gracefully.");
-            ProfileSelectState.LOG.error("Cause: {}", e.getMessage());
+            ProfileSelectGameState.LOG.error("Creating profile failed, trying to shut down gracefully.");
+            ProfileSelectGameState.LOG.error("Cause: {}", e.getMessage());
 
             getGame().setRunning(false);
         }

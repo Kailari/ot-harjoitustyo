@@ -44,6 +44,14 @@ public interface IInputHandler {
     boolean isMouseDown(int button);
 
     /**
+     * Kertoo onko hiiren nappi juuri painettu.
+     *
+     * @param button minkä napin tila tarkistetaan
+     * @return <code>true</code> jos nappi on juuri painettu
+     */
+    boolean isMousePressed(int button);
+
+    /**
      * Päivittää syötekäsittelijän tilan.
      */
     void update();

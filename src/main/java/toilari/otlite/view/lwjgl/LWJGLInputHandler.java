@@ -15,6 +15,7 @@ public class LWJGLInputHandler implements IInputHandler {
     private final long windowHandle;
 
     private final Map<Key, KeyState> keyStates = new HashMap<>();
+    private final KeyState[] mouseButtonState = new KeyState[5];
 
     private final double[] mouseX = new double[1];
     private final double[] mouseY = new double[1];
@@ -41,23 +42,41 @@ public class LWJGLInputHandler implements IInputHandler {
 
     @Override
     public int mouseX() {
-        GLFW.glfwGetCursorPos(this.windowHandle, this.mouseX, this.mouseY);
         return (int) Math.floor(this.mouseX[0]);
     }
 
     @Override
     public int mouseY() {
-        GLFW.glfwGetCursorPos(this.windowHandle, this.mouseX, this.mouseY);
         return (int) Math.floor(this.mouseY[0]);
     }
 
     @Override
     public boolean isMouseDown(int button) {
-        return GLFW.glfwGetMouseButton(this.windowHandle, button) == 1;
+        val state = this.mouseButtonState[button];
+        return state == KeyState.Pressed || state == KeyState.Down;
+    }
+
+    public boolean isMousePressed(int button) {
+        return this.mouseButtonState[button] == KeyState.Pressed;
     }
 
     @Override
     public void update() {
+        updateKeyboard();
+        updateMouse();
+    }
+
+    private void updateMouse() {
+        GLFW.glfwGetCursorPos(this.windowHandle, this.mouseX, this.mouseY);
+
+        for (int button = 0; button < 5; button++) {
+            boolean input = GLFW.glfwGetMouseButton(this.windowHandle, button) == GLFW.GLFW_PRESS;
+            KeyState old = this.mouseButtonState[button];
+            this.mouseButtonState[button] = resolveNewState(input, old);
+        }
+    }
+
+    private void updateKeyboard() {
         for (val key : Key.values()) {
             if (key == Key.UNKNOWN) {
                 continue;

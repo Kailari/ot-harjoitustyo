@@ -40,6 +40,11 @@ public class FakeInputHandler implements IInputHandler {
     }
 
     @Override
+    public boolean isMousePressed(int button) {
+        return false;
+    }
+
+    @Override
     public void update() {
         this.updatesCalled++;
     }

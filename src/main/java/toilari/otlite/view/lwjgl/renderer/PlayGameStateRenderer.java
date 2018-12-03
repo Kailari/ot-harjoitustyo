@@ -27,6 +27,8 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
     private static final int DAMAGE_LABEL_OFFSET_X = 2;
     private static final int DAMAGE_LABEL_OFFSET_Y = 2;
     private static final int DAMAGE_LABEL_DISTANCE = 8;
+
+    private static final int ABILITY_LABEL_FONTSIZE = 2;
     // TODO: mapping class for these to get rid of unchecked code
     private final TextureDAO textureDao;
     private final RendererDAO renderers;
@@ -166,7 +168,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         val b = ability.isOnCooldown() ? 0.15f : (ts.isActive(ability) ? 0.15f : 1.0f);
         this.abilityBackground.draw(camera, xx, yy, r, g, b);
 
-        this.textRenderer.draw(camera, xx, yy - (2.75f + ability.getName().chars().filter(c -> c == '\n').count() * 2.75f), 1.0f, 1.0f, 1.0f, 2, ability.getName());
+        this.textRenderer.draw(camera, xx, yy - (2.5f + ability.getName().chars().filter(c -> c == '\n').count() * ABILITY_LABEL_FONTSIZE), 1.0f, 1.0f, 1.0f, ABILITY_LABEL_FONTSIZE, ability.getName());
 
         this.textRenderer.draw(camera, xx + 1, yy + 16 - 5.5f, 0.5f, 0.5f, 0.5f, 4, String.valueOf(index + 1));
 

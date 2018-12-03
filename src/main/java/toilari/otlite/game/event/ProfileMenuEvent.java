@@ -10,12 +10,6 @@ import toilari.otlite.game.profile.Profile;
  */
 public abstract class ProfileMenuEvent implements IEvent {
     /**
-     * Viesti joka lähetetään kun peli halutaan sulkea.
-     */
-    public static class Quit extends ProfileMenuEvent {
-    }
-
-    /**
      * Viesti joka lähetetään kun uusi profiili halutaan lisätä.
      */
     @RequiredArgsConstructor

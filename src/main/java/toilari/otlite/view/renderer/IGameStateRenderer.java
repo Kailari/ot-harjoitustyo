@@ -33,6 +33,5 @@ public interface IGameStateRenderer<T extends GameState, TCamera extends Camera>
      *
      * @param state pelitila joka piirretään
      */
-    default void destroy(@NonNull T state) {
-    }
+    void destroy(@NonNull T state);
 }

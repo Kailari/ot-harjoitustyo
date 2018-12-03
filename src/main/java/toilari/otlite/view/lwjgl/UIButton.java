@@ -36,7 +36,6 @@ public class UIButton {
     private final float idleG;
     private final float idleB;
 
-    private boolean mouseWasDown;
     private float r, g, b;
 
     /**
@@ -93,7 +92,7 @@ public class UIButton {
      * @param x            painikkeen x-koordinaatti
      * @param y            painikkeen y-koordinaatti
      */
-    public void draw(@NonNull LWJGLCamera camera, @NonNull TextRenderer textRenderer, int fontSize, int x, int y) {
+    public void draw(@NonNull LWJGLCamera camera, @NonNull TextRenderer textRenderer, int fontSize, float x, float y) {
         updateMouse(camera, x, y);
 
         this.topLeft.draw(camera, x, y, this.r, this.g, this.b);
@@ -113,7 +112,7 @@ public class UIButton {
         textRenderer.draw(camera, textX, textY, 1.0f, 1.0f, 1.0f, fontSize, this.text);
     }
 
-    private void updateMouse(@NonNull LWJGLCamera camera, int x, int y) {
+    private void updateMouse(@NonNull LWJGLCamera camera, float x, float y) {
         val mouseX = (int) Math.floor(Input.getHandler().mouseX() / camera.getPixelsPerUnit());
         val mouseY = (int) Math.floor(Input.getHandler().mouseY() / camera.getPixelsPerUnit());
 
@@ -127,15 +126,12 @@ public class UIButton {
             this.b = this.idleB;
         }
 
-        if (this.mouseWasDown) {
-            this.mouseWasDown = Input.getHandler().isMouseDown(0);
-        } else if (Input.getHandler().isMouseDown(0)) {
-            this.mouseWasDown = true;
+        if (Input.getHandler().isMousePressed(0)) {
             click(x, y, mouseX, mouseY);
         }
     }
 
-    private void click(int x, int y, int mouseX, int mouseY) {
+    private void click(float x, float y, int mouseX, int mouseY) {
         if (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height) {
             this.onClick.perform();
         }

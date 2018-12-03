@@ -4,7 +4,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import toilari.otlite.dao.TextureDAO;
-import toilari.otlite.game.ProfileSelectState;
+import toilari.otlite.game.ProfileSelectGameState;
 import toilari.otlite.game.event.ProfileMenuEvent;
 import toilari.otlite.game.profile.Profile;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public class ProfileSelectStateRenderer implements ILWJGLGameStateRenderer<ProfileSelectState> {
+public class ProfileSelectGameStateRenderer implements ILWJGLGameStateRenderer<ProfileSelectGameState> {
     private static final int ADD_BUTTON_WIDTH = 31;
     private static final int ADD_BUTTON_HEIGHT = 8;
     private static final int ADD_BUTTON_SIZE = 2;
@@ -61,19 +61,19 @@ public class ProfileSelectStateRenderer implements ILWJGLGameStateRenderer<Profi
     private List<Integer> profileIds;
     private TextRenderer textRenderer;
 
-    private ProfileSelectState state;
+    private ProfileSelectGameState state;
 
     /**
      * Luo uuden profiilivalikon piirtäjän.
      *
      * @param textureDAO dao jolla tarvittavat tekstuurit voidaan ladata
      */
-    public ProfileSelectStateRenderer(@NonNull TextureDAO textureDAO) {
+    public ProfileSelectGameStateRenderer(@NonNull TextureDAO textureDAO) {
         this.textureDAO = textureDAO;
     }
 
     @Override
-    public boolean init(@NonNull ProfileSelectState state) {
+    public boolean init(@NonNull ProfileSelectGameState state) {
         this.state = state;
         this.uiTexture = this.textureDAO.get("ui.png");
         this.textRenderer = new TextRenderer(this.textureDAO, 1, 16);
@@ -106,7 +106,7 @@ public class ProfileSelectStateRenderer implements ILWJGLGameStateRenderer<Profi
     }
 
     @Override
-    public void draw(@NonNull LWJGLCamera camera, @NonNull ProfileSelectState state) {
+    public void draw(@NonNull LWJGLCamera camera, @NonNull ProfileSelectGameState state) {
         drawTitle(camera);
         drawButtons(camera);
     }
@@ -135,7 +135,7 @@ public class ProfileSelectStateRenderer implements ILWJGLGameStateRenderer<Profi
         this.createProfileButton.draw(camera, this.textRenderer, ADD_BUTTON_FONT_SIZE, x, BUTTON_START_Y);
     }
 
-    private boolean refreshProfileList(@NonNull ProfileSelectState state) {
+    private boolean refreshProfileList(@NonNull ProfileSelectGameState state) {
         this.profileButtons = new ArrayList<>();
         this.profileRemoveButtons = new ArrayList<>();
         this.profileIds = new ArrayList<>();
@@ -154,7 +154,7 @@ public class ProfileSelectStateRenderer implements ILWJGLGameStateRenderer<Profi
         return false;
     }
 
-    private void createProfileButton(@NonNull ProfileSelectState state, @NonNull Profile profile) {
+    private void createProfileButton(@NonNull ProfileSelectGameState state, @NonNull Profile profile) {
         this.profileButtons.add(new UIButton(
             LARGE_BUTTON_WIDTH - (LARGE_BUTTON_HEIGHT + BUTTON_MARGIN), LARGE_BUTTON_HEIGHT,
             LARGE_BUTTON_SIZE,
@@ -177,7 +177,7 @@ public class ProfileSelectStateRenderer implements ILWJGLGameStateRenderer<Profi
     }
 
     @Override
-    public void destroy(@NonNull ProfileSelectState state) {
+    public void destroy(@NonNull ProfileSelectGameState state) {
         this.uiTexture.destroy();
     }
 }
