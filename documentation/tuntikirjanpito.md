@@ -32,4 +32,9 @@
 |26.11|    1 h | Hahmojen ja hahmojen kykyjen testejä. |
 |26.11|    3 h | Hahmojen parsimista JSON:sta. |
 |27.11|    6 h | Hahmojen ja piirtäjien parsimista JSON:sta. |
-| **yhteensä** | 71 h ||
+|28.11|    4 h | Testien lisäämistä ja vähän pelin sisältöä. |
+|29.11|    2 h | Käyttöliittymän parantelua. |
+|30.11|    2 h | Pelilogiikkaa ja siivoilua. |
+| 3.12|    3 h | Käyttöliittymän siistimistä ja joitain pikkujuttuja ennen releasea. |
+| 4.12|    1 h | Pientä siistimistä. |
+| **yhteensä** | 82 h ||
