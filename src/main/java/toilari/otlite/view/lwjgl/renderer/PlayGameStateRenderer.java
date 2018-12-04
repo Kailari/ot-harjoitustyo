@@ -8,13 +8,10 @@ import toilari.otlite.dao.TextureDAO;
 import toilari.otlite.game.PlayGameState;
 import toilari.otlite.game.event.CharacterEvent;
 import toilari.otlite.game.world.entities.IHealthHandler;
-import toilari.otlite.game.world.entities.characters.abilities.IAbility;
 import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbility;
-import toilari.otlite.game.world.entities.characters.abilities.components.TargetSelectorControllerComponent;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
-import toilari.otlite.view.lwjgl.Sprite;
 import toilari.otlite.view.lwjgl.TextRenderer;
-import toilari.otlite.view.lwjgl.Texture;
+import toilari.otlite.view.lwjgl.ui.UIAbilityBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,18 +25,16 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
     private static final int DAMAGE_LABEL_OFFSET_Y = 2;
     private static final int DAMAGE_LABEL_DISTANCE = 8;
 
-    private static final int ABILITY_LABEL_FONTSIZE = 2;
+
     // TODO: mapping class for these to get rid of unchecked code
     private final TextureDAO textureDao;
     private final RendererDAO renderers;
 
     private List<DamageInstance> damageInstances, damageInstancesSwap;
 
-    private Texture abilityBackgroundTexture;
-
     private LevelRenderer levelRenderer;
     private TextRenderer textRenderer;
-    private Sprite abilityBackground;
+    private UIAbilityBar abilityBar;
 
     /**
      * Luo uuden pelitilapiirtäjän.
@@ -67,8 +62,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         this.textRenderer = new TextRenderer(this.textureDao, 1, 16);
         state.getEventSystem().subscribeTo(CharacterEvent.Damage.class, this::onCharacterDamage);
 
-        this.abilityBackgroundTexture = this.textureDao.get("ability_background.png");
-        this.abilityBackground = new Sprite(this.abilityBackgroundTexture, 0, 0, 16, 16, 16, 16);
+        this.abilityBar = new UIAbilityBar(this.textureDao, this.textRenderer);
 
         return this.levelRenderer.init();
     }
@@ -86,8 +80,8 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
 
     private void makeCameraFollowPlayer(@NonNull LWJGLCamera camera, @NonNull PlayGameState state) {
         val player = state.getPlayer();
-        val cameraX = player.getX() - camera.getViewportWidth() / 16;
-        val cameraY = player.getY() - camera.getViewportHeight() / 16;
+        val cameraX = player.getX() - camera.getViewportWidth() / 2;
+        val cameraY = player.getY() - camera.getViewportHeight() / 2;
         camera.setPosition(cameraX, cameraY);
     }
 
@@ -116,23 +110,36 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
     }
 
     private void drawUI(@NonNull LWJGLCamera camera, @NonNull PlayGameState state) {
-        int x = Math.round(camera.getPosition().x);
-        int y = Math.round(camera.getPosition().y);
+        val screenTopLeftX = camera.getX();
+        val screenTopLeftY = camera.getY();
 
-        drawTurnStatus(camera, state, x, y);
-        drawAbilityBar(camera, state, x, y);
+        drawTurnStatus(camera, state, screenTopLeftX, screenTopLeftY);
+        this.abilityBar.draw(camera, state.getPlayer().getAbilities(), screenTopLeftX, screenTopLeftY + camera.getViewportHeight() - 18);
 
         if (state.getPlayer().isDead()) {
-            drawDeathMessage(camera, state, x, y);
+            drawDeathMessage(camera, state, screenTopLeftX, screenTopLeftY);
         }
 
     }
 
-    private void drawTurnStatus(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, int x, int y) {
-        val world = state.getWorld();
+    private void drawTurnStatus(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, float x, float y) {
+        drawCurrentTurn(camera, state, x + 2, y + 2);
+        drawActionLabel(camera, state, x + 2, y + 10);
+    }
+
+    private void drawCurrentTurn(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, float x, float y) {
         val str = state.getGame().getActiveProfile().getName()
             + "\nTurn: " + state.getPlayer().getTurnsTaken();
-        this.textRenderer.draw(camera, x + 2, y + 2, 0.25f, 0.65f, 0.25f, 4, str);
+        this.textRenderer.draw(camera, x, y, 0.25f, 0.65f, 0.25f, 4, str);
+    }
+
+    private void drawActionLabel(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, float x, float y) {
+        String apStr = resolveActionLabel(state);
+        this.textRenderer.draw(camera, x, y, 0.65f, 0.25f, 0.25f, 2, apStr);
+    }
+
+    private String resolveActionLabel(@NonNull PlayGameState state) {
+        val world = state.getWorld();
 
         String apStr = "Waiting...";
         if (world.getObjectManager().isCharactersTurn(state.getPlayer())) {
@@ -141,49 +148,24 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
             if (remaining == 0) {
                 apStr = "Press <SPACE> to end turn";
             } else {
-                apStr = "AP: " + remaining + "/" + total;
+                val targetSelector = state.getPlayer().getAbilities().getComponent(TargetSelectorAbility.class);
+                if (targetSelector != null && targetSelector.getTarget() != null) {
+                    apStr = "Press <SPACE> to attack!";
+                } else {
+                    apStr = "AP: " + remaining + "/" + total;
+                }
             }
         }
-
-        this.textRenderer.draw(camera, x + 2, y + 2 + 8, 0.65f, 0.25f, 0.25f, 2, apStr);
+        return apStr;
     }
 
-    private void drawAbilityBar(LWJGLCamera camera, @NonNull PlayGameState state, int x, int y) {
-        val abilities = state.getPlayer().getAbilities().getAbilitiesSortedByPriority();
-        int i = 0;
-        for (val ability : abilities) {
-            if (!state.getPlayer().getAbilities().getComponent(ability.getClass()).isHidden()) {
-                val ts = state.getPlayer().getAbilities().getComponent(TargetSelectorAbility.class);
-                drawAbility(camera, ability, ts, i++, x, y);
-            }
-        }
-    }
-
-    private void drawAbility(LWJGLCamera camera, IAbility ability, TargetSelectorControllerComponent ts, int index, int x, int y) {
-        val xx = 2 + x + index * (16 + 2);
-        val yy = y + (int) (camera.getViewportHeight() / camera.getPixelsPerUnit()) - 16 - 2;
-
-        val r = ability.isOnCooldown() ? 0.85f : (ts.isActive(ability) ? 0.15f : 1.0f);
-        val g = ability.isOnCooldown() ? 0.15f : (ts.isActive(ability) ? 0.85f : 1.0f);
-        val b = ability.isOnCooldown() ? 0.15f : (ts.isActive(ability) ? 0.15f : 1.0f);
-        this.abilityBackground.draw(camera, xx, yy, r, g, b);
-
-        this.textRenderer.draw(camera, xx, yy - (2.5f + ability.getName().chars().filter(c -> c == '\n').count() * ABILITY_LABEL_FONTSIZE), 1.0f, 1.0f, 1.0f, ABILITY_LABEL_FONTSIZE, ability.getName());
-
-        this.textRenderer.draw(camera, xx + 1, yy + 16 - 5.5f, 0.5f, 0.5f, 0.5f, 4, String.valueOf(index + 1));
-
-        if (ability.isOnCooldown()) {
-            this.textRenderer.draw(camera, xx, yy, 0.85f, 0.85f, 0.85f, 16, String.valueOf(ability.getRemainingCooldown()));
-        }
-    }
-
-    private void drawDeathMessage(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, int x, int y) {
+    private void drawDeathMessage(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, float x, float y) {
         val ded = "You are dead";
         val len = ded.length();
         val size = 8;
 
-        val w = (int) Math.ceil(camera.getViewportWidth() / camera.getPixelsPerUnit());
-        val h = (int) Math.ceil(camera.getViewportHeight() / camera.getPixelsPerUnit());
+        val w = camera.getViewportWidth();
+        val h = camera.getViewportHeight();
 
         val dt = Math.min(1, (System.currentTimeMillis() - state.getPlayer().getDeathTime()) / 5000.0f);
         this.textRenderer.draw(
@@ -245,7 +227,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
     @Override
     public void destroy(@NonNull PlayGameState state) {
         this.levelRenderer.destroy();
-        this.abilityBackgroundTexture.destroy();
+        this.abilityBar.destroy();
     }
 
     private static class DamageInstance {

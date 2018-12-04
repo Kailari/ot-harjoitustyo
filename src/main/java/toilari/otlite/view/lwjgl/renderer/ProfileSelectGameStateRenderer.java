@@ -10,7 +10,7 @@ import toilari.otlite.game.profile.Profile;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.TextRenderer;
 import toilari.otlite.view.lwjgl.Texture;
-import toilari.otlite.view.lwjgl.UIButton;
+import toilari.otlite.view.lwjgl.ui.UIButton;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -97,7 +97,7 @@ public class ProfileSelectGameStateRenderer implements ILWJGLGameStateRenderer<P
     }
 
     private void onRemoved(@NonNull ProfileMenuEvent.Removed event) {
-        int index = this.profileIds.indexOf(event.getProfileId());
+        int index = this.profileIds.indexOf(event.getProfile().getId());
         if (index >= 0) {
             this.profileButtons.remove(index);
             this.profileRemoveButtons.remove(index);
@@ -112,14 +112,14 @@ public class ProfileSelectGameStateRenderer implements ILWJGLGameStateRenderer<P
     }
 
     private void drawTitle(@NonNull LWJGLCamera camera) {
-        val centerX = camera.getViewportWidth() / camera.getPixelsPerUnit() / 2;
+        val centerX = camera.getViewportWidth() / 2;
         val x = centerX - TITLE_STRING.length() * (TITLE_FONTSIZE / 2.0f);
 
         this.textRenderer.draw(camera, x, TITLE_Y, 1.0f, 1.0f, 1.0f, TITLE_FONTSIZE, TITLE_STRING);
     }
 
     private void drawButtons(@NonNull LWJGLCamera camera) {
-        val centerX = camera.getViewportWidth() / camera.getPixelsPerUnit() / 2;
+        val centerX = camera.getViewportWidth() / 2;
         val x = Math.round(centerX - LARGE_BUTTON_WIDTH / 2.0f);
 
         for (int i = 0; i < this.profileButtons.size(); i++) {
@@ -162,7 +162,7 @@ public class ProfileSelectGameStateRenderer implements ILWJGLGameStateRenderer<P
             this.uiTexture,
             LARGE_BUTTON_IDLE_R, LARGE_BUTTON_IDLE_G, LARGE_BUTTON_IDLE_B,
             LARGE_BUTTON_HOVER_R, LARGE_BUTTON_HOVER_G, LARGE_BUTTON_HOVER_B,
-            () -> state.getEventSystem().fire(new ProfileMenuEvent.Select(profile.getId()))));
+            () -> state.getEventSystem().fire(new ProfileMenuEvent.Select(profile))));
 
         this.profileRemoveButtons.add(new UIButton(
             LARGE_BUTTON_HEIGHT, LARGE_BUTTON_HEIGHT,
@@ -171,7 +171,7 @@ public class ProfileSelectGameStateRenderer implements ILWJGLGameStateRenderer<P
             this.uiTexture,
             0.85f, 0.4f, 0.4f,
             0.95f, 0.7f, 0.7f,
-            () -> state.getEventSystem().fire(new ProfileMenuEvent.Remove(profile.getId()))));
+            () -> state.getEventSystem().fire(new ProfileMenuEvent.Remove(profile))));
 
         this.profileIds.add(profile.getId());
     }

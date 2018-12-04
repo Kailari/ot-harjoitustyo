@@ -1,11 +1,9 @@
 package toilari.otlite.view;
 
 import lombok.Getter;
-import lombok.NonNull;
-import org.joml.Vector2f;
 
 public class Camera {
-    @NonNull @Getter private Vector2f position = new Vector2f(0.0f, 0.0f);
+    @Getter private float x = 0.0f, y = 0.0f;
 
     /**
      * Asettaan kameralle uuden sijainnin.
@@ -14,7 +12,7 @@ public class Camera {
      * @param y kameran uusi y-kooridnaatti
      */
     public void setPosition(float x, float y) {
-        this.position.x = x;
-        this.position.y = y;
+        this.x = x;
+        this.y = y;
     }
 }

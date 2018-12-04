@@ -12,7 +12,7 @@ import toilari.otlite.game.event.MenuEvent;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.TextRenderer;
 import toilari.otlite.view.lwjgl.Texture;
-import toilari.otlite.view.lwjgl.UIButton;
+import toilari.otlite.view.lwjgl.ui.UIButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +96,7 @@ public class MainMenuGameStateRenderer implements ILWJGLGameStateRenderer<MainMe
 
     @Override
     public void draw(@NonNull LWJGLCamera camera, @NonNull MainMenuGameState state) {
-        val x = (camera.getViewportWidth() / camera.getPixelsPerUnit() / 2f) - (TITLE_STRING.length() / 2.0f) * TITLE_FONT_SIZE;
+        val x = (camera.getViewportWidth() / 2f) - (TITLE_STRING.length() / 2.0f) * TITLE_FONT_SIZE;
         val y = 4f;
 
         this.textRenderer.draw(camera, x, y, 1.0f, 1.0f, 1.0f, TITLE_FONT_SIZE, TITLE_STRING);
@@ -105,8 +105,8 @@ public class MainMenuGameStateRenderer implements ILWJGLGameStateRenderer<MainMe
     }
 
     private void drawButtons(@NonNull LWJGLCamera camera) {
-        val x = (camera.getViewportWidth() / camera.getPixelsPerUnit() - BUTTON_WIDTH) / 2.0f;
-        var y = (camera.getViewportHeight() / camera.getPixelsPerUnit() - BUTTON_HEIGHT * this.buttons.size()) / 2.0f;
+        val x = (camera.getViewportWidth() - BUTTON_WIDTH) / 2.0f;
+        var y = (camera.getViewportHeight() - BUTTON_HEIGHT * this.buttons.size()) / 2.0f;
 
         for (int i = 0; i < this.buttons.size(); i++) {
             val button = this.buttons.get(i);

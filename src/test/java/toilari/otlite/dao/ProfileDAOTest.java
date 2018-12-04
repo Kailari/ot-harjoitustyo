@@ -7,6 +7,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import toilari.otlite.dao.database.Database;
 import toilari.otlite.dao.util.FileHelper;
+import toilari.otlite.game.profile.Profile;
+import toilari.otlite.game.profile.Settings;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -106,15 +108,15 @@ class ProfileDAOTest {
         val dao = new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
 
         val size = dao.findAll().size();
-        dao.removeById(2);
+        dao.remove(new Profile(2, "Koira", new Settings(), false));
         assertEquals(size - 1, dao.findAll().size());
     }
 
     @Test
-    void removeByIDDoesNotLeaveStatisticsBehind() throws SQLException {
+    void removeDoesNotLeaveStatisticsBehind() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
         val dao = new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
-        dao.removeById(2);
+        dao.remove(new Profile(2, "Koira", new Settings(), false));
 
         try (val connection = database.getConnection();
              val statement = connection.prepareStatement(
@@ -127,12 +129,12 @@ class ProfileDAOTest {
     }
 
     @Test
-    void removeByIDRemovesNothingWhenGivenInvalidID() throws SQLException {
+    void removeRemovesNothingWhenGivenInvalidProfile() throws SQLException {
         val database = new Database(ROOT.resolve("test.db").toString());
         val dao = new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
 
         val size = dao.findAll().size();
-        dao.removeById(1337);
+        dao.remove(new Profile(1337, "INVALID", new Settings(), false));
         assertEquals(size, dao.findAll().size());
     }
 
@@ -151,7 +153,7 @@ class ProfileDAOTest {
             count = result.getInt("count");
         }
 
-        dao.removeById(1337);
+        dao.remove(new Profile(1337, "INVALID", new Settings(), false));
 
         try (val connection = database.getConnection();
              val statement = connection.prepareStatement(
@@ -220,6 +222,28 @@ class ProfileDAOTest {
         val dao = new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
 
         assertThrows(NullPointerException.class, () -> dao.createNew(null));
+    }
+
+
+    @Test
+    void createNewInitializesSettingsFile() throws SQLException {
+        val database = new Database(ROOT.resolve("test.db").toString());
+        val dao = new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
+
+        dao.createNew("TestPlayer");
+
+        assumeTrue(Files.exists(ROOT.resolve("TestPlayer.settings")));
+    }
+
+    @Test
+    void removeDoesNotLeaveSettingsFileBehind() throws SQLException {
+        val database = new Database(ROOT.resolve("test.db").toString());
+        val dao = new ProfileDAO(database, new SettingsDAO(ROOT.toString()));
+
+        val profile = dao.createNew("TestPlayer");
+
+        dao.remove(profile);
+        assertFalse(Files.exists(ROOT.resolve("TestPlayer.settings")));
     }
 
 

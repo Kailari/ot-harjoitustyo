@@ -64,10 +64,9 @@ public class ProfileSelectGameState extends GameState {
 
     private void onSelect(@NonNull ProfileMenuEvent.Select event) {
         try {
-            val profile = getGame().getProfileDao().findById(event.getId());
+            val profile = getGame().getProfileDao().findById(event.getProfile().getId());
 
             getGame().setActiveProfile(profile);
-            //getGame().changeState(new PlayGameState(new TurnObjectManager()));
             getGame().changeState(new MainMenuGameState());
         } catch (SQLException e) {
             ProfileSelectGameState.LOG.error("Selecting profile failed, trying to shut down gracefully.");
@@ -79,8 +78,8 @@ public class ProfileSelectGameState extends GameState {
 
     private void onRemove(@NonNull ProfileMenuEvent.Remove event) {
         try {
-            getGame().getProfileDao().removeById(event.getId());
-            getEventSystem().fire(new ProfileMenuEvent.Removed(event.getId()));
+            getGame().getProfileDao().remove(event.getProfile());
+            getEventSystem().fire(new ProfileMenuEvent.Removed(event.getProfile()));
         } catch (SQLException e) {
             ProfileSelectGameState.LOG.error("Creating profile failed, trying to shut down gracefully.");
             ProfileSelectGameState.LOG.error("Cause: {}", e.getMessage());

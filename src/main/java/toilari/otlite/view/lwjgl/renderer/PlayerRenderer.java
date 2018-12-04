@@ -4,11 +4,12 @@ import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.dao.TextureDAO;
 import toilari.otlite.game.util.Direction;
+import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.AttackAbility;
 import toilari.otlite.game.world.entities.characters.abilities.KickAbility;
 import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
-import toilari.otlite.game.world.entities.characters.abilities.components.AbstractAttackControllerComponent;
+import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbility;
 import toilari.otlite.game.world.level.Tile;
 import toilari.otlite.view.lwjgl.AnimatedSprite;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
@@ -62,19 +63,14 @@ public class PlayerRenderer extends CharacterRenderer {
             drawArrow(camera, character, x, y, direction, direction.ordinal());
         }
 
-        val kickComponent = character.getAbilities().getComponent(KickAbility.class);
-        if (kickComponent != null) {
-            drawKickVisualizer(camera, kickComponent);
-        }
-
-        val attackComponent = character.getAbilities().getComponent(AttackAbility.class);
-        if (attackComponent != null) {
-            drawKickVisualizer(camera, attackComponent);
+        val targetSelectorComponent = character.getAbilities().getComponent(TargetSelectorAbility.class);
+        if (targetSelectorComponent != null) {
+            val target = targetSelectorComponent.getTarget();
+            drawTargetSelector(camera, target);
         }
     }
 
-    private void drawKickVisualizer(LWJGLCamera camera, AbstractAttackControllerComponent component) {
-        val target = component.getTargetSelector().getTarget();
+    private void drawTargetSelector(LWJGLCamera camera, GameObject target) {
         if (target == null) {
             return;
         }

@@ -15,9 +15,10 @@ public class LWJGLCamera extends toilari.otlite.view.Camera {
 
     @NonNull private Matrix4f viewMatrix = new Matrix4f();
     @NonNull private float[] viewMatrixArr = new float[16];
-    @Getter private int viewportWidth;
-    @Getter private int viewportHeight;
     @Getter private final float pixelsPerUnit;
+
+    private int viewportWidth;
+    private int viewportHeight;
 
     @Getter private float zoom = 1.0f;
     private boolean viewDirty;
@@ -37,6 +38,14 @@ public class LWJGLCamera extends toilari.otlite.view.Camera {
      */
     @NonNull @Getter private float[] projectionMatrixArr = new float[16];
 
+
+    public float getViewportWidth() {
+        return this.viewportWidth / this.pixelsPerUnit;
+    }
+
+    public float getViewportHeight() {
+        return this.viewportHeight / this.pixelsPerUnit;
+    }
 
     /**
      * Hakee näkymämatriisin taulukkona. Taulukko on muotoa <code>float[16]</code>
@@ -101,7 +110,7 @@ public class LWJGLCamera extends toilari.otlite.view.Camera {
         if (this.viewDirty) {
             this.viewMatrix
                 .identity()
-                .translate(getPosition().x, this.getPosition().y, 0.0f)
+                .translate(getX(), getY(), 0.0f)
                 .scale(this.zoom)
                 .invert();
             this.viewMatrix.get(this.viewMatrixArr);

@@ -68,8 +68,8 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
         val mx = Input.getHandler().mouseX() / camera.getPixelsPerUnit();
         val my = Input.getHandler().mouseY() / camera.getPixelsPerUnit();
 
-        val sx = character.getX() - camera.getPosition().x;
-        val sy = character.getY() - camera.getPosition().y;
+        val sx = character.getX() - camera.getX();
+        val sy = character.getY() - camera.getY();
         val isHovering = mx >= sx && mx <= sx + this.context.width
             && my >= sy && my <= sy + this.context.height;
 

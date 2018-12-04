@@ -58,7 +58,18 @@ public class SettingsDAO {
         }
     }
 
+    /**
+     * Poistaa asetukset profiilin nimen perusteella.
+     *
+     * @param name profiilinimi
+     * @throws NullPointerException jos nimi on <code>null</code>
+     */
+    public void removeByName(@NonNull String name) {
+        val filename = nameToKey(name);
+        FileHelper.deleteFile(this.root.resolve(filename));
+    }
+
     private String nameToKey(@NonNull String name) {
-        return name.replaceAll("[^A-Za-z0-9 ]", "") + ".sav";
+        return name.replaceAll("[^A-Za-z0-9 ]", "") + ".settings";
     }
 }

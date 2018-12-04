@@ -3,7 +3,6 @@ package toilari.otlite.dao.util;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.File;
@@ -19,7 +18,6 @@ import java.util.stream.Stream;
 /**
  * Apuluokka tiedostojen luomista, poistamista ja etsimistä varten.
  */
-@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FileHelper {
     /**
@@ -28,8 +26,7 @@ public class FileHelper {
      *
      * @param path       polku josta etsitään
      * @param extensions tiedostopääte
-     * @return <code>Stream&lt;Path&gt;</code> jossa löydettyjen tiedostojen polut.
-     * Tyhjä jos tiedostoja ei löytynyt
+     * @return <code>Stream&lt;Path&gt;</code> jossa löydettyjen tiedostojen polut. Tyhjä jos tiedostoja ei löytynyt
      * @throws NullPointerException jos polku tai tiedostopääte on <code>null</code>
      */
     public static Stream<Path> discoverFiles(@NonNull Path path, String... extensions) {
@@ -40,7 +37,6 @@ public class FileHelper {
         try {
             return Files.find(path, 1, (p, attr) -> FileHelper.extensionFilter(extensions, p, attr));
         } catch (IOException e) {
-            LOG.error("Could not access path {}", path);
             return Arrays.stream(new Path[0]);
         }
     }
@@ -51,8 +47,7 @@ public class FileHelper {
      *
      * @param path     polku kansioon johon tiedosto luodaan
      * @param filename tiedoston nimi
-     * @return <code>true</code> kun tiedoston luonti onnistuu, muutoin
-     * <code>false</code>
+     * @return <code>true</code> kun tiedoston luonti onnistuu, muutoin <code>false</code>
      * @throws NullPointerException jos polku tai tiedostonimi on <code>null</code>
      */
     public static boolean createFile(@NonNull Path path, @NonNull String filename) {
@@ -63,9 +58,6 @@ public class FileHelper {
             Files.createFile(filePath);
             return true;
         } catch (IOException e) {
-            // This generally should not happen unless something really wacky is going on, or if thread gets
-            // SIGTERM'd mid-I/O or sth.
-            LOG.error("Could not create file or its parent directories: {}", e.getMessage());
             return false;
         }
     }
@@ -86,13 +78,11 @@ public class FileHelper {
      * Poistaa tiedoston ja kaikki sen sisältämät alihakemistot ja tiedostot.
      *
      * @param path Poistettavan hakemiston polku
-     * @return <code>true</code> jos poistaminen onnistuu, muutoin
-     * <code>false</code>
+     * @return <code>true</code> jos poistaminen onnistuu, muutoin <code>false</code>
      * @throws NullPointerException jos polku on <code>null</code>
      */
     public static boolean deleteDirectoryAndChildren(@NonNull Path path) {
         if (!Files.isDirectory(path)) {
-            LOG.error("Path to be deleted should point to a directory!");
             return false;
         }
 
@@ -104,7 +94,6 @@ public class FileHelper {
                 .forEach(File::delete);
             return true;
         } catch (IOException e) {
-            LOG.error("Could not delete file: {}", e.getMessage());
             return false;
         }
     }
@@ -122,5 +111,20 @@ public class FileHelper {
     private static boolean extensionFilter(String[] extensions, Path path, BasicFileAttributes attributes) {
         val pathStr = path.normalize().toString().toLowerCase();
         return attributes.isRegularFile() && Arrays.stream(extensions).anyMatch(extension -> pathStr.endsWith("." + extension));
+    }
+
+    /**
+     * Poistaa annetun tiedoston.
+     *
+     * @param path tiedoston polku
+     * @return <code>true</code> jos poistaminen onnistui
+     */
+    public static boolean deleteFile(@NonNull Path path) {
+        try {
+            Files.delete(path);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 }

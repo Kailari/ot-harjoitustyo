@@ -85,26 +85,30 @@ public class ProfileDAO {
     }
 
     /**
-     * Poistaa objektin sen ID:n perusteella.
+     * Poistaa profiilin.
      *
-     * @param id poistettavan objektin ID
+     * @param profile poistettava profiili
      * @throws SQLException jos tietokannan käsittelyssä tapahtuu virhe
      */
-    public void removeById(int id) throws SQLException {
+    public void remove(@NonNull Profile profile) throws SQLException {
+
+
         try (val connection = this.database.getConnection();
              val statement = connection.prepareStatement(
                  "DELETE FROM PlayerStatistics WHERE profile_id = ?")) {
-            statement.setInt(1, id);
+            statement.setInt(1, profile.getId());
             statement.executeUpdate();
         }
 
         try (val connection = this.database.getConnection();
              val statement = connection.prepareStatement(
                  "DELETE FROM Profiles WHERE id = ?")) {
-            statement.setInt(1, id);
+            statement.setInt(1, profile.getId());
 
             statement.executeUpdate();
         }
+
+        this.settingsDao.removeByName(profile.getName());
     }
 
     /**

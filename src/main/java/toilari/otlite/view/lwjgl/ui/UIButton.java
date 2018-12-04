@@ -1,9 +1,13 @@
-package toilari.otlite.view.lwjgl;
+package toilari.otlite.view.lwjgl.ui;
 
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.game.input.Input;
+import toilari.otlite.view.lwjgl.LWJGLCamera;
+import toilari.otlite.view.lwjgl.Sprite;
+import toilari.otlite.view.lwjgl.TextRenderer;
+import toilari.otlite.view.lwjgl.Texture;
 
 /**
  * Painike käyttöliittymässä.

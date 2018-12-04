@@ -24,17 +24,11 @@ public abstract class ProfileMenuEvent implements IEvent {
     }
 
     /**
-     * Viesti joka lähetetään kun profiilin valinta tai poistaminen epäonnistuu epäkelvollisen ID:n vuoksi.
-     */
-    public static class InvalidId extends ProfileMenuEvent {
-    }
-
-    /**
      * Viesti joka lähetetään kun profiili halutaan poistaa.
      */
     @RequiredArgsConstructor
     public static class Remove extends ProfileMenuEvent {
-        @Getter private final int id;
+        @Getter @NonNull private final Profile profile;
     }
 
     /**
@@ -42,7 +36,7 @@ public abstract class ProfileMenuEvent implements IEvent {
      */
     @RequiredArgsConstructor
     public static class Select extends ProfileMenuEvent {
-        @Getter private final int id;
+        @Getter @NonNull private final Profile profile;
     }
 
     /**
@@ -58,6 +52,6 @@ public abstract class ProfileMenuEvent implements IEvent {
      */
     @RequiredArgsConstructor
     public static class Removed extends ProfileMenuEvent {
-        @Getter private final int profileId;
+        @Getter private final Profile profile;
     }
 }
