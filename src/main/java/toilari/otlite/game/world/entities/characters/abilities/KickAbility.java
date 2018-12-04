@@ -11,13 +11,24 @@ import toilari.otlite.game.world.entities.characters.abilities.components.Abstra
 
 import java.util.Random;
 
+/**
+ * Hahmon hyökkäyskyky jolla hahmo voi potkia muita hahmoja tehden vahinkoa ja tönäisten niitä taaksepäin.
+ */
 public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAttackControllerComponent<KickAbility>> {
     private final Random random;
 
+    /**
+     * Luo uuden kyvyn.
+     */
     public KickAbility() {
         this(new Random());
     }
 
+    /**
+     * Luo uuden kyvyn.
+     *
+     * @param seed pseudosatunnaislukugeneraattorin siemenluku
+     */
     public KickAbility(long seed) {
         this(new Random(seed));
     }

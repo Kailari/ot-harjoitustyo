@@ -42,7 +42,16 @@ public class PlayGameState extends GameState {
 
         LOG.info("Initialization finished.");
 
+        LOG.info("Creating default level...");
         val characters = new CharacterDAO("content/characters/");
+        createCharacters(characters);
+
+        LOG.info("Level created.");
+
+        return false;
+    }
+
+    private void createCharacters(CharacterDAO characters) {
         this.player = characters.get("player");
         val eta = this.player.getAbilities().getComponent(EndTurnAbility.class);
         if (eta instanceof EndTurnControllerComponent.Player) {
@@ -64,8 +73,6 @@ public class PlayGameState extends GameState {
         var knight = characters.get("enemy_knight");
         this.world.getObjectManager().spawnTemplateAt(knight, 13, 2);
         this.world.getObjectManager().spawnTemplateAt(knight, 8, 4);
-
-        return false;
     }
 
     private void loadAssets() {

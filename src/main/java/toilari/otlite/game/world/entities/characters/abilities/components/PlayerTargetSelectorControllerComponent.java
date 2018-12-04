@@ -8,12 +8,20 @@ import toilari.otlite.game.input.Key;
 import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbility;
 
+/**
+ * Pelaajan kohteenvalintakyvyn ohjainkomponentti.
+ */
 @NoArgsConstructor
-public class PlayerTargetSelectorComponent extends TargetSelectorControllerComponent {
+public class PlayerTargetSelectorControllerComponent extends TargetSelectorControllerComponent {
 
     private final Key[] abilityKeys = {Key.ONE, Key.TWO, Key.THREE, Key.FOUR, Key.FIVE, Key.SIX, Key.SEVEN, Key.EIGHT, Key.NINE, Key.ZERO};
 
-    public PlayerTargetSelectorComponent(TargetSelectorControllerComponent template) {
+    /**
+     * Kopioi ohjainkomponentin templaatista.
+     *
+     * @param template templaatti josta kopioidaan
+     */
+    public PlayerTargetSelectorControllerComponent(TargetSelectorControllerComponent template) {
         super(template);
     }
 

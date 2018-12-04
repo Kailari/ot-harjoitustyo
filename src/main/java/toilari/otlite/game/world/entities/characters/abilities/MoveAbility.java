@@ -8,6 +8,9 @@ import toilari.otlite.game.world.entities.characters.abilities.components.MoveCo
  * Hahmon kyky liikkua.
  */
 public class MoveAbility extends AbstractAbility<MoveAbility, MoveControllerComponent> {
+    /**
+     * Luo uuden kyvyn.
+     */
     public MoveAbility() {
         super("Move");
     }

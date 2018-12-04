@@ -40,6 +40,13 @@ public enum Direction {
         return asLoopingIterator(NONE);
     }
 
+    /**
+     * Palauttaa suunnat loputtomana iteraattorina, aloittaen annetusta suunnasta. Annettu suunta on siis iteraattorin
+     * arvona ennen kun {@link Iterator#next()} kutsutaan ensimmäisen kerran.
+     *
+     * @param startingDirection suunta josta aloitetaan
+     * @return loputon iteraattori joka iteroi suuntia
+     */
     public static Iterator<Direction> asLoopingIterator(Direction startingDirection) {
         return new IterableDirection(true, startingDirection);
     }
@@ -48,7 +55,7 @@ public enum Direction {
         private final boolean looping;
         private Direction current;
 
-        public IterableDirection(boolean looping, Direction startingDirection) {
+        IterableDirection(boolean looping, Direction startingDirection) {
             this.looping = looping;
             this.current = startingDirection;
         }

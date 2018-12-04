@@ -1,20 +1,19 @@
 package toilari.otlite.game.world.entities.characters.abilities.components;
 
 import lombok.*;
-import toilari.otlite.game.input.Input;
-import toilari.otlite.game.input.Key;
 import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.entities.GameObject;
+import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.IAbility;
 import toilari.otlite.game.world.entities.characters.abilities.ITargetedAbility;
 import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbility;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Objects;
+import java.util.*;
 
+/**
+ * Pohjaluokka kohteenvalintakyvyn ohjainkomponenteille.
+ */
 @NoArgsConstructor
 public abstract class TargetSelectorControllerComponent extends AbstractControllerComponent<TargetSelectorAbility> {
     @Getter(AccessLevel.PROTECTED) private transient ITargetedAbility[] abilities;
@@ -24,10 +23,21 @@ public abstract class TargetSelectorControllerComponent extends AbstractControll
 
     private transient Iterator<Direction> directionIterator;
 
+    /**
+     * Onko annettu kyky aktiivinen eli ollaanko sille valitsemassa kohdetta.
+     *
+     * @param ability kyky jonka tila halutaan tarkistaa
+     * @return <code>true</code> jos annetulle kyvylle ollaan valitsemassa kohdetta, muulloin <code>false</code>
+     */
     public boolean isActive(IAbility ability) {
         return Objects.equals(this.active, ability);
     }
 
+    /**
+     * Asettaa annetun kyvyn aktiiviseksi.
+     *
+     * @param ability kyky jolle halutaan valita kohde
+     */
     public void setActive(ITargetedAbility ability) {
         if (!Arrays.asList(this.abilities).contains(ability)) {
             throw new IllegalStateException("Character tried to update targeting for ability it does not own.");
@@ -36,8 +46,7 @@ public abstract class TargetSelectorControllerComponent extends AbstractControll
         this.active = ability;
     }
 
-
-    protected TargetSelectorControllerComponent(TargetSelectorControllerComponent template) {
+    TargetSelectorControllerComponent(TargetSelectorControllerComponent template) {
         super(template);
     }
 
@@ -144,8 +153,18 @@ public abstract class TargetSelectorControllerComponent extends AbstractControll
         this.active = null;
     }
 
+    /**
+     * Ohjainkomponentti joka valitsee ensimmäiselle saatavilla olevalle, ei jäähtymässä olevalle hyökkäyskyvylle
+     * ensimmäisen löydetyn kohteen.
+     */
     @NoArgsConstructor
     public static class AlwaysAttackAdjacentIfPossible extends TargetSelectorControllerComponent {
+
+        /**
+         * Kopioi komponentin templaatista.
+         *
+         * @param template komponentti josta kopioidaan
+         */
         public AlwaysAttackAdjacentIfPossible(TargetSelectorControllerComponent template) {
             super(template);
         }
@@ -154,9 +173,11 @@ public abstract class TargetSelectorControllerComponent extends AbstractControll
         public void updateInput(@NonNull TargetSelectorAbility ability) {
             val world = getCharacter().getWorld();
             val manager = world.getObjectManager();
-            val player = manager.getGameState().getPlayer();
+            val player = manager.getGameState().getPlayer(); // TODO: Instead of targetting only player, determine by target candidate instead
 
-            setActive(0); // FIXME: Sets first ability as active (blindly assumes that first ability is the target selector)
+            if (findNewActiveAbility(manager)) {
+                return;
+            }
 
             for (val direction : Direction.asIterable()) {
                 val candidate = findTargetInDirection(direction);
@@ -167,6 +188,21 @@ public abstract class TargetSelectorControllerComponent extends AbstractControll
             }
 
             setTarget(null, Direction.NONE);
+        }
+
+        private boolean findNewActiveAbility(@NonNull TurnObjectManager manager) {
+            val activeCandidate = Arrays.stream(getAbilities())
+                .sorted(Comparator.comparingInt(IAbility::getPriority))
+                .filter(a -> !a.isOnCooldown() && manager.getRemainingActionPoints() >= a.getCost())
+                .findFirst();
+
+            if (!activeCandidate.isPresent()) {
+                this.setActive(-1);
+                return true;
+            }
+
+            this.setActive(activeCandidate.get());
+            return false;
         }
     }
 }

@@ -7,6 +7,9 @@ import toilari.otlite.game.world.entities.characters.abilities.components.EndTur
  * Hahmon kyky lopettaa vuoro.
  */
 public class EndTurnAbility extends AbstractAbility<EndTurnAbility, EndTurnControllerComponent> {
+    /**
+     * Luo uuden kyvyn.
+     */
     public EndTurnAbility() {
         super("End turn");
     }

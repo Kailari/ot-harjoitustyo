@@ -4,6 +4,9 @@ import lombok.NonNull;
 import toilari.otlite.game.world.entities.characters.abilities.components.TargetSelectorControllerComponent;
 
 public class TargetSelectorAbility extends AbstractAbility<TargetSelectorAbility, TargetSelectorControllerComponent> {
+    /**
+     * Luo uuden kyvyn.
+     */
     public TargetSelectorAbility() {
         super("Select Target");
     }
