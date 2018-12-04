@@ -23,6 +23,10 @@ Tarkemmin tarkasteltuna `Game` ei sisällä juuri lainkaan pelilogiikkaa. Pääl
 
 Itsessään `Game` tarjoaa vain metodit tilakoneen tilan vaihtamiseen ja hakemiseen, sekä nykyisen tilan päivittämiseen.
 
+Sekvenssikaavio nykyisen pelitilan vaihdosta uuteen:
+
+![Pelitilan vaihto](images/Pelitilan%20vaihto.png)
+
 ### GameState
 Varsinainen sovelluslogiikka on luokasta `GameState` perivissä konkreettisissa toteutuksissa. Esim. [`PlayGameState`](../src/main/java/toilari/otlite/game/PlayGameState.java) tarjoaa itse pelin toiminnallisuuden.
 
