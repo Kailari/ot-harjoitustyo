@@ -74,10 +74,10 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
             && my >= sy && my <= sy + this.context.height;
 
         if (isHovering) {
-            val size = 2;
+            val size = 3;
             val current = character.getHealth();
             val max = character.getAttributes().getMaxHealth(character.getLevels());
-            val str = current + "/" + max;
+            val str = String.format("%.1f/%.1f", current, max);
 
             val x = character.getX() + this.context.width / 2 - (size * str.length()) / 2;
             val y = character.getY() + this.context.height + 1;

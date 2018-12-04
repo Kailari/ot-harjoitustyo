@@ -23,7 +23,6 @@ public class MainMenuGameStateRenderer implements ILWJGLGameStateRenderer<MainMe
     private static final int BUTTON_TEXTURE_SIZE = 2;
     private static final int BUTTON_FONT_SIZE = 2;
     private static final int BUTTON_MARGIN = 1;
-    private static final int BUTTON_START_Y = 18;
 
     private static final float BUTTON_IDLE_R = 0.65f;
     private static final float BUTTON_IDLE_G = 0.65f;
@@ -60,11 +59,25 @@ public class MainMenuGameStateRenderer implements ILWJGLGameStateRenderer<MainMe
     }
 
     private void createButtons(MainMenuGameState state) {
-        addButton(state.getEventSystem(), "Continue", new MainMenuEvent.Continue());
-        addButton(state.getEventSystem(), "New Game", new MainMenuEvent.Continue());
-        addButton(state.getEventSystem(), "Bestiary", new MainMenuEvent.Continue());
-        addButton(state.getEventSystem(), "Settings", new MainMenuEvent.Continue());
+        addDisabledButton(state.getEventSystem(), "Continue", new MainMenuEvent.Continue());
+        addButton(state.getEventSystem(), "New Game", new MainMenuEvent.NewGame());
+        addDisabledButton(state.getEventSystem(), "Bestiary", new MainMenuEvent.Bestiary());
+        addDisabledButton(state.getEventSystem(), "Settings", new MainMenuEvent.Settings());
         addButton(state.getEventSystem(), "Quit Game", new MenuEvent.Quit());
+    }
+
+    private void addDisabledButton(EventSystem es, String label, IEvent onClick) {
+        val button = new UIButton(
+            BUTTON_WIDTH, BUTTON_HEIGHT,
+            BUTTON_TEXTURE_SIZE,
+            label,
+            this.uiTexture,
+            BUTTON_IDLE_R * 0.5f, BUTTON_IDLE_G * 0.5f, BUTTON_IDLE_B * 0.5f,
+            BUTTON_IDLE_R * 0.5f, BUTTON_IDLE_G * 0.5f, BUTTON_IDLE_B * 0.5f,
+            () -> { }
+        );
+
+        this.buttons.add(button);
     }
 
     private void addButton(EventSystem es, String label, IEvent onClick) {
@@ -84,7 +97,8 @@ public class MainMenuGameStateRenderer implements ILWJGLGameStateRenderer<MainMe
     @Override
     public void draw(@NonNull LWJGLCamera camera, @NonNull MainMenuGameState state) {
         val x = (camera.getViewportWidth() / camera.getPixelsPerUnit() / 2f) - (TITLE_STRING.length() / 2.0f) * TITLE_FONT_SIZE;
-        val y = 1f;
+        val y = 4f;
+
         this.textRenderer.draw(camera, x, y, 1.0f, 1.0f, 1.0f, TITLE_FONT_SIZE, TITLE_STRING);
 
         drawButtons(camera);
@@ -92,7 +106,7 @@ public class MainMenuGameStateRenderer implements ILWJGLGameStateRenderer<MainMe
 
     private void drawButtons(@NonNull LWJGLCamera camera) {
         val x = (camera.getViewportWidth() / camera.getPixelsPerUnit() - BUTTON_WIDTH) / 2.0f;
-        var y = BUTTON_START_Y;
+        var y = (camera.getViewportHeight() / camera.getPixelsPerUnit() - BUTTON_HEIGHT * this.buttons.size()) / 2.0f;
 
         for (int i = 0; i < this.buttons.size(); i++) {
             val button = this.buttons.get(i);

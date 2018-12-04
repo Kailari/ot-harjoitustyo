@@ -8,7 +8,7 @@ public class MainMenuGameState extends GameState {
     @Override
     public boolean init() {
         getEventSystem().subscribeTo(MenuEvent.Quit.class, (e) -> getGame().setRunning(false));
-        getEventSystem().subscribeTo(MainMenuEvent.Continue.class, (e) -> getGame().changeState(new PlayGameState(new TurnObjectManager())));
+        getEventSystem().subscribeTo(MainMenuEvent.NewGame.class, (e) -> getGame().changeState(new PlayGameState(new TurnObjectManager())));
         return false;
     }
 
