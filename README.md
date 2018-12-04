@@ -16,7 +16,7 @@ Hätä ei suinkaan ole tämän näköinen sillä useimpiin kehitysympäristöihi
 - [tuntikirjanpito](documentation/tuntikirjanpito.md)
 
 ## Releaset
-_Coming soon(ish)_
+[viikko 5 (_RELEASE 1_)](https://github.com/Kailari/ot-harjoitustyo/releases/tag/viikko5)
 
 ## Komentorivitoiminnot
 ### Testaus
