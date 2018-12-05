@@ -3,10 +3,7 @@ package toilari.otlite.dao.serialization;
 import com.google.gson.*;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import toilari.otlite.game.world.entities.characters.CharacterAbilities;
-import toilari.otlite.game.world.entities.characters.CharacterAttributes;
-import toilari.otlite.game.world.entities.characters.CharacterLevels;
-import toilari.otlite.game.world.entities.characters.CharacterObject;
+import toilari.otlite.game.world.entities.characters.*;
 import toilari.otlite.game.world.entities.characters.abilities.IAbility;
 import toilari.otlite.game.world.entities.characters.abilities.components.IControllerComponent;
 
@@ -24,7 +21,9 @@ public class CharacterAdapter implements JsonDeserializer<CharacterObject> {
 
         val characterAttributes = getAttributes(context, jsonObj);
         val characterLevels = getLevels(context, jsonObj);
-        val character = new CharacterObject(characterAttributes, characterLevels);
+        val characterInfo = getInfo(context, jsonObj);
+
+        val character = new CharacterObject(characterAttributes, characterLevels, characterInfo);
 
         val abilities = jsonObj.getAsJsonObject("abilities");
         if (abilities != null) {
@@ -47,6 +46,11 @@ public class CharacterAdapter implements JsonDeserializer<CharacterObject> {
     private CharacterAttributes getAttributes(JsonDeserializationContext context, JsonObject jsonObj) {
         CharacterAttributes attributes = context.deserialize(jsonObj.getAsJsonObject("attributes"), CharacterAttributes.class);
         return attributes == null ? new CharacterAttributes() : attributes;
+    }
+
+    private CharacterInfo getInfo(JsonDeserializationContext context, JsonObject jsonObj) {
+        CharacterInfo info = context.deserialize(jsonObj.getAsJsonObject("info"), CharacterInfo.class);
+        return info == null ? new CharacterInfo() : info;
     }
 
     private void deserializeAbilities(JsonDeserializationContext context, JsonObject abilities, CharacterObject character) {

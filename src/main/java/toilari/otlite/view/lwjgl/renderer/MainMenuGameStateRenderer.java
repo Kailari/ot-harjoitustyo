@@ -36,20 +36,26 @@ public class MainMenuGameStateRenderer implements ILWJGLGameStateRenderer<MainMe
     private static final String TITLE_STRING = "OT-LITE";
 
 
-    private final TextureDAO textures;
+    @NonNull private final TextureDAO textures;
+    @NonNull private final TextRenderer textRenderer;
 
-    private TextRenderer textRenderer;
     private Texture uiTexture;
 
     private List<UIButton> buttons;
 
+    /**
+     * Luo uuden päävalikon piirtäjän.
+     *
+     * @param textures tekstuuri-dao jolla tekstuurit ladataan
+     */
     public MainMenuGameStateRenderer(@NonNull TextureDAO textures) {
         this.textures = textures;
+        this.textRenderer = new TextRenderer(this.textures, 1, 16);
     }
 
     @Override
     public boolean init(@NonNull MainMenuGameState state) {
-        this.textRenderer = new TextRenderer(this.textures, 1, 16);
+        this.textRenderer.init();
         this.uiTexture = this.textures.get("ui.png");
 
         this.buttons = new ArrayList<>();
@@ -61,7 +67,7 @@ public class MainMenuGameStateRenderer implements ILWJGLGameStateRenderer<MainMe
     private void createButtons(MainMenuGameState state) {
         addDisabledButton(state.getEventSystem(), "Continue", new MainMenuEvent.Continue());
         addButton(state.getEventSystem(), "New Game", new MainMenuEvent.NewGame());
-        addDisabledButton(state.getEventSystem(), "Bestiary", new MainMenuEvent.Bestiary());
+        addButton(state.getEventSystem(), "Bestiary", new MainMenuEvent.Bestiary());
         addDisabledButton(state.getEventSystem(), "Settings", new MainMenuEvent.Settings());
         addButton(state.getEventSystem(), "Quit Game", new MenuEvent.Quit());
     }

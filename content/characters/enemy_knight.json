@@ -1,5 +1,8 @@
 {
   "rendererID": "dark_knight.json",
+  "info": {
+    "name": "Dark Knight"
+  },
   "attributes": {
     "baseActionPoints": 0,
     "baseHealth": 7.5

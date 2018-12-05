@@ -7,7 +7,6 @@ import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.AttackAbility;
-import toilari.otlite.game.world.entities.characters.abilities.KickAbility;
 import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
 import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbility;
 import toilari.otlite.game.world.level.Tile;
@@ -43,6 +42,7 @@ public class PlayerRenderer extends CharacterRenderer {
     public void destroy() {
         super.destroy();
         this.icons.destroy();
+        this.arrows.destroy();
     }
 
     @Override
@@ -76,8 +76,8 @@ public class PlayerRenderer extends CharacterRenderer {
         }
 
         val x = target.getX() + 2;
-        val y = target.getY() - 6 - (1.5f * (float) Math.sin((int) System.currentTimeMillis() / 125.0f));
-        this.arrows.draw(camera, x, y, 2, 0.25f, 0.65f, 0.25f);
+        val y = target.getY() - 6 - (1.5 * Math.sin(System.currentTimeMillis() / 75.0));
+        this.arrows.draw(camera, x, (float) y, 2, 0.25f, 0.65f, 0.25f);
     }
 
     private void drawArrow(@NonNull LWJGLCamera camera, @NonNull CharacterObject character, int x, int y, Direction direction, int frame) {

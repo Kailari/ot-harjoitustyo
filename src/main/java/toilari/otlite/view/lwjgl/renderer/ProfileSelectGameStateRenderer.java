@@ -53,13 +53,13 @@ public class ProfileSelectGameStateRenderer implements ILWJGLGameStateRenderer<P
     private static final String TITLE_STRING = "Select/Create a profile";
 
     @NonNull private final TextureDAO textureDAO;
+    @NonNull private final TextRenderer textRenderer;
 
     private Texture uiTexture;
     private UIButton createProfileButton;
     private List<UIButton> profileButtons;
     private List<UIButton> profileRemoveButtons;
     private List<Integer> profileIds;
-    private TextRenderer textRenderer;
 
     private ProfileSelectGameState state;
 
@@ -70,13 +70,14 @@ public class ProfileSelectGameStateRenderer implements ILWJGLGameStateRenderer<P
      */
     public ProfileSelectGameStateRenderer(@NonNull TextureDAO textureDAO) {
         this.textureDAO = textureDAO;
+        this.textRenderer = new TextRenderer(this.textureDAO, 1, 16);
     }
 
     @Override
     public boolean init(@NonNull ProfileSelectGameState state) {
         this.state = state;
+        this.textRenderer.init();
         this.uiTexture = this.textureDAO.get("ui.png");
-        this.textRenderer = new TextRenderer(this.textureDAO, 1, 16);
 
         if (refreshProfileList(state)) {
             return true;

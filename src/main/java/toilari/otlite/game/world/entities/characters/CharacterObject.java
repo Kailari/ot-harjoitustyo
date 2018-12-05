@@ -21,7 +21,6 @@ public class CharacterObject extends GameObject implements IHealthHandler {
     @Getter private transient int turnsTaken;
     @Getter private transient long deathTime;
 
-
     // Overrides IHealthHandler get/setHealth
     @Getter(onMethod = @__({@Override})) @Setter(onMethod = @__({@Override}))
     private float health;
@@ -29,6 +28,8 @@ public class CharacterObject extends GameObject implements IHealthHandler {
     @Getter private final CharacterAbilities abilities;
     @Getter private final CharacterAttributes attributes;
     @Getter private final CharacterLevels levels;
+    @Getter private final CharacterInfo info;
+
 
     /**
      * Lisää hahmolle uuden kyvyn.
@@ -47,12 +48,14 @@ public class CharacterObject extends GameObject implements IHealthHandler {
      *
      * @param attributes attribuuttien arvot
      * @param levels     attribuuttien tasot
+     * @param info       hahmon tiedot
      */
-    public CharacterObject(@NonNull CharacterAttributes attributes, @NonNull CharacterLevels levels) {
+    public CharacterObject(@NonNull CharacterAttributes attributes, @NonNull CharacterLevels levels, CharacterInfo info) {
         this.attributes = attributes;
         this.levels = levels;
 
         this.abilities = new CharacterAbilities();
+        this.info = info;
     }
 
     /**
@@ -63,6 +66,7 @@ public class CharacterObject extends GameObject implements IHealthHandler {
     public CharacterObject(@NonNull CharacterAttributes attributes) {
         this.attributes = attributes;
         this.levels = new CharacterLevels();
+        this.info = new CharacterInfo();
         this.abilities = new CharacterAbilities();
     }
 

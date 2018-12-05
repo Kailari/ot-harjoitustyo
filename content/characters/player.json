@@ -1,5 +1,8 @@
 {
   "rendererID": "player.json",
+  "info": {
+    "name": "Hero (you!)"
+  },
   "attributes": {
     "baseActionPoints": 1
   },

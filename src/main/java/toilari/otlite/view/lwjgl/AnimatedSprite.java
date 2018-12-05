@@ -1,10 +1,12 @@
 package toilari.otlite.view.lwjgl;
 
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Spriten laajennos joka tarjoaa helpon tavan animaatioiden käsittelyyn.
  */
+@Slf4j
 public class AnimatedSprite {
     private final Sprite[] frames;
 
@@ -46,6 +48,19 @@ public class AnimatedSprite {
      * @throws NullPointerException jos kamera on <code>null</code>
      */
     public void draw(@NonNull LWJGLCamera camera, float x, float y, int frame, float r, float g, float b) {
+        if (frame < 0 || frame >= this.frames.length) {
+            LOG.warn("Frame index {} is out of bounds, check your renderer definitions!", frame);
+            frame = 0;
+        }
         this.frames[frame].draw(camera, x, y, r, g, b);
+    }
+
+    /**
+     * Vapauttaa ladatut resurssit.
+     */
+    public void destroy() {
+        for (Sprite frame : this.frames) {
+            frame.destroy();
+        }
     }
 }

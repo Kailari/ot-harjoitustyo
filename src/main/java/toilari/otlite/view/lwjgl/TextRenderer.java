@@ -2,7 +2,6 @@ package toilari.otlite.view.lwjgl;
 
 import lombok.NonNull;
 import lombok.val;
-import lombok.var;
 import toilari.otlite.dao.TextureDAO;
 
 import java.util.HashMap;
@@ -12,7 +11,7 @@ import java.util.Map;
  * Piirtää tekstiä ruudulle.
  */
 public class TextRenderer {
-    private static final String AVAILABLE_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ.!?-+/\\";
+    private static final String AVAILABLE_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ.:!?-+/\\()[]<>";
     private static final Map<Character, Integer> CHAR_TO_FRAME = new HashMap<>();
 
     static {
@@ -21,11 +20,12 @@ public class TextRenderer {
         }
     }
 
-
+    @NonNull private final TextureDAO textures;
     private final int maxFontSize;
     private final int minFontSize;
 
-    private final AnimatedSprite[] font;
+    private Texture fontTexture;
+    private AnimatedSprite[] font;
 
     /**
      * Luo uuden piirtäjän.
@@ -36,15 +36,22 @@ public class TextRenderer {
      * @throws NullPointerException jos dao on <code>null</code>
      */
     public TextRenderer(@NonNull TextureDAO textures, int minFontSize, int maxFontSize) {
+        this.textures = textures;
         this.maxFontSize = maxFontSize;
         this.minFontSize = minFontSize;
+    }
 
-        val texture = textures.get("font.png");
-        int size = minFontSize;
 
-        this.font = new AnimatedSprite[maxFontSize - minFontSize + 1];
+    /**
+     * Alustaa piirtäjän ja lataa tarvittavat resurssit.
+     */
+    public void init() {
+        this.fontTexture = this.textures.get("font.png");
+        int size = this.minFontSize;
+
+        this.font = new AnimatedSprite[this.maxFontSize - this.minFontSize + 1];
         for (int i = 0; i < this.font.length; i++, size++) {
-            this.font[i] = new AnimatedSprite(texture, 42, size, size);
+            this.font[i] = new AnimatedSprite(this.fontTexture, AVAILABLE_CHARS.length(), size, size);
         }
     }
 
@@ -80,6 +87,16 @@ public class TextRenderer {
 
             this.font[size - 1].draw(camera, destX, destY, TextRenderer.CHAR_TO_FRAME.get(c), r, g, b);
             destX += size;
+        }
+    }
+
+    /**
+     * Vapauttaa piirtäjälle varatut resurssit.
+     */
+    public void destroy() {
+        this.fontTexture.destroy();
+        for (val as : this.font) {
+            as.destroy();
         }
     }
 }

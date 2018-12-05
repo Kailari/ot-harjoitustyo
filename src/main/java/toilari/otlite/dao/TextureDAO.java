@@ -60,6 +60,13 @@ public class TextureDAO extends CachingDAO<Texture, String> {
         return new Texture(width, height, handle);
     }
 
+    @Override
+    public Texture get(String key) {
+        val texture = super.get(key);
+        texture.init();
+        return texture;
+    }
+
     private static int generateGLTexture() {
         val handle = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, handle);

@@ -4,6 +4,7 @@ import lombok.val;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
 import toilari.otlite.game.profile.statistics.Statistics;
+import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.AbstractAttackAbility;
 
 /**

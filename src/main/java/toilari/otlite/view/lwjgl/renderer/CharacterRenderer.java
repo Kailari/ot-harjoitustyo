@@ -15,13 +15,12 @@ import toilari.otlite.view.renderer.IRenderer;
  */
 public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera> {
     @Getter(AccessLevel.PROTECTED) @NonNull private final TextureDAO textureDAO;
+    @Getter(AccessLevel.PROTECTED) @NonNull private final TextRenderer textRenderer;
 
     private final Context context;
 
     @Getter @Setter(AccessLevel.PROTECTED) private int currentFrameTime = 0;
     @Getter(AccessLevel.PROTECTED) private Texture texture;
-    @Getter(AccessLevel.PROTECTED) private Texture fontTexture;
-    @Getter(AccessLevel.PROTECTED) private TextRenderer textRenderer;
     @Getter(AccessLevel.PROTECTED) private AnimatedSprite sprite;
 
     /**
@@ -32,14 +31,14 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
      */
     public CharacterRenderer(TextureDAO textureDAO, Context context) {
         this.textureDAO = textureDAO;
+        this.textRenderer = new TextRenderer(this.textureDAO, 1, 16);
         this.context = context;
     }
 
     @Override
     public boolean init() {
+        this.textRenderer.init();
         this.texture = this.textureDAO.get(this.context.texture);
-        this.fontTexture = this.textureDAO.get("font.png");
-        this.textRenderer = new TextRenderer(this.textureDAO, 1, 16);
 
         this.sprite = new AnimatedSprite(this.texture, this.context.nFrames, this.context.width, this.context.height);
         return false;
@@ -106,6 +105,7 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
     @Override
     public void destroy() {
         this.texture.destroy();
-        this.fontTexture.destroy();
+        this.sprite.destroy();
+        this.textRenderer.destroy();
     }
 }

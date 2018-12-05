@@ -6,6 +6,7 @@ import lombok.val;
 import toilari.otlite.game.PlayGameState;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.characters.CharacterAttributes;
+import toilari.otlite.game.world.entities.characters.CharacterInfo;
 import toilari.otlite.game.world.entities.characters.CharacterLevels;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.level.Tile;
@@ -109,7 +110,8 @@ public class ObjectManager {
     public CharacterObject spawnTemplate(@NonNull CharacterObject template) {
         val attributes = new CharacterAttributes(template.getAttributes());
         val levels = new CharacterLevels(template.getLevels());
-        val instance = new CharacterObject(attributes, levels);
+        val info = new CharacterInfo(template.getInfo());
+        val instance = new CharacterObject(attributes, levels, info);
         instance.getAbilities().cloneAbilitiesFrom(template.getAbilities());
         instance.setRendererID(template.getRendererID());
         instance.setHealth(template.getHealth());

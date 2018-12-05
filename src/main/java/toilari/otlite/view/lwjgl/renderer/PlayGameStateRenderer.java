@@ -25,15 +25,13 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
     private static final int DAMAGE_LABEL_OFFSET_Y = 2;
     private static final int DAMAGE_LABEL_DISTANCE = 8;
 
-
-    // TODO: mapping class for these to get rid of unchecked code
-    private final TextureDAO textureDao;
-    private final RendererDAO renderers;
+    @NonNull private final TextureDAO textureDao; // TODO: mapping class for these to get rid of unchecked code
+    @NonNull private final RendererDAO renderers;
+    @NonNull private final TextRenderer textRenderer;
 
     private List<DamageInstance> damageInstances, damageInstancesSwap;
 
     private LevelRenderer levelRenderer;
-    private TextRenderer textRenderer;
     private UIAbilityBar abilityBar;
 
     /**
@@ -43,6 +41,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
      */
     public PlayGameStateRenderer(@NonNull TextureDAO textureDao) {
         this.textureDao = textureDao;
+        this.textRenderer = new TextRenderer(this.textureDao, 1, 16);
         this.levelRenderer = new LevelRenderer(this.textureDao, "tileset.png", 8, 8);
 
         this.renderers = new RendererDAO("content/renderers/", this.textureDao);
@@ -57,9 +56,9 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
             }
         }
 
+        this.textRenderer.init();
         this.damageInstances = new ArrayList<>();
         this.damageInstancesSwap = new ArrayList<>();
-        this.textRenderer = new TextRenderer(this.textureDao, 1, 16);
         state.getEventSystem().subscribeTo(CharacterEvent.Damage.class, this::onCharacterDamage);
 
         this.abilityBar = new UIAbilityBar(this.textureDao, this.textRenderer);

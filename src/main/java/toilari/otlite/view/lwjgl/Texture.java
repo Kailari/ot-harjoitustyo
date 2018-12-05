@@ -12,6 +12,8 @@ public class Texture {
     @Getter private final int width;
     @Getter private final int height;
 
+    private int referenceCounter = 0;
+
     private final int handle;
 
     /**
@@ -26,6 +28,13 @@ public class Texture {
         this.width = width;
         this.height = height;
         this.handle = handle;
+    }
+
+    /**
+     * Alustaa tekstuurin.
+     */
+    public void init() {
+        this.referenceCounter++;
     }
 
     /**
@@ -47,6 +56,9 @@ public class Texture {
      * Vapauttaa tekstuurille varatut resurssit.
      */
     public void destroy() {
-        glDeleteTextures(this.handle);
+        this.referenceCounter--;
+        if (this.referenceCounter == 0) {
+            glDeleteTextures(this.handle);
+        }
     }
 }

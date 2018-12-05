@@ -9,6 +9,7 @@ public class MainMenuGameState extends GameState {
     public boolean init() {
         getEventSystem().subscribeTo(MenuEvent.Quit.class, (e) -> getGame().setRunning(false));
         getEventSystem().subscribeTo(MainMenuEvent.NewGame.class, (e) -> getGame().changeState(new PlayGameState(new TurnObjectManager())));
+        getEventSystem().subscribeTo(MainMenuEvent.Bestiary.class, (e) -> getGame().changeState(new BestiaryGameState()));
         return false;
     }
 

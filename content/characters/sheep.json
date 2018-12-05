@@ -1,5 +1,8 @@
 {
   "rendererID": "sheep.json",
+  "info": {
+    "name": "Sheep (Baa!)"
+  },
   "attributes": {
     "baseActionPoints": 0,
     "baseHealth": 5.0

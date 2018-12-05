@@ -111,8 +111,8 @@ public class UIButton {
         this.bot.draw(camera, x + this.size, y + this.height - this.size, this.r, this.g, this.b);
         this.botRight.draw(camera, x + this.width - this.size, y + this.height - this.size, this.r, this.g, this.b);
 
-        val textX = x + Math.round(this.width / 2f - (this.text.length() / 2.0f) * fontSize);
-        val textY = y + Math.round(this.height / 2f - fontSize / 2f);
+        val textX = x + (this.width / 2f - (this.text.length() / 2.0f) * fontSize);
+        val textY = y + (this.height / 2f - fontSize / 2f);
         textRenderer.draw(camera, textX, textY, 1.0f, 1.0f, 1.0f, fontSize, this.text);
     }
 

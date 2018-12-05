@@ -2,11 +2,9 @@ package toilari.otlite;
 
 import lombok.val;
 import toilari.otlite.dao.TextureDAO;
-import toilari.otlite.game.Game;
-import toilari.otlite.game.MainMenuGameState;
-import toilari.otlite.game.PlayGameState;
-import toilari.otlite.game.ProfileSelectGameState;
+import toilari.otlite.game.*;
 import toilari.otlite.view.lwjgl.LWJGLGameRunner;
+import toilari.otlite.view.lwjgl.renderer.BestiaryGameStateRenderer;
 import toilari.otlite.view.lwjgl.renderer.MainMenuGameStateRenderer;
 import toilari.otlite.view.lwjgl.renderer.PlayGameStateRenderer;
 import toilari.otlite.view.lwjgl.renderer.ProfileSelectGameStateRenderer;
@@ -30,6 +28,7 @@ public class Launcher {
         stateRenderers.put(PlayGameState.class, new PlayGameStateRenderer(textureDao));
         stateRenderers.put(ProfileSelectGameState.class, new ProfileSelectGameStateRenderer(textureDao));
         stateRenderers.put(MainMenuGameState.class, new MainMenuGameStateRenderer(textureDao));
+        stateRenderers.put(BestiaryGameState.class, new BestiaryGameStateRenderer(textureDao));
 
 
         val app = new LWJGLGameRunner(
