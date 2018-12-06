@@ -78,7 +78,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
     }
 
     private void makeCameraFollowPlayer(@NonNull LWJGLCamera camera, @NonNull PlayGameState state) {
-        val player = state.getPlayer();
+        val player = state.getManager().getPlayer();
         val cameraX = player.getX() - camera.getViewportWidth() / 2;
         val cameraY = player.getY() - camera.getViewportHeight() / 2;
         camera.setPosition(cameraX, cameraY);
@@ -113,9 +113,9 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         val screenTopLeftY = camera.getY();
 
         drawTurnStatus(camera, state, screenTopLeftX, screenTopLeftY);
-        this.abilityBar.draw(camera, state.getPlayer().getAbilities(), screenTopLeftX, screenTopLeftY + camera.getViewportHeight() - 18);
+        this.abilityBar.draw(camera, state.getManager().getPlayer().getAbilities(), screenTopLeftX, screenTopLeftY + camera.getViewportHeight() - 18);
 
-        if (state.getPlayer().isDead()) {
+        if (state.getManager().getPlayer().isDead()) {
             drawDeathMessage(camera, state, screenTopLeftX, screenTopLeftY);
         }
 
@@ -128,7 +128,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
 
     private void drawCurrentTurn(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, float x, float y) {
         val str = state.getGame().getActiveProfile().getName()
-            + "\nTurn: " + state.getPlayer().getTurnsTaken();
+            + "\nTurn: " + state.getManager().getPlayer().getTurnsTaken();
         this.textRenderer.draw(camera, x, y, 0.25f, 0.65f, 0.25f, 4, str);
     }
 
@@ -139,15 +139,16 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
 
     private String resolveActionLabel(@NonNull PlayGameState state) {
         val world = state.getWorld();
+        val player = state.getManager().getPlayer();
 
         String apStr = "Waiting...";
-        if (world.getObjectManager().isCharactersTurn(state.getPlayer())) {
+        if (world.getObjectManager().isCharactersTurn(player)) {
             val remaining = world.getObjectManager().getRemainingActionPoints();
-            val total = state.getPlayer().getAttributes().getActionPoints(state.getPlayer().getLevels());
+            val total = player.getAttributes().getActionPoints(player.getLevels());
             if (remaining == 0) {
                 apStr = "Press <SPACE> to end turn";
             } else {
-                val targetSelector = state.getPlayer().getAbilities().getComponent(TargetSelectorAbility.class);
+                val targetSelector = player.getAbilities().getComponent(TargetSelectorAbility.class);
                 if (targetSelector != null && targetSelector.getTarget() != null) {
                     apStr = "Press <SPACE> to attack!";
                 } else {
@@ -166,7 +167,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         val w = camera.getViewportWidth();
         val h = camera.getViewportHeight();
 
-        val dt = Math.min(1, (System.currentTimeMillis() - state.getPlayer().getDeathTime()) / 5000.0f);
+        val dt = Math.min(1, (System.currentTimeMillis() - state.getManager().getPlayer().getDeathTime()) / 5000.0f);
         this.textRenderer.draw(
             camera,
             x + (w / 2f) - (len * size) / 2f,

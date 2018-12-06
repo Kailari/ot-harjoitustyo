@@ -92,12 +92,12 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
             float totalDuration = frameDuration * this.context.walkFrames.length;
             int subFrame = (int) ((time % totalDuration) / frameDuration);
 
-            frame = this.context.walkFrames[subFrame];
+            frame = this.context.walkFrames[Math.max(0, Math.min(this.context.nFrames, subFrame))];
         } else {
             float totalDuration = frameDuration * this.context.idleFrames.length;
             int subFrame = (int) ((time % totalDuration) / frameDuration);
 
-            frame = this.context.idleFrames[subFrame];
+            frame = this.context.idleFrames[Math.max(0, Math.min(this.context.nFrames, subFrame))];
         }
         return frame;
     }

@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class TileMapping {
     @NonNull private final Map<String, Byte> idToIndex = new HashMap<>();
-    @NonNull private Tile[] tiles;
+    @NonNull private final Map<Byte, Tile> indexToTile = new HashMap<>();
 
     /**
      * Luo hakutaulun johon lisätään annetulla DAO:lla löydetyt ruututyyppien
@@ -27,10 +27,25 @@ public class TileMapping {
      */
     public TileMapping(@NonNull IGetAllDAO<Tile> dao) {
         val loaded = dao.getAll();
-        this.tiles = loaded.toArray(new Tile[0]);
+        byte index = 0;
+        for (val tile : loaded) {
+            this.idToIndex.put(tile.getId(), index);
+            this.indexToTile.put(index, tile);
+            index++;
+        }
+    }
 
-        for (byte j = 0; j < this.tiles.length; j++) {
-            this.idToIndex.put(this.tiles[j].getId(), j);
+    public TileMapping(@NonNull IGetAllDAO<Tile> dao, Map<String, Byte> mapping) {
+        for (val entry : mapping.entrySet()) {
+            this.idToIndex.put(entry.getKey(), entry.getValue());
+        }
+
+        val loaded = dao.getAll();
+        for (val tile : loaded) {
+            val index = this.idToIndex.get(tile.getId());
+            if (index != null) {
+                this.indexToTile.put(index, tile);
+            }
         }
     }
 
@@ -65,7 +80,7 @@ public class TileMapping {
      * @return <code>null</code> jos tileä ei löydy, muutoin etsitty tile
      */
     public Tile getTile(byte index) {
-        return index >= 0 && index < this.tiles.length ? this.tiles[index] : null;
+        return this.indexToTile.get(index);
     }
 
     /**
@@ -74,6 +89,6 @@ public class TileMapping {
      * @return montako määrittelyä hakutaulussa on
      */
     public int getCount() {
-        return this.tiles.length;
+        return this.indexToTile.size();
     }
 }

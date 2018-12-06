@@ -5,48 +5,46 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import toilari.otlite.dao.serialization.IGetByIDDao;
 import toilari.otlite.dao.util.TextFileHelper;
-import toilari.otlite.game.world.entities.characters.CharacterAbilities;
-import toilari.otlite.game.world.entities.characters.CharacterObject;
+import toilari.otlite.game.world.level.LevelData;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Path;
 
+/**
+ * DAO karttojen lataamiseen levyltä.
+ */
 @Slf4j
-public class CharacterDAO extends AutoDiscoverFileDAO<CharacterObject> implements IGetByIDDao<CharacterObject> {
+public class LevelDAO extends AutoDiscoverFileDAO<LevelData> implements IGetByIDDao<LevelData> {
     private static final String[] EXTENSIONS = {"json"};
-    private final Gson gson;
+
+    @NonNull private final Gson gson;
 
     /**
-     * Luo uuden DAO:n hahmojen lataamiseksi määritystiedostoista.
+     * Luo uuden DAOn karttojen lataamiseksi.
      *
-     * @param root juurihakemisto josta hahmojen määrityksiä etsitään
+     * @param contentRoot juurihakemisto josta karttoja etsitään
      */
-    public CharacterDAO(@NonNull String root) {
-        super(root);
+    public LevelDAO(@NonNull String contentRoot) {
+        super(contentRoot);
         this.gson = new GsonBuilder()
-            .registerTypeAdapter(CharacterObject.class, CharacterAbilities.getAdapter())
             .create();
     }
 
     @NonNull
     @Override
     protected String[] getFileExtensions() {
-        return CharacterDAO.EXTENSIONS;
-    }
-
-
-    @Override
-    public CharacterObject getByID(@NonNull String path) {
-        return super.get(path + ".json");
+        return LevelDAO.EXTENSIONS;
     }
 
     @Override
-    protected CharacterObject load(Path path) {
+    protected LevelData load(Path path) {
         try (Reader reader = TextFileHelper.getReader(path)) {
-            return this.gson.fromJson(reader, CharacterObject.class);
+            val data = this.gson.fromJson(reader, LevelData.class);
+            return data;
         } catch (JsonSyntaxException e) {
             LOG.warn("Json syntax-error in file {}: {}", path, e.getMessage());
         } catch (IOException e) {
@@ -54,5 +52,10 @@ public class CharacterDAO extends AutoDiscoverFileDAO<CharacterObject> implement
         }
 
         return null;
+    }
+
+    @Override
+    public LevelData getByID(String id) {
+        return get(id + "." + LevelDAO.EXTENSIONS[0]);
     }
 }

@@ -173,7 +173,7 @@ public abstract class TargetSelectorControllerComponent extends AbstractControll
         public void updateInput(@NonNull TargetSelectorAbility ability) {
             val world = getCharacter().getWorld();
             val manager = world.getObjectManager();
-            val player = manager.getGameState().getPlayer(); // TODO: Instead of targetting only player, determine by target candidate instead
+            val player = manager.getPlayer(); // TODO: Instead of targetting only player, determine by target candidate instead
 
             if (findNewActiveAbility(manager)) {
                 return;

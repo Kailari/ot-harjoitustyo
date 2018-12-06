@@ -2,12 +2,15 @@ package toilari.otlite.game.world.level;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 /**
  * Yksi kartta pelimaailmassa.
  */
+@Slf4j
 public class Level {
+    private static final Tile OUT_OF_BOUNDS_TILE = new NormalTile(true, true, 0, "__out_of_bounds");
     @Getter private final int width;
     @Getter private final int height;
 
@@ -26,13 +29,15 @@ public class Level {
      */
     public Level(int width, int height, TileMapping tileMappings, byte[] tiles) {
         this.tileMappings = tileMappings;
-        this.tiles = tiles;
 
         this.width = width;
         this.height = height;
-        if (tiles.length != width * height) {
-            throw new IllegalArgumentException();
+        this.tiles = new byte[width * height];
+        if (tiles.length != this.tiles.length) {
+            LOG.error("Loaded level bounds ({}:{} => {} tiles) do not match with actual size! ({} tiles)", width, height, this.tiles.length, tiles.length);
         }
+
+        System.arraycopy(tiles, 0, this.tiles, 0, Math.min(this.tiles.length, tiles.length));
     }
 
     /**
@@ -41,14 +46,18 @@ public class Level {
      * @param x ruudun x-koordinaatti
      * @param y ruudun y-koordinaatti
      * @return annetuissa koordinaateissa olevan ruudun tyyppi
-     * @throws IllegalArgumentException jos koordinaatit ovat kartan ulkopuolella
      */
     public Tile getTileAt(int x, int y) {
+        if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
+            return Level.OUT_OF_BOUNDS_TILE;
+        }
+
         val index = (y * this.width) + x;
         val tileIndex = this.tiles[index];
         val tile = this.tileMappings.getTile(tileIndex);
         if (tile == null) {
-            throw new IllegalStateException("Unknown tile type detected at (" + x + ", " + y + ")");
+            LOG.error("Unknown tile index {} detected at ({}, {})", tileIndex, x, y);
+            return new NormalTile(false, false, 0, "__null");
         }
 
         return tile;

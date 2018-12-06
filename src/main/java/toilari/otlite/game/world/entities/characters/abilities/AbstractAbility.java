@@ -47,11 +47,7 @@ public abstract class AbstractAbility<A extends AbstractAbility<A, C>, C extends
         this.cooldownTimer--;
     }
 
-    protected boolean hasEventSystem() {
-        return getCharacter().getWorld().getObjectManager().getGameState() != null;
-    }
-
     protected EventSystem getEventSystem() {
-        return getCharacter().getWorld().getObjectManager().getGameState().getEventSystem();
+        return getCharacter().getWorld().getObjectManager().getEventSystem();
     }
 }

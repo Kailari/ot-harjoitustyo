@@ -2,7 +2,7 @@ package toilari.otlite.game.world.entity;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import toilari.otlite.game.PlayGameState;
+import toilari.otlite.game.GameState;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.ObjectManager;
@@ -112,14 +112,14 @@ class ObjectManagerTest {
     @Test
     void callingSetGameStateMultipleTimesThrows() {
         val manager = new ObjectManager();
-        manager.setGameState(new PlayGameState(new TurnObjectManager()));
-        assertThrows(IllegalStateException.class, () -> manager.setGameState(new PlayGameState(new TurnObjectManager())));
+        manager.setGameState(new TestGameState());
+        assertThrows(IllegalStateException.class, () -> manager.setGameState(new TestGameState()));
     }
 
     @Test
     void getGameStateReturnsCorrectStateAfterCallingSetGameState() {
         val manager = new ObjectManager();
-        val state = new PlayGameState(new TurnObjectManager());
+        val state = new TestGameState();
         manager.setGameState(state);
         assertEquals(state, manager.getGameState());
     }
@@ -131,6 +131,21 @@ class ObjectManagerTest {
         public void update() {
             super.update();
             this.called = true;
+        }
+    }
+
+    private static class TestGameState extends GameState {
+        @Override
+        public boolean init() {
+            return false;
+        }
+
+        @Override
+        public void update() {
+        }
+
+        @Override
+        public void destroy() {
         }
     }
 }

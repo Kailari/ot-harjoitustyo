@@ -97,7 +97,7 @@ public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C
             this.lastAttackKill = true;
         }
 
-        if (target instanceof CharacterObject && hasEventSystem()) {
+        if (target instanceof CharacterObject) {
             getEventSystem().fire(new CharacterEvent.Damage(getCharacter(), target, amount));
         }
     }

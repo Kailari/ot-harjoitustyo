@@ -2,8 +2,11 @@ package toilari.otlite.game.world.entities;
 
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.val;
+import toilari.otlite.game.GameState;
 import toilari.otlite.game.PlayGameState;
+import toilari.otlite.game.event.EventSystem;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.characters.CharacterAttributes;
 import toilari.otlite.game.world.entities.characters.CharacterInfo;
@@ -20,9 +23,27 @@ import java.util.stream.Collectors;
  * asianmukaisesti.
  */
 public class ObjectManager {
-    @Getter private PlayGameState gameState;
     @Getter @NonNull private final List<GameObject> objects = new ArrayList<>();
+    @Getter @Setter private CharacterObject player;
+    @Getter private GameState gameState;
+
+    private EventSystem eventSystem = null;
+
     private World world;
+
+    /**
+     * Hakee viestinvälitysjärjestelmän. Jos managerille ei ole asetettu pelitilaa, luodaan oma
+     * viestinvälitysjärjestelmä, muulloin käytetään pelitilan järjestelmää.
+     *
+     * @return käytettävä viestinvälitysjärjestelmä
+     */
+    public EventSystem getEventSystem() {
+        if (this.gameState == null) {
+            return this.eventSystem == null ? this.eventSystem = new EventSystem() : this.eventSystem;
+        }
+
+        return this.gameState.getEventSystem();
+    }
 
     /**
      * Asettaa aktiivisen pelitilan. Voidaan asettaa vain kerran, uudelleenkutsu aiheuttaa keskeytyksen.
@@ -30,7 +51,7 @@ public class ObjectManager {
      *
      * @param state aktiivinen pelitila
      */
-    public void setGameState(@NonNull PlayGameState state) {
+    public void setGameState(@NonNull GameState state) {
         if (this.gameState != null) {
             throw new IllegalStateException("Trying to re-set containing GameState!");
         }
@@ -69,11 +90,6 @@ public class ObjectManager {
         for (val object : this.objects) {
             if (!object.isRemoved()) {
                 object.update();
-            }
-
-            // Stop updating if gameobject shutdown the game
-            if (getGameState() != null && !getGameState().getGame().isRunning()) {
-                return;
             }
         }
 
