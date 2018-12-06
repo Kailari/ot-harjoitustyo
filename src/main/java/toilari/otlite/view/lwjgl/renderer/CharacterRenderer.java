@@ -1,6 +1,9 @@
 package toilari.otlite.view.lwjgl.renderer;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.val;
 import toilari.otlite.dao.TextureDAO;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
@@ -19,7 +22,6 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
 
     private final Context context;
 
-    @Getter @Setter(AccessLevel.PROTECTED) private int currentFrameTime = 0;
     @Getter(AccessLevel.PROTECTED) private Texture texture;
     @Getter(AccessLevel.PROTECTED) private AnimatedSprite sprite;
 
@@ -49,7 +51,7 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
         val isOwnTurn = character.getWorld().getObjectManager().isCharactersTurn(character);
         val hasActionPoints = character.getWorld().getObjectManager().getRemainingActionPoints() > 0;
 
-        int frame = getFrame(isOwnTurn, hasActionPoints);
+        int frame = getFrame(isOwnTurn, hasActionPoints, character);
 
         float r, g, b;
         if (this.context.color != null && this.context.color.length == 3) {
@@ -84,10 +86,10 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
         }
     }
 
-    private int getFrame(boolean isOwnTurn, boolean hasActionPoints) {
+    private int getFrame(boolean isOwnTurn, boolean hasActionPoints, CharacterObject character) {
         int frame;
-        int time = (int) System.currentTimeMillis();
-        float frameDuration = this.context.framesPerSecond == 0 ? 0 : 1000f / this.context.framesPerSecond;
+        float time = character.getTimeAlive();
+        float frameDuration = this.context.framesPerSecond == 0 ? 0 : 1.0f / this.context.framesPerSecond;
         if (isOwnTurn && hasActionPoints) {
             float totalDuration = frameDuration * this.context.walkFrames.length;
             int subFrame = (int) ((time % totalDuration) / frameDuration);

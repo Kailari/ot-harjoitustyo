@@ -27,7 +27,7 @@ class PlayerEndTurnAbilityTest {
         manager.spawn(character);
 
         manager.spendActionPoints(manager.getRemainingActionPoints());
-        manager.update();
+        manager.update(1.0f);
         assertEquals(0, manager.getTotalTurn());
     }
 
@@ -45,7 +45,7 @@ class PlayerEndTurnAbilityTest {
         manager.spawn(character);
 
         manager.spendActionPoints(manager.getRemainingActionPoints());
-        manager.update();
+        manager.update(1.0f);
         assertEquals(1, manager.getTotalTurn());
     }
 
@@ -60,7 +60,7 @@ class PlayerEndTurnAbilityTest {
         character.addAbility(new EndTurnAbility(), new EndTurnControllerComponent.Player());
         manager.spawn(character);
 
-        manager.update();
+        manager.update(1.0f);
         assertEquals(1, manager.getTotalTurn());
     }
 
@@ -75,9 +75,9 @@ class PlayerEndTurnAbilityTest {
         character.addAbility(new EndTurnAbility(), new EndTurnControllerComponent.Player());
         manager.spawn(character);
 
-        manager.update();
+        manager.update(1.0f);
         Input.getHandler().update();
-        manager.update();
+        manager.update(1.0f);
 
         assertEquals(1, manager.getTotalTurn());
     }

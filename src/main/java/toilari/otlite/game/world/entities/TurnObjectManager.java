@@ -86,8 +86,8 @@ public class TurnObjectManager extends ObjectManager {
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void update(float delta) {
+        super.update(delta);
 
         if (this.characters.isEmpty()) {
             return;

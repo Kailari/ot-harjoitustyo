@@ -24,8 +24,10 @@ public abstract class GameState {
 
     /**
      * Päivittää pelin tilan.
+     *
+     * @param delta viimeisimmästä päivityksestä kulunut aika
      */
-    public abstract void update();
+    public abstract void update(float delta);
 
     /**
      * Tuhoaa pelitilan. Kutsutaan kerran kun pelitila poistuu käytöstä.

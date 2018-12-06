@@ -144,7 +144,7 @@ class GameObjectTest {
 
         world.getObjectManager().spawn(obj);
         obj.remove();
-        world.getObjectManager().update();
+        world.getObjectManager().update(1.0f);
         assertThrows(IllegalStateException.class, () -> world.getObjectManager().spawn(obj));
     }
 
@@ -158,7 +158,7 @@ class GameObjectTest {
         world.getObjectManager().spawn(obj);
         obj.remove();
 
-        assertThrows(IllegalStateException.class, obj::update);
+        assertThrows(IllegalStateException.class, () -> obj.update(1.0f));
     }
 
     @Test
@@ -168,7 +168,7 @@ class GameObjectTest {
         val world = new World(manager);
         manager.init(world);
 
-        assertThrows(IllegalStateException.class, obj::update);
+        assertThrows(IllegalStateException.class, () -> obj.update(1.0f));
     }
 
     private static class TestGameObject extends GameObject {

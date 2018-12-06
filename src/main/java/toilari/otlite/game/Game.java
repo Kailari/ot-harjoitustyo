@@ -113,14 +113,15 @@ public class Game {
     /**
      * Kutsutaan toistuvasti niin kauan kuin peli on käynnissä.
      *
+     * @param delta viimeisimmästä päivityksestä kulunut aika
      * @throws IllegalStateException jos {@link #isRunning()} on <code>false</code>
      */
-    public void update() {
+    public void update(float delta) {
         if (!isRunning()) {
             throw new IllegalStateException("Game updated while not running!");
         }
 
-        this.currentGameState.update();
+        this.currentGameState.update(delta);
     }
 
     /**

@@ -274,7 +274,7 @@ class TurnObjectManagerTest {
             } while (characters[j].isRemoved());
 
 
-            manager.update();
+            manager.update(1.0f);
         }
     }
 
@@ -318,7 +318,7 @@ class TurnObjectManagerTest {
             } while (characters[j].isRemoved());
 
 
-            manager.update();
+            manager.update(1.0f);
         }
     }
 
@@ -333,7 +333,7 @@ class TurnObjectManagerTest {
         manager.spawn(b = new FakeCharacterObject());
         a.remove();
 
-        manager.update();
+        manager.update(1.0f);
 
         assertTrue(manager.isCharactersTurn(b));
     }

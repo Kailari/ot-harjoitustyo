@@ -153,7 +153,7 @@ class GameTest {
         val game = new Game(state, "target/test-temp/profiles.db");
 
         game.init();
-        game.update();
+        game.update(1.0f);
         assertTrue(state.update);
     }
 
@@ -161,7 +161,7 @@ class GameTest {
     void updateThrowsIfNotInitialized() {
         val game = new Game(new TestGameState(), "target/test-temp/profiles.db");
 
-        assertThrows(IllegalStateException.class, game::update);
+        assertThrows(IllegalStateException.class, () -> game.update(1.0f));
     }
 
     @Test
@@ -169,7 +169,7 @@ class GameTest {
         val game = new Game(new TestGameState(), "target/test-temp/profiles.db");
 
         game.changeState(new TestGameState());
-        assertThrows(IllegalStateException.class, game::update);
+        assertThrows(IllegalStateException.class, () -> game.update(1.0f));
     }
 
     @Test
@@ -197,7 +197,7 @@ class GameTest {
         }
 
         @Override
-        public void update() {
+        public void update(float delta) {
             this.update = true;
         }
 

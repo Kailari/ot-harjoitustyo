@@ -48,7 +48,7 @@ class ObjectManagerTest {
         val obj = new TestGameObject();
 
         world.getObjectManager().spawn(obj);
-        world.update();
+        world.update(1.0f);
 
         assertTrue(obj.called);
     }
@@ -63,7 +63,7 @@ class ObjectManagerTest {
             objects[i] = new TestGameObject();
             world.getObjectManager().spawn(objects[i]);
         }
-        world.update();
+        world.update(1.0f);
 
         val spawned = world.getObjectManager().getObjects();
         assertTrue(Arrays.stream(objects).allMatch(spawned::contains));
@@ -83,7 +83,7 @@ class ObjectManagerTest {
         for (int i = 0; i < 1000; i += 2) {
             objects[i].remove();
         }
-        world.update();
+        world.update(1.0f);
 
         val spawned = world.getObjectManager().getObjects();
         for (int i = 0; i < 1000; i++) {
@@ -128,8 +128,8 @@ class ObjectManagerTest {
         private boolean called;
 
         @Override
-        public void update() {
-            super.update();
+        public void update(float delta) {
+            super.update(delta);
             this.called = true;
         }
     }
@@ -141,7 +141,7 @@ class ObjectManagerTest {
         }
 
         @Override
-        public void update() {
+        public void update(float delta) {
         }
 
         @Override

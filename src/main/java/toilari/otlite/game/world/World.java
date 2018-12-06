@@ -97,8 +97,10 @@ public class World {
 
     /**
      * Päivittää pelimaailman.
+     *
+     * @param delta viimeisimmästä päivityksestä kulunut aika
      */
-    public void update() {
-        this.objectManager.update();
+    public void update(float delta) {
+        this.objectManager.update(delta);
     }
 }

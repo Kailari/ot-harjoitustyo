@@ -34,7 +34,7 @@ public class ProfileSelectGameState extends GameState {
     }
 
     @Override
-    public void update() {
+    public void update(float delta) {
     }
 
     @Override

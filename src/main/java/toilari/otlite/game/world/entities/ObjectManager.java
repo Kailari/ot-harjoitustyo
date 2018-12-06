@@ -85,11 +85,12 @@ public class ObjectManager {
 
     /**
      * Päivittää kaikki olemassaolevat objektit.
+     * @param delta viimeisimmästä päivityksestä kulunut aika
      */
-    public void update() {
+    public void update(float delta) {
         for (val object : this.objects) {
             if (!object.isRemoved()) {
-                object.update();
+                object.update(delta);
             }
         }
 

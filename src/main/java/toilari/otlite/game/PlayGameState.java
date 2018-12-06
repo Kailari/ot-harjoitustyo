@@ -62,8 +62,8 @@ public class PlayGameState extends GameState {
     }
 
     @Override
-    public void update() {
-        this.world.update();
+    public void update(float delta) {
+        this.world.update(delta);
     }
 
     @Override

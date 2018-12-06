@@ -11,6 +11,7 @@ import java.util.Objects;
 
 public class GameObject {
     private static int idCounter;
+    @Getter private transient float timeAlive;
 
     @Getter @Setter private String rendererID;
 
@@ -69,7 +70,7 @@ public class GameObject {
     }
 
     /**
-     * Merkitsee peliobjektin poistetuksi. Poistettujen objektien {@link #update()}-metodeja ei kutsuta ja
+     * Merkitsee peliobjektin poistetuksi. Poistettujen objektien {@link #update(float)}-metodeja ei kutsuta ja
      * ne poistetaan kun kaikki objektit on päivitetty, ennen seuraavaa ruudun piirtämistä.
      */
     public void remove() {
@@ -100,8 +101,9 @@ public class GameObject {
 
     /**
      * Päivittää peliobjektin tilan.
+     * @param delta viimeisimmästä päivityksestä kulunut aika
      */
-    public void update() {
+    public void update(float delta) {
         if (!this.spawned) {
             throw new IllegalStateException("Upadate called for object not yet spawned!");
         }
@@ -110,6 +112,7 @@ public class GameObject {
             throw new IllegalStateException("Update called after object was flagged for removal!");
         }
 
+        this.timeAlive += delta;
     }
 
     @Override

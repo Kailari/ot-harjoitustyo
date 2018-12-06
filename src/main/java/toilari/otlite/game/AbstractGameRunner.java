@@ -97,9 +97,15 @@ public abstract class AbstractGameRunner<T extends Camera> {
         this.camera = createCamera();
         Input.init(createInputHandler());
 
+        long time = System.currentTimeMillis();
         while (this.game.isRunning()) {
+            long current = System.currentTimeMillis();
+            long elapsed = current - time;
+            float delta = elapsed / 1000.0f;
+            time = current;
+
             Input.getHandler().update();
-            this.game.update();
+            this.game.update(delta);
             display(this.camera);
         }
         this.game.destroy();
