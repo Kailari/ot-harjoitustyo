@@ -5,6 +5,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import toilari.otlite.game.event.CharacterEvent;
 import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.IHealthHandler;
 import toilari.otlite.game.world.entities.TurnObjectManager;
@@ -137,6 +138,7 @@ public class CharacterObject extends GameObject implements IHealthHandler {
     public void remove() {
         this.deathTime = System.currentTimeMillis();
         super.remove();
+        getWorld().getObjectManager().getEventSystem().fire(new CharacterEvent.Died(this));
     }
 
     private <A extends IAbility<A, C>, C extends IControllerComponent<A>> boolean handleAbility(@NonNull TurnObjectManager turnManager, @NonNull A ability) {

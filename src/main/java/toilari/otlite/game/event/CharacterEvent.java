@@ -8,9 +8,17 @@ import toilari.otlite.game.world.entities.characters.CharacterObject;
 
 public class CharacterEvent implements IEvent {
     @RequiredArgsConstructor
-    public static class Damage implements IEvent {
+    public static class Damage extends CharacterEvent {
         @Getter @NonNull private final CharacterObject attacker;
         @Getter @NonNull private final GameObject target;
         @Getter private final float amount;
+    }
+
+    /**
+     * Viesti joka lähetetään kun pelaaja kuolee.
+     */
+    @RequiredArgsConstructor
+    public static class Died extends CharacterEvent {
+        @Getter private final CharacterObject character;
     }
 }

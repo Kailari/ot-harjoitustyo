@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import toilari.otlite.dao.IGetAllDAO;
 import toilari.otlite.dao.serialization.IGetByIDDao;
+import toilari.otlite.game.event.PlayEvent;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
@@ -26,8 +27,10 @@ public class PlayGameState extends GameState {
     /**
      * Luo uuden pelitila-instanssin.
      *
-     * @param manager vuoro/peliobjektimanageri
-     * @param levels  dao jolla kartat saadaan ladattua
+     * @param manager    vuoro/peliobjektimanageri
+     * @param tiles      dao jolla ruututyypit saadaan valittua
+     * @param characters dao jolla hahmot ladataan
+     * @param levels     dao jolla kartat saadaan ladattua
      * @throws NullPointerException jos piirtäjä tai objektimanageri on <code>null</code>
      */
     public PlayGameState(@NonNull TurnObjectManager manager, @NonNull IGetAllDAO<Tile> tiles, @NonNull IGetByIDDao<CharacterObject> characters, @NonNull IGetByIDDao<LevelData> levels) {
@@ -52,6 +55,8 @@ public class PlayGameState extends GameState {
         changeLevel(levelId);
 
         LOG.info("Initialization finished.");
+
+        getEventSystem().subscribeTo(PlayEvent.ReturnToMenuAfterLoss.class, (e) -> getGame().changeState(new MainMenuGameState()));
         return false;
     }
 

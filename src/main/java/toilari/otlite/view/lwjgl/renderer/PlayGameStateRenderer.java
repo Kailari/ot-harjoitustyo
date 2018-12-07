@@ -2,34 +2,27 @@ package toilari.otlite.view.lwjgl.renderer;
 
 import lombok.NonNull;
 import lombok.val;
-import lombok.var;
 import toilari.otlite.dao.RendererDAO;
 import toilari.otlite.dao.TextureDAO;
 import toilari.otlite.game.PlayGameState;
-import toilari.otlite.game.event.CharacterEvent;
-import toilari.otlite.game.world.entities.IHealthHandler;
+import toilari.otlite.game.event.PlayEvent;
+import toilari.otlite.game.input.Input;
+import toilari.otlite.game.input.Key;
 import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbility;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.TextRenderer;
 import toilari.otlite.view.lwjgl.ui.UIAbilityBar;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Piirtäjä pelitilan piirtämiseen. Vastaa maailman
  */
 public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameState> {
-    private static final int DAMAGE_LABEL_DURATION = 1500;
-    private static final int DAMAGE_LABEL_OFFSET_X = 2;
-    private static final int DAMAGE_LABEL_OFFSET_Y = 2;
-    private static final int DAMAGE_LABEL_DISTANCE = 8;
-
-    @NonNull private final TextureDAO textureDao; // TODO: mapping class for these to get rid of unchecked code
+    @NonNull private final TextureDAO textureDao;
     @NonNull private final RendererDAO renderers;
     @NonNull private final TextRenderer textRenderer;
+    @NonNull private final DamagePopupRenderer damagePopupRenderer;
 
-    private List<DamageInstance> damageInstances, damageInstancesSwap;
+    private PlayGameState state;
 
     private LevelRenderer levelRenderer;
     private UIAbilityBar abilityBar;
@@ -46,10 +39,14 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
 
         this.renderers = new RendererDAO("content/renderers/", this.textureDao);
         this.renderers.discoverAndLoadAll();
+
+        this.damagePopupRenderer = new DamagePopupRenderer();
     }
 
     @Override
     public boolean init(@NonNull PlayGameState state) {
+        this.state = state;
+
         for (val renderer : this.renderers.getAll()) {
             if (renderer.init()) {
                 return true;
@@ -57,13 +54,17 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         }
 
         this.textRenderer.init();
-        this.damageInstances = new ArrayList<>();
-        this.damageInstancesSwap = new ArrayList<>();
-        state.getEventSystem().subscribeTo(CharacterEvent.Damage.class, this::onCharacterDamage);
-
+        this.damagePopupRenderer.init(state);
         this.abilityBar = new UIAbilityBar(this.textureDao, this.textRenderer);
 
         return this.levelRenderer.init();
+    }
+
+    @Override
+    public void destroy(@NonNull PlayGameState state) {
+        this.levelRenderer.destroy();
+        this.abilityBar.destroy();
+        this.state = null;
     }
 
     @Override
@@ -73,7 +74,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         drawWorld(camera, state);
         postDrawWorld(camera, state);
 
-        drawPopupTexts(camera);
+        this.damagePopupRenderer.draw(camera, this.textRenderer);
         drawUI(camera, state);
     }
 
@@ -168,83 +169,30 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         val h = camera.getViewportHeight();
 
         val dt = Math.min(1, (System.currentTimeMillis() - state.getManager().getPlayer().getDeathTime()) / 5000.0f);
-        this.textRenderer.draw(
-            camera,
+        this.textRenderer.draw(camera,
             x + (w / 2f) - (len * size) / 2f,
             y + (h / 2f) - (size / 2f) + ((h / 2f + size) - dt * (h / 2f + size)),
             0.65f, 0.25f, 0.25f,
-            size,
-            ded);
-    }
+            size, ded);
 
-    private void drawPopupTexts(@NonNull LWJGLCamera camera) {
-        this.damageInstancesSwap.clear();
-        for (val instance : this.damageInstances) {
-            if (System.currentTimeMillis() > instance.timestamp + instance.duration) {
-                continue;
-            }
-
-            this.damageInstancesSwap.add(instance);
-            drawPopupText(camera, instance);
+        if (1.0f - dt < 0.001f) {
+            handleReturnToMenu(camera, x, y, size, w, h);
         }
-
-        val tmp = this.damageInstances;
-        this.damageInstances = this.damageInstancesSwap;
-        this.damageInstancesSwap = tmp;
     }
 
-    private void drawPopupText(@NonNull LWJGLCamera camera, DamageInstance instance) {
-        int size = 4;
-        float dt = (System.currentTimeMillis() - instance.timestamp) / (float) instance.duration;
-        var offsetY = -dt * PlayGameStateRenderer.DAMAGE_LABEL_DISTANCE;
-        var offsetX = 0f;
+    private void handleReturnToMenu(@NonNull LWJGLCamera camera, float x, float y, int size, float w, float h) {
+        val continueStr = "Press <SPACE> to return to menu";
+        val continueLen = continueStr.length();
+        val continueSize = 3;
+        this.textRenderer.draw(camera,
+            x + (w / 2.0f) - (continueLen * continueSize) / 2.0f,
+            y + (h / 2.0f) + (size / 2.0f) + 0.5f,
+            0.85f, 0.85f, 0.85f,
+            continueSize, continueStr
+        );
 
-        String msg;
-        if (instance.killingBlow) {
-            if (instance.amount > 99999f) {
-                msg = "AAaAaa!";
-                size = 3;
-                offsetX -= 9;
-            } else {
-                msg = "rekt";
-                offsetX -= 6;
-            }
-        } else {
-            msg = String.valueOf(Math.round(instance.amount));
-        }
-
-        this.textRenderer.draw(camera, instance.x + offsetX, instance.y + offsetY, 0.8f, 0.1f, 0.1f, size, msg);
-    }
-
-    private void onCharacterDamage(@NonNull CharacterEvent.Damage event) {
-        val x = event.getTarget().getX() + PlayGameStateRenderer.DAMAGE_LABEL_OFFSET_X;
-        val y = event.getTarget().getY() + PlayGameStateRenderer.DAMAGE_LABEL_OFFSET_Y;
-        val killingBlow = event.getTarget() instanceof IHealthHandler && ((IHealthHandler) event.getTarget()).isDead();
-        this.damageInstances.add(new DamageInstance(event.getAmount(), x, y, System.currentTimeMillis(), PlayGameStateRenderer.DAMAGE_LABEL_DURATION, killingBlow));
-    }
-
-
-    @Override
-    public void destroy(@NonNull PlayGameState state) {
-        this.levelRenderer.destroy();
-        this.abilityBar.destroy();
-    }
-
-    private static class DamageInstance {
-        private final long timestamp;
-        private final long duration;
-        private final float amount;
-        private final boolean killingBlow;
-        private final int x;
-        private final int y;
-
-        DamageInstance(float amount, int x, int y, long timestamp, int duration, boolean killingBlow) {
-            this.amount = amount;
-            this.x = x;
-            this.y = y;
-            this.timestamp = timestamp;
-            this.duration = duration;
-            this.killingBlow = killingBlow;
+        if (Input.getHandler().isKeyPressed(Key.SPACE)) {
+            this.state.getEventSystem().fire(new PlayEvent.ReturnToMenuAfterLoss());
         }
     }
 }

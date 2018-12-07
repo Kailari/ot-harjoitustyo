@@ -102,6 +102,8 @@ public class MainMenuGameStateRenderer implements ILWJGLGameStateRenderer<MainMe
 
     @Override
     public void draw(@NonNull LWJGLCamera camera, @NonNull MainMenuGameState state) {
+        camera.setPosition(0.0f, 0.0f);
+
         val x = (camera.getViewportWidth() / 2f) - (TITLE_STRING.length() / 2.0f) * TITLE_FONT_SIZE;
         val y = 4f;
 

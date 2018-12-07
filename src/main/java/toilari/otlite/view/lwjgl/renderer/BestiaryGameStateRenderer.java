@@ -51,6 +51,7 @@ public class BestiaryGameStateRenderer implements ILWJGLGameStateRenderer<Bestia
     private static final float SELECT_BUTTON_HOVER_B = 1.0f;
 
     private static final int SELECT_BUTTON_MARGIN = 1;
+    private static final int SELECT_BUTTON_HORIZONTAL_MARGIN = 2;
 
     @NonNull private final TextureDAO textures;
     @NonNull private final CharacterDAO characters;
@@ -114,7 +115,7 @@ public class BestiaryGameStateRenderer implements ILWJGLGameStateRenderer<Bestia
 
     private void createButtons(@NonNull BestiaryGameState state) {
         createStaticButtons(state);
-        createCharacterButtons();
+        createCharacterButtons(state);
     }
 
     private void createStaticButtons(@NonNull BestiaryGameState state) {
@@ -128,21 +129,24 @@ public class BestiaryGameStateRenderer implements ILWJGLGameStateRenderer<Bestia
             () -> state.getEventSystem().fire(new BestiaryEvent.Return()));
     }
 
-    private void createCharacterButtons() {
+    private void createCharacterButtons(@NonNull BestiaryGameState state) {
         for (val entry : this.characterEntries) {
-            createCharacterButton(entry);
+            createCharacterButton(entry, state);
         }
     }
 
-    private void createCharacterButton(@NonNull UICharacterEntry entry) {
+    private void createCharacterButton(@NonNull UICharacterEntry entry, @NonNull BestiaryGameState state) {
         this.characterButtons.add(new UIButton(
             SELECT_BUTTON_WIDTH, SELECT_BUTTON_HEIGHT,
             SELECT_BUTTON_TEXTURE_SIZE,
-            entry.getName(),
+            entry.getCharacter().getInfo().getName(),
             this.uiTexture,
             SELECT_BUTTON_IDLE_R, SELECT_BUTTON_IDLE_G, SELECT_BUTTON_IDLE_B,
             SELECT_BUTTON_HOVER_R, SELECT_BUTTON_HOVER_G, SELECT_BUTTON_HOVER_B,
-            () -> this.activeEntry = entry));
+            () -> {
+                state.setActiveCharacter(entry.getCharacter());
+                this.activeEntry = entry;
+            }));
     }
 
     @Override
@@ -155,14 +159,48 @@ public class BestiaryGameStateRenderer implements ILWJGLGameStateRenderer<Bestia
             screenTopLeftY + camera.getViewportHeight() - 2 - RETURN_BUTTON_HEIGHT);
 
         if (this.activeEntry != null) {
-            val x = screenTopLeftX + camera.getViewportWidth() / 2.0f - 4;
-            val y = screenTopLeftY + camera.getViewportHeight() / 2.0f - 4;
-            this.activeEntry.drawPortrait(camera, x, y);
+            val portraitSize = 8;
+            drawActiveEntryPortrait(camera,
+                screenTopLeftX + SELECT_BUTTON_WIDTH / 2.0f + SELECT_BUTTON_HORIZONTAL_MARGIN - portraitSize / 2.0f,
+                screenTopLeftY + camera.getViewportHeight() / 4.0f - portraitSize / 2.0f);
+            drawActiveEntryStats(camera,
+                screenTopLeftX + SELECT_BUTTON_HORIZONTAL_MARGIN * 2 + SELECT_BUTTON_WIDTH,
+                screenTopLeftY + 2);
         }
 
         for (int i = 0; i < this.characterButtons.size(); i++) {
-            this.characterButtons.get(i).draw(camera, this.textRenderer, SELECT_BUTTON_FONT_SIZE, screenTopLeftX + 2, screenTopLeftY + camera.getViewportHeight() / 2.0f + 2 + i * (SELECT_BUTTON_HEIGHT + SELECT_BUTTON_MARGIN));
+            this.characterButtons.get(i).draw(camera, this.textRenderer, SELECT_BUTTON_FONT_SIZE,
+                screenTopLeftX + 2,
+                screenTopLeftY + camera.getViewportHeight() / 2.0f + 2 + i * (SELECT_BUTTON_HEIGHT + SELECT_BUTTON_MARGIN));
         }
+    }
+
+    private void drawActiveEntryStats(@NonNull LWJGLCamera camera, float x, float y) {
+        val info = this.activeEntry.getCharacter().getInfo();
+        val attr = this.activeEntry.getCharacter().getAttributes();
+        val lvls = this.activeEntry.getCharacter().getLevels();
+
+        this.textRenderer.draw(camera, x, y, 1.0f, 1.0f, 1.0f, 4, info.getName());
+
+        val rowHeight = 3.5f;
+        int i = 0;
+        drawStatEntry(camera, x + 1, y + 6 + (i++ * rowHeight), 3, "Health", String.valueOf(attr.getMaxHealth(lvls)));
+        drawStatEntry(camera, x + 1, y + 6 + (i++ * rowHeight), 3, "Attack Damage", String.valueOf(attr.getAttackDamage(lvls)));
+        drawStatEntry(camera, x + 1, y + 6 + (i++ * rowHeight), 3, "Armor", String.valueOf(attr.getArmor(lvls)));
+        drawStatEntry(camera, x + 1, y + 6 + (i++ * rowHeight), 3, "AP", String.valueOf(attr.getActionPoints(lvls)));
+    }
+
+    private void drawStatEntry(@NonNull LWJGLCamera camera, float x, float y, int fontsize, String title, String value) {
+        val maxNumberOfChars = (int) Math.ceil((camera.getViewportWidth() - x - 3) / fontsize);
+        val titleNumberOfChars = title.length() + 2;
+        val numberOfSpaces = maxNumberOfChars - (titleNumberOfChars);
+
+        val format = "%s: %" + numberOfSpaces + "s";
+        this.textRenderer.draw(camera, x, y, 1.0f, 1.0f, 1.0f, fontsize, String.format(format, title, value));
+    }
+
+    private void drawActiveEntryPortrait(@NonNull LWJGLCamera camera, float x, float y) {
+        this.activeEntry.drawPortrait(camera, x, y);
     }
 
     @Override

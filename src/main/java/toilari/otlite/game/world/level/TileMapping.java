@@ -35,6 +35,12 @@ public class TileMapping {
         }
     }
 
+    /**
+     * Luo uuden hakutaulun.
+     *
+     * @param dao     dao jolla ruututyypit ladataan
+     * @param mapping olemassaoleva hakutaulu jolla indeksit määritetään
+     */
     public TileMapping(@NonNull IGetAllDAO<Tile> dao, Map<String, Byte> mapping) {
         for (val entry : mapping.entrySet()) {
             this.idToIndex.put(entry.getKey(), entry.getValue());
