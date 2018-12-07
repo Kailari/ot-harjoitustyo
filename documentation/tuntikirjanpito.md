@@ -37,4 +37,6 @@
 |30.11|    2 h | Pelilogiikkaa ja siivoilua. |
 | 3.12|    3 h | Käyttöliittymän siistimistä ja joitain pikkujuttuja ennen releasea. |
 | 4.12|    1 h | Pientä siistimistä. |
-| **yhteensä** | 82 h ||
+| 6.12|    2 h | Karttojen laataaminen tiedostosta. |
+| 7.12|    1 h | Käyttöliittymää kuntoon ja kulmien viilailua. |
+| **yhteensä** | 85 h ||
