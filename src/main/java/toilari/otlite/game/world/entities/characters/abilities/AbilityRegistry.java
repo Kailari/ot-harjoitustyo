@@ -39,6 +39,24 @@ public class AbilityRegistry {
     }
 
     /**
+     * Lisää uuden kyvyn rekisteriin. Vain rekisteröityjä kykyjä voidaan ladata tiedostosta. Hyväksyy vain kykyjä ja
+     * komponentteja joiden tyypit ovat keskenään yhteensopivia.
+     *
+     * @param key            kyvyn tunniste jota käytetään avaimena määritystiedostossa
+     * @param abilityClass   kyvyn toteuttava luokka
+     * @param abilityFactory tehdas jolla kyvyn instansseja voidaan tuottaa
+     * @param <A>            kyvyn tyyppi
+     * @param <C>            kyvyn ohjainkomponentin tyyppi
+     * @return kyvyn rekisteri-instanssi jota voidaan käyttää komponenttien rekisteröintiin
+     */
+    private static <A extends IAbility<A, C>, C extends IControllerComponent<A>> AbilityComponentEntry<A, C> register(String key, Class<? extends A> abilityClass, Supplier<A> abilityFactory) {
+        val entry = new AbilityComponentEntry<A, C>(abilityClass, abilityFactory);
+        ABILITY_ENTRIES_BY_KEY.put(key, entry);
+        ABILITY_ENTRIES_BY_CLASS.put(abilityClass, entry);
+        return entry;
+    }
+
+    /**
      * Hakee tunnistetta vastaavan kyvyn luokan.
      *
      * @param key kyvyn tunniste
@@ -62,23 +80,15 @@ public class AbilityRegistry {
     }
 
     /**
-     * Lisää uuden kyvyn rekisteriin. Vain rekisteröityjä kykyjä voidaan ladata tiedostosta. Hyväksyy vain kykyjä ja
-     * komponentteja joiden tyypit ovat keskenään yhteensopivia.
+     * Hakee komponentille tehtaan jolla annetuntyyppinen komponentti voidaan luoda.
      *
-     * @param key            kyvyn tunniste jota käytetään avaimena määritystiedostossa
-     * @param abilityClass   kyvyn toteuttava luokka
-     * @param abilityFactory tehdas jolla kyvyn instansseja voidaan tuottaa
-     * @param <A>            kyvyn tyyppi
-     * @param <C>            kyvyn ohjainkomponentin tyyppi
-     * @return kyvyn rekisteri-instanssi jota voidaan käyttää komponenttien rekisteröintiin
+     * @param abilityTemplate   kykytemplaatti jota vastaavista komponenteista etsitään
+     * @param componentTemplate komponenttitemplaatti jota etsitään
+     * @param <A>               kyvyn tyyppi
+     * @param <C>               komponentin tyyppi
+     * @return <code>null</code> jos komponenttia vastaavaa tehdasta ei löydy, muulloin löydetty tehdas
+     * @throws NullPointerException jos kumpikaan templaateista on <code>null</code>
      */
-    public static <A extends IAbility<A, C>, C extends IControllerComponent<A>> AbilityComponentEntry<A, C> register(String key, Class<? extends A> abilityClass, Supplier<A> abilityFactory) {
-        val entry = new AbilityComponentEntry<A, C>(abilityClass, abilityFactory);
-        ABILITY_ENTRIES_BY_KEY.put(key, entry);
-        ABILITY_ENTRIES_BY_CLASS.put(abilityClass, entry);
-        return entry;
-    }
-
     public static <A extends IAbility<A, C>, C extends IControllerComponent<A>> Function<C, C> getComponentInstanceFactory(@NonNull A abilityTemplate, @NonNull C componentTemplate) {
         val abilityClass = abilityTemplate.getClass();
         AbilityComponentEntry<A, C> entry = getAbilityComponentEntry(abilityClass);
@@ -91,7 +101,16 @@ public class AbilityRegistry {
         return factories.get(componentTemplate.getClass());
     }
 
-    public static <A extends IAbility<A, C>, C extends IControllerComponent<A>> Supplier<A> getAbilityInstanceFactory(A abilityTemplate) {
+    /**
+     * Hakee kyvylle tehtaan jolla annetuntyyppinen kyky voidaan luoda.
+     *
+     * @param abilityTemplate kykytemplaatti jota vastaavaa tehdasta etsitään
+     * @param <A>             kyvyn tyyppi
+     * @param <C>             komponentin tyyppi
+     * @return <code>null</code> jos kykyä vastaavaa tehdasta ei löydy, muulloin löydetty tehdas
+     * @throws NullPointerException jos templaatti on <code>null</code>
+     */
+    public static <A extends IAbility<A, C>, C extends IControllerComponent<A>> Supplier<A> getAbilityInstanceFactory(@NonNull A abilityTemplate) {
         val abilityClass = abilityTemplate.getClass();
         AbilityComponentEntry<A, C> entry = getAbilityComponentEntry(abilityClass);
         if (entry == null) {
