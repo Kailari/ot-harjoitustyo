@@ -54,7 +54,7 @@ public abstract class AbstractAttackControllerComponent<A extends AbstractAttack
 
     @Override
     public boolean wantsPerformOn(GameObject target, Direction direction) {
-        return direction != Direction.NONE;
+        return target != null && direction != Direction.NONE;
     }
 
     @Override

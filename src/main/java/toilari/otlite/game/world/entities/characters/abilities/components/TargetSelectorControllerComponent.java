@@ -23,8 +23,6 @@ public abstract class TargetSelectorControllerComponent extends AbstractControll
     @Getter private transient GameObject target;
     @Getter private transient Direction targetDirection;
 
-    private transient Iterator<Direction> directionIterator;
-
     /**
      * Onko annettu kyky aktiivinen eli ollaanko sille valitsemassa kohdetta.
      *
@@ -90,22 +88,11 @@ public abstract class TargetSelectorControllerComponent extends AbstractControll
         this.targetDirection = Direction.NONE;
     }
 
-    protected void findNewTarget() {
-        if (this.target == null) {
-            this.directionIterator = Direction.asLoopingIterator();
-        }
-
-        this.targetDirection = this.directionIterator.next();
-        for (int i = 0; i < 4; i++, this.targetDirection = this.directionIterator.next()) {
-            this.target = findTargetInDirection(this.targetDirection);
-
-            if (this.target != null) {
-                return;
-            }
-        }
-
-        this.targetDirection = Direction.NONE;
+    @Override
+    public void reset() {
         this.target = null;
+        this.active = null;
+        this.targetDirection = Direction.NONE;
     }
 
     protected GameObject findTargetInDirection(Direction direction) {
@@ -124,6 +111,11 @@ public abstract class TargetSelectorControllerComponent extends AbstractControll
         if (targetCandidate != null
             && ability.canPerformOn(targetCandidate, direction)
             && component.wantsPerformOn(targetCandidate, direction)) {
+
+            if (targetCandidate instanceof CharacterObject) {
+                return ((CharacterObject) targetCandidate).isDead() ? null : targetCandidate;
+            }
+
             return targetCandidate;
         }
 
@@ -133,13 +125,5 @@ public abstract class TargetSelectorControllerComponent extends AbstractControll
     protected void setTarget(GameObject target, Direction direction) {
         this.target = target;
         this.targetDirection = direction;
-        this.directionIterator = Direction.asLoopingIterator(direction);
-    }
-
-    @Override
-    public void reset() {
-        this.target = null;
-        this.targetDirection = Direction.NONE;
-        this.active = null;
     }
 }

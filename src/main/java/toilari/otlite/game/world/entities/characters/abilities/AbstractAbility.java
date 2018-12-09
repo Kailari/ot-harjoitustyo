@@ -19,8 +19,7 @@ public abstract class AbstractAbility<A extends AbstractAbility<A, C>, C extends
     }
 
     @Override
-    public void init(@NonNull CharacterObject character, int priority) {
-        this.priority = priority;
+    public void init(@NonNull CharacterObject character) {
         this.character = character;
     }
 

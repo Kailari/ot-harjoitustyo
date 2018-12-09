@@ -1,5 +1,8 @@
 package toilari.otlite.fake;
 
+import lombok.NonNull;
+import toilari.otlite.game.util.Direction;
+import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.characters.abilities.AbstractAttackAbility;
 
 public class FakeAttackAbility extends AbstractAttackAbility<FakeAttackAbility, FakeAttackControllerComponent> {
@@ -14,6 +17,15 @@ public class FakeAttackAbility extends AbstractAttackAbility<FakeAttackAbility, 
         super("fakeAttack");
         this.cost = cost;
         this.cooldown = cooldown;
+    }
+
+    public static FakeAttackAbility createWithoutTargetValidation(int cost, int cooldown) {
+        return new FakeAttackAbility(cost, cooldown) {
+            @Override
+            public boolean canPerformOn(GameObject target, @NonNull Direction direction) {
+                return true;
+            }
+        };
     }
 
     @Override

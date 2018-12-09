@@ -64,7 +64,7 @@ public class CharacterObject extends GameObject implements IHealthHandler {
         this.health = getAttributes().getMaxHealth(this.levels);
 
         for (val ability : this.abilities.getAbilitiesSortedByPriority()) {
-            ability.init(this, 0);
+            ability.init(this);
             this.abilities.getComponentResponsibleFor(ability).init(this);
         }
     }

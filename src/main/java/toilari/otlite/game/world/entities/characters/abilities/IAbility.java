@@ -20,9 +20,8 @@ public interface IAbility<A extends IAbility<A, C>, C extends IControllerCompone
      * Alustaa kyvyn ja asetaa hahmon jonka kyky tämä on.
      *
      * @param character hahmo jonka kyky tämä on
-     * @param priority  kyvyn prioriteetti
      */
-    void init(@NonNull CharacterObject character, int priority);
+    void init(@NonNull CharacterObject character);
 
     /**
      * Asettaa kyvyn prioriteetin.

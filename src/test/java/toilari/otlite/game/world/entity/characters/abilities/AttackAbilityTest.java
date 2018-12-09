@@ -10,17 +10,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class AttackAbilityTest {
     @Test
     void getCooldownLengthMatchesCharacterAttributes() {
-        val character = new FakeCharacterObject();
+        val character = FakeCharacterObject.create();
         val ability = new AttackAbility();
-        ability.init(character, 0);
+        ability.init(character);
         assertEquals(character.getAttributes().getAttackCooldown(), ability.getCooldownLength());
     }
 
     @Test
     void getCostMatchesCharacterAttributes() {
-        val character = new FakeCharacterObject();
+        val character = FakeCharacterObject.create();
         val ability = new AttackAbility();
-        ability.init(character, 0);
+        ability.init(character);
         assertEquals(character.getAttributes().getAttackCost(), ability.getCost());
     }
 }

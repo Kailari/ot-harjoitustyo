@@ -25,7 +25,7 @@ class TurnObjectManagerTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacterObject(new CharacterAttributes(
+        val character = FakeCharacterObject.createWithAttributes(new CharacterAttributes(
             1,
             0,
             1,
@@ -59,7 +59,7 @@ class TurnObjectManagerTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacterObject();
+        val character = FakeCharacterObject.create();
         manager.spawn(character);
 
         assertThrows(IllegalArgumentException.class, () -> manager.spendActionPoints(100));
@@ -71,7 +71,7 @@ class TurnObjectManagerTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacterObject();
+        val character = FakeCharacterObject.create();
         manager.spawn(character);
 
         assertThrows(IllegalArgumentException.class, () -> manager.spendActionPoints(-1));
@@ -83,7 +83,7 @@ class TurnObjectManagerTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacterObject();
+        val character = FakeCharacterObject.create();
         manager.spawn(character);
 
         manager.spendActionPoints(1);
@@ -96,7 +96,7 @@ class TurnObjectManagerTest {
 
     @Test
     void isCharactersTurnRetunsFalseWhenThereAreNoCharacters() {
-        assertFalse(new TurnObjectManager().isCharactersTurn(new FakeCharacterObject()));
+        assertFalse(new TurnObjectManager().isCharactersTurn(FakeCharacterObject.create()));
     }
 
     @Test
@@ -110,7 +110,7 @@ class TurnObjectManagerTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacterObject();
+        val character = FakeCharacterObject.create();
         manager.nextTurn();
         manager.nextTurn();
         manager.nextTurn();
@@ -126,7 +126,7 @@ class TurnObjectManagerTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacterObject();
+        val character = FakeCharacterObject.create();
         manager.spawn(character);
 
         assertEquals(character, manager.getActiveCharacter());
@@ -138,7 +138,7 @@ class TurnObjectManagerTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacterObject();
+        val character = FakeCharacterObject.create();
         manager.spawn(character);
 
         for (int i = 0; i < 100; i++) {
@@ -153,9 +153,9 @@ class TurnObjectManagerTest {
         val world = new World(manager);
         world.init();
 
-        val a = new FakeCharacterObject();
-        val b = new FakeCharacterObject();
-        val c = new FakeCharacterObject();
+        val a = FakeCharacterObject.create();
+        val b = FakeCharacterObject.create();
+        val c = FakeCharacterObject.create();
         manager.spawn(a);
         manager.spawn(b);
         manager.spawn(c);
@@ -179,9 +179,9 @@ class TurnObjectManagerTest {
         val world = new World(manager);
         world.init();
 
-        val a = new FakeCharacterObject();
-        val b = new FakeCharacterObject();
-        val c = new FakeCharacterObject();
+        val a = FakeCharacterObject.create();
+        val b = FakeCharacterObject.create();
+        val c = FakeCharacterObject.create();
         manager.spawn(a);
         manager.spawn(b);
         manager.spawn(c);
@@ -204,7 +204,7 @@ class TurnObjectManagerTest {
         val characters = new FakeCharacterObject[1000];
         int nRemoved = 0;
         for (int i = 0; i < characters.length; i++) {
-            characters[i] = new FakeCharacterObject();
+            characters[i] = FakeCharacterObject.create();
             manager.spawn(characters[i]);
         }
 
@@ -242,7 +242,7 @@ class TurnObjectManagerTest {
         val characters = new FakeCharacterObject[1000];
         int nRemoved = 0;
         for (int i = 0; i < characters.length; i++) {
-            characters[i] = new FakeCharacterObject();
+            characters[i] = FakeCharacterObject.create();
             manager.spawn(characters[i]);
         }
 
@@ -287,7 +287,7 @@ class TurnObjectManagerTest {
         val characters = new FakeCharacterObject[1000];
         int nRemoved = 0;
         for (int i = 0; i < characters.length; i++) {
-            characters[i] = new FakeCharacterObject();
+            characters[i] = FakeCharacterObject.create();
             manager.spawn(characters[i]);
         }
 
@@ -329,8 +329,8 @@ class TurnObjectManagerTest {
         world.init();
 
         CharacterObject a, b;
-        manager.spawn(a = new FakeCharacterObject());
-        manager.spawn(b = new FakeCharacterObject());
+        manager.spawn(a = FakeCharacterObject.create());
+        manager.spawn(b = FakeCharacterObject.create());
         a.remove();
 
         manager.update(1.0f);

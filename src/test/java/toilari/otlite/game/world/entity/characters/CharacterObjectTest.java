@@ -22,7 +22,7 @@ class CharacterObjectTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacterObject();
+        val character = FakeCharacterObject.create();
         manager.spawn(character);
         assertFalse(character.isDead());
     }
@@ -33,7 +33,7 @@ class CharacterObjectTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacterObject();
+        val character = FakeCharacterObject.create();
         manager.spawn(character);
         assertEquals(10.0f, character.getHealth());
     }
@@ -44,7 +44,7 @@ class CharacterObjectTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacterObject();
+        val character = FakeCharacterObject.create();
         manager.spawn(character);
         character.setHealth(0.0f);
 

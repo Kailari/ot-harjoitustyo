@@ -2,10 +2,7 @@ package toilari.otlite.game.world.entity.characters.abilities;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import toilari.otlite.fake.FakeAttackAbility;
-import toilari.otlite.fake.FakeAttackControllerComponent;
-import toilari.otlite.fake.FakeCharacterObject;
-import toilari.otlite.fake.FakeTargetSelectorControllerComponent;
+import toilari.otlite.fake.*;
 import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.GameObject;
@@ -19,7 +16,7 @@ class AbstractAttackAbilityTest {
     @Test
     @SuppressWarnings("ConstantConditions")
     void canPerformOnThrowsIfDirectionIsNull() {
-        assertThrows(NullPointerException.class, () -> FakeAttackAbility.create(1, 0).canPerformOn(new FakeCharacterObject(), null));
+        assertThrows(NullPointerException.class, () -> FakeAttackAbility.create(1, 0).canPerformOn(FakeCharacterObject.create(), null));
     }
 
     @Test
@@ -28,10 +25,11 @@ class AbstractAttackAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacterObject();
-        character.setTilePos(6, 9);
         val ability = FakeAttackAbility.create(1, 0);
-        ability.init(character, 0);
+        val character = FakeCharacterObject.createAtWithAbilities(6, 9,
+            new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(null, Direction.RIGHT)),
+            new AbilityEntry<>(1, ability, FakeAttackControllerComponent.create()));
+        ability.init(character);
         manager.spawn(character);
 
         assertFalse(ability.canPerformOn(character, Direction.NONE));
@@ -46,10 +44,11 @@ class AbstractAttackAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacterObject();
-        character.setTilePos(6, 9);
         val ability = FakeAttackAbility.create(1, 0);
-        ability.init(character, 0);
+        val character = FakeCharacterObject.createAtWithAbilities(6, 9,
+            new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(null, Direction.RIGHT)),
+            new AbilityEntry<>(1, ability, FakeAttackControllerComponent.create()));
+        ability.init(character);
         manager.spawn(character);
 
         assertFalse(ability.canPerformOn(null, Direction.NONE));
@@ -64,10 +63,11 @@ class AbstractAttackAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacterObject();
-        character.setTilePos(6, 9);
         val ability = FakeAttackAbility.create(1, 0);
-        ability.init(character, 0);
+        val character = FakeCharacterObject.createAtWithAbilities(6, 9,
+            new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(null, Direction.RIGHT)),
+            new AbilityEntry<>(1, ability, FakeAttackControllerComponent.create()));
+        ability.init(character);
         manager.spawn(character);
 
         val other = new GameObject();
@@ -86,13 +86,15 @@ class AbstractAttackAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacterObject();
-        character.setTilePos(6, 9);
         val ability = FakeAttackAbility.create(1, 0);
-        ability.init(character, 0);
+        val character = FakeCharacterObject.createAtWithAbilities(6, 9,
+            new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(null, Direction.RIGHT)),
+            new AbilityEntry<>(1, ability, FakeAttackControllerComponent.create()));
+        ability.init(character);
         manager.spawn(character);
 
         val nonCharacterObject = new GameObject();
+        manager.spawn(nonCharacterObject);
         assertFalse(ability.canPerformOn(nonCharacterObject, Direction.NONE));
         for (val direction : Direction.asIterable()) {
             assertFalse(ability.canPerformOn(nonCharacterObject, direction));
@@ -105,16 +107,17 @@ class AbstractAttackAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacterObject();
-        character.setTilePos(6, 9);
         val ability = FakeAttackAbility.create(1, 0);
-        ability.init(character, 0);
+        val character = FakeCharacterObject.createAtWithAbilities(6, 9,
+            new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(null, Direction.RIGHT)),
+            new AbilityEntry<>(1, ability, FakeAttackControllerComponent.create()));
+        ability.init(character);
         manager.spawn(character);
 
-        val other = new FakeCharacterObject();
+        val other = FakeCharacterObject.createAt(7, 9);
         manager.spawn(other);
-        other.setHealth(0.0f);
 
+        other.setHealth(0.0f);
         assertFalse(ability.canPerformOn(other, Direction.NONE));
         for (val direction : Direction.asIterable()) {
             assertFalse(ability.canPerformOn(other, direction));
@@ -127,17 +130,18 @@ class AbstractAttackAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacterObject();
-        character.setTilePos(6, 9);
         val ability = FakeAttackAbility.create(1, 0);
-        ability.init(character, 0);
+        val character = FakeCharacterObject.createAtWithAbilities(6, 9,
+            new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(null, Direction.RIGHT)),
+            new AbilityEntry<>(1, ability, FakeAttackControllerComponent.create()));
+        ability.init(character);
         manager.spawn(character);
 
-        val other = new FakeCharacterObject();
+        val other = FakeCharacterObject.createAt(7, 9);
         manager.spawn(other);
+
         other.setHealth(0.0f);
         other.remove();
-
         assertFalse(ability.canPerformOn(other, Direction.NONE));
         for (val direction : Direction.asIterable()) {
             assertFalse(ability.canPerformOn(other, direction));
@@ -150,14 +154,14 @@ class AbstractAttackAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacterObject();
-        character.setTilePos(6, 9);
         val ability = FakeAttackAbility.create(1, 0);
-        ability.init(character, 0);
+        val character = FakeCharacterObject.createAtWithAbilities(6, 9,
+            new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(null, Direction.RIGHT)),
+            new AbilityEntry<>(1, ability, FakeAttackControllerComponent.create()));
+        ability.init(character);
         manager.spawn(character);
 
-        val other = new FakeCharacterObject();
-        other.setTilePos(7, 9);
+        val other = FakeCharacterObject.createAt(7, 9);
         manager.spawn(other);
 
         assertFalse(ability.canPerformOn(other, Direction.NONE));
@@ -178,15 +182,11 @@ class AbstractAttackAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val character = new FakeCharacterObject();
-        val selectorAbility = new TargetSelectorAbility();
-        val selectorComponent = FakeTargetSelectorControllerComponent.create(null, Direction.RIGHT);
         val ability = FakeAttackAbility.create(1, 0);
-        ability.setPriority(1);
         val component = FakeAttackControllerComponent.create();
-
-        character.getAbilities().addAbility(selectorAbility, selectorComponent);
-        character.getAbilities().addAbility(ability, component);
+        val character = FakeCharacterObject.createWithAbilities(
+            new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(null, Direction.RIGHT)),
+            new AbilityEntry<>(1, ability, component));
 
         manager.spawn(character);
         assertFalse(ability.perform(component));
@@ -198,18 +198,14 @@ class AbstractAttackAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val other = new FakeCharacterObject();
+        val other = FakeCharacterObject.create();
         manager.spawn(other);
 
-        val character = new FakeCharacterObject();
-        val selectorAbility = new TargetSelectorAbility();
-        val selectorComponent = FakeTargetSelectorControllerComponent.create(other, Direction.RIGHT);
         val ability = FakeAttackAbility.create(1, 0);
-        ability.setPriority(1);
         val component = FakeAttackControllerComponent.create();
-
-        character.getAbilities().addAbility(selectorAbility, selectorComponent);
-        character.getAbilities().addAbility(ability, component);
+        val character = FakeCharacterObject.createWithAbilities(
+            new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(other, Direction.RIGHT)),
+            new AbilityEntry<>(1, ability, component));
 
         manager.spawn(character);
 
@@ -223,18 +219,14 @@ class AbstractAttackAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val other = new FakeCharacterObject();
+        val other = FakeCharacterObject.create();
         manager.spawn(other);
 
-        val character = new FakeCharacterObject();
-        val selectorAbility = new TargetSelectorAbility();
-        val selectorComponent = FakeTargetSelectorControllerComponent.create(other, Direction.RIGHT);
         val ability = FakeAttackAbility.create(1, 0);
-        ability.setPriority(1);
         val component = FakeAttackControllerComponent.create();
-
-        character.getAbilities().addAbility(selectorAbility, selectorComponent);
-        character.getAbilities().addAbility(ability, component);
+        val character = FakeCharacterObject.createWithAbilities(
+            new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(other, Direction.RIGHT)),
+            new AbilityEntry<>(1, ability, component));
 
         manager.spawn(character);
 
@@ -249,18 +241,14 @@ class AbstractAttackAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val other = new FakeCharacterObject();
+        val other = FakeCharacterObject.create();
         manager.spawn(other);
 
-        val character = new FakeCharacterObject();
-        val selectorAbility = new TargetSelectorAbility();
-        val selectorComponent = FakeTargetSelectorControllerComponent.create(other, Direction.RIGHT);
         val ability = FakeAttackAbility.create(1, 0);
-        ability.setPriority(1);
         val component = FakeAttackControllerComponent.create();
-
-        character.getAbilities().addAbility(selectorAbility, selectorComponent);
-        character.getAbilities().addAbility(ability, component);
+        val character = FakeCharacterObject.createWithAbilities(
+            new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(other, Direction.RIGHT)),
+            new AbilityEntry<>(1, ability, component));
 
         manager.spawn(character);
 
@@ -276,18 +264,14 @@ class AbstractAttackAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val other = new FakeCharacterObject();
+        val other = FakeCharacterObject.create();
         manager.spawn(other);
 
-        val character = new FakeCharacterObject();
-        val selectorAbility = new TargetSelectorAbility();
-        val selectorComponent = FakeTargetSelectorControllerComponent.create(other, Direction.RIGHT);
         val ability = FakeAttackAbility.create(1, 0);
-        ability.setPriority(1);
         val component = FakeAttackControllerComponent.create();
-
-        character.getAbilities().addAbility(selectorAbility, selectorComponent);
-        character.getAbilities().addAbility(ability, component);
+        val character = FakeCharacterObject.createWithAbilities(
+            new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(other, Direction.RIGHT)),
+            new AbilityEntry<>(1, ability, component));
 
         manager.spawn(character);
 
@@ -300,18 +284,14 @@ class AbstractAttackAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val other = new FakeCharacterObject();
+        val other = FakeCharacterObject.create();
         manager.spawn(other);
 
-        val character = new FakeCharacterObject();
-        val selectorAbility = new TargetSelectorAbility();
-        val selectorComponent = FakeTargetSelectorControllerComponent.create(other, Direction.RIGHT);
         val ability = FakeAttackAbility.create(1, 0);
-        ability.setPriority(1);
         val component = FakeAttackControllerComponent.create();
-
-        character.getAbilities().addAbility(selectorAbility, selectorComponent);
-        character.getAbilities().addAbility(ability, component);
+        val character = FakeCharacterObject.createWithAbilities(
+            new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(other, Direction.RIGHT)),
+            new AbilityEntry<>(1, ability, component));
 
         manager.spawn(character);
 
@@ -325,18 +305,14 @@ class AbstractAttackAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val other = new FakeCharacterObject();
+        val other = FakeCharacterObject.create();
         manager.spawn(other);
 
-        val character = new FakeCharacterObject();
-        val selectorAbility = new TargetSelectorAbility();
-        val selectorComponent = FakeTargetSelectorControllerComponent.create(other, Direction.RIGHT);
         val ability = FakeAttackAbility.create(1, 0);
-        ability.setPriority(1);
         val component = FakeAttackControllerComponent.create();
-
-        character.getAbilities().addAbility(selectorAbility, selectorComponent);
-        character.getAbilities().addAbility(ability, component);
+        val character = FakeCharacterObject.createWithAbilities(
+            new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(other, Direction.RIGHT)),
+            new AbilityEntry<>(1, ability, component));
 
         manager.spawn(character);
         for (int i = 0; i < 10; i++) {

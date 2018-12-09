@@ -1,101 +1,83 @@
 package toilari.otlite.game.world.entity.characters.abilities.components;
 
-import lombok.NonNull;
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import toilari.otlite.fake.FakeAbility;
-import toilari.otlite.fake.FakeAttackAbility;
-import toilari.otlite.fake.FakeAttackControllerComponent;
-import toilari.otlite.fake.FakeCharacterObject;
+import toilari.otlite.fake.*;
+import toilari.otlite.game.util.Direction;
+import toilari.otlite.game.world.World;
+import toilari.otlite.game.world.entities.GameObject;
+import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbility;
-import toilari.otlite.game.world.entities.characters.abilities.components.TargetSelectorControllerComponent;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class TargetSelectorControllerComponentTest {
     @Test
     void setActiveFailsIfAbilityIsNotAvailable() {
-        val ts = new TargetSelectorAbility();
-        val component = new TestTargetSelectorControllerComponent();
-        val character = new FakeCharacterObject();
+        val component = FakeTargetSelectorControllerComponent.create(null, Direction.NONE);
+        val character = FakeCharacterObject.createWithAbilities(
+            new AbilityEntry<>(0, new TargetSelectorAbility(), component));
 
-        character.getAbilities().addAbility(ts, component);
         component.init(character);
         assertThrows(IllegalStateException.class, () -> component.setActiveTargetedAbility(FakeAttackAbility.create(0, 0)));
     }
 
     @Test
     void setActiveSucceedsIfAbilityIsNull() {
-        val ts = new TargetSelectorAbility();
-        val component = new TestTargetSelectorControllerComponent();
-        val character = new FakeCharacterObject();
+        val component = FakeTargetSelectorControllerComponent.create(null, Direction.NONE);
+        val character = FakeCharacterObject.createWithAbilities(
+            new AbilityEntry<>(0, new TargetSelectorAbility(), component));
 
-        character.getAbilities().addAbility(ts, component);
         component.init(character);
         assertDoesNotThrow(() -> component.setActiveTargetedAbility(null));
     }
 
     @Test
     void setActiveSucceedsIfAbilityIsAvailable() {
-        val ts = new TargetSelectorAbility();
-        val component = new TestTargetSelectorControllerComponent();
-        val character = new FakeCharacterObject();
-
+        val component = FakeTargetSelectorControllerComponent.create(null, Direction.NONE);
         val attackAbility = FakeAttackAbility.create(0, 0);
-        val attackComponent = FakeAttackControllerComponent.create();
+        val character = FakeCharacterObject.createWithAbilities(
+            new AbilityEntry<>(0, new TargetSelectorAbility(), component),
+            new AbilityEntry<>(1, attackAbility, FakeAttackControllerComponent.create()));
 
-        character.getAbilities().addAbility(attackAbility, attackComponent);
-        character.getAbilities().addAbility(ts, component);
         component.init(character);
         assertDoesNotThrow(() -> component.setActiveTargetedAbility(attackAbility));
     }
 
     @Test
     void isActiveReturnsTrueAfterAbilityIsSetActive() {
-        val ts = new TargetSelectorAbility();
-        val component = new TestTargetSelectorControllerComponent();
-        val character = new FakeCharacterObject();
-
+        val component = FakeTargetSelectorControllerComponent.create(null, Direction.NONE);
         val attackAbility = FakeAttackAbility.create(0, 0);
-        val attackComponent = FakeAttackControllerComponent.create();
+        val character = FakeCharacterObject.createWithAbilities(
+            new AbilityEntry<>(0, new TargetSelectorAbility(), component),
+            new AbilityEntry<>(1, attackAbility, FakeAttackControllerComponent.create()));
 
-        character.getAbilities().addAbility(attackAbility, attackComponent);
-        character.getAbilities().addAbility(ts, component);
         component.init(character);
-
         component.setActiveTargetedAbility(attackAbility);
         assertTrue(component.isActive(attackAbility));
     }
 
     @Test
     void isActiveReturnsFalseIfAbilityIsNotActive() {
-        val ts = new TargetSelectorAbility();
-        val component = new TestTargetSelectorControllerComponent();
-        val character = new FakeCharacterObject();
-
+        val component = FakeTargetSelectorControllerComponent.create(null, Direction.NONE);
         val attackAbility = FakeAttackAbility.create(0, 0);
         val attackComponent = FakeAttackControllerComponent.create();
+        val character = FakeCharacterObject.createWithAbilities(
+            new AbilityEntry<>(0, new TargetSelectorAbility(), component),
+            new AbilityEntry<>(1, attackAbility, attackComponent));
 
-        character.getAbilities().addAbility(attackAbility, attackComponent);
-        character.getAbilities().addAbility(ts, component);
         component.init(character);
-
         assertFalse(component.isActive(attackAbility));
     }
 
     @Test
     void isActiveReturnsFalseIfAbilityIsNotActiveAndAbilityIsInvalid() {
         val ts = new TargetSelectorAbility();
-        val component = new TestTargetSelectorControllerComponent();
-        val character = new FakeCharacterObject();
+        val component = FakeTargetSelectorControllerComponent.create(null, Direction.NONE);
+        val character = FakeCharacterObject.createWithAbilities(
+            new AbilityEntry<>(0, ts, component));
 
-        val attackAbility = FakeAttackAbility.create(0, 0);
-        val attackComponent = FakeAttackControllerComponent.create();
-
-        character.getAbilities().addAbility(attackAbility, attackComponent);
-        character.getAbilities().addAbility(ts, component);
         component.init(character);
-
         assertFalse(component.isActive(FakeAttackAbility.create(0, 0)));
     }
 
@@ -103,55 +85,187 @@ class TargetSelectorControllerComponentTest {
     @SuppressWarnings("ConstantConditions")
     void isActiveThrowsIfAbilityIsNull() {
         val ts = new TargetSelectorAbility();
-        val component = new TestTargetSelectorControllerComponent();
-        val character = new FakeCharacterObject();
+        val component = FakeTargetSelectorControllerComponent.create(null, Direction.NONE);
+        val character = FakeCharacterObject.createWithAbilities(
+            new AbilityEntry<>(0, ts, component));
 
-        val attackAbility = FakeAttackAbility.create(0, 0);
-        val attackComponent = FakeAttackControllerComponent.create();
-
-        character.getAbilities().addAbility(attackAbility, attackComponent);
-        character.getAbilities().addAbility(ts, component);
         component.init(character);
-
         assertThrows(NullPointerException.class, () -> component.isActive(null));
     }
 
     @Test
     void isAvailableAbilityReturnsFalseIfAbilityIsNotTargeted() {
         val ts = new TargetSelectorAbility();
-        val component = new TestTargetSelectorControllerComponent();
-        val character = new FakeCharacterObject();
+        val component = FakeTargetSelectorControllerComponent.create(null, Direction.NONE);
+        val character = FakeCharacterObject.createWithAbilities(
+            new AbilityEntry<>(0, ts, component));
 
-        val attackAbility = FakeAttackAbility.create(0, 0);
-        val attackComponent = FakeAttackControllerComponent.create();
-
-        character.getAbilities().addAbility(attackAbility, attackComponent);
-        character.getAbilities().addAbility(ts, component);
         component.init(character);
-
         assertFalse(component.isAvailableAbility(FakeAbility.createFree()));
     }
 
     @Test
     void isAvailableAbilityReturnsFalseIfAbilityIsNull() {
         val ts = new TargetSelectorAbility();
-        val component = new TestTargetSelectorControllerComponent();
-        val character = new FakeCharacterObject();
+        val component = FakeTargetSelectorControllerComponent.create(null, Direction.NONE);
+        val character = FakeCharacterObject.createWithAbilities(
+            new AbilityEntry<>(0, ts, component)
+        );
 
-        val attackAbility = FakeAttackAbility.create(0, 0);
-        val attackComponent = FakeAttackControllerComponent.create();
-
-        character.getAbilities().addAbility(attackAbility, attackComponent);
-        character.getAbilities().addAbility(ts, component);
         component.init(character);
-
         assertFalse(component.isAvailableAbility(null));
     }
 
-    private static class TestTargetSelectorControllerComponent extends TargetSelectorControllerComponent {
-        @Override
-        public void updateInput(@NonNull TargetSelectorAbility ability) {
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void wantsThrowsIfAbilityIsNull() {
+        assertThrows(NullPointerException.class, () -> FakeTargetSelectorControllerComponent.create(null, Direction.NONE).wants(null));
+    }
 
-        }
+    @Test
+    void wantsReturnsFalseWithValidAbility() {
+        val ts = new TargetSelectorAbility();
+        val component = FakeTargetSelectorControllerComponent.create(null, Direction.NONE);
+        val character = FakeCharacterObject.createWithAbilities(
+            new AbilityEntry<>(0, ts, component));
+
+        component.init(character);
+        assertFalse(component.wants(ts));
+    }
+
+    @Test
+    void findTargetReturnsNullIfThereIsNoActiveAbility() {
+        val manager = new TurnObjectManager();
+        val world = new World(manager);
+        world.init();
+
+        val component = FakeTargetSelectorControllerComponent.create(null, Direction.NONE);
+        val character = FakeCharacterObject.createAtWithAbilities(0, 0,
+            new AbilityEntry<>(0, new TargetSelectorAbility(), component));
+        manager.spawn(character);
+
+        assertNull(component.findTargetInDirection(Direction.RIGHT));
+    }
+
+    @Test
+    void findTargetReturnsNullIfThereIsNoTarget() {
+        val manager = new TurnObjectManager();
+        val world = new World(manager);
+        world.init();
+
+        val component = FakeTargetSelectorControllerComponent.create(null, Direction.NONE);
+        val attack = FakeAttackAbility.createWithoutTargetValidation(1, 0);
+        val character = FakeCharacterObject.createAtWithAbilities(0, 0,
+            new AbilityEntry<>(0, new TargetSelectorAbility(), component),
+            new AbilityEntry<>(1, attack, FakeAttackControllerComponent.createWithoutTargetValidation()));
+        manager.spawn(character);
+
+        component.setActiveTargetedAbility(attack);
+        assertNull(component.findTargetInDirection(Direction.RIGHT));
+    }
+
+    @Test
+    void findTargetReturnsNullIfTargetIsDead() {
+        val manager = new TurnObjectManager();
+        val world = new World(manager);
+        world.init();
+
+        val component = FakeTargetSelectorControllerComponent.create(null, Direction.NONE);
+        val attack = FakeAttackAbility.createWithoutTargetValidation(1, 0);
+        val character = FakeCharacterObject.createAtWithAbilities(0, 0,
+            new AbilityEntry<>(0, new TargetSelectorAbility(), component),
+            new AbilityEntry<>(1, attack, FakeAttackControllerComponent.createWithoutTargetValidation()));
+        manager.spawn(character);
+
+        val target = FakeCharacterObject.createAt(1, 0);
+        manager.spawn(target);
+        target.setHealth(0.0f);
+
+        component.setActiveTargetedAbility(attack);
+        assertNull(component.findTargetInDirection(Direction.RIGHT));
+    }
+
+    @Test
+    void findTargetReturnsNullIfTargetIsRemoved() {
+        val manager = new TurnObjectManager();
+        val world = new World(manager);
+        world.init();
+
+        val component = FakeTargetSelectorControllerComponent.create(null, Direction.NONE);
+        val attack = FakeAttackAbility.createWithoutTargetValidation(1, 0);
+        val character = FakeCharacterObject.createAtWithAbilities(0, 0,
+            new AbilityEntry<>(0, new TargetSelectorAbility(), component),
+            new AbilityEntry<>(1, attack, FakeAttackControllerComponent.createWithoutTargetValidation()));
+        manager.spawn(character);
+
+        val target = FakeCharacterObject.createAt(1, 0);
+        manager.spawn(target);
+        target.remove();
+
+        component.setActiveTargetedAbility(attack);
+        assertNull(component.findTargetInDirection(Direction.RIGHT));
+    }
+
+    @Test
+    void findTargetReturnsNullIfTargetIsDeadAndRemoved() {
+        val manager = new TurnObjectManager();
+        val world = new World(manager);
+        world.init();
+
+        val component = FakeTargetSelectorControllerComponent.create(null, Direction.NONE);
+        val attack = FakeAttackAbility.createWithoutTargetValidation(1, 0);
+        val character = FakeCharacterObject.createAtWithAbilities(0, 0,
+            new AbilityEntry<>(0, new TargetSelectorAbility(), component),
+            new AbilityEntry<>(1, attack, FakeAttackControllerComponent.createWithoutTargetValidation()));
+        manager.spawn(character);
+
+        val target = FakeCharacterObject.createAt(1, 0);
+        manager.spawn(target);
+        target.setHealth(0.0f);
+        target.remove();
+
+        component.setActiveTargetedAbility(attack);
+        assertNull(component.findTargetInDirection(Direction.RIGHT));
+    }
+
+    @Test
+    void findTargetReturnsNonNullIfTargetIsAliveAndNotRemoved() {
+        val manager = new TurnObjectManager();
+        val world = new World(manager);
+        world.init();
+
+        val component = FakeTargetSelectorControllerComponent.create(null, Direction.NONE);
+        val attack = FakeAttackAbility.createWithoutTargetValidation(1, 0);
+        val character = FakeCharacterObject.createAtWithAbilities(0, 0,
+            new AbilityEntry<>(0, new TargetSelectorAbility(), component),
+            new AbilityEntry<>(1, attack, FakeAttackControllerComponent.createWithoutTargetValidation()));
+        manager.spawn(character);
+
+        val target = FakeCharacterObject.createAt(1, 0);
+        manager.spawn(target);
+
+        component.setActiveTargetedAbility(attack);
+        assertNotNull(component.findTargetInDirection(Direction.RIGHT));
+    }
+
+    @Test
+    void findTargetReturnsNonNullIfTargetIsNotRemovedAndNotCharacter() {
+        val manager = new TurnObjectManager();
+        val world = new World(manager);
+        world.init();
+
+        val component = FakeTargetSelectorControllerComponent.create(null, Direction.NONE);
+        val attack = FakeAttackAbility.createWithoutTargetValidation(1, 0);
+        val character = FakeCharacterObject.createAtWithAbilities(0, 0,
+            new AbilityEntry<>(0, new TargetSelectorAbility(), component),
+            new AbilityEntry<>(1, attack, FakeAttackControllerComponent.createWithoutTargetValidation()));
+        manager.spawn(character);
+
+        val target = new GameObject();
+        target.setTilePos(1, 0);
+        manager.spawn(target);
+
+        component.setActiveTargetedAbility(attack);
+        assertNotNull(component.findTargetInDirection(Direction.RIGHT));
     }
 }

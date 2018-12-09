@@ -3,18 +3,24 @@ package toilari.otlite.game.world.entities.characters.abilities.components;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.val;
+import lombok.var;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
 import toilari.otlite.game.util.Direction;
+import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbility;
+
+import java.util.Iterator;
 
 /**
  * Pelaajan kohteenvalintakyvyn ohjainkomponentti.
  */
 @NoArgsConstructor
 public class PlayerTargetSelectorControllerComponent extends TargetSelectorControllerComponent {
-
     private final Key[] abilityKeys = {Key.ONE, Key.TWO, Key.THREE, Key.FOUR, Key.FIVE, Key.SIX, Key.SEVEN, Key.EIGHT, Key.NINE, Key.ZERO};
+
+    private transient Iterator<Direction> directionIterator;
+
 
     /**
      * Kopioi ohjainkomponentin templaatista.
@@ -23,6 +29,12 @@ public class PlayerTargetSelectorControllerComponent extends TargetSelectorContr
      */
     public PlayerTargetSelectorControllerComponent(TargetSelectorControllerComponent template) {
         super(template);
+    }
+
+    @Override
+    protected void setTarget(GameObject target, Direction direction) {
+        super.setTarget(target, direction);
+        this.directionIterator = Direction.asLoopingIterator(direction);
     }
 
     @Override
@@ -45,6 +57,23 @@ public class PlayerTargetSelectorControllerComponent extends TargetSelectorContr
                 }
             }
         }
+    }
+
+    private void findNewTarget() {
+        if (getTarget() == null) {
+            this.directionIterator = Direction.asLoopingIterator();
+        }
+
+        var direction = this.directionIterator.next();
+        for (int i = 0; i < 4; i++, direction = this.directionIterator.next()) {
+            val targetCandidate = findTargetInDirection(direction);
+            if (targetCandidate != null) {
+                setTarget(targetCandidate, direction);
+                return;
+            }
+        }
+
+        setTarget(null, Direction.NONE);
     }
 
     private void selectTargetWithArrowKeys() {

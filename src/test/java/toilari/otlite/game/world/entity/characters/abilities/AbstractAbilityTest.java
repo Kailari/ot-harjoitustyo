@@ -18,13 +18,13 @@ class AbstractAbilityTest {
 
     @Test
     void abilityIsNotOnCooldownByDefault() {
-        val character = new FakeCharacterObject();
+        val character = FakeCharacterObject.create();
         assertFalse(new TestAbility(character, 0).isOnCooldown());
     }
 
     @Test
     void abilityOnCooldownAfterBeingPutOnCooldown() {
-        val character = new FakeCharacterObject();
+        val character = FakeCharacterObject.create();
         val ability = new TestAbility(character, 0);
 
         ability.putOnCooldown();
@@ -33,7 +33,7 @@ class AbstractAbilityTest {
 
     @Test
     void abilityCooldownIsExpectedNumberOfTurnsInitially() {
-        val character = new FakeCharacterObject();
+        val character = FakeCharacterObject.create();
         val ability = new TestAbility(character, 0);
 
         ability.putOnCooldown();
@@ -42,7 +42,7 @@ class AbstractAbilityTest {
 
     @Test
     void abilityCooldownIsExpectedNumberOfTurnsAfterReducingCooldown() {
-        val character = new FakeCharacterObject();
+        val character = FakeCharacterObject.create();
         val ability = new TestAbility(character, 0);
 
         ability.putOnCooldown();
@@ -60,7 +60,7 @@ class AbstractAbilityTest {
 
     @Test
     void abilityCooldownCanReachZero() {
-        val character = new FakeCharacterObject();
+        val character = FakeCharacterObject.create();
         val ability = new TestAbility(character, 0);
 
         ability.putOnCooldown();
@@ -72,7 +72,7 @@ class AbstractAbilityTest {
 
     @Test
     void reduceCooldownThrowsIfTimerWouldGoNegative() {
-        val character = new FakeCharacterObject();
+        val character = FakeCharacterObject.create();
         val ability = new TestAbility(character, 0);
 
         ability.putOnCooldown();
@@ -86,7 +86,8 @@ class AbstractAbilityTest {
     private class TestAbility extends AbstractAbility<TestAbility, AbstractControllerComponent<TestAbility>> {
         TestAbility(CharacterObject character, int priority) {
             super("Test");
-            init(character, priority);
+            setPriority(priority);
+            init(character);
         }
 
         @Override
