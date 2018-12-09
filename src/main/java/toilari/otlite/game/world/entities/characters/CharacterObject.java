@@ -31,19 +31,6 @@ public class CharacterObject extends GameObject implements IHealthHandler {
     @Getter private final CharacterLevels levels;
     @Getter private final CharacterInfo info;
 
-
-    /**
-     * Lisää hahmolle uuden kyvyn.
-     *
-     * @param ability   kyky joka lisätään
-     * @param component kyvystä vastaava ohjainkomponentti
-     * @param <A>       kyvyn tyyppi
-     * @param <C>       ohjainkomponentin tyyppi
-     */
-    public <A extends IAbility<A, C>, C extends IControllerComponent<A>> void addAbility(A ability, IControllerComponent<A> component) {
-        this.abilities.addAbility(ability, component);
-    }
-
     /**
      * Luo uuden hahmon asettaen sille attribuuttien ja tasojen oletusarvot.
      *

@@ -1,5 +1,6 @@
 package toilari.otlite.game.world.entities.characters.abilities.components;
 
+import lombok.NoArgsConstructor;
 import lombok.val;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
@@ -12,6 +13,7 @@ import toilari.otlite.game.world.entities.characters.abilities.AbstractAttackAbi
  *
  * @param <A> kyvyn tyyppi
  */
+@NoArgsConstructor
 public abstract class AbstractPlayerAttackControllerComponent<A extends AbstractAttackAbility> extends AbstractAttackControllerComponent<A> {
     protected AbstractPlayerAttackControllerComponent(AbstractControllerComponent<A> template) {
         super(template);

@@ -35,13 +35,13 @@ public class PlayerTargetSelectorControllerComponent extends TargetSelectorContr
         for (int i = 0; i < this.abilityKeys.length; i++) {
             if (Input.getHandler().isKeyPressed(this.abilityKeys[i]) && hasAbility(i) && notOnCooldown(i) && canAfford(i)) {
                 if (getTarget() == null || isActive(i)) {
-                    setActive(i);
+                    setActiveTargetedAbility(i);
                     findNewTarget();
                     if (getTarget() == null) {
-                        setActive(-1);
+                        setActiveTargetedAbility(-1);
                     }
                 } else {
-                    setActive(i);
+                    setActiveTargetedAbility(i);
                 }
             }
         }
@@ -65,5 +65,29 @@ public class PlayerTargetSelectorControllerComponent extends TargetSelectorContr
                 setTarget(candidate, direction);
             }
         }
+    }
+
+    private boolean isActive(int abilityIndex) {
+        return hasAbility(abilityIndex) && isActive(getAbilities()[abilityIndex]);
+    }
+
+    private boolean notOnCooldown(int abilityIndex) {
+        return hasAbility(abilityIndex) && !getAbilities()[abilityIndex].isOnCooldown();
+    }
+
+    private boolean hasAbility(int abilityIndex) {
+        return abilityIndex >= 0 && abilityIndex < getAbilities().length && isAvailableAbility(getAbilities()[abilityIndex]);
+    }
+
+    private void setActiveTargetedAbility(int abilityIndex) {
+        if (!hasAbility(abilityIndex)) {
+            setActiveTargetedAbility(null);
+        } else {
+            setActiveTargetedAbility(getAbilities()[abilityIndex]);
+        }
+    }
+
+    private boolean canAfford(int i) {
+        return getAbilities()[i].getCost() <= getCharacter().getWorld().getObjectManager().getRemainingActionPoints();
     }
 }

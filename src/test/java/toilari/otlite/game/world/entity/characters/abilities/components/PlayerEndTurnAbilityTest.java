@@ -23,7 +23,7 @@ class PlayerEndTurnAbilityTest {
         world.init();
 
         val character = new FakeCharacterObject();
-        character.addAbility(new EndTurnAbility(), new EndTurnControllerComponent.Player());
+        character.getAbilities().addAbility(new EndTurnAbility(), new EndTurnControllerComponent.Player());
         manager.spawn(character);
 
         manager.spendActionPoints(manager.getRemainingActionPoints());
@@ -41,7 +41,7 @@ class PlayerEndTurnAbilityTest {
         val character = new FakeCharacterObject();
         val component = new EndTurnControllerComponent.Player();
         component.setAutoEndTurn(true);
-        character.addAbility(new EndTurnAbility(), component);
+        character.getAbilities().addAbility(new EndTurnAbility(), component);
         manager.spawn(character);
 
         manager.spendActionPoints(manager.getRemainingActionPoints());
@@ -57,7 +57,7 @@ class PlayerEndTurnAbilityTest {
         world.init();
 
         val character = new FakeCharacterObject();
-        character.addAbility(new EndTurnAbility(), new EndTurnControllerComponent.Player());
+        character.getAbilities().addAbility(new EndTurnAbility(), new EndTurnControllerComponent.Player());
         manager.spawn(character);
 
         manager.update(1.0f);
@@ -72,7 +72,7 @@ class PlayerEndTurnAbilityTest {
         world.init();
 
         val character = new FakeCharacterObject();
-        character.addAbility(new EndTurnAbility(), new EndTurnControllerComponent.Player());
+        character.getAbilities().addAbility(new EndTurnAbility(), new EndTurnControllerComponent.Player());
         manager.spawn(character);
 
         manager.update(1.0f);

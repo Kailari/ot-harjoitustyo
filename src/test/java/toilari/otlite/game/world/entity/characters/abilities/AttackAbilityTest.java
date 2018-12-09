@@ -282,8 +282,8 @@ class AttackAbilityTest {
         ability.setPriority(1);
         val component = new TestAttackControllerComponent();
 
-        character.addAbility(selectorAbility, selectorComponent);
-        character.addAbility(ability, component);
+        character.getAbilities().addAbility(selectorAbility, selectorComponent);
+        character.getAbilities().addAbility(ability, component);
 
         manager.spawn(character);
         assertFalse(ability.perform(component));
@@ -305,8 +305,8 @@ class AttackAbilityTest {
         ability.setPriority(1);
         val component = new TestAttackControllerComponent();
 
-        character.addAbility(selectorAbility, selectorComponent);
-        character.addAbility(ability, component);
+        character.getAbilities().addAbility(selectorAbility, selectorComponent);
+        character.getAbilities().addAbility(ability, component);
 
         manager.spawn(character);
 
@@ -330,8 +330,8 @@ class AttackAbilityTest {
         ability.setPriority(1);
         val component = new TestAttackControllerComponent();
 
-        character.addAbility(selectorAbility, selectorComponent);
-        character.addAbility(ability, component);
+        character.getAbilities().addAbility(selectorAbility, selectorComponent);
+        character.getAbilities().addAbility(ability, component);
 
         manager.spawn(character);
 
@@ -356,8 +356,8 @@ class AttackAbilityTest {
         ability.setPriority(1);
         val component = new TestAttackControllerComponent();
 
-        character.addAbility(selectorAbility, selectorComponent);
-        character.addAbility(ability, component);
+        character.getAbilities().addAbility(selectorAbility, selectorComponent);
+        character.getAbilities().addAbility(ability, component);
 
         manager.spawn(character);
 
@@ -383,8 +383,8 @@ class AttackAbilityTest {
         ability.setPriority(1);
         val component = new TestAttackControllerComponent();
 
-        character.addAbility(selectorAbility, selectorComponent);
-        character.addAbility(ability, component);
+        character.getAbilities().addAbility(selectorAbility, selectorComponent);
+        character.getAbilities().addAbility(ability, component);
 
         manager.spawn(character);
 
@@ -407,8 +407,8 @@ class AttackAbilityTest {
         ability.setPriority(1);
         val component = new TestAttackControllerComponent();
 
-        character.addAbility(selectorAbility, selectorComponent);
-        character.addAbility(ability, component);
+        character.getAbilities().addAbility(selectorAbility, selectorComponent);
+        character.getAbilities().addAbility(ability, component);
 
         manager.spawn(character);
 
@@ -432,8 +432,8 @@ class AttackAbilityTest {
         ability.setPriority(1);
         val component = new TestAttackControllerComponent();
 
-        character.addAbility(selectorAbility, selectorComponent);
-        character.addAbility(ability, component);
+        character.getAbilities().addAbility(selectorAbility, selectorComponent);
+        character.getAbilities().addAbility(ability, component);
 
         manager.spawn(character);
         for (int i = 0; i < 10; i++) {

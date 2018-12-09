@@ -5,10 +5,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import toilari.otlite.dao.serialization.CharacterAdapter;
 import toilari.otlite.dao.serialization.IGetByIDDao;
 import toilari.otlite.dao.util.TextFileHelper;
-import toilari.otlite.game.world.entities.characters.CharacterAbilities;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
+import toilari.otlite.game.world.entities.characters.abilities.AbilityRegistry;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -27,7 +28,7 @@ public class CharacterDAO extends AutoDiscoverFileDAO<CharacterObject> implement
     public CharacterDAO(@NonNull String root) {
         super(root);
         this.gson = new GsonBuilder()
-            .registerTypeAdapter(CharacterObject.class, CharacterAbilities.getAdapter())
+            .registerTypeAdapter(CharacterObject.class, new CharacterAdapter())
             .create();
     }
 

@@ -1,14 +1,15 @@
 package toilari.otlite.game.world.entities.characters;
 
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import toilari.otlite.dao.serialization.AbilityComponentEntry;
-import toilari.otlite.dao.serialization.CharacterAdapter;
-import toilari.otlite.game.world.entities.characters.abilities.*;
-import toilari.otlite.game.world.entities.characters.abilities.components.*;
+import toilari.otlite.game.world.entities.characters.abilities.AbilityRegistry;
+import toilari.otlite.game.world.entities.characters.abilities.IAbility;
+import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
+import toilari.otlite.game.world.entities.characters.abilities.components.IControllerComponent;
+import toilari.otlite.game.world.entities.characters.abilities.components.MoveControllerComponent;
 
 import java.util.*;
-import java.util.function.Supplier;
 
 /**
  * Säilöö hahmon {@link IAbility kykyjä} ja niitä vastaavia {@link IControllerComponent ohjainkomponentteja}.
@@ -27,53 +28,10 @@ import java.util.function.Supplier;
  * Etuna tästä saadaan esimerkiksi se että aina jos kyvyn luokka/tyyppi on tiedossa, on pääsy käytettäväksi määritellyn
  * ohjainkomponentin julkisiin metodeihin helppoa, eikä tyyppimuunnoksia useimmissa tapauksissa tarvita.
  */
+@Slf4j
 public class CharacterAbilities {
-    private static final CharacterAdapter ADAPTER = new CharacterAdapter();
-    private static final Map<Class<? extends IAbility>, Supplier<? extends IAbility>> ABILITY_FACTORIES = new HashMap<>();
-    private static final Map<String, AbilityComponentEntry<?, ?>> ABILITY_ENTRIES = new HashMap<>();
-    private static final Map<Class, AbilityComponentEntry<?, ?>> ABILITY_ENTRIES_BY_CLASS = new HashMap<>();
-
-    public static Map<String, AbilityComponentEntry<?, ?>> getAbilityEntries() {
-        return CharacterAbilities.ABILITY_ENTRIES;
-    }
-
-    static {
-        registerAbility("target_selector", TargetSelectorAbility.class, TargetSelectorAbility::new)
-            .addComponent("player", PlayerTargetSelectorControllerComponent.class, PlayerTargetSelectorControllerComponent::new)
-            .addComponent("attack_adjacent_if_possible", TargetSelectorControllerComponent.AlwaysAttackAdjacentIfPossible.class, TargetSelectorControllerComponent.AlwaysAttackAdjacentIfPossible::new);
-
-        registerAbility("move", MoveAbility.class, MoveAbility::new)
-            .addComponent("player", MoveControllerComponent.Player.class, MoveControllerComponent.Player::new)
-            .addComponent("animal", MoveControllerComponent.AI.class, MoveControllerComponent.AI::new);
-
-        registerAbility("end_turn", EndTurnAbility.class, EndTurnAbility::new)
-            .addComponent("player", EndTurnControllerComponent.Player.class, EndTurnControllerComponent.Player::new)
-            .addComponent("ai", EndTurnControllerComponent.AI.class, EndTurnControllerComponent.AI::new);
-
-        registerAbility("attack", AttackAbility.class, AttackAbility::new)
-            .addComponent("player", AttackControllerComponent.Player.class, AttackControllerComponent.Player::new)
-            .addComponent("ai", AttackControllerComponent.AI.class, AttackControllerComponent.AI::new);
-
-        registerAbility("kick", KickAbility.class, KickAbility::new)
-            .addComponent("player", KickControllerComponent.Player.class, KickControllerComponent.Player::new)
-            .addComponent("ai", KickControllerComponent.AI.class, KickControllerComponent.AI::new);
-    }
-
-    private static <A extends IAbility<A, C>, C extends IControllerComponent<A>> AbilityComponentEntry<A, C> registerAbility(String key, Class<? extends A> abilityClass, Supplier<A> abilityFactory) {
-        ABILITY_FACTORIES.put(abilityClass, abilityFactory);
-        val entry = new AbilityComponentEntry<A, C>(abilityClass);
-        ABILITY_ENTRIES.put(key, entry);
-        ABILITY_ENTRIES_BY_CLASS.put(abilityClass, entry);
-        return entry;
-    }
-
-    public static CharacterAdapter getAdapter() {
-        return CharacterAbilities.ADAPTER;
-    }
-
     private final Map<Class<? extends IAbility>, IControllerComponent> components = new HashMap<>();
     private final SortedSet<IAbility> abilities = new TreeSet<>(Comparator.comparingInt(IAbility::getPriority));
-
 
     /**
      * Lisää hahmolle uuden kyvyn.
@@ -162,21 +120,52 @@ public class CharacterAbilities {
      * @param template instanssi joka kopioidaan
      */
     public void cloneAbilitiesFrom(@NonNull CharacterAbilities template) {
-        for (val abilityTemplate : template.getAbilitiesSortedByPriority()) {
-            val componentTemplate = template.getComponent(abilityTemplate.getClass());
+        for (IAbility abilityTemplate : template.abilities) {
+            if (abilityTemplate == null) {
+                LOG.error("Template had a NULL ability!");
+                continue;
+            }
 
-            AbilityComponentEntry<?, IControllerComponent<?>> entry = (AbilityComponentEntry<?, IControllerComponent<?>>) CharacterAbilities.ABILITY_ENTRIES_BY_CLASS.get(abilityTemplate.getClass());
-            val instanceComponentFactory = entry.getFactories().get(componentTemplate.getClass());
-            val instanceComponent = instanceComponentFactory.apply(componentTemplate);
-            val instanceAbility = CharacterAbilities.ABILITY_FACTORIES.get(abilityTemplate.getClass()).get();
-            instanceAbility.setPriority(abilityTemplate.getPriority());
-
-            addAbilityUnsafe(instanceAbility, instanceComponent);
+            // Type signature of IAbility prevents its clashing with the matching type signature of addAbilityFromTemplate,
+            // but as compiler cannot see that template has to satisfy those requirements due to being parameterless in
+            // this context, it comes to conclusion that this call is unsafe and should be flagged as unchecked, while actually
+            // under normal circumstances it cannot fail.
+            // noinspection unchecked
+            addAbilityFromTemplate(template, abilityTemplate);
         }
     }
 
-    private void addAbilityUnsafe(IAbility ability, IControllerComponent component) {
-        this.abilities.add(ability);
-        this.components.put(ability.getClass(), component);
+    private <A extends IAbility<A, C>, C extends IControllerComponent<A>> void addAbilityFromTemplate(@NonNull CharacterAbilities template, @NonNull A abilityTemplate) {
+        val componentTemplate = template.getComponentResponsibleFor(abilityTemplate);
+
+        val instanceAbility = cloneAbility(abilityTemplate);
+        val instanceComponent = cloneControllerComponent(abilityTemplate, componentTemplate);
+        if (instanceAbility == null || instanceComponent == null) {
+            return;
+        }
+
+        // We know for sure that signatures of the ability and the component match, perform add without type validation
+        this.abilities.add(instanceAbility);
+        this.components.put(instanceAbility.getClass(), instanceComponent);
+    }
+
+    private <A extends IAbility<A, C>, C extends IControllerComponent<A>> IAbility cloneAbility(A abilityTemplate) {
+        val factory = AbilityRegistry.getAbilityInstanceFactory(abilityTemplate);
+        if (factory == null) {
+            return null;
+        }
+
+        val ability = factory.get();
+        if (ability == null) {
+            return null;
+        }
+
+        ability.setPriority(abilityTemplate.getPriority());
+        return ability;
+    }
+
+    private static <A extends IAbility<A, C>, C extends IControllerComponent<A>> C cloneControllerComponent(A abilityTemplate, C componentTemplate) {
+        val factory = AbilityRegistry.getComponentInstanceFactory(abilityTemplate, componentTemplate);
+        return factory == null ? null : factory.apply(componentTemplate);
     }
 }

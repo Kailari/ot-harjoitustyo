@@ -8,6 +8,7 @@ import toilari.otlite.game.world.entities.characters.abilities.components.IContr
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Apuluokka kyky- ja ohjainkomponenttiparien varastointiin.
@@ -16,17 +17,20 @@ import java.util.function.Function;
  * @param <C> komponentin tyyppi
  */
 public class AbilityComponentEntry<A extends IAbility<A, C>, C extends IControllerComponent<A>> {
-    @Getter private final Class<? extends A> abilityClass;
-    @Getter private final Map<String, Class<? extends C>> componentClasses = new HashMap<>();
-    @Getter private final Map<Class, Function<C, C>> factories = new HashMap<>();
+    @Getter @NonNull private final Class<? extends A> abilityClass;
+    @Getter @NonNull private final Supplier<A> factory;
+    @Getter @NonNull private final Map<String, Class<? extends C>> componentClasses = new HashMap<>();
+    @Getter @NonNull private final Map<Class, Function<C, C>> componentFactories = new HashMap<>();
 
     /**
      * Luo uuden parin.
      *
      * @param abilityClass kyvyn tyyppi
+     * @param factory      tehdas jolla kyvyn instansseja voidaan tuottaa
      */
-    public AbilityComponentEntry(@NonNull Class<? extends A> abilityClass) {
+    public AbilityComponentEntry(@NonNull Class<? extends A> abilityClass, Supplier<A> factory) {
         this.abilityClass = abilityClass;
+        this.factory = factory;
     }
 
     /**
@@ -39,7 +43,7 @@ public class AbilityComponentEntry<A extends IAbility<A, C>, C extends IControll
      */
     public AbilityComponentEntry<A, C> addComponent(String key, Class<? extends C> componentClass, Function<C, C> factory) {
         this.componentClasses.put(key, componentClass);
-        this.factories.put(componentClass, factory);
+        this.componentFactories.put(componentClass, factory);
         return this;
     }
 }
