@@ -1,7 +1,5 @@
 package toilari.otlite.game.world.entities.characters.abilities;
 
-import toilari.otlite.game.util.Direction;
-import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.characters.abilities.components.AbstractAttackControllerComponent;
 
 /**
@@ -23,10 +21,5 @@ public class AttackAbility extends AbstractAttackAbility<AttackAbility, Abstract
     @Override
     public int getCooldownLength() {
         return getCharacter().getAttributes().getAttackCooldown();
-    }
-
-    @Override
-    public boolean canPerformOn(GameObject target, Direction direction) {
-        return true;
     }
 }

@@ -38,46 +38,9 @@ public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAtta
         this.random = random;
     }
 
-
-    /**
-     * Kokeilee voiko hahmo potkaista annettuun suuntaan.
-     *
-     * @param direction suunta johon potkaistaan
-     * @return <code>true</code> jos hahmo voi potkaista, muulloin <code>false</code>
-     */
     @Override
-    public boolean canPerformOn(GameObject target, Direction direction) {
-        if (getCharacter().getLevels().getAttributeLevel(Attribute.STRENGTH) < 2) {
-            return false;
-        }
-
-        if (direction == Direction.NONE) {
-            return false;
-        }
-
-        return hasTarget(direction);
-    }
-
-    private boolean tileBehindTargetIsFree(Direction direction, int delta) {
-        val targetX = getCharacter().getTileX() + direction.getDx() * (1 + delta);
-        val targetY = getCharacter().getTileY() + direction.getDy() * (1 + delta);
-
-        val objectInTarget = getCharacter().getWorld().getObjectAt(targetX, targetY);
-        val tileInTarget = getCharacter().getWorld().getTileAt(targetX, targetY);
-
-        return objectInTarget == null && !tileInTarget.isWall();
-    }
-
-    private boolean hasTarget(@NonNull Direction targetDirection) {
-        val targetX = getCharacter().getTileX() + targetDirection.getDx();
-        val targetY = getCharacter().getTileY() + targetDirection.getDy();
-        val objectInDirection = getCharacter().getWorld().getObjectAt(targetX, targetY);
-        if (objectInDirection instanceof CharacterObject && !objectInDirection.isRemoved()) {
-            val targetCharacter = (CharacterObject) objectInDirection;
-            return !targetCharacter.isDead();
-        }
-
-        return false;
+    public boolean canPerformOn(GameObject target, @NonNull Direction direction) {
+        return getCharacter().getLevels().getAttributeLevel(Attribute.STRENGTH) >= 2 && super.canPerformOn(target, direction);
     }
 
     @Override
@@ -94,10 +57,9 @@ public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAtta
     public boolean perform(@NonNull AbstractAttackControllerComponent<KickAbility> component) {
         val target = component.getTargetSelector().getTarget();
         val direction = component.getTargetSelector().getTargetDirection();
-        if (!canPerformOn(direction) || target == null) {
+        if (!canPerformOn(target, direction)) {
             return false;
         }
-
 
         if (tileBehindTargetIsFree(direction, 1)) {
             if (target instanceof IHealthHandler) {
@@ -114,6 +76,16 @@ public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAtta
         }
 
         return true;
+    }
+
+    private boolean tileBehindTargetIsFree(Direction direction, int delta) {
+        val targetX = getCharacter().getTileX() + direction.getDx() * (1 + delta);
+        val targetY = getCharacter().getTileY() + direction.getDy() * (1 + delta);
+
+        val objectInTarget = getCharacter().getWorld().getObjectAt(targetX, targetY);
+        val tileInTarget = getCharacter().getWorld().getTileAt(targetX, targetY);
+
+        return objectInTarget == null && !tileInTarget.isWall();
     }
 
     private void knockBackTarget(GameObject target, Direction direction, int knockbackAmount) {

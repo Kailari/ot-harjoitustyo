@@ -1,7 +1,5 @@
 package toilari.otlite.fake;
 
-import toilari.otlite.game.util.Direction;
-import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.characters.abilities.AbstractAttackAbility;
 
 public class FakeAttackAbility extends AbstractAttackAbility<FakeAttackAbility, FakeAttackControllerComponent> {
@@ -16,11 +14,6 @@ public class FakeAttackAbility extends AbstractAttackAbility<FakeAttackAbility, 
         super("fakeAttack");
         this.cost = cost;
         this.cooldown = cooldown;
-    }
-
-    @Override
-    public boolean canPerformOn(GameObject target, Direction direction) {
-        return false;
     }
 
     @Override

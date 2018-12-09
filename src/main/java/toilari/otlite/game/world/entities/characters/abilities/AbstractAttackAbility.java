@@ -1,7 +1,6 @@
 package toilari.otlite.game.world.entities.characters.abilities;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.game.event.CharacterEvent;
@@ -26,37 +25,16 @@ public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C
     }
 
     /**
-     * Tarkistaa voiko hahmo hyökätä annettuun suuntaan.
+     * Voiko hyökkäyksen suorittaa annetulle hahmolle annettuun suuntaan. Oletuksena hyväksyy kaikki hahmot paitsi
+     * hyökkääjän itsensä ja minkä tahansa suunnan.
      *
-     * @param direction suunta johon hyökätään
-     * @return <code>true</code> jos voidaan hyökätä, muulloin <code>false</code>
-     * @throws NullPointerException jos suunta on <code>null</code>
+     * @param target    kohde johon kyvyn suoritus kohdistetaan
+     * @param direction suunta suorittavasta objektista kohteeseen
+     * @return
      */
-    public boolean canPerformOn(@NonNull Direction direction) {
-        return canAttack(getCharacter().getTileX() + direction.getDx(), getCharacter().getTileY() + direction.getDy());
-    }
-
-    /**
-     * Testaa voiko hahmo hyökätä annettuihin koordinaatteihin.
-     *
-     * @param x tarkistettava x-koordinaatti
-     * @param y tarkistettava y-koordinaatti
-     * @return <code>true</code> jos voidaan hyökätä, muulloin <code>false</code>
-     */
-    public boolean canAttack(int x, int y) {
-        val objectAtTarget = getCharacter().getWorld().getObjectAt(x, y);
-        return canAttack(objectAtTarget);
-    }
-
-    /**
-     * Testaa voiko hahmo hyökätä annetun objektin kimppuun. Hyökkääminen onnistuu jos kohde ei ole null,
-     * sitä ei ole poistettu, se on {@link CharacterObject hahmo} ja se ei ole kuollut
-     *
-     * @param target kohde jonka kimppuun hyökätään
-     * @return <code>true</code> jos voidaan hyökätä, muulloin <code>false</code>
-     */
-    public boolean canAttack(GameObject target) {
-        if (!(target instanceof CharacterObject) || target.isRemoved()) {
+    @Override
+    public boolean canPerformOn(GameObject target, @NonNull Direction direction) {
+        if (direction == Direction.NONE || !(target instanceof CharacterObject) || target.isRemoved()) {
             return false;
         }
 
@@ -67,7 +45,8 @@ public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C
     @Override
     public boolean perform(@NonNull C component) {
         val target = component.getTargetSelector().getTarget();
-        if (!canAttack(target)) {
+        val direction = component.getTargetSelector().getTargetDirection();
+        if (!canPerformOn(target, direction)) {
             return false;
         }
 

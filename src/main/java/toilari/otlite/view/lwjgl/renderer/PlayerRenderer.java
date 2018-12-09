@@ -60,7 +60,7 @@ public class PlayerRenderer extends CharacterRenderer {
         val y = character.getY() / Tile.SIZE_IN_WORLD;
 
         for (val direction : Direction.asIterable()) {
-            drawArrow(camera, character, x, y, direction, direction.ordinal());
+            drawArrow(camera, character, direction, direction.ordinal());
         }
 
         val targetSelectorComponent = character.getAbilities().getComponent(TargetSelectorAbility.class);
@@ -80,23 +80,23 @@ public class PlayerRenderer extends CharacterRenderer {
         this.arrows.draw(camera, x, (float) y, 2, 0.25f, 0.65f, 0.25f);
     }
 
-    private void drawArrow(@NonNull LWJGLCamera camera, @NonNull CharacterObject character, int x, int y, Direction direction, int frame) {
+    private void drawArrow(@NonNull LWJGLCamera camera, @NonNull CharacterObject character, Direction direction, int frame) {
         val canMove = checkCanMove(character, direction);
 
-        val dx = direction.getDx();
-        val dy = direction.getDy();
-        val canAttack = checkCanAttack(character, x, y, dx, dy);
+        val targetX = character.getTileX() + direction.getDx();
+        val targetY = character.getTileY() + direction.getDy();
+        val canAttack = checkCanAttack(character, targetX, targetY, direction);
         if (canAttack) {
             frame = 5;
         } else if (!canMove) {
             frame = 4;
         }
-        val isDangerous = (canMove && character.getWorld().getCurrentLevel().getTileAt(x + dx, y + dy).isDangerous());
+        val isDangerous = (canMove && character.getWorld().getCurrentLevel().getTileAt(targetX, targetY).isDangerous());
 
         float r = canAttack || isDangerous ? 0.85f : 0.85f;
         float g = canAttack || isDangerous ? 0.2f : 0.95f;
         float b = canAttack || isDangerous ? 0.2f : 0.85f;
-        this.arrows.draw(camera, (x + dx) * Tile.SIZE_IN_WORLD + 2, (y + dy) * Tile.SIZE_IN_WORLD + 2, frame, r, g, b);
+        this.arrows.draw(camera, targetX * Tile.SIZE_IN_WORLD + 2, targetY * Tile.SIZE_IN_WORLD + 2, frame, r, g, b);
     }
 
     private boolean checkCanMove(@NonNull CharacterObject character, Direction direction) {
@@ -104,8 +104,8 @@ public class PlayerRenderer extends CharacterRenderer {
         return ability != null && ability.canMoveTo(direction, 1);
     }
 
-    private boolean checkCanAttack(@NonNull CharacterObject character, int x, int y, int dx, int dy) {
+    private boolean checkCanAttack(@NonNull CharacterObject character, int x, int y, Direction direction) {
         val ability = character.getAbilities().getAbility(AttackAbility.class);
-        return ability != null && ability.canAttack(x + dx, y + dy);
+        return ability != null && ability.canPerformOn(character.getWorld().getObjectAt(x, y), direction);
     }
 }
