@@ -125,16 +125,16 @@ public class CharacterObject extends GameObject implements IHealthHandler {
      * Kutsutaan kun vuoro päättyy.
      */
     public void endTurn() {
-        handlePanic();
+        handleEndPanic();
 
         for (val ability : this.abilities.getAbilitiesSortedByPriority()) {
             handleAbilityEndTurn(ability);
         }
     }
 
-    private void handlePanic() {
+    private void handleEndPanic() {
         if (this.isPanicking()) {
-            this.panicking = this.random.nextFloat() < 0.5f;
+            this.panicking = this.random.nextFloat() < 0.35f;
         }
     }
 
@@ -163,7 +163,7 @@ public class CharacterObject extends GameObject implements IHealthHandler {
         component.updateInput(ability);
 
         val cost = ability.getCost();
-        if (component.wants(ability) && canAfford(turnManager, cost)) {
+        if (cost != -1 && component.wants(ability) && canAfford(turnManager, cost)) {
             if (ability.perform(component)) {
                 turnManager.spendActionPoints(cost);
                 ability.putOnCooldown();

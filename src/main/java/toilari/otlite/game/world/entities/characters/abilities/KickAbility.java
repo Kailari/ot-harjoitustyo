@@ -39,11 +39,6 @@ public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAtta
     }
 
     @Override
-    public boolean canPerformOn(GameObject target, @NonNull Direction direction) {
-        return getCharacter().getLevels().getAttributeLevel(Attribute.STRENGTH) >= 2 && super.canPerformOn(target, direction);
-    }
-
-    @Override
     public int getCost() {
         return Attribute.Strength.getKickCost(getCharacter().getLevels());
     }

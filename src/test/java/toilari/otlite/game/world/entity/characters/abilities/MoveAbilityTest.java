@@ -318,7 +318,7 @@ class MoveAbilityTest {
         }
 
         @Override
-        public void updateInput(@NonNull MoveAbility ability) {
+        public void doUpdateInput(@NonNull MoveAbility ability) {
         }
     }
 }

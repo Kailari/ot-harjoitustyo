@@ -114,7 +114,8 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         val screenTopLeftY = camera.getY();
 
         drawTurnStatus(camera, state, screenTopLeftX, screenTopLeftY);
-        this.abilityBar.draw(camera, state.getManager().getPlayer().getAbilities(), screenTopLeftX, screenTopLeftY + camera.getViewportHeight() - 18);
+        val remainingAP = state.getManager().isCharactersTurn(state.getManager().getPlayer()) ? state.getManager().getRemainingActionPoints() : 0;
+        this.abilityBar.draw(camera, state.getManager().getPlayer().getAbilities(), screenTopLeftX, screenTopLeftY + camera.getViewportHeight() - 18, remainingAP);
 
         if (state.getManager().getPlayer().isDead()) {
             drawDeathMessage(camera, state, screenTopLeftX, screenTopLeftY);
@@ -151,7 +152,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
             } else {
                 val targetSelector = player.getAbilities().getComponent(TargetSelectorAbility.class);
                 if (targetSelector != null && targetSelector.getTarget() != null) {
-                    apStr = "Press <SPACE> to attack!";
+                    apStr = "Press <SPACE> to attack\nPress <ESC> to cancel";
                 } else {
                     apStr = "AP: " + remaining + "/" + total;
                 }

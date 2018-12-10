@@ -31,17 +31,17 @@ public class UIAbilityBar {
         this.abilityBackground = new Sprite(this.abilityBackgroundTexture, 0, 0, 16, 16, 16, 16);
     }
 
-    public void draw(LWJGLCamera camera, @NonNull CharacterAbilities abilities, float x, float y) {
+    public void draw(LWJGLCamera camera, @NonNull CharacterAbilities abilities, float x, float y, int remainingAp) {
         int i = 0;
         for (val ability : abilities.getAbilitiesSortedByPriority()) {
-            if (!abilities.getComponent(ability.getClass()).isHidden()) {
+            if (!abilities.getComponent(ability.getClass()).isHidden() && ability.getCost() != -1) {
                 val ts = abilities.getComponent(TargetSelectorAbility.class);
-                drawAbility(camera, ability, ts, i++, x, y);
+                drawAbility(camera, ability, ts, i++, x, y, remainingAp);
             }
         }
     }
 
-    private void drawAbility(LWJGLCamera camera, IAbility ability, TargetSelectorControllerComponent ts, int index, float x, float y) {
+    private void drawAbility(LWJGLCamera camera, IAbility ability, TargetSelectorControllerComponent ts, int index, float x, float y, int remainingAp) {
         val xx = 2 + x + index * (16 + 2);
 
         val r = ability.isOnCooldown() ? 0.85f : (ts.isActive(ability) ? 0.15f : 1.0f);
@@ -49,12 +49,21 @@ public class UIAbilityBar {
         val b = ability.isOnCooldown() ? 0.15f : (ts.isActive(ability) ? 0.15f : 1.0f);
         this.abilityBackground.draw(camera, xx, y, r, g, b);
 
+        // Ability name (above the icon)
         this.textRenderer.draw(camera, xx, y - (2.5f + ability.getName().chars().filter(c -> c == '\n').count() * ABILITY_LABEL_FONTSIZE), 1.0f, 1.0f, 1.0f, ABILITY_LABEL_FONTSIZE, ability.getName());
 
+        // Ability index (left bottom)
         this.textRenderer.draw(camera, xx + 1, y + 16 - 5.5f, 0.5f, 0.5f, 0.5f, 4, String.valueOf(index + 1));
 
+        // AP cost (right bottom)
+        val apR = ability.getCost() > remainingAp ? 0.85f : 0.15f;
+        val apG = ability.getCost() > remainingAp ? 0.15f : 0.85f;
+        val apB = ability.getCost() > remainingAp ? 0.15f : 0.15f;
+        this.textRenderer.draw(camera, xx + 11, y + 16 - 5.5f, apR, apG, apB, 4, String.valueOf(ability.getCost()));
+
+        // Cooldown (overdraw the whole thing)
         if (ability.isOnCooldown()) {
-            this.textRenderer.draw(camera, xx, y, 0.85f, 0.85f, 0.85f, 16, String.valueOf(ability.getRemainingCooldown()));
+            this.textRenderer.draw(camera, xx + 1, y + 1, 0.85f, 0.85f, 0.85f, 14, String.valueOf(ability.getRemainingCooldown()));
         }
     }
 
