@@ -31,6 +31,13 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
      * @return suunta johon hahmo haluaa liikkua
      */
     public Direction getInputDirection() {
+        if (getCharacter().isPanicking()) {
+            this.inputX = getCharacter().getTileX() - getCharacter().getPanicSourceX();
+            this.inputY = getCharacter().getTileY() - getCharacter().getPanicSourceY();
+
+            // TODO: handle better
+        }
+
         if (this.inputX != 0) {
             return this.inputX > 0 ? Direction.RIGHT : Direction.LEFT;
         } else if (this.inputY != 0) {

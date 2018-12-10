@@ -8,17 +8,16 @@
   },
   "levels": {
     "attributeLevels": [
-      2,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1
+      10, 10, 10, 10, 10, 10, 10, 10
     ]
   },
   "abilities": {
+    "target_selector": {
+      "priority": 0,
+      "component": {
+        "class": "player"
+      }
+    },
     "move": {
       "priority": 1,
       "component": {
@@ -41,14 +40,16 @@
         "class": "player"
       }
     },
-    "end_turn": {
-      "priority": 99,
+    "warcry": {
+      "priority": 4,
+      "name": "Warcry",
       "component": {
+        "visibleOnHud": true,
         "class": "player"
       }
     },
-    "target_selector": {
-      "priority": 0,
+    "end_turn": {
+      "priority": 99,
       "component": {
         "class": "player"
       }

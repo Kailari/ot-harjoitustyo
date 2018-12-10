@@ -41,7 +41,7 @@ public class AbilityComponentEntry<A extends IAbility<A, C>, C extends IControll
      * @param factory        tehdas jolla komponentteja voidaan tuottaa
      * @return tämä pari ketjutusta varten
      */
-    public AbilityComponentEntry<A, C> addComponent(String key, Class<? extends C> componentClass, Function<C, C> factory) {
+    public AbilityComponentEntry<A, C> registerComponent(String key, Class<? extends C> componentClass, Function<C, C> factory) {
         this.componentClasses.put(key, componentClass);
         this.componentFactories.put(componentClass, factory);
         return this;

@@ -2,6 +2,7 @@ package toilari.otlite.game.world.level;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -47,6 +48,7 @@ public class Level {
      * @param y ruudun y-koordinaatti
      * @return annetuissa koordinaateissa olevan ruudun tyyppi
      */
+    @NonNull
     public Tile getTileAt(int x, int y) {
         if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
             return Level.OUT_OF_BOUNDS_TILE;

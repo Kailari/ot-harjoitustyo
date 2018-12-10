@@ -9,9 +9,12 @@ import toilari.otlite.game.event.CharacterEvent;
 import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.IHealthHandler;
 import toilari.otlite.game.world.entities.TurnObjectManager;
+import toilari.otlite.game.world.entities.characters.abilities.EndTurnAbility;
 import toilari.otlite.game.world.entities.characters.abilities.IAbility;
+import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
 import toilari.otlite.game.world.entities.characters.abilities.components.IControllerComponent;
 
+import java.util.Random;
 import java.util.stream.StreamSupport;
 
 /**
@@ -21,6 +24,7 @@ import java.util.stream.StreamSupport;
 public class CharacterObject extends GameObject implements IHealthHandler {
     @Getter private transient int turnsTaken;
     @Getter private transient long deathTime;
+    private transient final Random random = new Random();
 
     // Overrides IHealthHandler get/setHealth
     @Getter(onMethod = @__({@Override})) @Setter(onMethod = @__({@Override}))
@@ -30,6 +34,10 @@ public class CharacterObject extends GameObject implements IHealthHandler {
     @Getter private final CharacterAttributes attributes;
     @Getter private final CharacterLevels levels;
     @Getter private final CharacterInfo info;
+
+    @Getter private boolean panicking;
+    @Getter private int panicSourceX;
+    @Getter private int panicSourceY;
 
     /**
      * Luo uuden hahmon asettaen sille attribuuttien ja tasojen oletusarvot.
@@ -94,6 +102,12 @@ public class CharacterObject extends GameObject implements IHealthHandler {
      */
     public void updateOnTurn(@NonNull TurnObjectManager turnManager) {
         for (val ability : this.abilities.getAbilitiesSortedByPriority()) {
+            // Only update allowed abilities (move/end turn) while panicking
+            if (this.panicking && !(ability instanceof MoveAbility || ability instanceof EndTurnAbility)) {
+                LOG.debug("Skipping ability \"{}\" due to panic", ability.getClass().getSimpleName());
+                continue;
+            }
+
             // addAbility signature makes sure that abilities are always compatible with their associated components.
             // Thus, we can sefely ignore this warning.
             // noinspection unchecked
@@ -111,12 +125,24 @@ public class CharacterObject extends GameObject implements IHealthHandler {
      * Kutsutaan kun vuoro päättyy.
      */
     public void endTurn() {
-        for (val ability : this.abilities.getAbilitiesSortedByPriority()) {
-            this.abilities.getComponentResponsibleFor(ability).reset();
+        handlePanic();
 
-            if (ability.isOnCooldown()) {
-                ability.reduceCooldownTimer();
-            }
+        for (val ability : this.abilities.getAbilitiesSortedByPriority()) {
+            handleAbilityEndTurn(ability);
+        }
+    }
+
+    private void handlePanic() {
+        if (this.isPanicking()) {
+            this.panicking = this.random.nextFloat() < 0.5f;
+        }
+    }
+
+    private <A extends IAbility<A, C>, C extends IControllerComponent<A>> void handleAbilityEndTurn(A ability) {
+        this.abilities.getComponentResponsibleFor(ability).reset();
+
+        if (ability.isOnCooldown()) {
+            ability.reduceCooldownTimer();
         }
     }
 
@@ -151,5 +177,12 @@ public class CharacterObject extends GameObject implements IHealthHandler {
 
     private boolean canAfford(TurnObjectManager turnManager, int cost) {
         return turnManager.getRemainingActionPoints() >= cost;
+    }
+
+    public void panic(int x, int y) {
+        LOG.debug("a character is panicking!");
+        this.panicking = true;
+        this.panicSourceX = x;
+        this.panicSourceY = y;
     }
 }

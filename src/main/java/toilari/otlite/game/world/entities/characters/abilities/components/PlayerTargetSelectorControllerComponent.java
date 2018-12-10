@@ -75,13 +75,14 @@ public class PlayerTargetSelectorControllerComponent extends TargetSelectorContr
                 setTarget(targetCandidate, direction);
                 return;
             }
+
+            if (direction == Direction.LEFT && getActive().canTargetSelf()) {
+                setTarget(getCharacter(), Direction.NONE);
+                return;
+            }
         }
 
-        if (getActive().canTargetSelf()) {
-            setTarget(getCharacter(), Direction.NONE);
-        } else {
-            setTarget(null, Direction.NONE);
-        }
+        setTarget(null, Direction.NONE);
     }
 
     private void selectTargetWithArrowKeys() {

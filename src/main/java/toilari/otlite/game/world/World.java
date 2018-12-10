@@ -55,6 +55,7 @@ public class World {
      * @throws IllegalArgumentException jos koordinaatit eivät ole kartan {@link #isWithinBounds(int, int)
      *                                  rajojen sisäpuolella}
      */
+    @NonNull
     public Tile getTileAt(int x, int y) {
         return getCurrentLevel().getTileAt(x, y);
     }
