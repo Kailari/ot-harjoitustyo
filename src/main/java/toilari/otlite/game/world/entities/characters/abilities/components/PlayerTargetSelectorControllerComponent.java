@@ -32,7 +32,7 @@ public class PlayerTargetSelectorControllerComponent extends TargetSelectorContr
     }
 
     @Override
-    protected void setTarget(GameObject target, Direction direction) {
+    public void setTarget(GameObject target, Direction direction) {
         super.setTarget(target, direction);
         this.directionIterator = Direction.asLoopingIterator(direction);
     }
@@ -48,7 +48,7 @@ public class PlayerTargetSelectorControllerComponent extends TargetSelectorContr
             if (Input.getHandler().isKeyPressed(this.abilityKeys[i]) && hasAbility(i) && notOnCooldown(i) && canAfford(i)) {
                 if (getTarget() == null || isActive(i)) {
                     setActiveTargetedAbility(i);
-                    findNewTarget();
+                    cycleTargets();
                     if (getTarget() == null) {
                         setActiveTargetedAbility(-1);
                     }
@@ -59,7 +59,11 @@ public class PlayerTargetSelectorControllerComponent extends TargetSelectorContr
         }
     }
 
-    private void findNewTarget() {
+    public void cycleTargets() {
+        if (getActive() == null) {
+            return;
+        }
+
         if (getTarget() == null) {
             this.directionIterator = Direction.asLoopingIterator();
         }
@@ -73,7 +77,11 @@ public class PlayerTargetSelectorControllerComponent extends TargetSelectorContr
             }
         }
 
-        setTarget(null, Direction.NONE);
+        if (getActive().canTargetSelf()) {
+            setTarget(getCharacter(), Direction.NONE);
+        } else {
+            setTarget(null, Direction.NONE);
+        }
     }
 
     private void selectTargetWithArrowKeys() {

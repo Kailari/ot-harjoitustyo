@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class FakeInputHandler implements IInputHandler {
-    private final List<Key> pressedKeys;
+    private List<Key> pressedKeys;
     private int updatesCalled;
 
     public FakeInputHandler(Key... pressedKeys) {
@@ -47,5 +47,10 @@ public class FakeInputHandler implements IInputHandler {
     @Override
     public void update() {
         this.updatesCalled++;
+    }
+
+    public void setPressedKeys(Key... pressedKeys) {
+        this.pressedKeys = Arrays.asList(pressedKeys);
+        this.updatesCalled = 0;
     }
 }

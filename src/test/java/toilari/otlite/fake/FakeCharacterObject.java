@@ -1,8 +1,12 @@
 package toilari.otlite.fake;
 
 import lombok.val;
+import toilari.otlite.game.util.Direction;
+import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.CharacterAttributes;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
+
+import java.util.HashMap;
 
 public class FakeCharacterObject extends CharacterObject {
     private FakeCharacterObject() {
@@ -66,5 +70,18 @@ public class FakeCharacterObject extends CharacterObject {
         }
 
         return character;
+    }
+
+    public static HashMap<Direction, CharacterObject> createAround(TurnObjectManager manager, CharacterObject character) {
+        val map = new HashMap<Direction, CharacterObject>();
+        map.put(Direction.LEFT, createAt(character.getTileX() - 1, character.getTileY()));
+        map.put(Direction.RIGHT, createAt(character.getTileX() + 1, character.getTileY()));
+        map.put(Direction.UP, createAt(character.getTileX(), character.getTileY() - 1));
+        map.put(Direction.DOWN, createAt(character.getTileX(), character.getTileY() + 1));
+        manager.spawn(map.get(Direction.LEFT));
+        manager.spawn(map.get(Direction.RIGHT));
+        manager.spawn(map.get(Direction.UP));
+        manager.spawn(map.get(Direction.DOWN));
+        return map;
     }
 }

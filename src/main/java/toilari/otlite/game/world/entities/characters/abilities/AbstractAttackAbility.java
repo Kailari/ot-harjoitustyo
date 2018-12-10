@@ -1,8 +1,6 @@
 package toilari.otlite.game.world.entities.characters.abilities;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.val;
+import lombok.*;
 import toilari.otlite.game.event.CharacterEvent;
 import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.entities.GameObject;
@@ -17,8 +15,15 @@ public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C
     extends AbstractAbility<A, C>
     implements ITargetedAbility<A, C> {
 
+    private boolean canTargetSelf = false;
+
     @Getter private boolean lastAttackKill;
     @Getter private float lastAttackDamage;
+
+    @Override
+    public boolean canTargetSelf() {
+        return this.canTargetSelf;
+    }
 
     protected AbstractAttackAbility(@NonNull String name) {
         super(name);

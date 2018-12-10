@@ -13,4 +13,11 @@ public interface ITargetedAbility<A extends ITargetedAbility<A, C>, C extends IT
      * @return <code>true</code> jos kyky voidaan suorittaa, muulloin <code>false</code>
      */
     boolean canPerformOn(GameObject target, Direction direction);
+
+    /**
+     * Voiko kyvyn kohdistaa itseensä?
+     *
+     * @return <code>true</code> jos hahmo voi käyttää kyvyn itseensä
+     */
+    boolean canTargetSelf();
 }

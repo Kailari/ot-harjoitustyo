@@ -10,7 +10,6 @@ import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbi
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -19,7 +18,7 @@ import java.util.Objects;
 @NoArgsConstructor
 public abstract class TargetSelectorControllerComponent extends AbstractControllerComponent<TargetSelectorAbility> {
     @Getter(AccessLevel.PROTECTED) private transient ITargetedAbility[] abilities;
-    @Getter(AccessLevel.PROTECTED) private transient ITargetedAbility active;
+    @Getter private transient ITargetedAbility active;
     @Getter private transient GameObject target;
     @Getter private transient Direction targetDirection;
 
@@ -32,6 +31,17 @@ public abstract class TargetSelectorControllerComponent extends AbstractControll
      */
     public boolean isActive(@NonNull IAbility ability) {
         return Objects.equals(this.active, ability);
+    }
+
+    /**
+     * Asettaa nykyisen kohteen.
+     *
+     * @param target    peliobjekti jota tulee käyttää kohteena
+     * @param direction suunta johon ollaan hyökkäämässä
+     */
+    public void setTarget(GameObject target, Direction direction) {
+        this.target = target;
+        this.targetDirection = direction;
     }
 
     /**
@@ -120,10 +130,5 @@ public abstract class TargetSelectorControllerComponent extends AbstractControll
         }
 
         return null;
-    }
-
-    protected void setTarget(GameObject target, Direction direction) {
-        this.target = target;
-        this.targetDirection = direction;
     }
 }
