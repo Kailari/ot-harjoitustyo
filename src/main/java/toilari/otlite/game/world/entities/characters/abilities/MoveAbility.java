@@ -31,11 +31,11 @@ public class MoveAbility extends AbstractAbility<MoveAbility, MoveControllerComp
         int newY = getCharacter().getTileY() + direction.getDy();
 
         val world = getCharacter().getWorld();
-        if (!world.getCurrentLevel().isWithinBounds(newX, newY)) {
+        if (!world.isWithinBounds(newX, newY)) {
             return false;
         }
 
-        val tileAtTarget = world.getCurrentLevel().getTileAt(newX, newY);
+        val tileAtTarget = world.getTileAt(newX, newY);
         val objectAtTarget = world.getObjectAt(newX, newY);
 
         val tileIsWalkable = !tileAtTarget.isWall();

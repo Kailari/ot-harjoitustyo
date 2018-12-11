@@ -39,8 +39,15 @@ public class PlayerTargetSelectorControllerComponent extends TargetSelectorContr
 
     @Override
     public void updateInput(@NonNull TargetSelectorAbility ability) {
+        cancelWithEscape();
         cycleTargetWithAbilityKeys();
         selectTargetWithArrowKeys();
+    }
+
+    private void cancelWithEscape() {
+        if (Input.getHandler().isKeyPressed(Key.ESCAPE)) {
+            reset();
+        }
     }
 
     private void cycleTargetWithAbilityKeys() {

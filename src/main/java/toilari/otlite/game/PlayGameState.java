@@ -21,8 +21,6 @@ public class PlayGameState extends GameState {
     @Getter @NonNull private final World world;
     @Getter @NonNull private final TurnObjectManager manager;
     @NonNull private final IGetByIDDao<CharacterObject> characters;
-    @NonNull private final IGetByIDDao<LevelData> levels;
-    @NonNull private final IGetAllDAO<Tile> tiles;
 
     /**
      * Luo uuden pelitila-instanssin.
@@ -35,12 +33,10 @@ public class PlayGameState extends GameState {
      */
     public PlayGameState(@NonNull TurnObjectManager manager, @NonNull IGetAllDAO<Tile> tiles, @NonNull IGetByIDDao<CharacterObject> characters, @NonNull IGetByIDDao<LevelData> levels) {
         this.manager = manager;
-        this.tiles = tiles;
         this.characters = characters;
-        this.levels = levels;
 
         this.manager.setGameState(this);
-        this.world = new World(manager);
+        this.world = new World(manager, tiles, levels, characters);
     }
 
     @Override
@@ -52,18 +48,12 @@ public class PlayGameState extends GameState {
         this.manager.spawn(player);
         this.manager.setPlayer(player);
         val levelId = "1";
-        changeLevel(levelId);
+        this.world.changeLevel(levelId);
 
         LOG.info("Initialization finished.");
 
         getEventSystem().subscribeTo(PlayEvent.ReturnToMenuAfterLoss.class, (e) -> getGame().changeState(new MainMenuGameState()));
         return false;
-    }
-
-    private void changeLevel(@NonNull String levelId) {
-        val level = this.levels.getByID(levelId);
-        this.world.changeLevel(level.asLevel(this.tiles));
-        level.spawn(this.characters, this.manager);
     }
 
     @Override

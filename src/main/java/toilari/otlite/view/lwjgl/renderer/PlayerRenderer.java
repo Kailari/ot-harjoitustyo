@@ -134,7 +134,7 @@ public class PlayerRenderer extends CharacterRenderer {
         } else if (!canMove) {
             frame = 4;
         }
-        val isDangerous = (canMove && character.getWorld().getCurrentLevel().getTileAt(targetX, targetY).isDangerous());
+        val isDangerous = (canMove && character.getWorld().getTileAt(targetX, targetY).isDangerous());
 
         float r = canAttack || isDangerous ? 0.85f : 0.85f;
         float g = canAttack || isDangerous ? 0.2f : 0.95f;

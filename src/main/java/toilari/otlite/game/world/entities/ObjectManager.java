@@ -85,6 +85,7 @@ public class ObjectManager {
 
     /**
      * Päivittää kaikki olemassaolevat objektit.
+     *
      * @param delta viimeisimmästä päivityksestä kulunut aika
      */
     public void update(float delta) {
@@ -166,5 +167,13 @@ public class ObjectManager {
 
     protected void remove(GameObject object) {
         this.objects.remove(object);
+    }
+
+    /**
+     * Poistaa kaikki paitsi pelaajaobjektin.
+     */
+    public void clearAllNonPlayerObjects() {
+        this.objects.clear();
+        this.objects.add(this.player);
     }
 }

@@ -64,7 +64,7 @@ public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAtta
                 }
             }
 
-            int knockbackAmount = calculateKnockbackAmount(component.getTargetSelector().getTargetDirection());
+            int knockbackAmount = calculateKnockbackAmount(component.getTargetSelector().getTarget(), component.getTargetSelector().getTargetDirection());
             knockBackTarget(target, direction, knockbackAmount);
         } else {
             dealDamage(target, (IHealthHandler) target, calculateDamage() * 1.5f);
@@ -88,22 +88,32 @@ public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAtta
             return;
         }
 
-        val oldX = target.getTileX();
-        val oldY = target.getTileY();
-        val newX = oldX + direction.getDx() * knockbackAmount;
-        val newY = oldY + direction.getDy() * knockbackAmount;
-        target.setTilePos(newX, newY);
+        for (int delta = 1; delta <= knockbackAmount; delta++) {
+            val oldX = target.getTileX();
+            val oldY = target.getTileY();
+            val newX = oldX + direction.getDx() * delta;
+            val newY = oldY + direction.getDy() * delta;
+            target.setTilePos(newX, newY);
 
-        if (target instanceof CharacterObject) {
-            target.getWorld().getTileAt(oldX, oldY).onCharacterExit(oldX, oldY, (CharacterObject) target);
-            target.getWorld().getTileAt(newX, newY).onCharacterEnter(newX, newY, (CharacterObject) target);
+            if (target instanceof CharacterObject) {
+                target.getWorld().getTileAt(oldX, oldY).onCharacterExit(oldX, oldY, (CharacterObject) target);
+                target.getWorld().getTileAt(newX, newY).onCharacterEnter(newX, newY, (CharacterObject) target);
+            }
         }
     }
 
-    private int calculateKnockbackAmount(Direction direction) {
+    private int calculateKnockbackAmount(GameObject target, Direction direction) {
         val min = Attribute.Strength.getKickKnockbackMin(getCharacter().getLevels());
         val max = numberOfFreeTilesInDirection(direction, Attribute.Strength.getKickKnockbackMax(getCharacter().getLevels()));
-        return Math.round(min + (this.random.nextFloat() * (max - min)));
+
+        float resistance = 0.0f;
+        if (target instanceof CharacterObject) {
+            val targetCharacter = (CharacterObject) target;
+            resistance = targetCharacter.getAttributes().getKnockbackResistance(targetCharacter.getLevels());
+        }
+
+        val maxAmount = (max - min) * (1.0f - resistance);
+        return Math.round(min + (this.random.nextFloat() * maxAmount));
     }
 
     private int numberOfFreeTilesInDirection(Direction direction, int max) {

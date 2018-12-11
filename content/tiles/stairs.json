@@ -1,0 +1,6 @@
+{
+    "id": "stairs",
+    "wall": false,
+    "tileIndex": 4,
+    "type": "stair"
+}

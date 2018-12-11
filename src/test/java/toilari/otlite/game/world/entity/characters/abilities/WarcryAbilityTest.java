@@ -1,6 +1,7 @@
 package toilari.otlite.game.world.entity.characters.abilities;
 
 import lombok.val;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import toilari.otlite.fake.FakeCharacterObject;
@@ -8,6 +9,7 @@ import toilari.otlite.game.world.entities.characters.Attribute;
 import toilari.otlite.game.world.entities.characters.abilities.WarcryAbility;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class WarcryAbilityTest {
     @ParameterizedTest
@@ -38,5 +40,10 @@ class WarcryAbilityTest {
         val ability = new WarcryAbility();
         ability.init(character);
         assertEquals(Attribute.Charisma.getWarcryRange(character.getLevels()), ability.getAreaExtent());
+    }
+
+    //@Test
+    void notYetImplemented() {
+        //fail("not implemented");
     }
 }

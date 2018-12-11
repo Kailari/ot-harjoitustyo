@@ -2,20 +2,38 @@ package toilari.otlite.game.world;
 
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import toilari.otlite.dao.IGetAllDAO;
+import toilari.otlite.dao.serialization.IGetByIDDao;
 import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.TurnObjectManager;
+import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.level.Level;
+import toilari.otlite.game.world.level.LevelData;
 import toilari.otlite.game.world.level.NormalTile;
 import toilari.otlite.game.world.level.Tile;
 
 /**
  * Pelimaailma.
  */
+@Slf4j
 public class World {
     private static final Tile NULL_TILE = new NormalTile(true, true, 0, "__null");
+
+    private IGetByIDDao<LevelData> levels = null;
+    private IGetAllDAO<Tile> tiles = null;
+    private IGetByIDDao<CharacterObject> characters = null;
+
     @Getter private Level currentLevel;
     @NonNull @Getter private final TurnObjectManager objectManager;
+
+    public World(TurnObjectManager manager, IGetAllDAO<Tile> tiles, IGetByIDDao<LevelData> levels, IGetByIDDao<CharacterObject> characters) {
+        this.objectManager = manager;
+        this.levels = levels;
+        this.tiles = tiles;
+        this.characters = characters;
+    }
 
     /**
      * Tarkistaa onko annetuissa koordinaateissa objektia ja palauttaa sen jos sellainen löytyy. Ei palauta objekteja
@@ -70,7 +88,7 @@ public class World {
      * @return <code>true</code> jos koordinaatit ovat kartan sisällä, muulloin <code>false</code>
      */
     public boolean isWithinBounds(int x, int y) {
-        return getCurrentLevel().isWithinBounds(x, y);
+        return getCurrentLevel() != null && getCurrentLevel().isWithinBounds(x, y);
     }
 
     /**
@@ -88,7 +106,30 @@ public class World {
      * @param level Uusi kartta johon vaihdetaan
      */
     public void changeLevel(@NonNull Level level) {
+        this.objectManager.clearAllNonPlayerObjects();
         this.currentLevel = level;
+    }
+
+    /**
+     * Vaihtaa pelin karttaa.
+     *
+     * @param levelId Uuden kartan ID
+     */
+    public void changeLevel(@NonNull String levelId) {
+        if (this.levels == null || this.tiles == null || this.characters == null) {
+            LOG.warn("Level/Tile/Character accessors are not initialized properly.");
+            return;
+        }
+
+        val level = this.levels.getByID(levelId);
+        if (level == null) {
+            LOG.warn("Could not load level \"{}\"", levelId);
+            return;
+        }
+
+        changeLevel(level.asLevel(this.tiles));
+        level.setNextLevel();
+        level.spawn(this.characters, this.objectManager);
     }
 
     /**

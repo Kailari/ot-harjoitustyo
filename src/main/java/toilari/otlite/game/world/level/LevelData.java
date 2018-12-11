@@ -20,6 +20,7 @@ public class LevelData {
     @Getter private int width = 0, height = 0;
     @Getter private Map<String, Byte> mapping = new HashMap<>();
     @Getter private byte[] tiles = new byte[0];
+    private String nextLevel;
 
     @SerializedName("characters")
     @Getter private List<CharacterEntry> characterEntries = new ArrayList<>();
@@ -33,6 +34,13 @@ public class LevelData {
      */
     public Level asLevel(@NonNull IGetAllDAO<Tile> tiles) {
         return new Level(this.width, this.height, new TileMapping(tiles, this.mapping), this.tiles);
+    }
+
+    /**
+     * Asettaa seuraavan kartan tämän kartan tietojen mukaan.
+     */
+    public void setNextLevel() {
+        StaircaseTile.nextLevel = this.nextLevel;
     }
 
     /**

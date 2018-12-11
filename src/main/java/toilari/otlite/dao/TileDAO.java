@@ -10,6 +10,7 @@ import toilari.otlite.dao.serialization.TileAdapter;
 import toilari.otlite.dao.util.TextFileHelper;
 import toilari.otlite.game.world.level.KillTile;
 import toilari.otlite.game.world.level.NormalTile;
+import toilari.otlite.game.world.level.StaircaseTile;
 import toilari.otlite.game.world.level.Tile;
 
 import java.io.IOException;
@@ -31,6 +32,7 @@ public class TileDAO extends AutoDiscoverFileDAO<Tile> {
         val adapter = new TileAdapter();
         adapter.registerTileType("normal", NormalTile.class);
         adapter.registerTileType("kill", KillTile.class);
+        adapter.registerTileType("stair", StaircaseTile.class);
         return adapter;
     }
 
