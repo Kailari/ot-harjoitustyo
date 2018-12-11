@@ -11,6 +11,7 @@ Hätä ei suinkaan ole tämän näköinen sillä useimpiin kehitysympäristöihi
 *TL;DR: Puttuvat metodit generoidaan kääntämisen yhteydessä, jos haluat editorin sisällä virheistä eroon lataa lombok-liitännäinen.*
 
 ## Dokumentaatio
+- [käyttöohje](documentation/kayttoohje.md)
 - [vaatimusmäärittely](documentation/vaatimusmaarittely.md)
 - [arkkitehtuuri](documentation/arkkitehtuuri.md)
 - [tuntikirjanpito](documentation/tuntikirjanpito.md)

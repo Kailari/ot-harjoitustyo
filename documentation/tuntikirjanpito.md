@@ -42,4 +42,5 @@
 | 9.12|    3 h | Refaktorointia ja siivoilua. |
 |10.12|    2 h | Testejä kykyjen kohteenvalintaan liittyen. |
 |10.12|    4 h | Käyttöliittymän viilailua, siivoilua ja lisää testejä. |
-| **yhteensä** | 94 h ||
+|11.12|    3 h | Arkkitehttuurin dokumentointia ja käyttöohjeen laatimista. |
+| **yhteensä** | 97 h ||
