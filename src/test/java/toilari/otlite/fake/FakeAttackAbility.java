@@ -13,6 +13,10 @@ public class FakeAttackAbility extends AbstractAttackAbility<FakeAttackAbility, 
         return new FakeAttackAbility(cost, cooldown);
     }
 
+    public static FakeAttackAbility createFree() {
+        return create(0, 0);
+    }
+
     private FakeAttackAbility(int cost, int cooldown) {
         super("fakeAttack");
         this.cost = cost;

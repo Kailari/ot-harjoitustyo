@@ -40,8 +40,9 @@ public class CharacterAbilities {
      * @param component kyvystä vastaava ohjainkomponentti
      * @param <A>       kyvyn tyyppi
      * @param <C>       ohjainkomponentin tyyppi
+     * @throws NullPointerException jos kyky tai ohjainkomponentti ovat <code>null</code>
      */
-    public <A extends IAbility<A, C>, C extends IControllerComponent<A>> void addAbility(A ability, IControllerComponent<A> component) {
+    public <A extends IAbility<A, C>, C extends IControllerComponent<A>> void addAbility(@NonNull A ability, @NonNull IControllerComponent<A> component) {
         this.abilities.add(ability);
         this.components.put(ability.getClass(), component);
     }
@@ -53,8 +54,9 @@ public class CharacterAbilities {
      * @param <A>          toiminnon tyyppi
      * @param <C>          ohjainkomponentin tyyppi
      * @return <code>null</code> jos komponenttia ei löydy, muulloin löydetty komponentti
+     * @throws NullPointerException jos luokka on <code>null</code>
      */
-    public <A extends IAbility<A, C>, C extends IControllerComponent<A>> C getComponent(Class<? extends A> abilityClass) {
+    public <A extends IAbility<A, C>, C extends IControllerComponent<A>> C getComponent(@NonNull Class<? extends A> abilityClass) {
         val ability = getAbility(abilityClass);
         return ability == null ? null : getComponentResponsibleFor(ability);
     }
@@ -67,7 +69,7 @@ public class CharacterAbilities {
      * @param <C>          ohjainkomponentin tyyppi
      * @return <code>null</code> jos kykyä ei löydy, muulloin löydetty kyky
      */
-    public <A extends IAbility<A, C>, C extends IControllerComponent<A>> A getAbility(Class<? extends A> abilityClass) {
+    public <A extends IAbility<A, C>, C extends IControllerComponent<A>> A getAbility(@NonNull Class<? extends A> abilityClass) {
         for (val ability : this.abilities) {
             if (ability.getClass().equals(abilityClass)) {
                 // The horrific addAbility signature makes sure that this operation is actually checked as long as
@@ -82,8 +84,9 @@ public class CharacterAbilities {
     }
 
     /**
-     * Hakee kyvyn ohjaamisesta vastaavan ohjainkomponentin. Mikäli kyseessä on kyky joka on rekisteröity metodilla
-     * {@link #addAbility(IAbility, IControllerComponent)} on paluuarvo aina validi ei-null ohjainkomponentti.
+     * Hakee kyvyn INSTANSSIN ohjaamisesta vastaavan ohjainkomponentin. Tätä metodia voidaan siis käyttää jos tiedossa
+     * on jo kyvyn instanssi ja voimme olla varmoja että se on lähtöisin tältä hahmolta. Muulloin tulee käyttää metodia
+     * {@link #getComponent(Class)}.
      *
      * @param ability toiminto jonka ohjainkomponentti haetaan
      * @param <A>     toiminnon tyyppi
@@ -91,7 +94,7 @@ public class CharacterAbilities {
      * @return ohjainkomponentti joka vastaa annetusta kyvystä
      * @throws IllegalStateException jos kyvystä vastaavaa ohjainkomponenttia ei löydy
      */
-    @NonNull <A extends IAbility<A, C>, C extends IControllerComponent<A>> C getComponentResponsibleFor(@NonNull A ability) {
+    public @NonNull <A extends IAbility<A, C>, C extends IControllerComponent<A>> C getComponentResponsibleFor(@NonNull A ability) {
         val component = this.components.get(ability.getClass());
         if (component == null) {
             throw new IllegalStateException("No registered component for ability \"" + ability.getClass().getSimpleName() + "\"");
@@ -135,7 +138,7 @@ public class CharacterAbilities {
         }
     }
 
-    private <A extends IAbility<A, C>, C extends IControllerComponent<A>> void addAbilityFromTemplate(@NonNull CharacterAbilities template, @NonNull A abilityTemplate) {
+    private <A extends IAbility<A, C>, C extends IControllerComponent<A>> void addAbilityFromTemplate(CharacterAbilities template, A abilityTemplate) {
         val componentTemplate = template.getComponentResponsibleFor(abilityTemplate);
 
         val instanceAbility = cloneAbility(abilityTemplate);

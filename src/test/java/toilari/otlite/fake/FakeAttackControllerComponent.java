@@ -12,6 +12,10 @@ public class FakeAttackControllerComponent extends AbstractPlayerAttackControlle
         return new FakeAttackControllerComponent();
     }
 
+    public static FakeAttackControllerComponent create(FakeAttackControllerComponent template) {
+        return new FakeAttackControllerComponent(template);
+    }
+
     public static FakeAttackControllerComponent createWithoutTargetValidation() {
         return new FakeAttackControllerComponent() {
             @Override
@@ -19,5 +23,9 @@ public class FakeAttackControllerComponent extends AbstractPlayerAttackControlle
                 return true;
             }
         };
+    }
+
+    private FakeAttackControllerComponent(FakeAttackControllerComponent template) {
+        super(template);
     }
 }

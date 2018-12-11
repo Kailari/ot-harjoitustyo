@@ -52,7 +52,7 @@ public class AbilityRegistry {
      * @param <C>            kyvyn ohjainkomponentin tyyppi
      * @return kyvyn rekisteri-instanssi jota voidaan käyttää komponenttien rekisteröintiin
      */
-    private static <A extends IAbility<A, C>, C extends IControllerComponent<A>> AbilityComponentEntry<A, C> register(String key, Class<? extends A> abilityClass, Supplier<A> abilityFactory) {
+    public static <A extends IAbility<A, C>, C extends IControllerComponent<A>> AbilityComponentEntry<A, C> register(String key, Class<? extends A> abilityClass, Supplier<A> abilityFactory) {
         val entry = new AbilityComponentEntry<A, C>(abilityClass, abilityFactory);
         ABILITY_ENTRIES_BY_KEY.put(key, entry);
         ABILITY_ENTRIES_BY_CLASS.put(abilityClass, entry);

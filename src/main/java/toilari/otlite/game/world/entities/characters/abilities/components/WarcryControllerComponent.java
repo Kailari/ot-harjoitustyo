@@ -1,9 +1,6 @@
 package toilari.otlite.game.world.entities.characters.abilities.components;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
 import toilari.otlite.game.util.Direction;
@@ -15,6 +12,7 @@ import toilari.otlite.game.world.entities.characters.abilities.WarcryAbility;
 /**
  * Ohjainkomponentti sotahuudolle.
  */
+@NoArgsConstructor
 public abstract class WarcryControllerComponent
     extends AbstractControllerComponent<WarcryAbility>
     implements ITargetedControllerComponent<WarcryAbility>, IAreaOfEffectControllerComponent<WarcryAbility> {
@@ -71,6 +69,7 @@ public abstract class WarcryControllerComponent
     /**
      * Pelaajan ohjainkomponentti sotahuudolle.
      */
+    @NoArgsConstructor
     public static class Player extends WarcryControllerComponent {
         /**
          * Kopioi komponentin templaatista.

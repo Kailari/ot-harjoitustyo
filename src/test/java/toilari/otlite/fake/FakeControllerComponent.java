@@ -1,16 +1,18 @@
 package toilari.otlite.fake;
 
-import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import toilari.otlite.game.world.entities.characters.abilities.components.AbstractControllerComponent;
 
-@AllArgsConstructor
 public class FakeControllerComponent extends AbstractControllerComponent<FakeAbility> {
     @Setter private boolean wants;
 
     public static FakeControllerComponent create(boolean wants) {
         return new FakeControllerComponent(wants);
+    }
+
+    private FakeControllerComponent(boolean wants) {
+        this.wants = wants;
     }
 
     @Override
@@ -31,5 +33,9 @@ public class FakeControllerComponent extends AbstractControllerComponent<FakeAbi
     @Override
     public void reset() {
 
+    }
+
+    public static FakeControllerComponent create(FakeControllerComponent template) {
+        return create(template.wants);
     }
 }
