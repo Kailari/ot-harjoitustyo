@@ -39,4 +39,7 @@
 | 4.12|    1 h | Pientä siistimistä. |
 | 6.12|    2 h | Karttojen laataaminen tiedostosta. |
 | 7.12|    1 h | Käyttöliittymää kuntoon ja kulmien viilailua. |
-| **yhteensä** | 85 h ||
+| 9.12|    3 h | Refaktorointia ja siivoilua. |
+|10.12|    2 h | Testejä kykyjen kohteenvalintaan liittyen. |
+|10.12|    4 h | Käyttöliittymän viilailua, siivoilua ja lisää testejä. |
+| **yhteensä** | 94 h ||
