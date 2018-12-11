@@ -18,6 +18,7 @@ Hätä ei suinkaan ole tämän näköinen sillä useimpiin kehitysympäristöihi
 
 ## Releaset
 [viikko 5 (_RELEASE 1_)](https://github.com/Kailari/ot-harjoitustyo/releases/tag/viikko5)
+[viikko 6 (_RELEASE 2_)](https://github.com/Kailari/ot-harjoitustyo/releases/tag/viikko6)
 
 ## Komentorivitoiminnot
 ### Testaus
