@@ -43,4 +43,5 @@
 |10.12|    2 h | Testejä kykyjen kohteenvalintaan liittyen. |
 |10.12|    4 h | Käyttöliittymän viilailua, siivoilua ja lisää testejä. |
 |11.12|    3 h | Arkkitehttuurin dokumentointia ja käyttöohjeen laatimista. |
-| **yhteensä** | 97 h ||
+|11.12|    1 h | Pientä viilailua. |
+| **yhteensä** | 98 h ||
