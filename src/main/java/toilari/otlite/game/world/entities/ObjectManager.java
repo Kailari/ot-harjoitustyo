@@ -174,6 +174,8 @@ public class ObjectManager {
      */
     public void clearAllNonPlayerObjects() {
         this.objects.clear();
-        this.objects.add(this.player);
+        if (this.player != null) {
+            this.objects.add(this.player);
+        }
     }
 }

@@ -133,9 +133,11 @@ public class TurnObjectManager extends ObjectManager {
     public void clearAllNonPlayerObjects() {
         super.clearAllNonPlayerObjects();
         this.characters.clear();
-        this.characters.add(getPlayer());
-        this.turn = -1;
-        nextTurn();
+        if (getPlayer() != null) {
+            this.characters.add(getPlayer());
+            this.turn = -1;
+            nextTurn();
+        }
     }
 
     private void validateTurnIndex() {

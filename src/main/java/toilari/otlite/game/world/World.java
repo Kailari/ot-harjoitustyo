@@ -28,6 +28,14 @@ public class World {
     @Getter private Level currentLevel;
     @NonNull @Getter private final TurnObjectManager objectManager;
 
+    /**
+     * Luo uuden pelimaailman.
+     *
+     * @param manager    objektimanageri jolla pelimaailman objekteja hallinnoidaan
+     * @param tiles      ruutu DAO jolla ruututyypit ladataan
+     * @param levels     kartta DAO jolla kartat ladataan
+     * @param characters hahmo DAO jolla pelihahmot ladataan
+     */
     public World(TurnObjectManager manager, IGetAllDAO<Tile> tiles, IGetByIDDao<LevelData> levels, IGetByIDDao<CharacterObject> characters) {
         this.objectManager = manager;
         this.levels = levels;
