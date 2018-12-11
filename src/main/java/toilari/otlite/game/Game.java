@@ -75,6 +75,7 @@ public class Game {
             this.currentGameState.setGame(null);
         }
 
+        val old = this.currentGameState;
         this.currentGameState = newState;
         this.currentGameState.setGame(this);
         if (this.currentGameState.init()) {
@@ -82,7 +83,7 @@ public class Game {
             setRunning(false);
         } else {
             if (this.stateChangeCallback != null) {
-                this.stateChangeCallback.onStateChange(this.currentGameState);
+                this.stateChangeCallback.onStateChange(old, this.currentGameState);
             }
         }
     }

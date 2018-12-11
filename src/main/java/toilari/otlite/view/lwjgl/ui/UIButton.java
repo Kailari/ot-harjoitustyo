@@ -4,6 +4,9 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.game.input.Input;
+import toilari.otlite.game.profile.Profile;
+import toilari.otlite.game.profile.statistics.Statistics;
+import toilari.otlite.game.profile.statistics.StatisticsManager;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.Sprite;
 import toilari.otlite.view.lwjgl.TextRenderer;
@@ -13,6 +16,8 @@ import toilari.otlite.view.lwjgl.Texture;
  * Painike käyttöliittymässä.
  */
 public class UIButton {
+    private final StatisticsManager statistics;
+    private final Profile profile;
     @Getter private final int width;
     @Getter private final int height;
     @Getter private final int size;
@@ -45,20 +50,24 @@ public class UIButton {
     /**
      * Luo uuden painikkeen.
      *
-     * @param width   painikkeen leveys
-     * @param height  painikkeen korkeus
-     * @param size    painikkeen tekstuurin skaalaus
-     * @param text    painikkeen teksti
-     * @param texture painikkeen tekstuuri
-     * @param idleR   värisävyn punainen komponentti
-     * @param idleG   värisävyn vihreä komponentti
-     * @param idleB   värisävyn sininen komponentti
-     * @param hoverR  värisävyn punainen komponentti kursorin ollessa painikkeen päällä
-     * @param hoverG  värisävyn vihreä komponentti kursorin ollessa painikkeen päällä
-     * @param hoverB  värisävyn sininen komponentti kursorin ollessa painikkeen päällä
-     * @param onClick takaisinkutsu jota kutsutaan kun painiketta painetaan
+     * @param statistics statistiikkamanageri
+     * @param profile    nykyinen aktiivinen profiili
+     * @param width      painikkeen leveys
+     * @param height     painikkeen korkeus
+     * @param size       painikkeen tekstuurin skaalaus
+     * @param text       painikkeen teksti
+     * @param texture    painikkeen tekstuuri
+     * @param idleR      värisävyn punainen komponentti
+     * @param idleG      värisävyn vihreä komponentti
+     * @param idleB      värisävyn sininen komponentti
+     * @param hoverR     värisävyn punainen komponentti kursorin ollessa painikkeen päällä
+     * @param hoverG     värisävyn vihreä komponentti kursorin ollessa painikkeen päällä
+     * @param hoverB     värisävyn sininen komponentti kursorin ollessa painikkeen päällä
+     * @param onClick    takaisinkutsu jota kutsutaan kun painiketta painetaan
      */
-    public UIButton(int width, int height, int size, @NonNull String text, @NonNull Texture texture, float idleR, float idleG, float idleB, float hoverR, float hoverG, float hoverB, Action onClick) {
+    public UIButton(StatisticsManager statistics, Profile profile, int width, int height, int size, @NonNull String text, @NonNull Texture texture, float idleR, float idleG, float idleB, float hoverR, float hoverG, float hoverB, Action onClick) {
+        this.statistics = statistics;
+        this.profile = profile;
         this.width = width;
         this.height = height;
         this.size = size;
@@ -138,6 +147,9 @@ public class UIButton {
     private void click(float x, float y, int mouseX, int mouseY) {
         if (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height) {
             this.onClick.perform();
+            if (this.statistics != null && this.profile != null) {
+                this.statistics.increment(Statistics.BUTTONS_CLICKED, this.profile.getId());
+            }
         }
     }
 

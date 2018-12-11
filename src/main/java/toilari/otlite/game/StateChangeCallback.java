@@ -10,7 +10,8 @@ public interface StateChangeCallback {
     /**
      * Kutsutaan kun pelitila vaihtuu.
      *
+     * @param oldState wanha pelitila
      * @param newState uusi pelitila
      */
-    void onStateChange(@NonNull GameState newState);
+    void onStateChange(GameState oldState, @NonNull GameState newState);
 }

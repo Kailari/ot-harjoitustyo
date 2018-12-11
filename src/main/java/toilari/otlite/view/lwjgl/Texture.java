@@ -3,7 +3,8 @@ package toilari.otlite.view.lwjgl;
 import lombok.Getter;
 import toilari.otlite.dao.TextureDAO;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBindTexture;
 
 /**
  * Piirtämistä varten ladattu kuva eli tekstuuri. Apuluokka tekstuurien käsittelyyn.
@@ -57,8 +58,5 @@ public class Texture {
      */
     public void destroy() {
         this.referenceCounter--;
-        if (this.referenceCounter == 0) {
-            glDeleteTextures(this.handle);
-        }
     }
 }

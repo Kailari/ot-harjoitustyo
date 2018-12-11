@@ -83,7 +83,7 @@ public class ProfileSelectGameStateRenderer implements ILWJGLGameStateRenderer<P
             return true;
         }
 
-        this.createProfileButton = new UIButton(ADD_BUTTON_WIDTH, ADD_BUTTON_HEIGHT, ADD_BUTTON_SIZE, "Add", this.uiTexture,
+        this.createProfileButton = new UIButton(state.getGame().getStatistics(), state.getGame().getActiveProfile(), ADD_BUTTON_WIDTH, ADD_BUTTON_HEIGHT, ADD_BUTTON_SIZE, "Add", this.uiTexture,
             ADD_BUTTON_IDLE_R, ADD_BUTTON_IDLE_G, ADD_BUTTON_IDLE_B, ADD_BUTTON_HOVER_R, ADD_BUTTON_HOVER_G, ADD_BUTTON_HOVER_B,
             () -> state.getEventSystem().fire(new ProfileMenuEvent.Add("Player #" + this.profileButtons.size())));
 
@@ -156,7 +156,7 @@ public class ProfileSelectGameStateRenderer implements ILWJGLGameStateRenderer<P
     }
 
     private void createProfileButton(@NonNull ProfileSelectGameState state, @NonNull Profile profile) {
-        this.profileButtons.add(new UIButton(
+        this.profileButtons.add(new UIButton(state.getGame().getStatistics(), state.getGame().getActiveProfile(),
             LARGE_BUTTON_WIDTH - (LARGE_BUTTON_HEIGHT + BUTTON_MARGIN), LARGE_BUTTON_HEIGHT,
             LARGE_BUTTON_SIZE,
             profile.getName(),
@@ -165,7 +165,7 @@ public class ProfileSelectGameStateRenderer implements ILWJGLGameStateRenderer<P
             LARGE_BUTTON_HOVER_R, LARGE_BUTTON_HOVER_G, LARGE_BUTTON_HOVER_B,
             () -> state.getEventSystem().fire(new ProfileMenuEvent.Select(profile))));
 
-        this.profileRemoveButtons.add(new UIButton(
+        this.profileRemoveButtons.add(new UIButton(state.getGame().getStatistics(), state.getGame().getActiveProfile(),
             LARGE_BUTTON_HEIGHT, LARGE_BUTTON_HEIGHT,
             LARGE_BUTTON_SIZE,
             "X",

@@ -10,7 +10,9 @@ public enum Statistics {
 
     TILES_MOVED("Tiles Moved", 1, 0.0),
     TURNS_PLAYED("Turns Played", 2, 0.0),
-    ;
+
+    FLOORS_CLEARED("Floors Cleared", 5, 0.0),
+    BUTTONS_CLICKED("UI Buttons clicked", 6, 0.0);
 
     @Getter private final String name;
     @Getter private final int id;

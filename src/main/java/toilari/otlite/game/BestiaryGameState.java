@@ -16,7 +16,7 @@ public class BestiaryGameState extends GameState {
 
     @Override
     public void update(float delta) {
-        if (this.activeCharacter != null) {
+        if (this.activeCharacter != null && this.activeCharacter.isSpawned()) {
             this.activeCharacter.update(delta);
         }
     }

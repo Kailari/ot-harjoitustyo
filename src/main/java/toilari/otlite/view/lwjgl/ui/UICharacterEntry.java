@@ -24,9 +24,8 @@ public class UICharacterEntry {
      * @param character    hahmo jonka tietoja tämä komponentti näyttää
      */
     public UICharacterEntry(@NonNull RendererDAO renderers, @NonNull World previewWorld, @NonNull CharacterObject character) {
-        this.character = character;
-        previewWorld.getObjectManager().spawn(character);
-        this.renderer = (CharacterRenderer) renderers.get(character.getRendererID());
+        this.character = previewWorld.getObjectManager().spawnTemplate(character);
+        this.renderer = (CharacterRenderer) renderers.get(this.character.getRendererID());
     }
 
     /**

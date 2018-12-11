@@ -7,6 +7,9 @@ import toilari.otlite.dao.RendererDAO;
 import toilari.otlite.dao.TextureDAO;
 import toilari.otlite.game.BestiaryGameState;
 import toilari.otlite.game.event.BestiaryEvent;
+import toilari.otlite.game.profile.Profile;
+import toilari.otlite.game.profile.statistics.Statistics;
+import toilari.otlite.game.profile.statistics.StatisticsManager;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
@@ -57,10 +60,13 @@ public class BestiaryGameStateRenderer implements ILWJGLGameStateRenderer<Bestia
     @NonNull private final CharacterDAO characters;
     @NonNull private final TextRenderer textRenderer;
     @NonNull private final RendererDAO renderers;
-    @NonNull private final World previewWorld;
 
+    private World previewWorld;
     private Texture uiTexture;
     private UIButton returnButton;
+
+    private StatisticsManager statisticsManager;
+    private Profile profile;
 
     private UICharacterEntry activeEntry;
     private List<UIButton> characterButtons = new ArrayList<>();
@@ -77,22 +83,27 @@ public class BestiaryGameStateRenderer implements ILWJGLGameStateRenderer<Bestia
         this.renderers = new RendererDAO("content/renderers/", textures);
         this.renderers.discoverAndLoadAll();
         this.textRenderer = new TextRenderer(this.textures, 1, 16);
+    }
+
+    @Override
+    public boolean init(@NonNull BestiaryGameState state) {
+        this.statisticsManager = state.getGame().getStatistics();
+        this.profile = state.getGame().getActiveProfile();
+
         this.previewWorld = new World(new TurnObjectManager() {
             @Override
             public boolean isCharactersTurn(CharacterObject character) {
                 return false;
             }
         });
-    }
 
-    @Override
-    public boolean init(@NonNull BestiaryGameState state) {
         if (initResources()) {
             return true;
         }
 
         loadCharacters();
         createButtons(state);
+
 
         return false;
     }
@@ -124,7 +135,7 @@ public class BestiaryGameStateRenderer implements ILWJGLGameStateRenderer<Bestia
     }
 
     private void createStaticButtons(@NonNull BestiaryGameState state) {
-        this.returnButton = new UIButton(
+        this.returnButton = new UIButton(this.statisticsManager, this.profile,
             RETURN_BUTTON_WIDTH, RETURN_BUTTON_HEIGHT,
             RETURN_BUTTON_TEXTURE_SIZE,
             RETURN_BUTTON_LABEL,
@@ -141,7 +152,7 @@ public class BestiaryGameStateRenderer implements ILWJGLGameStateRenderer<Bestia
     }
 
     private void createCharacterButton(@NonNull UICharacterEntry entry, @NonNull BestiaryGameState state) {
-        this.characterButtons.add(new UIButton(
+        this.characterButtons.add(new UIButton(this.statisticsManager, this.profile,
             SELECT_BUTTON_WIDTH, SELECT_BUTTON_HEIGHT,
             SELECT_BUTTON_TEXTURE_SIZE,
             entry.getCharacter().getInfo().getName(),
@@ -197,10 +208,19 @@ public class BestiaryGameStateRenderer implements ILWJGLGameStateRenderer<Bestia
 
         val rowHeight = 3.5f;
         int i = 0;
-        drawStatEntry(camera, x + 1, y + 6 + (i++ * rowHeight), 3, "Health", String.valueOf(attr.getMaxHealth(lvls)));
-        drawStatEntry(camera, x + 1, y + 6 + (i++ * rowHeight), 3, "Attack Damage", String.valueOf(attr.getAttackDamage(lvls)));
-        drawStatEntry(camera, x + 1, y + 6 + (i++ * rowHeight), 3, "Armor", String.valueOf(attr.getArmor(lvls)));
-        drawStatEntry(camera, x + 1, y + 6 + (i++ * rowHeight), 3, "AP", String.valueOf(attr.getActionPoints(lvls)));
+        drawStatEntry(camera, x + 1, y + 6 + (i++ * rowHeight), 3, "Health", String.format("%.1f", attr.getMaxHealth(lvls)));
+        drawStatEntry(camera, x + 1, y + 6 + (i++ * rowHeight), 3, "Attack Damage", String.format("%.1f", attr.getAttackDamage(lvls)));
+        drawStatEntry(camera, x + 1, y + 6 + (i++ * rowHeight), 3, "Armor", String.format("%.1f", attr.getArmor(lvls)));
+        drawStatEntry(camera, x + 1, y + 6 + (i++ * rowHeight), 3, "AP", String.format("%d", attr.getActionPoints(lvls)));
+
+        if (this.activeEntry.getCharacter().getInfo().getName().equals("Hero (you!)")) {
+            this.textRenderer.draw(camera, x, y + 10 + (i * rowHeight), 1.0f, 1.0f, 1.0f, 4, "Statistics");
+
+            for (val statistic : Statistics.values()) {
+                val value = this.statisticsManager.getDouble(statistic, this.profile.getId());
+                drawStatEntry(camera, x + 1, y + 16 + (i++ * rowHeight), 3, statistic.getName(), String.format("%.1f", value));
+            }
+        }
     }
 
     private void drawStatEntry(@NonNull LWJGLCamera camera, float x, float y, int fontsize, String title, String value) {
@@ -218,6 +238,11 @@ public class BestiaryGameStateRenderer implements ILWJGLGameStateRenderer<Bestia
 
     @Override
     public void destroy(@NonNull BestiaryGameState state) {
+        this.statisticsManager = null;
+        this.profile = null;
+        this.characterEntries.clear();
+        this.characterButtons.clear();
+        this.activeEntry = null;
         this.uiTexture.destroy();
         this.textRenderer.destroy();
     }

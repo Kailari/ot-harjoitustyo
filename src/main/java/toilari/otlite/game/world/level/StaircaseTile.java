@@ -1,6 +1,8 @@
 package toilari.otlite.game.world.level;
 
 import lombok.NonNull;
+import lombok.val;
+import toilari.otlite.game.profile.statistics.Statistics;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 
 /**
@@ -28,6 +30,10 @@ public class StaircaseTile extends Tile {
             return;
         }
 
+        val state = character.getWorld().getObjectManager().getGameState();
+        if (state != null) {
+            state.getGame().getStatistics().increment(Statistics.FLOORS_CLEARED, state.getGame().getActiveProfile().getId());
+        }
         character.getWorld().changeLevel(StaircaseTile.nextLevel);
     }
 }

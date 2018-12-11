@@ -35,14 +35,21 @@ public abstract class AbstractGameRunner<T extends Camera> {
     /**
      * Takaisinkutsu joka ajetaan kun käärityn pelin pelitila vaihtuu.
      *
-     * @param state uusi pelitila
+     * @param newState uusi pelitila
      */
-    protected void onStateChange(@NonNull GameState state) {
-        val renderer = this.stateRendererMappings.get(state.getClass());
-        if (renderer == null) {
-            throw new IllegalStateException("No renderer registered for state \"" + state.getClass().getSimpleName() + "\"");
+    protected void onStateChange(GameState old, @NonNull GameState newState) {
+        if (old != null) {
+            val oldRenderer = this.stateRendererMappings.get(old.getClass());
+            if (oldRenderer != null) {
+                oldRenderer.destroy(old);
+            }
         }
-        if (renderer.init(state)) {
+
+        val renderer = this.stateRendererMappings.get(newState.getClass());
+        if (renderer == null) {
+            throw new IllegalStateException("No renderer registered for state \"" + newState.getClass().getSimpleName() + "\"");
+        }
+        if (renderer.init(newState)) {
             LOG.error("Initializing gamestate renderer failed, trying to shut down gracefully...");
             getGame().setRunning(false);
         }

@@ -9,6 +9,8 @@ import toilari.otlite.game.event.EventSystem;
 import toilari.otlite.game.event.IEvent;
 import toilari.otlite.game.event.MainMenuEvent;
 import toilari.otlite.game.event.MenuEvent;
+import toilari.otlite.game.profile.Profile;
+import toilari.otlite.game.profile.statistics.StatisticsManager;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.TextRenderer;
 import toilari.otlite.view.lwjgl.Texture;
@@ -42,6 +44,8 @@ public class MainMenuGameStateRenderer implements ILWJGLGameStateRenderer<MainMe
     private Texture uiTexture;
 
     private List<UIButton> buttons;
+    private StatisticsManager statisticsManager;
+    private Profile profile;
 
     /**
      * Luo uuden päävalikon piirtäjän.
@@ -55,6 +59,8 @@ public class MainMenuGameStateRenderer implements ILWJGLGameStateRenderer<MainMe
 
     @Override
     public boolean init(@NonNull MainMenuGameState state) {
+        this.statisticsManager = state.getGame().getStatistics();
+        this.profile = state.getGame().getActiveProfile();
         this.textRenderer.init();
         this.uiTexture = this.textures.get("ui.png");
 
@@ -73,7 +79,7 @@ public class MainMenuGameStateRenderer implements ILWJGLGameStateRenderer<MainMe
     }
 
     private void addDisabledButton(EventSystem es, String label, IEvent onClick) {
-        val button = new UIButton(
+        val button = new UIButton(this.statisticsManager, this.profile,
             BUTTON_WIDTH, BUTTON_HEIGHT,
             BUTTON_TEXTURE_SIZE,
             label,
@@ -87,7 +93,7 @@ public class MainMenuGameStateRenderer implements ILWJGLGameStateRenderer<MainMe
     }
 
     private void addButton(EventSystem es, String label, IEvent onClick) {
-        val button = new UIButton(
+        val button = new UIButton(this.statisticsManager, this.profile,
             BUTTON_WIDTH, BUTTON_HEIGHT,
             BUTTON_TEXTURE_SIZE,
             label,

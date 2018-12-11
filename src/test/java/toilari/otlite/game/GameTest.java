@@ -206,7 +206,7 @@ class GameTest {
             this.destroy = true;
         }
 
-        void callback(GameState state) {
+        void callback(GameState a, GameState b) {
             this.callback = true;
         }
     }
