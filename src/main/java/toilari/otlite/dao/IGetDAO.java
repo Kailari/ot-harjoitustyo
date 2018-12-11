@@ -1,7 +1,7 @@
 package toilari.otlite.dao;
 
 /**
- * DAO joka tarjoaa {@link #get(K)} metodin.
+ * DAO joka tarjoaa <code>get(Key)</code>-metodin.
  *
  * @param <T> ladattavan olion tyyppi
  * @param <K> ladattavan olion tunnisteen tyyppi

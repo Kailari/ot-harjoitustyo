@@ -13,10 +13,10 @@ public class CharacterAttributes {
     private static final float EVASION_CAP = 0.9f;
 
     /**
-     * Laskee hahmon maksimiterveyspisteet. Laskeminen tapahtuu kaavalla<br/>
-     * <code>maxHealth = (baseHealth + level * healthGain) * modifier</code><br/>
-     * johon modifier-osa saadaan laskemalla<br/>
-     * <code>modifier = (1.0 + enduranceModifier + vitalityModifier)</code><br/>
+     * Laskee hahmon maksimiterveyspisteet. Laskeminen tapahtuu kaavalla<br>
+     * <code>maxHealth = (baseHealth + level * healthGain) * modifier</code><br>
+     * johon modifier-osa saadaan laskemalla<br>
+     * <code>modifier = (1.0 + enduranceModifier + vitalityModifier)</code><br>
      * Attribuuttikohtaiset osat riippuvat hahmon attribuuteista.
      *
      * @param levels hahmon attribuuttien tasot
@@ -30,10 +30,10 @@ public class CharacterAttributes {
     }
 
     /**
-     * Laskee hahmon terveyspisteiden palautumisnopeuden. Laskeminen tapahtuu kaavalla<br/>
-     * <code>regen = (baseRegen + level * regenGain) * modifier</code><br/>
-     * johon modifier-osa saadaan laskemalla<br/>
-     * <code>modifier = (1.0 + vitalityModifier)</code><br/>
+     * Laskee hahmon terveyspisteiden palautumisnopeuden. Laskeminen tapahtuu kaavalla<br>
+     * <code>regen = (baseRegen + level * regenGain) * modifier</code><br>
+     * johon modifier-osa saadaan laskemalla<br>
+     * <code>modifier = (1.0 + vitalityModifier)</code><br>
      * Attribuuttikohtaiset osat riippuvat hahmon attribuuteista.
      *
      * @param levels hahmon attribuuttien tasot
@@ -58,10 +58,10 @@ public class CharacterAttributes {
     }
 
     /**
-     * Laskee hahmon "panssarin" eli vahingonvähennyksen määrän. Laskeminen tapahtuu kaavalla<br/>
-     * <code>armor = (baseArmor + level * armorGain) * modifier</code><br/>
-     * johon modifier-osa saadaan laskemalla<br/>
-     * <code>modifier = (1.0 + enduranceModifier)</code><br/>
+     * Laskee hahmon "panssarin" eli vahingonvähennyksen määrän. Laskeminen tapahtuu kaavalla<br>
+     * <code>armor = (baseArmor + level * armorGain) * modifier</code><br>
+     * johon modifier-osa saadaan laskemalla<br>
+     * <code>modifier = (1.0 + enduranceModifier)</code><br>
      * Attribuuttikohtaiset osat riippuvat hahmon attribuuteista.
      *
      * @param levels hahmon attribuuttien tasot

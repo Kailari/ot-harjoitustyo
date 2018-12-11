@@ -20,14 +20,14 @@ public interface IAreaOfEffectAbility<A extends IAreaOfEffectAbility<A, C>, C ex
 
     /**
      * Kyvyn vaikutusalueen koko yhteen suuntaan. Suure on ilmoitettu ruutuina yhteen suuntaan kohdekoordinaateista
-     * poispäin. Esim. koko 2 tarkoittaa että alue on muotoa:<br/>
+     * poispäin. Esim. koko 2 tarkoittaa että alue on muotoa:<br>
      * <code>
-     * XXXXX<br/>
-     * XXXXX<br/>
-     * XXOXX<br/>
-     * XXXXX<br/>
-     * XXXXX<br/>
-     * </code><br/>
+     * XXXXX<br>
+     * XXXXX<br>
+     * XXOXX<br>
+     * XXXXX<br>
+     * XXXXX<br>
+     * </code><br>
      * jossa <code>X</code> on vaikutusaluetta ja <code>O</code> kohdekoordinaatti.
      *
      * @return vaikutusalueen koko yhteen suuntaan

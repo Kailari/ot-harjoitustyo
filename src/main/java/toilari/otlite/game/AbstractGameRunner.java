@@ -32,12 +32,7 @@ public abstract class AbstractGameRunner<T extends Camera> {
         this.game.setStateChangeCallback(this::onStateChange);
     }
 
-    /**
-     * Takaisinkutsu joka ajetaan kun käärityn pelin pelitila vaihtuu.
-     *
-     * @param newState uusi pelitila
-     */
-    protected void onStateChange(GameState old, @NonNull GameState newState) {
+    private void onStateChange(GameState old, @NonNull GameState newState) {
         if (old != null) {
             val oldRenderer = this.stateRendererMappings.get(old.getClass());
             if (oldRenderer != null) {
@@ -64,6 +59,8 @@ public abstract class AbstractGameRunner<T extends Camera> {
 
     /**
      * Piirtää pelin.
+     *
+     * @param camera kamera jonka näkökulmasta piiretään
      */
     protected void display(@NonNull T camera) {
         val state = getGame().getCurrentGameState();

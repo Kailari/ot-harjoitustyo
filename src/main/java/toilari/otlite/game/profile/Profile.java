@@ -8,9 +8,6 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 public class Profile {
-    /**
-     * Pelaajan yksilöivä tunnus
-     */
     @Getter private final int id;
     @Getter private final String name;
     @Getter private final Settings settings;
