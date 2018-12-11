@@ -66,6 +66,11 @@ public class BestiaryGameStateRenderer implements ILWJGLGameStateRenderer<Bestia
     private List<UIButton> characterButtons = new ArrayList<>();
     private List<UICharacterEntry> characterEntries = new ArrayList<>();
 
+    /**
+     * Luo uuden piirtäjän.
+     *
+     * @param textures dao jolla tekstuurit ladataan
+     */
     public BestiaryGameStateRenderer(@NonNull TextureDAO textures) {
         this.textures = textures;
         this.characters = new CharacterDAO("content/characters/");
@@ -159,15 +164,23 @@ public class BestiaryGameStateRenderer implements ILWJGLGameStateRenderer<Bestia
             screenTopLeftY + camera.getViewportHeight() - 2 - RETURN_BUTTON_HEIGHT);
 
         if (this.activeEntry != null) {
-            val portraitSize = 8;
-            drawActiveEntryPortrait(camera,
-                screenTopLeftX + SELECT_BUTTON_WIDTH / 2.0f + SELECT_BUTTON_HORIZONTAL_MARGIN - portraitSize / 2.0f,
-                screenTopLeftY + camera.getViewportHeight() / 4.0f - portraitSize / 2.0f);
-            drawActiveEntryStats(camera,
-                screenTopLeftX + SELECT_BUTTON_HORIZONTAL_MARGIN * 2 + SELECT_BUTTON_WIDTH,
-                screenTopLeftY + 2);
+            drawActiveEntry(camera, screenTopLeftX, screenTopLeftY);
         }
 
+        drawSelectButtons(camera, screenTopLeftX, screenTopLeftY);
+    }
+
+    private void drawActiveEntry(@NonNull LWJGLCamera camera, float screenTopLeftX, float screenTopLeftY) {
+        val portraitSize = 8;
+        drawActiveEntryPortrait(camera,
+            screenTopLeftX + SELECT_BUTTON_WIDTH / 2.0f + SELECT_BUTTON_HORIZONTAL_MARGIN - portraitSize / 2.0f,
+            screenTopLeftY + camera.getViewportHeight() / 4.0f - portraitSize / 2.0f);
+        drawActiveEntryStats(camera,
+            screenTopLeftX + SELECT_BUTTON_HORIZONTAL_MARGIN * 2 + SELECT_BUTTON_WIDTH,
+            screenTopLeftY + 2);
+    }
+
+    private void drawSelectButtons(@NonNull LWJGLCamera camera, float screenTopLeftX, float screenTopLeftY) {
         for (int i = 0; i < this.characterButtons.size(); i++) {
             this.characterButtons.get(i).draw(camera, this.textRenderer, SELECT_BUTTON_FONT_SIZE,
                 screenTopLeftX + 2,

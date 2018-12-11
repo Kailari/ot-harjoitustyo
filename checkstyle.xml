@@ -94,11 +94,11 @@
             <property name="checkEmptyJavadoc" value="true"/>
         </module>
 
-        <!-- obsessive-compulsive disorder -->
+        <!-- obsessive-compulsive disorder >
         <module name="RequireThis">
             <property name="checkMethods" value="false"/>
             <property name="validateOnlyOverlapping" value="false"/>
-        </module>
+        </module-->
     </module>
 
     <!-- File Length -->

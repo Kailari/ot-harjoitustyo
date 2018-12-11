@@ -53,12 +53,14 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
 
     @Override
     public final void updateInput(@NonNull MoveAbility ability) {
-        refreshMoveDirections(ability);
+        if (getCharacter().getWorld().getCurrentLevel() != null) {
+            refreshMoveDirections(ability);
 
-        if (getAvailableDirections().isEmpty()) {
-            setInputX(0);
-            setInputY(0);
-            return;
+            if (getAvailableDirections().isEmpty()) {
+                setInputX(0);
+                setInputY(0);
+                return;
+            }
         }
 
         if (!getCharacter().isPanicking()) {
@@ -79,12 +81,13 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
 
     private void refreshMoveDirections(@NonNull MoveAbility ability) {
         this.availableDirections.clear();
-        val level = getCharacter().getWorld().getCurrentLevel();
+
+        val world = getCharacter().getWorld();
         val x = getCharacter().getTileX();
         val y = getCharacter().getTileY();
 
         for (val direction : Direction.asIterable()) {
-            val tileAtTarget = level.getTileAt(x + direction.getDx(), y + direction.getDy());
+            val tileAtTarget = world.getTileAt(x + direction.getDx(), y + direction.getDy());
             val panickingOrNotDangerous = !tileAtTarget.isDangerous() || getCharacter().isPanicking();
 
             if (ability.canMoveTo(direction, 1) && panickingOrNotDangerous) {

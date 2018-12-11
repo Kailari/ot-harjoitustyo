@@ -8,6 +8,8 @@ import toilari.otlite.fake.FakeInputHandler;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
 import toilari.otlite.game.util.Direction;
+import toilari.otlite.game.world.World;
+import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
 import toilari.otlite.game.world.entities.characters.abilities.components.MoveControllerComponent;
 
@@ -50,13 +52,15 @@ class MoveAbilityPlayerControlComponentTest {
     @Test
     void wantsMoveReturnsFalseIfNoInput() {
         Input.init(new FakeInputHandler());
+        val manager = new TurnObjectManager();
+        val world = new World(manager);
+        world.init();
+
         val ability = new MoveAbility();
         val component = new MoveControllerComponent.Player();
         val player = FakeCharacterObject.createWithAbilities(
-            new AbilityEntry<>(0, ability, component)
-        );
-        ability.init(player);
-        component.init(player);
+            new AbilityEntry<>(0, ability, component));
+        manager.spawn(player);
 
         component.updateInput(ability);
         assertFalse(component.wants(ability));
@@ -65,13 +69,16 @@ class MoveAbilityPlayerControlComponentTest {
     @Test
     void getInputDirectionReturnsNoneAfterSecondUpdateWhenInputIsHeldPressed() {
         Input.init(new FakeInputHandler(Key.RIGHT, Key.DOWN));
+        val manager = new TurnObjectManager();
+        val world = new World(manager);
+        world.init();
+
         val ability = new MoveAbility();
         val component = new MoveControllerComponent.Player();
         val player = FakeCharacterObject.createWithAbilities(
             new AbilityEntry<>(0, ability, component)
         );
-        ability.init(player);
-        component.init(player);
+        manager.spawn(player);
 
         component.updateInput(ability);
         Input.getHandler().update();

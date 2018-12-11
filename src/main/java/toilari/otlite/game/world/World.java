@@ -6,12 +6,14 @@ import lombok.val;
 import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.level.Level;
+import toilari.otlite.game.world.level.NormalTile;
 import toilari.otlite.game.world.level.Tile;
 
 /**
  * Pelimaailma.
  */
 public class World {
+    private static final Tile NULL_TILE = new NormalTile(true, true, 0, "__null");
     @Getter private Level currentLevel;
     @NonNull @Getter private final TurnObjectManager objectManager;
 
@@ -57,7 +59,7 @@ public class World {
      */
     @NonNull
     public Tile getTileAt(int x, int y) {
-        return getCurrentLevel().getTileAt(x, y);
+        return getCurrentLevel() == null ? NULL_TILE : getCurrentLevel().getTileAt(x, y);
     }
 
     /**

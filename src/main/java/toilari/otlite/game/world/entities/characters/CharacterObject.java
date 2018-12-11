@@ -88,6 +88,19 @@ public class CharacterObject extends GameObject implements IHealthHandler {
     }
 
     /**
+     * Asettaa hahmon tilan paniikkiin.
+     *
+     * @param x paniikin aiheuttajan x-koordinaatti
+     * @param y paniikin aiheuttajan y-koordinaatti
+     */
+    public void panic(int x, int y) {
+        LOG.debug("a character is panicking!");
+        this.panicking = true;
+        this.panicSourceX = x;
+        this.panicSourceY = y;
+    }
+
+    /**
      * Kutsutaan kun vuoro alkaa.
      */
     public void beginTurn() {
@@ -177,12 +190,5 @@ public class CharacterObject extends GameObject implements IHealthHandler {
 
     private boolean canAfford(TurnObjectManager turnManager, int cost) {
         return turnManager.getRemainingActionPoints() >= cost;
-    }
-
-    public void panic(int x, int y) {
-        LOG.debug("a character is panicking!");
-        this.panicking = true;
-        this.panicSourceX = x;
-        this.panicSourceY = y;
     }
 }

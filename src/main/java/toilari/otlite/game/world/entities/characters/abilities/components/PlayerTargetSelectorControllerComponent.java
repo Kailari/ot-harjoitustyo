@@ -59,6 +59,9 @@ public class PlayerTargetSelectorControllerComponent extends TargetSelectorContr
         }
     }
 
+    /**
+     * Yrittää löytää uuden kohteen joka on eri kuin nykyinen.
+     */
     public void cycleTargets() {
         if (getActive() == null) {
             return;
@@ -70,9 +73,7 @@ public class PlayerTargetSelectorControllerComponent extends TargetSelectorContr
 
         var direction = this.directionIterator.next();
         for (int i = 0; i < 4; i++, direction = this.directionIterator.next()) {
-            val targetCandidate = findTargetInDirection(direction);
-            if (targetCandidate != null) {
-                setTarget(targetCandidate, direction);
+            if (tryFindTargetInDirection(direction)) {
                 return;
             }
 
@@ -83,6 +84,16 @@ public class PlayerTargetSelectorControllerComponent extends TargetSelectorContr
         }
 
         setTarget(null, Direction.NONE);
+    }
+
+    private boolean tryFindTargetInDirection(Direction direction) {
+        val targetCandidate = findTargetInDirection(direction);
+        if (targetCandidate != null) {
+            setTarget(targetCandidate, direction);
+            return true;
+        }
+
+        return false;
     }
 
     private void selectTargetWithArrowKeys() {

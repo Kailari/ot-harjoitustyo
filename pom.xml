@@ -201,8 +201,10 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>3.0.0</version>
                 <configuration>
+                    <consoleOutput>true</consoleOutput>
+                    <encoding>UTF-8</encoding>
                     <configLocation>checkstyle.xml</configLocation>
-                    <excludes>toilari/otlite/view/**/*</excludes>
+                    <!--excludes>toilari/otlite/view/**/*</excludes-->
                 </configuration>
             </plugin>
 

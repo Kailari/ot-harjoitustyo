@@ -20,6 +20,11 @@ public class LWJGLInputHandler implements IInputHandler {
     private final double[] mouseX = new double[1];
     private final double[] mouseY = new double[1];
 
+    /**
+     * Luo uuden syötekäsittelijän.
+     *
+     * @param windowHandle LWJGL-ikkunan kahva jota voidaan käyttää syötteen tilan lukemiseen
+     */
     public LWJGLInputHandler(long windowHandle) {
         this.windowHandle = windowHandle;
 
@@ -56,6 +61,7 @@ public class LWJGLInputHandler implements IInputHandler {
         return state == KeyState.Pressed || state == KeyState.Down;
     }
 
+    @Override
     public boolean isMousePressed(int button) {
         return this.mouseButtonState[button] == KeyState.Pressed;
     }

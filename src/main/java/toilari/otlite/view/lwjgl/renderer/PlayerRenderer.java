@@ -68,22 +68,26 @@ public class PlayerRenderer extends CharacterRenderer {
                 val y = character.getTileY();
                 for (var dx = -range; dx <= range; dx++) {
                     for (var dy = -range; dy <= range; dy++) {
-                        val tileX = x + dx;
-                        val tileY = y + dy;
-                        val r = 0.85f;
-                        val g = 0.15f;
-                        var b = 0.85f;
-                        val objectAtCoordinates = character.getWorld().getObjectAt(tileX, tileY);
-                        if (objectAtCoordinates != null && ((IAreaOfEffectAbility) active).canAffect(objectAtCoordinates)) {
-                            b = 0.15f;
-                        }
-
-                        if (!character.getWorld().getTileAt(tileX, tileY).isWall()) {
-                            this.largeIcons.draw(camera, tileX * Tile.SIZE_IN_WORLD + 0.5f, tileY * Tile.SIZE_IN_WORLD + 0.5f, 6, r, g, b);
-                        }
+                        drawAreaAbilityVisualizerTile(camera, character, (IAreaOfEffectAbility) active, x, y, dx, dy);
                     }
                 }
             }
+        }
+    }
+
+    private void drawAreaAbilityVisualizerTile(@NonNull LWJGLCamera camera, @NonNull CharacterObject character, IAreaOfEffectAbility active, int x, int y, int dx, int dy) {
+        val tileX = x + dx;
+        val tileY = y + dy;
+        val r = 0.85f;
+        val g = 0.15f;
+        var b = 0.85f;
+        val objectAtCoordinates = character.getWorld().getObjectAt(tileX, tileY);
+        if (objectAtCoordinates != null && active.canAffect(objectAtCoordinates)) {
+            b = 0.15f;
+        }
+
+        if (!character.getWorld().getTileAt(tileX, tileY).isWall()) {
+            this.largeIcons.draw(camera, tileX * Tile.SIZE_IN_WORLD + 0.5f, tileY * Tile.SIZE_IN_WORLD + 0.5f, 6, r, g, b);
         }
     }
 

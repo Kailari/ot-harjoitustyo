@@ -24,6 +24,12 @@ public class UIAbilityBar {
     private final Sprite abilityBackground;
     private final TextRenderer textRenderer;
 
+    /**
+     * Luo uuden kykypalkin.
+     *
+     * @param textures     dao jolla tarvittavat tekstuurit ladataan
+     * @param textRenderer tekstipiirtäjä jolla tarvittavat tekstit piiretään
+     */
     public UIAbilityBar(@NonNull TextureDAO textures, @NonNull TextRenderer textRenderer) {
         this.textRenderer = textRenderer;
 
@@ -31,6 +37,15 @@ public class UIAbilityBar {
         this.abilityBackground = new Sprite(this.abilityBackgroundTexture, 0, 0, 16, 16, 16, 16);
     }
 
+    /**
+     * Piirtää palkin.
+     *
+     * @param camera      kamera jonka näkökulmasta piiretään
+     * @param abilities   pelihahmon kyvyt joista näytettävät kyvyt valitaan
+     * @param x           palkin x-koordinaatti
+     * @param y           palkin y-koordinaatti
+     * @param remainingAp hahmon jäljelläolevat toimintopisteet
+     */
     public void draw(LWJGLCamera camera, @NonNull CharacterAbilities abilities, float x, float y, int remainingAp) {
         int i = 0;
         for (val ability : abilities.getAbilitiesSortedByPriority()) {
@@ -67,6 +82,9 @@ public class UIAbilityBar {
         }
     }
 
+    /**
+     * Vapauttaa piirtäjälle varatut resurssit.
+     */
     public void destroy() {
         this.abilityBackgroundTexture.destroy();
     }

@@ -66,7 +66,7 @@ public abstract class WarcryControllerComponent
         doUpdateInput(ability);
     }
 
-    public abstract void doUpdateInput(@NonNull WarcryAbility ability);
+    protected abstract void doUpdateInput(@NonNull WarcryAbility ability);
 
     /**
      * Pelaajan ohjainkomponentti sotahuudolle.

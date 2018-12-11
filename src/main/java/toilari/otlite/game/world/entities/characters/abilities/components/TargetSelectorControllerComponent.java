@@ -110,10 +110,8 @@ public abstract class TargetSelectorControllerComponent extends AbstractControll
             return null;
         }
 
-        val x = getCharacter().getTileX();
-        val y = getCharacter().getTileY();
-        val targetX = x + direction.getDx();
-        val targetY = y + direction.getDy();
+        val targetX = getCharacter().getTileX() + direction.getDx();
+        val targetY = getCharacter().getTileY() + direction.getDy();
         val targetCandidate = getCharacter().getWorld().getObjectAt(targetX, targetY);
 
         val ability = getActive();
