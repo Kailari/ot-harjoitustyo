@@ -57,15 +57,16 @@ public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAtta
         }
 
         if (tileBehindTargetIsFree(direction, 1)) {
-            if (target instanceof IHealthHandler) {
+            int knockbackAmount = calculateKnockbackAmount(component.getTargetSelector().getTarget(), component.getTargetSelector().getTargetDirection());
+            knockBackTarget(target, direction, knockbackAmount);
+
+            // If target is a character and didn't die while getting knocked back
+            if (target instanceof IHealthHandler && !((IHealthHandler) target).isDead()) {
                 dealDamage(target, (IHealthHandler) target, calculateDamage(target) * 0.5f);
                 if (((IHealthHandler) target).isDead()) {
                     return true;
                 }
             }
-
-            int knockbackAmount = calculateKnockbackAmount(component.getTargetSelector().getTarget(), component.getTargetSelector().getTargetDirection());
-            knockBackTarget(target, direction, knockbackAmount);
         } else {
             dealDamage(target, (IHealthHandler) target, calculateDamage(target) * 1.5f);
         }
