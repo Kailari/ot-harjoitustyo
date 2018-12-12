@@ -90,20 +90,30 @@ public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAtta
         }
 
         for (int delta = 1; delta <= knockbackAmount; delta++) {
-            val oldX = target.getTileX();
-            val oldY = target.getTileY();
-            val newX = oldX + direction.getDx() * delta;
-            val newY = oldY + direction.getDy() * delta;
-            target.setTilePos(newX, newY);
-
-            if (target instanceof CharacterObject) {
-                target.getWorld().getTileAt(oldX, oldY).onCharacterExit(oldX, oldY, (CharacterObject) target);
-                target.getWorld().getTileAt(newX, newY).onCharacterEnter(newX, newY, (CharacterObject) target);
-                if (((CharacterObject) target).isDead()) {
-                    return;
-                }
+            if (moveTarget(target, direction, delta)) {
+                return;
             }
         }
+    }
+
+    private boolean moveTarget(GameObject target, Direction direction, int delta) {
+        val oldX = target.getTileX();
+        val oldY = target.getTileY();
+        val newX = oldX + direction.getDx() * delta;
+        val newY = oldY + direction.getDy() * delta;
+        target.setTilePos(newX, newY);
+
+        if (target instanceof CharacterObject) {
+            val targetCharacter = (CharacterObject) target;
+            val targetHealth = targetCharacter.getHealth();
+            target.getWorld().getTileAt(oldX, oldY).onCharacterExit(oldX, oldY, targetCharacter);
+            target.getWorld().getTileAt(newX, newY).onCharacterEnter(newX, newY, targetCharacter);
+            if (targetCharacter.isDead()) {
+                setLastAttackDamage(targetHealth);
+                setLastAttackKill(true);
+            }
+        }
+        return false;
     }
 
     private int calculateKnockbackAmount(GameObject target, Direction direction) {
