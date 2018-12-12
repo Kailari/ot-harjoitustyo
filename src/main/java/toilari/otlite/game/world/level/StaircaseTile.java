@@ -32,14 +32,14 @@ public class StaircaseTile extends Tile {
             return;
         }
 
-        val healthRegen = player.getAttributes().getHealthRegen();
-        player.heal(healthRegen);
-        player.getWorld().getObjectManager().getEventSystem().fire(new CharacterEvent.Heal(player, healthRegen));
-
         val state = character.getWorld().getObjectManager().getGameState();
         if (state != null) {
             state.getGame().getStatistics().increment(Statistics.FLOORS_CLEARED, state.getGame().getActiveProfile().getId());
         }
         character.getWorld().changeLevel(StaircaseTile.nextLevel);
+
+        val healthRegen = player.getAttributes().getHealthRegen();
+        player.heal(healthRegen);
+        player.getWorld().getObjectManager().getEventSystem().fire(new CharacterEvent.Heal(player, healthRegen));
     }
 }

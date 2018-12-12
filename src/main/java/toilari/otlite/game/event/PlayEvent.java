@@ -13,4 +13,8 @@ public abstract class PlayEvent implements IEvent {
     @NoArgsConstructor
     public static class ReturnToMenuAfterLoss extends PlayEvent {
     }
+
+    @NoArgsConstructor
+    public static class NextFloor extends PlayEvent {
+    }
 }

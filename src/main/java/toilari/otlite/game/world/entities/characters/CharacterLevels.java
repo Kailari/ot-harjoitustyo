@@ -1,5 +1,6 @@
 package toilari.otlite.game.world.entities.characters;
 
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -16,7 +17,7 @@ public class CharacterLevels {
     private transient EventSystem eventSystem;
     private transient CharacterObject character;
 
-    private int experience;
+    @Getter private int experience;
     private int[] attributeLevels = new int[]{1, 1, 1, 1, 1, 1, 1, 1};
 
 
@@ -26,7 +27,16 @@ public class CharacterLevels {
      * @return attribuuttipisteiden maksimimäärä
      */
     public int calculateMaxAttributePoints() {
-        return 10 + this.getXpLevel();
+        return Attribute.MAX.ordinal() + this.getXpLevel();
+    }
+
+    /**
+     * Laskee montako attribuuttipistettä on jo käytössä.
+     *
+     * @return käytössä olevien attribuuttipisteiden määrä
+     */
+    public int calculateAttributePointsInUse() {
+        return Arrays.stream(this.attributeLevels).sum();
     }
 
     /**
@@ -35,9 +45,11 @@ public class CharacterLevels {
      * @return hahmon kokemustaso
      */
     public int getXpLevel() {
+        if (this.experience == 0) {
+            return 0;
+        }
         int level = 0;
-        int xp = this.experience;
-        while ((xp -= experienceRequiredForLevel(level + 1)) > 0) {
+        while ((this.experience - experienceRequiredForLevel(level + 1)) >= 0) {
             level++;
         }
 
@@ -58,7 +70,7 @@ public class CharacterLevels {
             throw new IllegalArgumentException("Level cannot be nagative!");
         }
 
-        return (int) Math.pow(10, 1.0 + level * 1.025) * level;
+        return (5 + level) * level;
     }
 
     /**
@@ -68,7 +80,7 @@ public class CharacterLevels {
      */
     public CharacterLevels(CharacterLevels template) {
         this.experience = template.experience;
-        this.attributeLevels = Arrays.copyOf(template.attributeLevels, 10);
+        this.attributeLevels = Arrays.copyOf(template.attributeLevels, Attribute.MAX.ordinal());
     }
 
     /**
@@ -123,7 +135,7 @@ public class CharacterLevels {
             throw new IllegalArgumentException("Level must be within range 1..10");
         }
 
-        val spentPointsBeforehand = Arrays.stream(this.attributeLevels).sum();
+        val spentPointsBeforehand = calculateAttributePointsInUse();
         val spentPointsAfterwards = spentPointsBeforehand - this.attributeLevels[attribute.ordinal()] + level;
         if (calculateMaxAttributePoints() < spentPointsAfterwards) {
             LOG.error("Tried to set attribute level but there are no enough points available");

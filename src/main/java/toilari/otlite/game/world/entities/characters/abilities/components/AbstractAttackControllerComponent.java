@@ -47,6 +47,14 @@ public abstract class AbstractAttackControllerComponent<A extends AbstractAttack
 
     @Override
     public void abilityPerformed(A ability) {
+        if (ability.isLastAttackKill()) {
+            val target = this.targetSelector.getTarget();
+            if (target instanceof CharacterObject) {
+                val targetCharacter = (CharacterObject) target;
+                getCharacter().getLevels().rewardExperience(targetCharacter.getAttributes().getXpReward());
+            }
+        }
+
         this.targetSelector.abilityPerformed(getCharacter().getAbilities().getAbility(TargetSelectorAbility.class));
         setWantsPerform(false);
     }

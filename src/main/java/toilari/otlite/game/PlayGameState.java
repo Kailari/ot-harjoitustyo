@@ -22,6 +22,8 @@ public class PlayGameState extends GameState {
     @Getter @NonNull private final TurnObjectManager manager;
     @NonNull private final IGetByIDDao<CharacterObject> characters;
 
+    @Getter private int currentFloor = 0;
+
     /**
      * Luo uuden pelitila-instanssin.
      *
@@ -29,6 +31,7 @@ public class PlayGameState extends GameState {
      * @param tiles      dao jolla ruututyypit saadaan valittua
      * @param characters dao jolla hahmot ladataan
      * @param levels     dao jolla kartat saadaan ladattua
+     *
      * @throws NullPointerException jos piirtäjä tai objektimanageri on <code>null</code>
      */
     public PlayGameState(@NonNull TurnObjectManager manager, @NonNull IGetAllDAO<Tile> tiles, @NonNull IGetByIDDao<CharacterObject> characters, @NonNull IGetByIDDao<LevelData> levels) {
@@ -43,9 +46,9 @@ public class PlayGameState extends GameState {
     public boolean init() {
         LOG.info("Initializing PlayGameState...");
         this.world.init();
+        getEventSystem().subscribeTo(PlayEvent.NextFloor.class, (e) -> this.currentFloor++);
 
-        val player = this.characters.getByID("player");
-        this.manager.spawn(player);
+        val player = this.manager.spawnTemplate(this.characters.getByID("player"));
         this.manager.setPlayer(player);
         val levelId = getGame().getInitialLevelId();
         this.world.changeLevel(levelId);

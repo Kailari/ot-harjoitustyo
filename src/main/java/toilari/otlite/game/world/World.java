@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import toilari.otlite.dao.IGetAllDAO;
 import toilari.otlite.dao.serialization.IGetByIDDao;
+import toilari.otlite.game.event.PlayEvent;
 import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
@@ -49,6 +50,7 @@ public class World {
      *
      * @param x x-koordinaatti josta etsitään
      * @param y y-koordinaatti josta etsitään
+     *
      * @return <code>null</code> jos koordinaateissa ei ole objektia, muulloin löydetty objekti
      */
     public GameObject getObjectAt(int x, int y) {
@@ -79,9 +81,11 @@ public class World {
      *
      * @param x ruudun x-ruutukoordinaatti
      * @param y ruudun y-ruutukoordinaatti
+     *
      * @return ruutu annetuissa koordinaateissa, <code>null</code> jos karttaa ei ole asetettu
-     * @throws IllegalArgumentException jos koordinaatit eivät ole kartan {@link #isWithinBounds(int, int)
-     *                                  rajojen sisäpuolella}
+     *
+     * @throws IllegalArgumentException jos koordinaatit eivät ole kartan {@link #isWithinBounds(int, int) rajojen
+     *                                  sisäpuolella}
      */
     @NonNull
     public Tile getTileAt(int x, int y) {
@@ -93,6 +97,7 @@ public class World {
      *
      * @param x tarkistettava x-koordinaatti.
      * @param y tarkistettava y-koordinaatti.
+     *
      * @return <code>true</code> jos koordinaatit ovat kartan sisällä, muulloin <code>false</code>
      */
     public boolean isWithinBounds(int x, int y) {
@@ -138,6 +143,8 @@ public class World {
         changeLevel(level.asLevel(this.tiles));
         level.setNextLevel();
         level.spawn(this.characters, this.objectManager);
+
+        getObjectManager().getEventSystem().fire(new PlayEvent.NextFloor());
     }
 
     /**

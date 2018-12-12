@@ -4,11 +4,12 @@
     "name": "Hero (you!)"
   },
   "attributes": {
-    "baseActionPoints": 1
+    "baseActionPoints": 1,
+    "baseAttackDamage": 9001
   },
   "levels": {
     "attributeLevels": [
-      2, 1, 1, 1, 4, 1, 1, 1
+      1, 1, 1, 1, 1, 1, 1, 1
     ]
   },
   "abilities": {

@@ -10,6 +10,7 @@ import toilari.otlite.game.event.PlayEvent;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
 import toilari.otlite.game.util.Color;
+import toilari.otlite.game.world.entities.characters.CharacterLevels;
 import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbility;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.TextRenderer;
@@ -133,13 +134,29 @@ public class PlayGameStateRenderer<R extends IGetAllDAO<IRenderer> & IGetByIDDao
 
     private void drawTurnStatus(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, float x, float y) {
         drawCurrentTurn(camera, state, x + 2, y + 2);
-        drawActionLabel(camera, state, x + 2, y + 10);
+        drawXPStatus(camera, state, x + 2, y + 10);
+        drawActionLabel(camera, state, x + 2, y + 17);
     }
 
     private void drawCurrentTurn(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, float x, float y) {
-        val str = state.getGame().getActiveProfile().getName()
-            + "\nTurn: " + state.getManager().getPlayer().getTurnsTaken();
-        this.textRenderer.draw(camera, x, y, GAME_INFO_COLOR, 4, str);
+        val str = String.format("Floor: %d Turn: %d", state.getCurrentFloor(), state.getManager().getPlayer().getTurnsTaken());
+        this.textRenderer.draw(camera, x, y, GAME_INFO_COLOR, 3, str);
+    }
+
+    private void drawXPStatus(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, float x, float y) {
+        val levels = state.getManager().getPlayer().getLevels();
+
+        val currentLevel = levels.getXpLevel();
+
+        val requiredForCurrent = levels.experienceRequiredForLevel(currentLevel);
+        val requiredForNext = levels.experienceRequiredForLevel(currentLevel + 1);
+        val actualRequiredExperience = requiredForNext - requiredForCurrent;
+
+        val currentExperience = levels.getExperience();
+        val progressTowardsNextLevel = currentExperience - requiredForCurrent;
+
+        val str = String.format("Level: %d\nXP: %d/%d", currentLevel, progressTowardsNextLevel, actualRequiredExperience);
+        this.textRenderer.draw(camera, x, y, GAME_INFO_COLOR, 3, str);
     }
 
     private void drawActionLabel(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, float x, float y) {
