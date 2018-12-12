@@ -57,6 +57,6 @@ public class TextFileHelper {
      */
     @NonNull
     public static String readFileToString(@NonNull String path) throws IOException {
-        return new String(Files.readAllBytes(Paths.get(path)));
+        return new String(Files.readAllBytes(Paths.get(path)), Charset.forName("UTF-8"));
     }
 }

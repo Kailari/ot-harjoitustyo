@@ -66,8 +66,9 @@ class DatabaseTest {
         val path = ROOT.resolve("test.db").toString();
         assertDoesNotThrow(() -> {
                 val db = new Database(path);
-                val conn = db.getConnection();
-                assertNotNull(conn);
+                try (val conn = db.getConnection()) {
+                    assertNotNull(conn);
+                }
             }
         );
     }

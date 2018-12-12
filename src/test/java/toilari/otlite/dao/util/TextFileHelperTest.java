@@ -6,10 +6,7 @@ import org.junit.jupiter.api.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.OpenOption;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -41,36 +38,60 @@ class TextFileHelperTest {
     @Test
     @SuppressWarnings("ConstantConditions")
     void getReaderThrowsIfParamsAreNull() {
-        assertThrows(NullPointerException.class, () -> TextFileHelper.getReader(null));
-        assertThrows(NullPointerException.class, () -> TextFileHelper.getReader(this.editable, (OpenOption[]) null));
+        assertThrows(NullPointerException.class, () -> {
+            try (val reader = TextFileHelper.getReader(null)) {
+            }
+        });
+        assertThrows(NullPointerException.class, () -> {
+            try (val reader = TextFileHelper.getReader(this.editable, (OpenOption[]) null)) {
+            }
+        });
     }
 
     @Test
     void getReaderOpensExistingFile() {
-        assertDoesNotThrow(() -> TextFileHelper.getReader(this.editable));
+        assertDoesNotThrow(() -> {
+            try (val reader = TextFileHelper.getReader(this.editable)) {
+            }
+        });
     }
 
     @Test
     void getReaderFailsForNonexistingFile() {
-        assertThrows(IOException.class, () -> TextFileHelper.getReader(this.empty));
+        assertThrows(IOException.class, () -> {
+            try (val reader = TextFileHelper.getReader(this.empty)) {
+            }
+        });
     }
 
 
     @Test
     @SuppressWarnings("ConstantConditions")
     void getWriterThrowsIfParamsAreNull() {
-        assertThrows(NullPointerException.class, () -> TextFileHelper.getWriter(null));
-        assertThrows(NullPointerException.class, () -> TextFileHelper.getWriter(this.editable, (OpenOption[]) null));
+        assertThrows(NullPointerException.class, () -> {
+            try (val writer = TextFileHelper.getWriter(null)) {
+            }
+        });
+        assertThrows(NullPointerException.class, () -> {
+            try (val writer = TextFileHelper.getWriter(this.editable, (OpenOption[]) null)) {
+            }
+        });
     }
 
     @Test
     void getWriterOpensExistingFile() {
-        assertDoesNotThrow(() -> TextFileHelper.getWriter(this.editable));
+        assertDoesNotThrow(() -> {
+            try (val writer = TextFileHelper.getWriter(this.editable)) {
+            }
+        });
     }
 
     @Test
     void openForWritingDoesNotFailForNonexistingFile() {
-        assertDoesNotThrow(() -> TextFileHelper.getWriter(this.empty));
+        assertDoesNotThrow(() -> {
+            try (val writer = TextFileHelper.getWriter(this.empty)) {
+            }
+        });
     }
 
     @Test
@@ -82,7 +103,7 @@ class TextFileHelperTest {
     @Test
     void readFileToStringReturnsCorrectStringForExistingFile() throws IOException {
         val string = TextFileHelper.readFileToString(this.editable.toString());
-        val split = string.split("\n");
+        val split = string.split("\r\n?|\n");
         for (int i = 0; i < Math.min(split.length, EDITABLE_CONTENT.size()); i++) {
             assertEquals(EDITABLE_CONTENT.get(i), split[i]);
         }

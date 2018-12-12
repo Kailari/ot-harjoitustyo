@@ -108,7 +108,11 @@ public class LWJGLGameRunner extends AbstractGameRunner<LWJGLCamera> {
         this.windowHandle = glfwCreateWindow(getWindowWidth(), getWindowHeight(), "OTLite", NULL, NULL);
 
         GLFWWindowSizeCallback
-            .create((handle, width, height) -> getCamera().resizeViewport(width, height))
+            .create((handle, width, height) -> {
+                if (getCamera() != null) {
+                    getCamera().resizeViewport(width, height);
+                }
+            })
             .set(this.windowHandle);
 
     }

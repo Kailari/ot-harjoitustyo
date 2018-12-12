@@ -1,9 +1,13 @@
 package toilari.otlite.dao.util;
 
+import lombok.val;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,30 +38,48 @@ class FileStreamHelperTest {
 
     @Test
     void openForReadingOpensExistingFile() {
-        assertDoesNotThrow(() -> FileStreamHelper.openForReading(this.editable));
+        assertDoesNotThrow(() -> {
+            try (val stream = FileStreamHelper.openForReading(this.editable)) {
+            }
+        });
     }
 
     @Test
     void openForReadingFailsForNonexistingFile() {
-        assertThrows(IOException.class, () -> FileStreamHelper.openForReading(this.empty));
+        assertThrows(IOException.class, () -> {
+            try (val stream = FileStreamHelper.openForReading(this.empty)) {
+            }
+        });
     }
 
 
     @Test
     @SuppressWarnings("ConstantConditions")
     void openForWritingThrowsIfParamsAreNull() {
-        assertThrows(NullPointerException.class, () -> FileStreamHelper.openForWriting(null));
-        assertThrows(NullPointerException.class, () -> FileStreamHelper.openForWriting(this.editable, (OpenOption[]) null));
+        assertThrows(NullPointerException.class, () -> {
+            try (val stream = FileStreamHelper.openForWriting(null)) {
+            }
+        });
+        assertThrows(NullPointerException.class, () -> {
+            try (val stream = FileStreamHelper.openForWriting(this.editable, (OpenOption[]) null)) {
+            }
+        });
     }
 
     @Test
     void openForWritingOpensExistingFile() {
-        assertDoesNotThrow(() -> FileStreamHelper.openForWriting(this.editable));
+        assertDoesNotThrow(() -> {
+            try (val stream = FileStreamHelper.openForWriting(this.editable)) {
+            }
+        });
     }
 
     @Test
     void openForWritingDoesNotFailForNonexistingFile() {
-        assertDoesNotThrow(() -> FileStreamHelper.openForWriting(this.empty, StandardOpenOption.CREATE));
+        assertDoesNotThrow(() -> {
+            try (val stream = FileStreamHelper.openForWriting(this.empty)) {
+            }
+        });
     }
 
 
