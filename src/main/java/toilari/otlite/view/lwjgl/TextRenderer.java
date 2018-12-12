@@ -2,7 +2,8 @@ package toilari.otlite.view.lwjgl;
 
 import lombok.NonNull;
 import lombok.val;
-import toilari.otlite.dao.TextureDAO;
+import toilari.otlite.dao.IGetDAO;
+import toilari.otlite.game.util.Color;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +21,7 @@ public class TextRenderer {
         }
     }
 
-    @NonNull private final TextureDAO textures;
+    @NonNull private final IGetDAO<Texture, String> textures;
     private final int maxFontSize;
     private final int minFontSize;
 
@@ -33,9 +34,10 @@ public class TextRenderer {
      * @param textures    DAO jolla tarvittavat tekstuurit ladataan
      * @param minFontSize minimifonttikoko
      * @param maxFontSize maksimifonttikoko
+     *
      * @throws NullPointerException jos dao on <code>null</code>
      */
-    public TextRenderer(@NonNull TextureDAO textures, int minFontSize, int maxFontSize) {
+    public TextRenderer(@NonNull IGetDAO<Texture, String> textures, int minFontSize, int maxFontSize) {
         this.textures = textures;
         this.maxFontSize = maxFontSize;
         this.minFontSize = minFontSize;
@@ -61,13 +63,11 @@ public class TextRenderer {
      * @param camera kamera jonka näkökulmasta piiretään
      * @param x      tekstin x-koordinaatti
      * @param y      tekstin y-koordinaatti
-     * @param r      värisävyn punainen komponentti
-     * @param g      värisävyn vihreä komponentti
-     * @param b      värisävyn sininen komponentti
+     * @param color  väri
      * @param size   fonttikoko
      * @param string piirrettävä merkkijono
      */
-    public void draw(@NonNull LWJGLCamera camera, float x, float y, float r, float g, float b, int size, @NonNull String string) {
+    public void draw(@NonNull LWJGLCamera camera, float x, float y, @NonNull Color color, int size, @NonNull String string) {
         size = Math.max(this.minFontSize, Math.min(this.maxFontSize, size));
         string = string.toUpperCase();
         float destX = x, destY = y;
@@ -85,7 +85,7 @@ public class TextRenderer {
                 continue;
             }
 
-            this.font[size - 1].draw(camera, destX, destY, TextRenderer.CHAR_TO_FRAME.get(c), r, g, b);
+            this.font[size - 1].draw(camera, destX, destY, TextRenderer.CHAR_TO_FRAME.get(c), color);
             destX += size;
         }
     }

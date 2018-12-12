@@ -19,6 +19,7 @@ public class PlayerStatisticDAO {
      * Luo uuden DAOn statistiikkadatan lukemiseen. Luo tarvittavat tietokantataulut jos niitä ei vielä ole.
      *
      * @param database tietokanta jota luetaan
+     *
      * @throws SQLException         jos tietokannan käsittelyssä tapahtuu virhe
      * @throws NullPointerException jos tietokanta on <code>null</code>
      */
@@ -44,6 +45,7 @@ public class PlayerStatisticDAO {
      * @param profileId   pelaajaprofiili jonka tietoja päivitetään
      * @param statisticId päivitettävän statistiikan ID
      * @param value       arvo
+     *
      * @throws SQLException jos tietokannan käsittelyssä tapahtuu virhe
      */
     public void addButDoNotReplace(int profileId, int statisticId, double value) throws SQLException {
@@ -66,6 +68,7 @@ public class PlayerStatisticDAO {
      * @param profileId   pelaajaprofiili jonka tietoja päivitetään
      * @param statisticId päivitettävän statistiikan ID
      * @param value       uusi arvo
+     *
      * @throws SQLException jos tietokannan käsittelyssä tapahtuu virhe
      */
     public void update(int profileId, int statisticId, double value) throws SQLException {
@@ -84,7 +87,9 @@ public class PlayerStatisticDAO {
      *
      * @param profileId   pelaajaprofiili jonka tietoja haetaan
      * @param statisticId noudettavan statistiikan ID
+     *
      * @return statistiikan nykyinen arvo
+     *
      * @throws SQLException jos tietokannan käsittelyssä tapahtuu virhe
      */
     public double get(int profileId, int statisticId) throws SQLException {
@@ -110,6 +115,7 @@ public class PlayerStatisticDAO {
      * @param profileId   pelaajaprofiili jonka tietoja muokataan
      * @param statisticId kasvatettavan statistiikan ID
      * @param amount      arvo jolla statistiikkatietoa kasvatetaan
+     *
      * @throws SQLException jos tietokannan käsittelyssä tapahtuu virhe
      */
     public void incrementBy(int profileId, int statisticId, double amount) throws SQLException {

@@ -7,6 +7,7 @@ import toilari.otlite.dao.TextureDAO;
 import toilari.otlite.game.ProfileSelectGameState;
 import toilari.otlite.game.event.ProfileMenuEvent;
 import toilari.otlite.game.profile.Profile;
+import toilari.otlite.game.util.Color;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.TextRenderer;
 import toilari.otlite.view.lwjgl.Texture;
@@ -22,28 +23,16 @@ public class ProfileSelectGameStateRenderer implements ILWJGLGameStateRenderer<P
     private static final int ADD_BUTTON_HEIGHT = 8;
     private static final int ADD_BUTTON_SIZE = 2;
     private static final int ADD_BUTTON_FONT_SIZE = 2;
-
-    private static final float ADD_BUTTON_IDLE_R = 0.65f;
-    private static final float ADD_BUTTON_IDLE_G = 0.65f;
-    private static final float ADD_BUTTON_IDLE_B = 0.65f;
-
-    private static final float ADD_BUTTON_HOVER_R = 1.0f;
-    private static final float ADD_BUTTON_HOVER_G = 1.0f;
-    private static final float ADD_BUTTON_HOVER_B = 1.0f;
+    private static final Color ADD_BUTTON_COLOR_IDLE = Color.WHITE.shade(0.35f);
+    private static final Color ADD_BUTTON_COLOR_HOVER = Color.WHITE;
 
 
     private static final int LARGE_BUTTON_WIDTH = 64;
     private static final int LARGE_BUTTON_HEIGHT = 8;
     private static final int LARGE_BUTTON_SIZE = 2;
     private static final int LARGE_BUTTON_FONT_SIZE = 2;
-
-    private static final float LARGE_BUTTON_IDLE_R = 0.65f;
-    private static final float LARGE_BUTTON_IDLE_G = 0.65f;
-    private static final float LARGE_BUTTON_IDLE_B = 0.65f;
-
-    private static final float LARGE_BUTTON_HOVER_R = 1.0f;
-    private static final float LARGE_BUTTON_HOVER_G = 1.0f;
-    private static final float LARGE_BUTTON_HOVER_B = 1.0f;
+    private static final Color LARGE_BUTTON_COLOR_IDLE = Color.WHITE.shade(0.35f);
+    private static final Color LARGE_BUTTON_COLOR_HOVER = Color.WHITE;
 
     private static final int BUTTON_MARGIN = 2;
     private static final int BUTTON_START_Y = 16;
@@ -51,6 +40,11 @@ public class ProfileSelectGameStateRenderer implements ILWJGLGameStateRenderer<P
     private static final int TITLE_FONTSIZE = 5;
     private static final int TITLE_Y = 4;
     private static final String TITLE_STRING = "Select/Create a profile";
+
+    private static final Color PROFILE_REMOVE_BUTTON_COLOR_IDLE = new Color(0.85f, 0.4f, 0.4f);
+    private static final Color PROFILE_REMOVE_BUTTON_COLOR_HOVER = new Color(0.95f, 0.7f, 0.7f);
+
+    private static final Color TITLE_COLOR = Color.WHITE.shade(0.15f);
 
     @NonNull private final TextureDAO textureDAO;
     @NonNull private final TextRenderer textRenderer;
@@ -83,8 +77,12 @@ public class ProfileSelectGameStateRenderer implements ILWJGLGameStateRenderer<P
             return true;
         }
 
-        this.createProfileButton = new UIButton(state.getGame().getStatistics(), state.getGame().getActiveProfile(), ADD_BUTTON_WIDTH, ADD_BUTTON_HEIGHT, ADD_BUTTON_SIZE, "Add", this.uiTexture,
-            ADD_BUTTON_IDLE_R, ADD_BUTTON_IDLE_G, ADD_BUTTON_IDLE_B, ADD_BUTTON_HOVER_R, ADD_BUTTON_HOVER_G, ADD_BUTTON_HOVER_B,
+        this.createProfileButton = new UIButton(state.getGame().getStatistics(), state.getGame().getActiveProfile(),
+            ADD_BUTTON_WIDTH, ADD_BUTTON_HEIGHT,
+            ADD_BUTTON_SIZE,
+            "Add", this.uiTexture,
+            ADD_BUTTON_COLOR_IDLE,
+            ADD_BUTTON_COLOR_HOVER,
             () -> state.getEventSystem().fire(new ProfileMenuEvent.Add("Player #" + this.profileButtons.size())));
 
         state.getEventSystem().subscribeTo(ProfileMenuEvent.Added.class, this::onAdded);
@@ -116,7 +114,7 @@ public class ProfileSelectGameStateRenderer implements ILWJGLGameStateRenderer<P
         val centerX = camera.getViewportWidth() / 2;
         val x = centerX - TITLE_STRING.length() * (TITLE_FONTSIZE / 2.0f);
 
-        this.textRenderer.draw(camera, x, TITLE_Y, 1.0f, 1.0f, 1.0f, TITLE_FONTSIZE, TITLE_STRING);
+        this.textRenderer.draw(camera, x, TITLE_Y, TITLE_COLOR, TITLE_FONTSIZE, TITLE_STRING);
     }
 
     private void drawButtons(@NonNull LWJGLCamera camera) {
@@ -142,7 +140,7 @@ public class ProfileSelectGameStateRenderer implements ILWJGLGameStateRenderer<P
         this.profileIds = new ArrayList<>();
         List<Profile> profiles;
         try {
-            profiles = state.getGame().getProfileDao().findAll();
+            profiles = state.getGame().getProfiles().findAll();
         } catch (SQLException e) {
             LOG.error("Could not fetch profiles.");
             return true;
@@ -161,8 +159,7 @@ public class ProfileSelectGameStateRenderer implements ILWJGLGameStateRenderer<P
             LARGE_BUTTON_SIZE,
             profile.getName(),
             this.uiTexture,
-            LARGE_BUTTON_IDLE_R, LARGE_BUTTON_IDLE_G, LARGE_BUTTON_IDLE_B,
-            LARGE_BUTTON_HOVER_R, LARGE_BUTTON_HOVER_G, LARGE_BUTTON_HOVER_B,
+            LARGE_BUTTON_COLOR_IDLE, LARGE_BUTTON_COLOR_HOVER,
             () -> state.getEventSystem().fire(new ProfileMenuEvent.Select(profile))));
 
         this.profileRemoveButtons.add(new UIButton(state.getGame().getStatistics(), state.getGame().getActiveProfile(),
@@ -170,8 +167,8 @@ public class ProfileSelectGameStateRenderer implements ILWJGLGameStateRenderer<P
             LARGE_BUTTON_SIZE,
             "X",
             this.uiTexture,
-            0.85f, 0.4f, 0.4f,
-            0.95f, 0.7f, 0.7f,
+            PROFILE_REMOVE_BUTTON_COLOR_IDLE,
+            PROFILE_REMOVE_BUTTON_COLOR_HOVER,
             () -> state.getEventSystem().fire(new ProfileMenuEvent.Remove(profile))));
 
         this.profileIds.add(profile.getId());

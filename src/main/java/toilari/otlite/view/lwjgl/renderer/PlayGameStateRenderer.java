@@ -2,25 +2,33 @@ package toilari.otlite.view.lwjgl.renderer;
 
 import lombok.NonNull;
 import lombok.val;
-import toilari.otlite.dao.RendererDAO;
-import toilari.otlite.dao.TextureDAO;
+import toilari.otlite.dao.IGetAllDAO;
+import toilari.otlite.dao.IGetDAO;
+import toilari.otlite.dao.serialization.IGetByIDDao;
 import toilari.otlite.game.PlayGameState;
 import toilari.otlite.game.event.PlayEvent;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
+import toilari.otlite.game.util.Color;
 import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbility;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.TextRenderer;
+import toilari.otlite.view.lwjgl.Texture;
 import toilari.otlite.view.lwjgl.ui.UIAbilityBar;
+import toilari.otlite.view.renderer.IRenderer;
 
 /**
  * Piirtäjä pelitilan piirtämiseen. Vastaa maailman
  */
-public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameState> {
-    @NonNull private final TextureDAO textureDao;
-    @NonNull private final RendererDAO renderers;
+public class PlayGameStateRenderer<R extends IGetAllDAO<IRenderer> & IGetByIDDao<IRenderer>> implements ILWJGLGameStateRenderer<PlayGameState> {
+    private static final Color DEATH_MESSAGE_COLOR = new Color(0.65f, 0.25f, 0.25f);
+    private static final Color RETURN_TO_MENU_MESSAGE_COLOR = Color.WHITE.shade(0.15f);
+    private static final Color GAME_INFO_COLOR = new Color(0.25f, 0.65f, 0.25f);
+    private static final Color ACTION_LABEL_COLOR = new Color(0.65f, 0.25f, 0.25f);
+    @NonNull private final R renderers;
+    @NonNull private final IGetDAO<Texture, String> textureDao;
     @NonNull private final TextRenderer textRenderer;
-    @NonNull private final DamagePopupRenderer damagePopupRenderer;
+    @NonNull private final PopupTextRenderer popupTextRenderer;
 
     private PlayGameState state;
 
@@ -30,17 +38,17 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
     /**
      * Luo uuden pelitilapiirtäjän.
      *
+     * @param renderers  dao jolla piirtäjät ladataan
      * @param textureDao dao jolla tekstuurit ladataan
      */
-    public PlayGameStateRenderer(@NonNull TextureDAO textureDao) {
+    public PlayGameStateRenderer(@NonNull R renderers, @NonNull IGetDAO<Texture, String> textureDao) {
         this.textureDao = textureDao;
         this.textRenderer = new TextRenderer(this.textureDao, 1, 16);
         this.levelRenderer = new LevelRenderer(this.textureDao, "tileset.png", 8, 8);
 
-        this.renderers = new RendererDAO("content/renderers/", this.textureDao);
-        this.renderers.discoverAndLoadAll();
+        this.renderers = renderers;
 
-        this.damagePopupRenderer = new DamagePopupRenderer();
+        this.popupTextRenderer = new PopupTextRenderer();
     }
 
     @Override
@@ -54,7 +62,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         }
 
         this.textRenderer.init();
-        this.damagePopupRenderer.init(state);
+        this.popupTextRenderer.init(state);
         this.abilityBar = new UIAbilityBar(this.textureDao, this.textRenderer);
 
         return this.levelRenderer.init();
@@ -74,7 +82,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         drawWorld(camera, state);
         postDrawWorld(camera, state);
 
-        this.damagePopupRenderer.draw(camera, this.textRenderer);
+        this.popupTextRenderer.draw(camera, this.textRenderer);
         drawUI(camera, state);
     }
 
@@ -90,7 +98,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         this.levelRenderer.draw(camera, world.getCurrentLevel());
 
         for (val object : world.getObjectManager().getObjects()) {
-            val renderer = this.renderers.get(object.getRendererID());
+            val renderer = this.renderers.getByID(object.getRendererID());
             if (renderer != null) {
                 renderer.draw(camera, object);
             }
@@ -102,7 +110,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         this.levelRenderer.postDraw(camera, world.getCurrentLevel());
 
         for (val object : world.getObjectManager().getObjects()) {
-            val renderer = this.renderers.get(object.getRendererID());
+            val renderer = this.renderers.getByID(object.getRendererID());
             if (renderer != null) {
                 renderer.postDraw(camera, object);
             }
@@ -131,12 +139,12 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
     private void drawCurrentTurn(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, float x, float y) {
         val str = state.getGame().getActiveProfile().getName()
             + "\nTurn: " + state.getManager().getPlayer().getTurnsTaken();
-        this.textRenderer.draw(camera, x, y, 0.25f, 0.65f, 0.25f, 4, str);
+        this.textRenderer.draw(camera, x, y, GAME_INFO_COLOR, 4, str);
     }
 
     private void drawActionLabel(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, float x, float y) {
         String apStr = resolveActionLabel(state);
-        this.textRenderer.draw(camera, x, y, 0.65f, 0.25f, 0.25f, 2, apStr);
+        this.textRenderer.draw(camera, x, y, ACTION_LABEL_COLOR, 2, apStr);
     }
 
     private String resolveActionLabel(@NonNull PlayGameState state) {
@@ -146,7 +154,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         String apStr = "Waiting...";
         if (world.getObjectManager().isCharactersTurn(player)) {
             val remaining = world.getObjectManager().getRemainingActionPoints();
-            val total = player.getAttributes().getActionPoints(player.getLevels());
+            val total = player.getAttributes().getActionPoints();
             if (remaining == 0) {
                 apStr = "Press <SPACE> to end turn";
             } else {
@@ -173,7 +181,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         this.textRenderer.draw(camera,
             x + (w / 2f) - (len * size) / 2f,
             y + (h / 2f) - (size / 2f) + ((h / 2f + size) - dt * (h / 2f + size)),
-            0.65f, 0.25f, 0.25f,
+            DEATH_MESSAGE_COLOR,
             size, ded);
 
         if (1.0f - dt < 0.001f) {
@@ -188,7 +196,7 @@ public class PlayGameStateRenderer implements ILWJGLGameStateRenderer<PlayGameSt
         this.textRenderer.draw(camera,
             x + (w / 2.0f) - (continueLen * continueSize) / 2.0f,
             y + (h / 2.0f) + (size / 2.0f) + 0.5f,
-            0.85f, 0.85f, 0.85f,
+            RETURN_TO_MENU_MESSAGE_COLOR,
             continueSize, continueStr
         );
 

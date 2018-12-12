@@ -47,7 +47,7 @@ public class PlayGameState extends GameState {
         val player = this.characters.getByID("player");
         this.manager.spawn(player);
         this.manager.setPlayer(player);
-        val levelId = "1";
+        val levelId = getGame().getInitialLevelId();
         this.world.changeLevel(levelId);
 
         LOG.info("Initialization finished.");

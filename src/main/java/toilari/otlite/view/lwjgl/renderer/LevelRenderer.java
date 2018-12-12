@@ -2,7 +2,8 @@ package toilari.otlite.view.lwjgl.renderer;
 
 import lombok.NonNull;
 import lombok.val;
-import toilari.otlite.dao.TextureDAO;
+import toilari.otlite.dao.IGetDAO;
+import toilari.otlite.game.util.Color;
 import toilari.otlite.game.world.level.Level;
 import toilari.otlite.game.world.level.Tile;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
@@ -13,7 +14,7 @@ import toilari.otlite.view.lwjgl.Texture;
  * Piirtää pelin kartan.
  */
 public class LevelRenderer implements ILWJGLRenderer<Level> {
-    @NonNull private final TextureDAO textureDAO;
+    private final @NonNull IGetDAO<Texture, String> textureDAO;
     @NonNull private final String textureFilename;
 
     private final int tilesetRows;
@@ -29,9 +30,10 @@ public class LevelRenderer implements ILWJGLRenderer<Level> {
      * @param textureFilename tileset-tekstuurin tiedostonimi
      * @param tilesetRows     montako riviä atlaksessa on
      * @param tilesetColumns  montako saraketta atlaksessa on
+     *
      * @throws NullPointerException jos tiedostopolku tai DAO on null
      */
-    LevelRenderer(@NonNull TextureDAO textureDAO, @NonNull String textureFilename, int tilesetRows, int tilesetColumns) {
+    LevelRenderer(@NonNull IGetDAO<Texture, String> textureDAO, @NonNull String textureFilename, int tilesetRows, int tilesetColumns) {
         this.textureFilename = textureFilename;
         this.textureDAO = textureDAO;
         this.tilesetRows = tilesetRows;
@@ -70,7 +72,7 @@ public class LevelRenderer implements ILWJGLRenderer<Level> {
                 val tile = level.getTileAt(x, y);
                 val index = tile.getTileIndex();
 
-                this.tileSprites[index].draw(camera, x * Tile.SIZE_IN_WORLD, y * Tile.SIZE_IN_WORLD, 1.0f, 1.0f, 1.0f);
+                this.tileSprites[index].draw(camera, x * Tile.SIZE_IN_WORLD, y * Tile.SIZE_IN_WORLD, Color.WHITE);
             }
         }
 

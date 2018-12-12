@@ -4,7 +4,6 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import toilari.otlite.dao.PlayerStatisticDAO;
-import toilari.otlite.dao.database.Database;
 
 import java.sql.SQLException;
 
@@ -18,17 +17,17 @@ public class StatisticsManager {
     /**
      * Luo uuden statistiikkamanagerin käyttäen annettua tietokantaa tiedon tallennukseen.
      *
-     * @param database tietokanta johon tiedot tallennetaan
-     * @throws SQLException jos tietokannan käsittelyssä tapahtuu virhe
+     * @param statistics dao jolla pelaajan statistiikkoihin pääsee käsiksi
      */
-    public StatisticsManager(@NonNull Database database) throws SQLException {
-        this.playerStatistics = new PlayerStatisticDAO(database);
+    public StatisticsManager(@NonNull PlayerStatisticDAO statistics) {
+        this.playerStatistics = statistics;
     }
 
     /**
      * Lisää pelaajaprofiilin tietokantaan jos sitä ei vielä ole siellä.
      *
      * @param profileId lisättävän profiilin ID
+     *
      * @throws SQLException jos tietokannan käsittelyssä tapahtuu virhe
      */
     public void startTrackingProfile(int profileId) throws SQLException {
@@ -42,7 +41,9 @@ public class StatisticsManager {
      *
      * @param key       haettava tieto
      * @param profileId profiili jonka tietoa haetaan
+     *
      * @return statistiikan nykyinen arvo tai -1 jos hakeminen ei onnistunut
+     *
      * @throws NullPointerException jos haettava statistiikka on <code>null</code>
      */
     public long getLong(@NonNull Statistics key, int profileId) {
@@ -55,7 +56,9 @@ public class StatisticsManager {
      *
      * @param key       haettava tieto
      * @param profileId profiili jonka tietoa haetaan
+     *
      * @return statistiikan nykyinen arvo tai <code>NaN</code> jos hakeminen ei onnistu
+     *
      * @throws NullPointerException jos haettava statistiikka on <code>null</code>
      */
     public double getDouble(@NonNull Statistics key, int profileId) {
@@ -73,6 +76,7 @@ public class StatisticsManager {
      * @param key       tieto jonka arvo asetetaan
      * @param profileId profiili jonka tietoa päivitetään
      * @param value     uusi arvo
+     *
      * @throws NullPointerException jos haettava statistiikka on <code>null</code>
      */
     public void set(@NonNull Statistics key, int profileId, double value) {
@@ -88,6 +92,7 @@ public class StatisticsManager {
      *
      * @param key       tieto jonka arvoa kasvatetaan
      * @param profileId profiili jonka tietoa päivitetään
+     *
      * @throws NullPointerException jos haettava statistiikka on <code>null</code>
      */
     public void increment(@NonNull Statistics key, int profileId) {
@@ -100,6 +105,7 @@ public class StatisticsManager {
      * @param key       tieto jonka arvoa kasvatetaan
      * @param amount    kuinka paljon arvoa kasvatetaan
      * @param profileId profiili jonka tietoa päivitetään
+     *
      * @throws NullPointerException jos haettava statistiikka on <code>null</code>
      */
     public void incrementBy(Statistics key, double amount, int profileId) {

@@ -54,7 +54,7 @@ public class TurnObjectManager extends ObjectManager {
             return;
         }
 
-        this.remainingActionPoints = getActiveCharacter().getAttributes().getActionPoints(getActiveCharacter().getLevels());
+        this.remainingActionPoints = getActiveCharacter().getAttributes().getActionPoints();
 
         getActiveCharacter().beginTurn();
     }

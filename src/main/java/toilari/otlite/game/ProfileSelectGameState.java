@@ -21,7 +21,7 @@ public class ProfileSelectGameState extends GameState {
         getEventSystem().subscribeTo(ProfileMenuEvent.Select.class, this::onSelect);
 
         try {
-            for (val profile : getGame().getProfileDao().findAll()) {
+            for (val profile : getGame().getProfiles().findAll()) {
                 getGame().getStatistics().startTrackingProfile(profile.getId());
             }
         } catch (SQLException e) {
@@ -43,13 +43,13 @@ public class ProfileSelectGameState extends GameState {
 
     private void onAdd(@NonNull ProfileMenuEvent.Add event) {
         try {
-            if (getGame().getProfileDao().profileWithNameExists(event.getName())) {
+            if (getGame().getProfiles().profileWithNameExists(event.getName())) {
                 ProfileSelectGameState.LOG.warn("Profile with given name already exists!");
                 getEventSystem().fire(new ProfileMenuEvent.InvalidName());
                 return;
             }
 
-            val profile = getGame().getProfileDao().createNew(event.getName());
+            val profile = getGame().getProfiles().createNew(event.getName());
             if (profile != null) {
                 getGame().getStatistics().startTrackingProfile(profile.getId());
                 getEventSystem().fire(new ProfileMenuEvent.Added(profile));
@@ -64,7 +64,7 @@ public class ProfileSelectGameState extends GameState {
 
     private void onSelect(@NonNull ProfileMenuEvent.Select event) {
         try {
-            val profile = getGame().getProfileDao().findById(event.getProfile().getId());
+            val profile = getGame().getProfiles().findById(event.getProfile().getId());
 
             getGame().setActiveProfile(profile);
             getGame().changeState(new MainMenuGameState());
@@ -78,7 +78,7 @@ public class ProfileSelectGameState extends GameState {
 
     private void onRemove(@NonNull ProfileMenuEvent.Remove event) {
         try {
-            getGame().getProfileDao().remove(event.getProfile());
+            getGame().getProfiles().remove(event.getProfile());
             getEventSystem().fire(new ProfileMenuEvent.Removed(event.getProfile()));
         } catch (SQLException e) {
             ProfileSelectGameState.LOG.error("Creating profile failed, trying to shut down gracefully.");

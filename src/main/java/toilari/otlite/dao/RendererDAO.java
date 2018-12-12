@@ -6,8 +6,11 @@ import com.google.gson.JsonSyntaxException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import toilari.otlite.dao.serialization.ColorAdapter;
+import toilari.otlite.dao.serialization.IGetByIDDao;
 import toilari.otlite.dao.serialization.RendererAdapter;
 import toilari.otlite.dao.util.TextFileHelper;
+import toilari.otlite.game.util.Color;
 import toilari.otlite.view.lwjgl.renderer.CharacterRenderer;
 import toilari.otlite.view.lwjgl.renderer.Context;
 import toilari.otlite.view.lwjgl.renderer.PlayerRenderer;
@@ -21,8 +24,8 @@ import java.nio.file.Path;
  * Lataa piirtäjiä määritystiedostoista.
  */
 @Slf4j
-public class RendererDAO extends AutoDiscoverFileDAO<IRenderer> {
-    private static final String[] EXTENSIONS = {"json", "renderer"};
+public class RendererDAO extends AutoDiscoverFileDAO<IRenderer> implements IGetByIDDao<IRenderer> {
+    private static final String[] EXTENSIONS = {"json"};
     private final Gson gson;
 
     /**
@@ -30,6 +33,7 @@ public class RendererDAO extends AutoDiscoverFileDAO<IRenderer> {
      *
      * @param root       juurihakemisto josta piirtäjiä etsitään
      * @param textureDAO tekstuuridao piirtäjien tekstuurien lataamiseen
+     *
      * @throws NullPointerException jos polku tai dao on <code>null</code>
      */
     public RendererDAO(@NonNull String root, @NonNull TextureDAO textureDAO) {
@@ -38,6 +42,7 @@ public class RendererDAO extends AutoDiscoverFileDAO<IRenderer> {
         typeAdapter.registerRenderer("player", PlayerRenderer::new, Context.class);
         typeAdapter.registerRenderer("character", CharacterRenderer::new, Context.class);
         this.gson = new GsonBuilder()
+            .registerTypeAdapter(Color.class, new ColorAdapter())
             .registerTypeAdapter(IRenderer.class, typeAdapter)
             .create();
     }
@@ -59,5 +64,10 @@ public class RendererDAO extends AutoDiscoverFileDAO<IRenderer> {
         }
 
         return null;
+    }
+
+    @Override
+    public IRenderer getByID(String id) {
+        return get(id + ".json");
     }
 }

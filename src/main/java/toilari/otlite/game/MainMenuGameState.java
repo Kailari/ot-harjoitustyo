@@ -1,12 +1,11 @@
 package toilari.otlite.game;
 
-import toilari.otlite.dao.CharacterDAO;
-import toilari.otlite.dao.LevelDAO;
-import toilari.otlite.dao.TileDAO;
 import toilari.otlite.game.event.MainMenuEvent;
 import toilari.otlite.game.event.MenuEvent;
-import toilari.otlite.game.world.entities.TurnObjectManager;
 
+/**
+ * Päävalikon pelitila.
+ */
 public class MainMenuGameState extends GameState {
     @Override
     public boolean init() {
@@ -14,10 +13,10 @@ public class MainMenuGameState extends GameState {
         getEventSystem().subscribeTo(
             MainMenuEvent.NewGame.class,
             (e) -> getGame().changeState(new PlayGameState(
-                new TurnObjectManager(),
-                new TileDAO("content/tiles/"),
-                new CharacterDAO("content/characters/"),
-                new LevelDAO("content/levels/"))
+                getGame().getNewObjectManager(),
+                getGame().getTiles(),
+                getGame().getCharacters(),
+                getGame().getLevels())
             )
         );
         getEventSystem().subscribeTo(MainMenuEvent.Bestiary.class, (e) -> getGame().changeState(new BestiaryGameState()));

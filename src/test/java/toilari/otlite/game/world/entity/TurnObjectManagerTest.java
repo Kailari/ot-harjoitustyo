@@ -26,13 +26,13 @@ class TurnObjectManagerTest {
         world.init();
 
         val character = FakeCharacterObject.createWithAttributes(new CharacterAttributes(
+            null,
             1,
             0,
             1,
             0,
             10,
             1336, // LVL 1 DEX gives 1 AP more, thus results in 1337 AP
-            2,
             0,
             0.1f,
             0.0f,

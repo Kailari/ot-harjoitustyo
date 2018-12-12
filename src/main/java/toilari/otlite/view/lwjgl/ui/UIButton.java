@@ -7,6 +7,7 @@ import toilari.otlite.game.input.Input;
 import toilari.otlite.game.profile.Profile;
 import toilari.otlite.game.profile.statistics.Statistics;
 import toilari.otlite.game.profile.statistics.StatisticsManager;
+import toilari.otlite.game.util.Color;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.Sprite;
 import toilari.otlite.view.lwjgl.TextRenderer;
@@ -37,15 +38,10 @@ public class UIButton {
 
     private final Action onClick;
 
-    private final float hoverR;
-    private final float hoverG;
-    private final float hoverB;
+    private final Color hoverColor;
+    private final Color idleColor;
 
-    private final float idleR;
-    private final float idleG;
-    private final float idleB;
-
-    private float r, g, b;
+    private Color color;
 
     /**
      * Luo uuden painikkeen.
@@ -57,15 +53,11 @@ public class UIButton {
      * @param size       painikkeen tekstuurin skaalaus
      * @param text       painikkeen teksti
      * @param texture    painikkeen tekstuuri
-     * @param idleR      värisävyn punainen komponentti
-     * @param idleG      värisävyn vihreä komponentti
-     * @param idleB      värisävyn sininen komponentti
-     * @param hoverR     värisävyn punainen komponentti kursorin ollessa painikkeen päällä
-     * @param hoverG     värisävyn vihreä komponentti kursorin ollessa painikkeen päällä
-     * @param hoverB     värisävyn sininen komponentti kursorin ollessa painikkeen päällä
+     * @param idleColor  painikkeen väri
+     * @param hoverColor väri kursorin ollessa painikkeen päällä
      * @param onClick    takaisinkutsu jota kutsutaan kun painiketta painetaan
      */
-    public UIButton(StatisticsManager statistics, Profile profile, int width, int height, int size, @NonNull String text, @NonNull Texture texture, float idleR, float idleG, float idleB, float hoverR, float hoverG, float hoverB, Action onClick) {
+    public UIButton(StatisticsManager statistics, Profile profile, int width, int height, int size, @NonNull String text, @NonNull Texture texture, @NonNull Color idleColor, @NonNull Color hoverColor, Action onClick) {
         this.statistics = statistics;
         this.profile = profile;
         this.width = width;
@@ -73,13 +65,8 @@ public class UIButton {
         this.size = size;
         this.text = text;
 
-        this.idleR = idleR;
-        this.idleG = idleG;
-        this.idleB = idleB;
-
-        this.hoverR = hoverR;
-        this.hoverG = hoverG;
-        this.hoverB = hoverB;
+        this.idleColor = idleColor;
+        this.hoverColor = hoverColor;
 
         this.onClick = onClick;
 
@@ -108,21 +95,21 @@ public class UIButton {
     public void draw(@NonNull LWJGLCamera camera, @NonNull TextRenderer textRenderer, int fontSize, float x, float y) {
         updateMouse(camera, x, y);
 
-        this.topLeft.draw(camera, x, y, this.r, this.g, this.b);
-        this.top.draw(camera, x + this.size, y, this.r, this.g, this.b);
-        this.topRight.draw(camera, x + this.width - this.size, y, this.r, this.g, this.b);
+        this.topLeft.draw(camera, x, y, this.color);
+        this.top.draw(camera, x + this.size, y, this.color);
+        this.topRight.draw(camera, x + this.width - this.size, y, this.color);
 
-        this.left.draw(camera, x, y + this.size, this.r, this.g, this.b);
-        this.fill.draw(camera, x + this.size, y + this.size, this.r, this.g, this.b);
-        this.right.draw(camera, x + this.width - this.size, y + this.size, this.r, this.g, this.b);
+        this.left.draw(camera, x, y + this.size, this.color);
+        this.fill.draw(camera, x + this.size, y + this.size, this.color);
+        this.right.draw(camera, x + this.width - this.size, y + this.size, this.color);
 
-        this.botLeft.draw(camera, x, y + this.height - this.size, this.r, this.g, this.b);
-        this.bot.draw(camera, x + this.size, y + this.height - this.size, this.r, this.g, this.b);
-        this.botRight.draw(camera, x + this.width - this.size, y + this.height - this.size, this.r, this.g, this.b);
+        this.botLeft.draw(camera, x, y + this.height - this.size, this.color);
+        this.bot.draw(camera, x + this.size, y + this.height - this.size, this.color);
+        this.botRight.draw(camera, x + this.width - this.size, y + this.height - this.size, this.color);
 
         val textX = x + (this.width / 2f - (this.text.length() / 2.0f) * fontSize);
         val textY = y + (this.height / 2f - fontSize / 2f);
-        textRenderer.draw(camera, textX, textY, 1.0f, 1.0f, 1.0f, fontSize, this.text);
+        textRenderer.draw(camera, textX, textY, Color.WHITE, fontSize, this.text);
     }
 
     private void updateMouse(@NonNull LWJGLCamera camera, float x, float y) {
@@ -130,13 +117,9 @@ public class UIButton {
         val mouseY = (int) Math.floor(Input.getHandler().mouseY() / camera.getPixelsPerUnit());
 
         if (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height) {
-            this.r = this.hoverR;
-            this.g = this.hoverG;
-            this.b = this.hoverB;
+            this.color = this.hoverColor;
         } else {
-            this.r = this.idleR;
-            this.g = this.idleG;
-            this.b = this.idleB;
+            this.color = this.idleColor;
         }
 
         if (Input.getHandler().isMousePressed(0)) {

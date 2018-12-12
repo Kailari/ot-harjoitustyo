@@ -10,8 +10,7 @@ import java.util.HashMap;
 
 public class FakeCharacterObject extends CharacterObject {
     private FakeCharacterObject() {
-        this(new CharacterAttributes(1, 0, 1, 0, 10,
-            2,
+        this(new CharacterAttributes(null, 1, 0, 1, 0, 10,
             2,
             0,
             0.1f,

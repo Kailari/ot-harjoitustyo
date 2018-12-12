@@ -2,6 +2,7 @@ package toilari.otlite.game.world.level;
 
 import lombok.NonNull;
 import lombok.val;
+import toilari.otlite.game.event.CharacterEvent;
 import toilari.otlite.game.profile.statistics.Statistics;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 
@@ -26,9 +27,14 @@ public class StaircaseTile extends Tile {
 
     @Override
     public void onCharacterEnter(int x, int y, @NonNull CharacterObject character) {
-        if (!character.getWorld().getObjectManager().getPlayer().equals(character) || StaircaseTile.nextLevel == null) {
+        val player = character.getWorld().getObjectManager().getPlayer();
+        if (!player.equals(character) || StaircaseTile.nextLevel == null) {
             return;
         }
+
+        val healthRegen = player.getAttributes().getHealthRegen();
+        player.heal(healthRegen);
+        player.getWorld().getObjectManager().getEventSystem().fire(new CharacterEvent.Heal(player, healthRegen));
 
         val state = character.getWorld().getObjectManager().getGameState();
         if (state != null) {

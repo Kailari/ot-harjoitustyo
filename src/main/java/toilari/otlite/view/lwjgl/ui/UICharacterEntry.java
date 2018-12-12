@@ -2,11 +2,12 @@ package toilari.otlite.view.lwjgl.ui;
 
 import lombok.Getter;
 import lombok.NonNull;
-import toilari.otlite.dao.RendererDAO;
+import toilari.otlite.dao.serialization.IGetByIDDao;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.renderer.CharacterRenderer;
+import toilari.otlite.view.renderer.IRenderer;
 
 /**
  * Käyttöliittymäkomponentti hahmon tietojen näyttämiseen osana käyttöliittymää.
@@ -23,9 +24,9 @@ public class UICharacterEntry {
      * @param previewWorld maailma jossa esikatseltaav hahmo on
      * @param character    hahmo jonka tietoja tämä komponentti näyttää
      */
-    public UICharacterEntry(@NonNull RendererDAO renderers, @NonNull World previewWorld, @NonNull CharacterObject character) {
+    public UICharacterEntry(@NonNull IGetByIDDao<IRenderer> renderers, @NonNull World previewWorld, @NonNull CharacterObject character) {
         this.character = previewWorld.getObjectManager().spawnTemplate(character);
-        this.renderer = (CharacterRenderer) renderers.get(this.character.getRendererID());
+        this.renderer = (CharacterRenderer) renderers.getByID(this.character.getRendererID());
     }
 
     /**

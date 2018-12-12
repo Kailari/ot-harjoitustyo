@@ -1,22 +1,10 @@
 {
   "texture": "white_knight.png",
   "nFrames": 6,
-  "walkFrames": [
-    0,
-    1
-  ],
-  "idleFrames": [
-    2,
-    3,
-    4,
-    5
-  ],
+  "walkFrames": [0, 1],
+  "idleFrames": [2, 3, 4, 5],
   "framesPerSecond": 1.5,
-  "color": [
-    0.25,
-    0.25,
-    0.25
-  ],
+  "color": [0.25, 0.25, 0.25],
   "width": 8,
   "height": 8,
   "class": "character"

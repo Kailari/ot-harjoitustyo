@@ -5,22 +5,18 @@ import lombok.val;
 import lombok.var;
 import org.joml.Matrix4f;
 import toilari.otlite.dao.util.TextFileHelper;
+import toilari.otlite.game.util.Color;
 
 import java.io.IOException;
 import java.util.HashMap;
 
-import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
-import static org.lwjgl.opengl.GL15.glBindBuffer;
-import static org.lwjgl.opengl.GL15.glBufferData;
-import static org.lwjgl.opengl.GL15.glDeleteBuffers;
-import static org.lwjgl.opengl.GL15.glGenBuffers;
+import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL30.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL30.GL_FLOAT;
 import static org.lwjgl.opengl.GL30.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL30.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL30.glDrawElements;
+import static org.lwjgl.opengl.GL30.*;
 
 /**
  * Pelimaailmaan piirettävä kaksiuloitteinen kuva.
@@ -128,12 +124,10 @@ public class Sprite {
      * @param camera kamera jonka näkökulmasta piirretään
      * @param x      x-koordinaatti johon piirretään
      * @param y      y-koordinaatti johon piirretään
-     * @param r      värisävyn punainen komponentti
-     * @param g      värisävyn vihreä komponentti
-     * @param b      värisävyn sininen komponentti
+     * @param color  värisävy
      * @throws NullPointerException jos kamera on <code>null</code>
      */
-    public void draw(@NonNull LWJGLCamera camera, float x, float y, float r, float g, float b) {
+    public void draw(@NonNull LWJGLCamera camera, float x, float y, @NonNull Color color) {
         this.texture.bind();
         getShader().use();
 
@@ -147,7 +141,7 @@ public class Sprite {
         glUniformMatrix4fv(uniformModel, false, model.get(new float[4 * 4]));
         glUniformMatrix4fv(uniformView, false, camera.getViewMatrixArr());
         glUniformMatrix4fv(uniformProj, false, camera.getProjectionMatrixArr());
-        glUniform3f(uniformTint, r, g, b);
+        glUniform3f(uniformTint, color.getR(), color.getG(), color.getB());
 
         glBindVertexArray(this.vao);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

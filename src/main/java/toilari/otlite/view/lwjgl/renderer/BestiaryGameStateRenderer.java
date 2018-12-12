@@ -2,14 +2,15 @@ package toilari.otlite.view.lwjgl.renderer;
 
 import lombok.NonNull;
 import lombok.val;
-import toilari.otlite.dao.CharacterDAO;
-import toilari.otlite.dao.RendererDAO;
+import toilari.otlite.dao.IGetAllDAO;
 import toilari.otlite.dao.TextureDAO;
+import toilari.otlite.dao.serialization.IGetByIDDao;
 import toilari.otlite.game.BestiaryGameState;
 import toilari.otlite.game.event.BestiaryEvent;
 import toilari.otlite.game.profile.Profile;
 import toilari.otlite.game.profile.statistics.Statistics;
 import toilari.otlite.game.profile.statistics.StatisticsManager;
+import toilari.otlite.game.util.Color;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
@@ -18,48 +19,47 @@ import toilari.otlite.view.lwjgl.TextRenderer;
 import toilari.otlite.view.lwjgl.Texture;
 import toilari.otlite.view.lwjgl.ui.UIButton;
 import toilari.otlite.view.lwjgl.ui.UICharacterEntry;
+import toilari.otlite.view.renderer.IRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Piirtäjä "bestiary"-valikon piirtämiseen.
+ * Piirtäjä bestiaarin piirtämiseen.
+ *
+ * @param <R> piirtäjä-DAOn tyyppi
  */
-public class BestiaryGameStateRenderer implements ILWJGLGameStateRenderer<BestiaryGameState> {
+public class BestiaryGameStateRenderer<R extends IGetAllDAO<IRenderer> & IGetByIDDao<IRenderer>> implements ILWJGLGameStateRenderer<BestiaryGameState> {
     private static final int RETURN_BUTTON_WIDTH = 24;
     private static final int RETURN_BUTTON_HEIGHT = 8;
     private static final int RETURN_BUTTON_TEXTURE_SIZE = 2;
     private static final int RETURN_BUTTON_FONT_SIZE = 2;
     private static final String RETURN_BUTTON_LABEL = "Return";
 
-    private static final float RETURN_BUTTON_IDLE_R = 0.65f;
-    private static final float RETURN_BUTTON_IDLE_G = 0.65f;
-    private static final float RETURN_BUTTON_IDLE_B = 0.65f;
-
-    private static final float RETURN_BUTTON_HOVER_R = 1.0f;
-    private static final float RETURN_BUTTON_HOVER_G = 1.0f;
-    private static final float RETURN_BUTTON_HOVER_B = 1.0f;
+    private static final Color RETURN_BUTTON_IDLE_COLOR = new Color(0.65f, 0.65f, 0.65f);
+    private static final Color RETURN_BUTTON_HOVER_COLOR = new Color(1.00f, 1.00f, 1.00f);
 
     private static final int SELECT_BUTTON_WIDTH = 48;
     private static final int SELECT_BUTTON_HEIGHT = 4;
     private static final int SELECT_BUTTON_TEXTURE_SIZE = 1;
     private static final int SELECT_BUTTON_FONT_SIZE = 2;
 
-    private static final float SELECT_BUTTON_IDLE_R = 0.65f;
-    private static final float SELECT_BUTTON_IDLE_G = 0.65f;
-    private static final float SELECT_BUTTON_IDLE_B = 0.65f;
-
-    private static final float SELECT_BUTTON_HOVER_R = 1.0f;
-    private static final float SELECT_BUTTON_HOVER_G = 1.0f;
-    private static final float SELECT_BUTTON_HOVER_B = 1.0f;
+    private static final Color SELECT_BUTTON_IDLE_COLOR = new Color(0.65f, 0.65f, 0.65f);
+    private static final Color SELECT_BUTTON_HOVER_COLOR = new Color(1.00f, 1.00f, 1.00f);
 
     private static final int SELECT_BUTTON_MARGIN = 1;
     private static final int SELECT_BUTTON_HORIZONTAL_MARGIN = 2;
 
+    private static final Color ATTRIBUTE_TITLE_COLOR = Color.WHITE;
+    private static final Color ATTRIBUTE_ENTRY_COLOR = Color.WHITE.shade(0.1f);
+
+    private static final Color STATS_TITLE_COLOR = Color.WHITE;
+    private static final Color STATS_ENTRY_COLOR = Color.WHITE.shade(0.1f);
+
     @NonNull private final TextureDAO textures;
-    @NonNull private final CharacterDAO characters;
+    @NonNull private final IGetAllDAO<CharacterObject> characters;
     @NonNull private final TextRenderer textRenderer;
-    @NonNull private final RendererDAO renderers;
+    @NonNull private final R renderers;
 
     private World previewWorld;
     private Texture uiTexture;
@@ -75,13 +75,14 @@ public class BestiaryGameStateRenderer implements ILWJGLGameStateRenderer<Bestia
     /**
      * Luo uuden piirtäjän.
      *
-     * @param textures dao jolla tekstuurit ladataan
+     * @param characters dao jolla hahmot ladataan
+     * @param renderers  dao jolla piirtäjät ladataan
+     * @param textures   dao jolla tekstuurit ladataan
      */
-    public BestiaryGameStateRenderer(@NonNull TextureDAO textures) {
+    public BestiaryGameStateRenderer(@NonNull IGetAllDAO<CharacterObject> characters, @NonNull R renderers, @NonNull TextureDAO textures) {
         this.textures = textures;
-        this.characters = new CharacterDAO("content/characters/");
-        this.renderers = new RendererDAO("content/renderers/", textures);
-        this.renderers.discoverAndLoadAll();
+        this.characters = characters;
+        this.renderers = renderers;
         this.textRenderer = new TextRenderer(this.textures, 1, 16);
     }
 
@@ -140,8 +141,7 @@ public class BestiaryGameStateRenderer implements ILWJGLGameStateRenderer<Bestia
             RETURN_BUTTON_TEXTURE_SIZE,
             RETURN_BUTTON_LABEL,
             this.uiTexture,
-            RETURN_BUTTON_IDLE_R, RETURN_BUTTON_IDLE_G, RETURN_BUTTON_IDLE_B,
-            RETURN_BUTTON_HOVER_R, RETURN_BUTTON_HOVER_G, RETURN_BUTTON_HOVER_B,
+            RETURN_BUTTON_IDLE_COLOR, RETURN_BUTTON_HOVER_COLOR,
             () -> state.getEventSystem().fire(new BestiaryEvent.Return()));
     }
 
@@ -157,8 +157,7 @@ public class BestiaryGameStateRenderer implements ILWJGLGameStateRenderer<Bestia
             SELECT_BUTTON_TEXTURE_SIZE,
             entry.getCharacter().getInfo().getName(),
             this.uiTexture,
-            SELECT_BUTTON_IDLE_R, SELECT_BUTTON_IDLE_G, SELECT_BUTTON_IDLE_B,
-            SELECT_BUTTON_HOVER_R, SELECT_BUTTON_HOVER_G, SELECT_BUTTON_HOVER_B,
+            SELECT_BUTTON_IDLE_COLOR, SELECT_BUTTON_HOVER_COLOR,
             () -> {
                 state.setActiveCharacter(entry.getCharacter());
                 this.activeEntry = entry;
@@ -202,34 +201,33 @@ public class BestiaryGameStateRenderer implements ILWJGLGameStateRenderer<Bestia
     private void drawActiveEntryStats(@NonNull LWJGLCamera camera, float x, float y) {
         val info = this.activeEntry.getCharacter().getInfo();
         val attr = this.activeEntry.getCharacter().getAttributes();
-        val lvls = this.activeEntry.getCharacter().getLevels();
 
-        this.textRenderer.draw(camera, x, y, 1.0f, 1.0f, 1.0f, 4, info.getName());
+        this.textRenderer.draw(camera, x, y, ATTRIBUTE_TITLE_COLOR, 4, info.getName());
 
         val rowHeight = 3.5f;
         int i = 0;
-        drawStatEntry(camera, x + 1, y + 6 + (i++ * rowHeight), 3, "Health", String.format("%.1f", attr.getMaxHealth(lvls)));
-        drawStatEntry(camera, x + 1, y + 6 + (i++ * rowHeight), 3, "Attack Damage", String.format("%.1f", attr.getAttackDamage(lvls)));
-        drawStatEntry(camera, x + 1, y + 6 + (i++ * rowHeight), 3, "Armor", String.format("%.1f", attr.getArmor(lvls)));
-        drawStatEntry(camera, x + 1, y + 6 + (i++ * rowHeight), 3, "AP", String.format("%d", attr.getActionPoints(lvls)));
+        drawStatEntry(camera, x + 1, y + 6 + (i++ * rowHeight), 3, "Health", String.format("%.1f", attr.getMaxHealth()), ATTRIBUTE_ENTRY_COLOR);
+        drawStatEntry(camera, x + 1, y + 6 + (i++ * rowHeight), 3, "Attack Damage", String.format("%.1f", attr.getAttackDamage()), ATTRIBUTE_ENTRY_COLOR);
+        drawStatEntry(camera, x + 1, y + 6 + (i++ * rowHeight), 3, "Armor", String.format("%.1f", attr.getArmor()), ATTRIBUTE_ENTRY_COLOR);
+        drawStatEntry(camera, x + 1, y + 6 + (i++ * rowHeight), 3, "AP", String.format("%d", attr.getActionPoints()), ATTRIBUTE_ENTRY_COLOR);
 
         if (this.activeEntry.getCharacter().getInfo().getName().equals("Hero (you!)")) {
-            this.textRenderer.draw(camera, x, y + 10 + (i * rowHeight), 1.0f, 1.0f, 1.0f, 4, "Statistics");
+            this.textRenderer.draw(camera, x, y + 10 + (i * rowHeight), STATS_TITLE_COLOR, 4, "Statistics");
 
             for (val statistic : Statistics.values()) {
                 val value = this.statisticsManager.getDouble(statistic, this.profile.getId());
-                drawStatEntry(camera, x + 1, y + 16 + (i++ * rowHeight), 3, statistic.getName(), String.format("%.1f", value));
+                drawStatEntry(camera, x + 1, y + 16 + (i++ * rowHeight), 3, statistic.getName(), String.format("%.1f", value), STATS_ENTRY_COLOR);
             }
         }
     }
 
-    private void drawStatEntry(@NonNull LWJGLCamera camera, float x, float y, int fontsize, String title, String value) {
+    private void drawStatEntry(@NonNull LWJGLCamera camera, float x, float y, int fontsize, String title, String value, Color color) {
         val maxNumberOfChars = (int) Math.ceil((camera.getViewportWidth() - x - 3) / fontsize);
         val titleNumberOfChars = title.length() + 2;
         val numberOfSpaces = maxNumberOfChars - (titleNumberOfChars);
 
         val format = "%s: %" + numberOfSpaces + "s";
-        this.textRenderer.draw(camera, x, y, 1.0f, 1.0f, 1.0f, fontsize, String.format(format, title, value));
+        this.textRenderer.draw(camera, x, y, color, fontsize, String.format(format, title, value));
     }
 
     private void drawActiveEntryPortrait(@NonNull LWJGLCamera camera, float x, float y) {

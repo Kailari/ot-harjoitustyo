@@ -3,24 +3,28 @@ package toilari.otlite.game;
 import lombok.val;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
+import toilari.otlite.dao.PlayerStatisticDAO;
+import toilari.otlite.dao.ProfileDAO;
+import toilari.otlite.dao.SettingsDAO;
+import toilari.otlite.dao.database.Database;
 import toilari.otlite.dao.util.FileHelper;
+import toilari.otlite.game.profile.statistics.StatisticsManager;
+import toilari.otlite.game.world.entities.TurnObjectManager;
 
 import java.nio.file.Paths;
+import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameTest {
     @Test
-    @SuppressWarnings("ConstantConditions")
     void gameConstructorThrowsWhenGivenNullParameters() {
-        assertThrows(NullPointerException.class, () -> new Game(null, null));
-        assertThrows(NullPointerException.class, () -> new Game(new TestGameState(), null));
-        assertThrows(NullPointerException.class, () -> new Game(null, "target/test-temp/profiles.db"));
+        assertThrows(NullPointerException.class, () -> createGame(null));
     }
 
     @Test
     void changeStateWorksWithNullCallback() {
-        val game = new Game(new TestGameState(), "target/test-temp/profiles.db");
+        val game = createGame(new TestGameState());
         game.setStateChangeCallback(null);
 
         assertDoesNotThrow(() -> game.changeState(new TestGameState()));
@@ -29,7 +33,7 @@ class GameTest {
     @Test
     void changeStateTriggersCallback() {
         val state = new TestGameState();
-        val game = new Game(new TestGameState(), "target/test-temp/profiles.db");
+        val game = createGame(new TestGameState());
         game.setStateChangeCallback(state::callback);
 
         game.changeState(state);
@@ -39,14 +43,14 @@ class GameTest {
     @Test
     @SuppressWarnings("ConstantConditions")
     void changeStateThrowsIfNewStateIsNull() {
-        val game = new Game(new TestGameState(), "target/test-temp/profiles.db");
+        val game = createGame(new TestGameState());
         assertThrows(NullPointerException.class, () -> game.changeState(null));
     }
 
     @Test
     void getCurrentStateReturnsCorrectStateAfterInit() {
         val stateA = new TestGameState();
-        val game = new Game(stateA, "target/test-temp/profiles.db");
+        val game = createGame(stateA);
 
         game.init();
         assertEquals(stateA, game.getCurrentGameState());
@@ -56,7 +60,7 @@ class GameTest {
     void currentGameStateReturnsCorrectStateAfterStateChange() {
         val stateA = new TestGameState();
         val stateB = new TestGameState();
-        val game = new Game(stateA, "target/test-temp/profiles.db");
+        val game = createGame(stateA);
 
         game.changeState(stateB);
         assertEquals(stateB, game.getCurrentGameState());
@@ -66,7 +70,7 @@ class GameTest {
     void currentGameStateReturnsCorrectStateAfterInitAndStateChange() {
         val stateA = new TestGameState();
         val stateB = new TestGameState();
-        val game = new Game(stateA, "target/test-temp/profiles.db");
+        val game = createGame(stateA);
 
         game.init();
         game.changeState(stateB);
@@ -76,7 +80,7 @@ class GameTest {
     @Test
     void initDoesNotOverrideManuallySetState() {
         val state = new TestGameState();
-        val game = new Game(new TestGameState(), "target/test-temp/profiles.db");
+        val game = createGame(new TestGameState());
 
         game.changeState(state);
         game.init();
@@ -86,7 +90,7 @@ class GameTest {
     @Test
     void changeStateSetsGameInstanceForActiveState() {
         val state = new TestGameState();
-        val game = new Game(new TestGameState(), "target/test-temp/profiles.db");
+        val game = createGame(new TestGameState());
 
         game.changeState(state);
         assertEquals(game, state.getGame());
@@ -95,7 +99,7 @@ class GameTest {
     @Test
     void initSetsGameInstanceForActiveState() {
         val state = new TestGameState();
-        val game = new Game(state, "target/test-temp/profiles.db");
+        val game = createGame(state);
 
         game.init();
         assertEquals(game, state.getGame());
@@ -104,7 +108,7 @@ class GameTest {
     @Test
     void changeStateClearsGameInstanceForOldState() {
         val state = new TestGameState();
-        val game = new Game(state, "target/test-temp/profiles.db");
+        val game = createGame(state);
 
         game.init();
         game.changeState(new TestGameState());
@@ -114,7 +118,7 @@ class GameTest {
     @Test
     void initCallsInitForNewState() {
         val state = new TestGameState();
-        val game = new Game(state, "target/test-temp/profiles.db");
+        val game = createGame(state);
 
         game.init();
         assertTrue(state.init);
@@ -123,7 +127,7 @@ class GameTest {
     @Test
     void changeStateCallsInitForNewState() {
         val state = new TestGameState();
-        val game = new Game(new TestGameState(), "target/test-temp/profiles.db");
+        val game = createGame(new TestGameState());
 
         game.changeState(state);
         assertTrue(state.init);
@@ -132,7 +136,7 @@ class GameTest {
     @Test
     void changeStateCallsDestroyForOldState() {
         val state = new TestGameState();
-        val game = new Game(state, "target/test-temp/profiles.db");
+        val game = createGame(state);
 
         game.init();
         game.changeState(new TestGameState());
@@ -141,7 +145,7 @@ class GameTest {
 
     @Test
     void gameIsRunningAfterInit() {
-        val game = new Game(new TestGameState(), "target/test-temp/profiles.db");
+        val game = createGame(new TestGameState());
         game.init();
 
         assertTrue(game.isRunning());
@@ -150,7 +154,7 @@ class GameTest {
     @Test
     void updateCallsGameStateUpdate() {
         val state = new TestGameState();
-        val game = new Game(state, "target/test-temp/profiles.db");
+        val game = createGame(state);
 
         game.init();
         game.update(1.0f);
@@ -159,14 +163,14 @@ class GameTest {
 
     @Test
     void updateThrowsIfNotInitialized() {
-        val game = new Game(new TestGameState(), "target/test-temp/profiles.db");
+        val game = createGame(new TestGameState());
 
         assertThrows(IllegalStateException.class, () -> game.update(1.0f));
     }
 
     @Test
     void updateThrowsIfNotInitializedEvenIfStateIsSetManually() {
-        val game = new Game(new TestGameState(), "target/test-temp/profiles.db");
+        val game = createGame(new TestGameState());
 
         game.changeState(new TestGameState());
         assertThrows(IllegalStateException.class, () -> game.update(1.0f));
@@ -175,7 +179,7 @@ class GameTest {
     @Test
     void destroyCallsGameStateDestroy() {
         val state = new TestGameState();
-        val game = new Game(state, "target/test-temp/profiles.db");
+        val game = createGame(state);
 
         game.init();
         game.destroy();
@@ -185,6 +189,21 @@ class GameTest {
     @AfterAll
     static void afterAll() {
         FileHelper.deleteDirectoryAndChildren(Paths.get("target/test-temp"));
+    }
+
+    private static Game createGame(GameState state) {
+        try {
+            val database = new Database("src/test/resources/test.db");
+            return new Game(state, "",
+                () -> null,
+                id -> null,
+                id -> null,
+                new ProfileDAO(database, new SettingsDAO("")),
+                new StatisticsManager(new PlayerStatisticDAO(database)),
+                TurnObjectManager::new);
+        } catch (SQLException ignored) {
+            throw new IllegalStateException("Invalid database path");
+        }
     }
 
     private static class TestGameState extends GameState {

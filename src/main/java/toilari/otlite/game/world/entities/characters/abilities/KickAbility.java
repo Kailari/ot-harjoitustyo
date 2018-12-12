@@ -58,7 +58,7 @@ public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAtta
 
         if (tileBehindTargetIsFree(direction, 1)) {
             if (target instanceof IHealthHandler) {
-                dealDamage(target, (IHealthHandler) target, calculateDamage() * 0.5f);
+                dealDamage(target, (IHealthHandler) target, calculateDamage(target) * 0.5f);
                 if (((IHealthHandler) target).isDead()) {
                     return true;
                 }
@@ -67,7 +67,7 @@ public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAtta
             int knockbackAmount = calculateKnockbackAmount(component.getTargetSelector().getTarget(), component.getTargetSelector().getTargetDirection());
             knockBackTarget(target, direction, knockbackAmount);
         } else {
-            dealDamage(target, (IHealthHandler) target, calculateDamage() * 1.5f);
+            dealDamage(target, (IHealthHandler) target, calculateDamage(target) * 1.5f);
         }
 
         return true;
@@ -109,7 +109,7 @@ public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAtta
         float resistance = 0.0f;
         if (target instanceof CharacterObject) {
             val targetCharacter = (CharacterObject) target;
-            resistance = targetCharacter.getAttributes().getKnockbackResistance(targetCharacter.getLevels());
+            resistance = targetCharacter.getAttributes().getKnockbackResistance();
         }
 
         val maxAmount = (max - min) * (1.0f - resistance);

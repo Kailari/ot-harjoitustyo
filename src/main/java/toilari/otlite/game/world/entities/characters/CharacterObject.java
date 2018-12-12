@@ -40,6 +40,31 @@ public class CharacterObject extends GameObject implements IHealthHandler {
     @Getter private int panicSourceY;
 
     /**
+     * Asettaa hahmon tilan paniikkiin.
+     *
+     * @param x paniikin aiheuttajan x-koordinaatti
+     * @param y paniikin aiheuttajan y-koordinaatti
+     */
+    public void panic(int x, int y) {
+        LOG.debug("a character is panicking!");
+        this.panicking = true;
+        this.panicSourceX = x;
+        this.panicSourceY = y;
+    }
+
+    /**
+     * Nostaa hahmon terveyspisteiden määrää.
+     *
+     * @param amount kuinka paljon terveyspisteitä hahmolle annetaan
+     */
+    public void heal(float amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Heal amount cannot be negative!");
+        }
+        this.health = Math.min(this.attributes.getMaxHealth(), this.health + amount);
+    }
+
+    /**
      * Luo uuden hahmon asettaen sille attribuuttien ja tasojen oletusarvot.
      *
      * @param attributes attribuuttien arvot
@@ -69,7 +94,9 @@ public class CharacterObject extends GameObject implements IHealthHandler {
     @Override
     public void init() {
         super.init();
-        this.health = getAttributes().getMaxHealth(this.levels);
+        this.levels.init(this);
+        this.attributes.init(this);
+        this.health = getAttributes().getMaxHealth();
 
         for (val ability : this.abilities.getAbilitiesSortedByPriority()) {
             ability.init(this);
@@ -85,19 +112,6 @@ public class CharacterObject extends GameObject implements IHealthHandler {
     @Override
     public boolean isDead() {
         return this.health < 0.000001f;
-    }
-
-    /**
-     * Asettaa hahmon tilan paniikkiin.
-     *
-     * @param x paniikin aiheuttajan x-koordinaatti
-     * @param y paniikin aiheuttajan y-koordinaatti
-     */
-    public void panic(int x, int y) {
-        LOG.debug("a character is panicking!");
-        this.panicking = true;
-        this.panicSourceX = x;
-        this.panicSourceY = y;
     }
 
     /**
@@ -164,7 +178,6 @@ public class CharacterObject extends GameObject implements IHealthHandler {
     public void remove() {
         this.deathTime = System.currentTimeMillis();
         super.remove();
-        getWorld().getObjectManager().getEventSystem().fire(new CharacterEvent.Died(this));
     }
 
     private <A extends IAbility<A, C>, C extends IControllerComponent<A>> boolean handleAbility(@NonNull TurnObjectManager turnManager, @NonNull A ability) {

@@ -6,6 +6,7 @@ import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.dao.TextureDAO;
 import toilari.otlite.game.input.Input;
+import toilari.otlite.game.util.Color;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.view.lwjgl.AnimatedSprite;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
@@ -17,6 +18,7 @@ import toilari.otlite.view.renderer.IRenderer;
  * Piirtäjä pelihahmojen piirtämiseen.
  */
 public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera> {
+    private static final Color HEALTH_COLOR = new Color(0.85f, 0.15f, 0.15f);
     @Getter(AccessLevel.PROTECTED) @NonNull private final TextureDAO textureDAO;
     @Getter(AccessLevel.PROTECTED) @NonNull private final TextRenderer textRenderer;
 
@@ -53,15 +55,7 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
 
         int frame = getFrame(isOwnTurn, hasActionPoints, character);
 
-        float r, g, b;
-        if (this.context.color != null && this.context.color.length == 3) {
-            r = this.context.color[0];
-            g = this.context.color[1];
-            b = this.context.color[2];
-        } else {
-            r = g = b = 1.0f;
-        }
-        this.sprite.draw(camera, character.getX(), character.getY(), frame, r, g, b);
+        this.sprite.draw(camera, character.getX(), character.getY(), frame, this.context.color);
     }
 
     @Override
@@ -77,12 +71,12 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
         if (isHovering) {
             val size = 3;
             val current = character.getHealth();
-            val max = character.getAttributes().getMaxHealth(character.getLevels());
+            val max = character.getAttributes().getMaxHealth();
             val str = String.format("%.1f/%.1f", current, max);
 
             val x = character.getX() + this.context.width / 2 - (size * str.length()) / 2;
             val y = character.getY() + this.context.height + 1;
-            this.textRenderer.draw(camera, x, y, 0.85f, 0.25f, 0.25f, size, str);
+            this.textRenderer.draw(camera, x, y, HEALTH_COLOR, size, str);
         }
     }
 

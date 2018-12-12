@@ -11,6 +11,7 @@ import toilari.otlite.game.event.MainMenuEvent;
 import toilari.otlite.game.event.MenuEvent;
 import toilari.otlite.game.profile.Profile;
 import toilari.otlite.game.profile.statistics.StatisticsManager;
+import toilari.otlite.game.util.Color;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.TextRenderer;
 import toilari.otlite.view.lwjgl.Texture;
@@ -26,13 +27,9 @@ public class MainMenuGameStateRenderer implements ILWJGLGameStateRenderer<MainMe
     private static final int BUTTON_FONT_SIZE = 2;
     private static final int BUTTON_MARGIN = 1;
 
-    private static final float BUTTON_IDLE_R = 0.65f;
-    private static final float BUTTON_IDLE_G = 0.65f;
-    private static final float BUTTON_IDLE_B = 0.65f;
-
-    private static final float BUTTON_HOVER_R = 1.0f;
-    private static final float BUTTON_HOVER_G = 1.0f;
-    private static final float BUTTON_HOVER_B = 1.0f;
+    private static final Color BUTTON_COLOR_IDLE = Color.WHITE.shade(0.35f);
+    private static final Color BUTTON_COLOR_HOVER = Color.WHITE;
+    private static final Color TITLE_COLOR = Color.WHITE.shade(0.15f);
 
     private static final int TITLE_FONT_SIZE = 16;
     private static final String TITLE_STRING = "OT-LITE";
@@ -84,8 +81,8 @@ public class MainMenuGameStateRenderer implements ILWJGLGameStateRenderer<MainMe
             BUTTON_TEXTURE_SIZE,
             label,
             this.uiTexture,
-            BUTTON_IDLE_R * 0.5f, BUTTON_IDLE_G * 0.5f, BUTTON_IDLE_B * 0.5f,
-            BUTTON_IDLE_R * 0.5f, BUTTON_IDLE_G * 0.5f, BUTTON_IDLE_B * 0.5f,
+            BUTTON_COLOR_IDLE.shade(0.5f),
+            BUTTON_COLOR_IDLE.shade(0.5f),
             () -> { }
         );
 
@@ -98,8 +95,8 @@ public class MainMenuGameStateRenderer implements ILWJGLGameStateRenderer<MainMe
             BUTTON_TEXTURE_SIZE,
             label,
             this.uiTexture,
-            BUTTON_IDLE_R, BUTTON_IDLE_G, BUTTON_IDLE_B,
-            BUTTON_HOVER_R, BUTTON_HOVER_G, BUTTON_HOVER_B,
+            BUTTON_COLOR_IDLE,
+            BUTTON_COLOR_HOVER,
             () -> es.fire(onClick)
         );
 
@@ -113,7 +110,7 @@ public class MainMenuGameStateRenderer implements ILWJGLGameStateRenderer<MainMe
         val x = (camera.getViewportWidth() / 2f) - (TITLE_STRING.length() / 2.0f) * TITLE_FONT_SIZE;
         val y = 4f;
 
-        this.textRenderer.draw(camera, x, y, 1.0f, 1.0f, 1.0f, TITLE_FONT_SIZE, TITLE_STRING);
+        this.textRenderer.draw(camera, x, y, TITLE_COLOR, TITLE_FONT_SIZE, TITLE_STRING);
 
         drawButtons(camera);
     }

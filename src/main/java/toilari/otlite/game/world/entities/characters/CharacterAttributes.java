@@ -11,6 +11,7 @@ public class CharacterAttributes {
     private static final float FEAR_RESISTANCE_CAP = 0.95f;
     private static final float KNOCKBACK_RESISTANCE_CAP = 0.975f;
     private static final float EVASION_CAP = 0.9f;
+    private static final float MAX_ARMOR_REDUCTION_PERCENTAGE = 0.95f;
 
     /**
      * Laskee hahmon maksimiterveyspisteet. Laskeminen tapahtuu kaavalla<br>
@@ -19,10 +20,10 @@ public class CharacterAttributes {
      * <code>modifier = (1.0 + enduranceModifier + vitalityModifier)</code><br>
      * Attribuuttikohtaiset osat riippuvat hahmon attribuuteista.
      *
-     * @param levels hahmon attribuuttien tasot
      * @return hahmon maksimiterveyspisteet, kaikki määreet huomioonottaen
      */
-    public float getMaxHealth(@NonNull CharacterLevels levels) {
+    public float getMaxHealth() {
+        val levels = this.character.getLevels();
         val base = this.baseHealth + levels.getXpLevel() * this.healthGain;
         val enduranceModifier = Attribute.Endurance.getHealthModifier(levels);
         val vitalityModifier = Attribute.Vitality.getHealthModifier(levels);
@@ -36,25 +37,13 @@ public class CharacterAttributes {
      * <code>modifier = (1.0 + vitalityModifier)</code><br>
      * Attribuuttikohtaiset osat riippuvat hahmon attribuuteista.
      *
-     * @param levels hahmon attribuuttien tasot
      * @return hahmon terveyspisteiden palautumisnopeus, kaikki määreet huomioonottaen
      */
-    public float getHealthRegen(@NonNull CharacterLevels levels) {
+    public float getHealthRegen() {
+        val levels = this.character.getLevels();
         val base = this.baseHealthRegen + levels.getXpLevel() * this.healthRegenGain;
         val vitalityModifier = Attribute.Vitality.getHealthRegenModifier(levels);
         return base * (1.0f + vitalityModifier);
-    }
-
-    /**
-     * Hakee hahmon terveyspisteiden palautumisen viiveen. Palautettu luku kertoo montako vuoroa
-     * kestää ennen kuin hahmon terveyspisteet alkavat palautua.
-     *
-     * @param levels hahmon attribuuttien tasot
-     * @return viive kauanko vielä kestää ennen kuin hahmon terveyspisteet alkavat palautua
-     */
-    public int getHealthRegenDelay(@NonNull CharacterLevels levels) {
-        val vitalityPart = Attribute.Vitality.getHealthRegenDelay(levels);
-        return this.baseHealthRegenDelay + vitalityPart;
     }
 
     /**
@@ -64,10 +53,10 @@ public class CharacterAttributes {
      * <code>modifier = (1.0 + enduranceModifier)</code><br>
      * Attribuuttikohtaiset osat riippuvat hahmon attribuuteista.
      *
-     * @param levels hahmon attribuuttien tasot
      * @return hahmon vahingonvähennyksen määrä, kaikki määreet huomioiden
      */
-    public float getArmor(@NonNull CharacterLevels levels) {
+    public float getArmor() {
+        val levels = this.character.getLevels();
         val base = this.baseArmor + levels.getXpLevel() * this.armorGain;
         val enduranceBonus = Attribute.Endurance.getArmorModifier(levels);
         return base * (1.0f * enduranceBonus);
@@ -76,10 +65,10 @@ public class CharacterAttributes {
     /**
      * Hahmon kyky välttää osumia. Todennäköisyys ettei isku osu hahmoon lainkaan.
      *
-     * @param levels hahmon attribuuttien tilat
      * @return todennäköisyys ettei hahmoon osuta
      */
-    public float getEvasion(@NonNull CharacterLevels levels) {
+    public float getEvasion() {
+        val levels = this.character.getLevels();
         val base = this.baseEvasion + levels.getXpLevel() * evasionGain;
         val luckBonus = Attribute.Luck.getEvasion(levels);
         return Math.min(
@@ -90,10 +79,10 @@ public class CharacterAttributes {
     /**
      * Hahmon kyky vastustaa tönäisyjä.
      *
-     * @param levels hahmon attribuuttien tilat
      * @return montako prosenttia tönäisystä tulee jättää huomiotta
      */
-    public float getKnockbackResistance(@NonNull CharacterLevels levels) {
+    public float getKnockbackResistance() {
+        val levels = this.character.getLevels();
         val strengthModifier = Attribute.Strength.getKnockbackResistance(levels);
         return Math.min(
             CharacterAttributes.KNOCKBACK_RESISTANCE_CAP,
@@ -103,10 +92,10 @@ public class CharacterAttributes {
     /**
      * Hahmon kyky vastustaa "pelko"-statusefektiä.
      *
-     * @param levels hahmon attribuuttien tilat
      * @return montako prosenttia efektin todennäköisyydestä tulee jättää huomiotta
      */
-    public float getFearResistance(@NonNull CharacterLevels levels) {
+    public float getFearResistance() {
+        val levels = this.character.getLevels();
         val charismaModifier = Attribute.Charisma.getFearResistanceModifier(levels);
         val wisdomModifier = Attribute.Wisdom.getFearResistance(levels);
         return Math.min(
@@ -118,10 +107,10 @@ public class CharacterAttributes {
     /**
      * Hakee hahmon toimintopisteiden määrän. Määrä riippuu hahmon attribuuteista.
      *
-     * @param levels hahmon attribuuttien tasot
      * @return hahmon toimintopisteiden määrä, kaikki määreet huomioiden
      */
-    public int getActionPoints(@NonNull CharacterLevels levels) {
+    public int getActionPoints() {
+        val levels = this.character.getLevels();
         val base = this.baseActionPoints + Attribute.Dexterity.getActionPoints(levels);
         val bonus = Attribute.Wisdom.getActionPoints(levels);
         return base + (bonus > 0 ? bonus : 0);
@@ -130,10 +119,10 @@ public class CharacterAttributes {
     /**
      * Laskee hahmon vahinkopisteiden määrän.
      *
-     * @param levels hahmon attribuuttien tasot
      * @return hahmon vahinkopisteiden määrä, kaikki määreet huomioiden
      */
-    public float getAttackDamage(@NonNull CharacterLevels levels) {
+    public float getAttackDamage() {
+        val levels = this.character.getLevels();
         val base = this.baseAttackDamage + levels.getXpLevel() * this.attackDamageGain;
         val strengthModifier = Attribute.Strength.getDamageModifier(levels);
         return base * (1.0f + strengthModifier);
@@ -142,10 +131,10 @@ public class CharacterAttributes {
     /**
      * Laskee kriittisen osuman todennäköisyyden.
      *
-     * @param levels hahmon attribuuttien tasot
      * @return todennäköisyys että hahmo tekee kriittisen osuman
      */
-    public float getCriticalHitChance(@NonNull CharacterLevels levels) {
+    public float getCriticalHitChance() {
+        val levels = this.character.getLevels();
         val luckBonus = Attribute.Luck.getCriticalHitChance(levels);
         return this.baseCriticalHitChance + luckBonus;
     }
@@ -153,13 +142,15 @@ public class CharacterAttributes {
     /**
      * Laskee kriittisen osuman vahinkokertoimen.
      *
-     * @param levels hahmon attribuuttien tasot
      * @return todennäköisyys että hahmo tekee kriittisen osuman
      */
-    public float getCriticalHitDamage(@NonNull CharacterLevels levels) {
+    public float getCriticalHitDamage() {
+        val levels = this.character.getLevels();
         val wisdomModifier = Attribute.Wisdom.getCriticalHitDamageModifier(levels);
         return this.baseCriticalHitDamage + (1.0f + wisdomModifier);
     }
+
+    private transient CharacterObject character;
 
     @Getter private int moveCost = 1;
 
@@ -170,7 +161,6 @@ public class CharacterAttributes {
 
     private int baseActionPoints = 0;
 
-    private int baseHealthRegenDelay = 0;
     private int baseArmor = 0;
 
     private float armorGain = 0.05f;
@@ -191,6 +181,16 @@ public class CharacterAttributes {
     private float healthRegenGain = 0.01f;
 
     /**
+     * Laskee panssarista aiheutuvan vahinkopisteiden vähennyksen.
+     *
+     * @param amount vahinkopisteet ennen vähennyksiä
+     * @return vähettävien vahinkopisteiden määrä
+     */
+    public float calculateDamageReduction(float amount) {
+        return Math.min(amount * MAX_ARMOR_REDUCTION_PERCENTAGE, getArmor());
+    }
+
+    /**
      * Kopioi attribuutit uuteen instanssiin.
      *
      * @param attributes templaatti josta kopioidaan
@@ -202,7 +202,6 @@ public class CharacterAttributes {
         this.attackCooldown = attributes.attackCooldown;
         this.xpReward = attributes.xpReward;
         this.baseActionPoints = attributes.baseActionPoints;
-        this.baseHealthRegenDelay = attributes.baseHealthRegenDelay;
         this.baseArmor = attributes.baseArmor;
         this.armorGain = attributes.armorGain;
         this.baseEvasion = attributes.baseEvasion;
@@ -217,5 +216,9 @@ public class CharacterAttributes {
         this.healthGain = attributes.healthGain;
         this.baseHealthRegen = attributes.baseHealthRegen;
         this.healthRegenGain = attributes.healthRegenGain;
+    }
+
+    public void init(CharacterObject character) {
+        this.character = character;
     }
 }

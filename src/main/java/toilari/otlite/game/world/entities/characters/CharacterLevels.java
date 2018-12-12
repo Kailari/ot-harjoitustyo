@@ -1,14 +1,65 @@
 package toilari.otlite.game.world.entities.characters;
 
-import lombok.Getter;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import toilari.otlite.game.event.CharacterEvent;
+import toilari.otlite.game.event.EventSystem;
+
+import java.util.Arrays;
 
 /**
  * Apuluokka hahmon attribuuttien käsittelyyn.
  */
+@Slf4j
 public class CharacterLevels {
-    @Getter private final int xpLevel;
-    private final int[] attributeLevels = new int[]{1, 1, 1, 1, 1, 1, 1, 1};
+    private transient EventSystem eventSystem;
+    private transient CharacterObject character;
+
+    private int experience;
+    private int[] attributeLevels = new int[]{1, 1, 1, 1, 1, 1, 1, 1};
+
+
+    /**
+     * Laskee paljonko attribuuttipisteitä hahmolla on käytettävissä yhteensä.
+     *
+     * @return attribuuttipisteiden maksimimäärä
+     */
+    public int calculateMaxAttributePoints() {
+        return 10 + this.getXpLevel();
+    }
+
+    /**
+     * Laskee hahmon kokemustason.
+     *
+     * @return hahmon kokemustaso
+     */
+    public int getXpLevel() {
+        int level = 0;
+        int xp = this.experience;
+        while ((xp -= experienceRequiredForLevel(level + 1)) > 0) {
+            level++;
+        }
+
+        return level;
+    }
+
+    /**
+     * Laskee tasoon tarvittavan kokemuspistemäärän.
+     *
+     * @param level taso jonka "hinta" kokemuspisteinä halutaan tietää
+     *
+     * @return tarvittava kokemuspisteiden määrä
+     *
+     * @throws IllegalArgumentException jos taso on negatiivinen
+     */
+    public int experienceRequiredForLevel(int level) {
+        if (level < 0) {
+            throw new IllegalArgumentException("Level cannot be nagative!");
+        }
+
+        return (int) Math.pow(10, 1.0 + level * 1.025) * level;
+    }
 
     /**
      * Kopio tasot uuteen olioon.
@@ -16,15 +67,32 @@ public class CharacterLevels {
      * @param template templaatti josta kopioidaan
      */
     public CharacterLevels(CharacterLevels template) {
-        this.xpLevel = template.xpLevel;
-        System.arraycopy(template.attributeLevels, 0, this.attributeLevels, 0, 8);
+        this.experience = template.experience;
+        this.attributeLevels = Arrays.copyOf(template.attributeLevels, 10);
+    }
+
+    /**
+     * Antaa hahmolle kokemuspisteitä.
+     *
+     * @param amount annettavien pisteiden määrä
+     */
+    public void rewardExperience(int amount) {
+        val levelBefore = getXpLevel();
+        this.experience += amount;
+
+        val levelAfter = getXpLevel();
+        if (levelAfter > levelBefore) {
+            this.eventSystem.fire(new CharacterEvent.LevelUp(this.character, levelAfter));
+        }
     }
 
     /**
      * Hakee attribuutin tason.
      *
      * @param attribute attribuutti joka taso haetaan
+     *
      * @return attribuutin taso
+     *
      * @throws NullPointerException     jos attribuutti on <code>null</code>
      * @throws IllegalArgumentException jos attribuutti on {@link Attribute#MAX}
      */
@@ -41,6 +109,7 @@ public class CharacterLevels {
      *
      * @param attribute attribuutti joka taso asetetaan
      * @param level     attribuutin uusi taso
+     *
      * @throws NullPointerException     jos attribuutti on <code>null</code>
      * @throws IllegalArgumentException jos taso ei ole välillä [1..10]
      * @throws IllegalArgumentException jos attribuutti on {@link Attribute#MAX}
@@ -54,6 +123,13 @@ public class CharacterLevels {
             throw new IllegalArgumentException("Level must be within range 1..10");
         }
 
+        val spentPointsBeforehand = Arrays.stream(this.attributeLevels).sum();
+        val spentPointsAfterwards = spentPointsBeforehand - this.attributeLevels[attribute.ordinal()] + level;
+        if (calculateMaxAttributePoints() < spentPointsAfterwards) {
+            LOG.error("Tried to set attribute level but there are no enough points available");
+            return;
+        }
+
         this.attributeLevels[attribute.ordinal()] = level;
     }
 
@@ -62,11 +138,16 @@ public class CharacterLevels {
      * Kasvattaa attribuutin tasoa yhdellä.
      *
      * @param attribute attribuutti joka tasoa kasvatetaan
+     *
      * @throws NullPointerException     jos attribuutti on <code>null</code>
      * @throws IllegalArgumentException jos taso ei ole välillä [1..10]
      * @throws IllegalArgumentException jos attribuutti on {@link Attribute#MAX}
      */
     public void levelUpAttribute(@NonNull Attribute attribute) {
+        if (calculateMaxAttributePoints() == 0) {
+            LOG.warn("Tried to level up attribute without enough attribute points!");
+            return;
+        }
         setAttributeLevel(attribute, getAttributeLevel(attribute) + 1);
     }
 
@@ -74,7 +155,7 @@ public class CharacterLevels {
      * Luo uuden hahmon attribuuttiolion ja asettaa kaikkien attribuuttien tasoksi 1.
      */
     public CharacterLevels() {
-        this.xpLevel = 0;
+        this.experience = 0;
 
         setAttributeLevel(Attribute.STRENGTH, 1);
         setAttributeLevel(Attribute.ENDURANCE, 1);
@@ -84,5 +165,12 @@ public class CharacterLevels {
         setAttributeLevel(Attribute.INTELLIGENCE, 1);
         setAttributeLevel(Attribute.WISDOM, 1);
         setAttributeLevel(Attribute.LUCK, 1);
+    }
+
+    void init(@NonNull CharacterObject character) {
+        if (character.getWorld() != null) {
+            this.eventSystem = character.getWorld().getObjectManager().getEventSystem();
+        }
+        this.character = character;
     }
 }

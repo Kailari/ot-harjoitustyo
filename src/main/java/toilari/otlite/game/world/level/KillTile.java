@@ -15,6 +15,7 @@ public class KillTile extends Tile {
      * @param dangerous kohdellaanko ruutua vaarallisena
      * @param tileIndex ruudun ulkonäön indeksi
      * @param id        ruudun tunniste
+     *
      * @throws NullPointerException jos id on <code>null</code>
      */
     public KillTile(boolean wall, boolean dangerous, int tileIndex, @NonNull String id) {
@@ -25,7 +26,7 @@ public class KillTile extends Tile {
     public void onCharacterEnter(int x, int y, @NonNull CharacterObject character) {
         character.setHealth(0.0f);
         if (character.getWorld().getObjectManager().getGameState() != null) {
-            character.getWorld().getObjectManager().getGameState().getEventSystem().fire(new CharacterEvent.Damage(character, character, 100000.0f));
+            character.getWorld().getObjectManager().getGameState().getEventSystem().fire(new CharacterEvent.Death(character, CharacterEvent.Death.Cause.FALL));
         }
         character.remove();
     }

@@ -4,6 +4,7 @@ import lombok.NonNull;
 import lombok.val;
 import lombok.var;
 import toilari.otlite.dao.TextureDAO;
+import toilari.otlite.game.util.Color;
 import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
@@ -17,6 +18,12 @@ import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.Texture;
 
 public class PlayerRenderer extends CharacterRenderer {
+    private static final Color AREA_ABILITY_VISUALIZER_COLOR_NORMAL = new Color(0.85f, 0.15f, 0.85f);
+    private static final Color AREA_ABILITY_VISUALIZER_COLOR_WITH_TARGET = new Color(0.85f, 0.15f, 0.15f);
+    private static final Color TARGET_SELECTOR_COLOR = new Color(0.25f, 0.65f, 0.25f);
+    private static final Color MOVE_COLOR_DANGEROUS = new Color(0.85f, 0.15f, 0.15f);
+    private static final Color MOVE_COLOR_NORMAL = new Color(0.85f, 0.95f, 0.85f);
+
     private transient Texture icons;
     private transient AnimatedSprite smallIcons;
     private transient AnimatedSprite largeIcons;
@@ -26,6 +33,7 @@ public class PlayerRenderer extends CharacterRenderer {
      *
      * @param textureDAO DAO jolla tekstuuri saadaan ladattua
      * @param context    piirrettävän olion tiedot
+     *
      * @throws NullPointerException jos dao on <code>null</code>
      */
     public PlayerRenderer(TextureDAO textureDAO, Context context) {
@@ -78,16 +86,14 @@ public class PlayerRenderer extends CharacterRenderer {
     private void drawAreaAbilityVisualizerTile(@NonNull LWJGLCamera camera, @NonNull CharacterObject character, IAreaOfEffectAbility active, int x, int y, int dx, int dy) {
         val tileX = x + dx;
         val tileY = y + dy;
-        val r = 0.85f;
-        val g = 0.15f;
-        var b = 0.85f;
+        var color = AREA_ABILITY_VISUALIZER_COLOR_NORMAL;
         val objectAtCoordinates = character.getWorld().getObjectAt(tileX, tileY);
         if (objectAtCoordinates != null && active.canAffect(objectAtCoordinates)) {
-            b = 0.15f;
+            color = AREA_ABILITY_VISUALIZER_COLOR_WITH_TARGET;
         }
 
         if (!character.getWorld().getTileAt(tileX, tileY).isWall()) {
-            this.largeIcons.draw(camera, tileX * Tile.SIZE_IN_WORLD + 0.5f, tileY * Tile.SIZE_IN_WORLD + 0.5f, 6, r, g, b);
+            this.largeIcons.draw(camera, tileX * Tile.SIZE_IN_WORLD + 0.5f, tileY * Tile.SIZE_IN_WORLD + 0.5f, 6, color);
         }
     }
 
@@ -120,7 +126,7 @@ public class PlayerRenderer extends CharacterRenderer {
 
         val x = target.getX() + 2;
         val y = target.getY() - 6 - (1.5 * Math.sin(System.currentTimeMillis() / 75.0));
-        this.smallIcons.draw(camera, x, (float) y, 2, 0.25f, 0.65f, 0.25f);
+        this.smallIcons.draw(camera, x, (float) y, 2, TARGET_SELECTOR_COLOR);
     }
 
     private void drawArrow(@NonNull LWJGLCamera camera, @NonNull CharacterObject character, Direction direction, int frame) {
@@ -136,10 +142,8 @@ public class PlayerRenderer extends CharacterRenderer {
         }
         val isDangerous = (canMove && character.getWorld().getTileAt(targetX, targetY).isDangerous());
 
-        float r = canAttack || isDangerous ? 0.85f : 0.85f;
-        float g = canAttack || isDangerous ? 0.2f : 0.95f;
-        float b = canAttack || isDangerous ? 0.2f : 0.85f;
-        this.smallIcons.draw(camera, targetX * Tile.SIZE_IN_WORLD + 2, targetY * Tile.SIZE_IN_WORLD + 2, frame, r, g, b);
+        val color = canAttack || isDangerous ? MOVE_COLOR_DANGEROUS : MOVE_COLOR_NORMAL;
+        this.smallIcons.draw(camera, targetX * Tile.SIZE_IN_WORLD + 2, targetY * Tile.SIZE_IN_WORLD + 2, frame, color);
     }
 
     private boolean checkCanMove(@NonNull CharacterObject character, Direction direction) {

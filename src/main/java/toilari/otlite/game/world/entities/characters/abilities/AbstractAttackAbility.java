@@ -1,6 +1,8 @@
 package toilari.otlite.game.world.entities.characters.abilities;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.val;
 import toilari.otlite.game.event.CharacterEvent;
 import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.entities.GameObject;
@@ -50,7 +52,7 @@ public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C
         this.lastAttackKill = false;
         this.lastAttackDamage = 0.0f;
 
-        val amount = calculateDamage();
+        val amount = calculateDamage(target);
         if (target instanceof IHealthHandler) {
             this.lastAttackDamage = amount;
             dealDamage(target, (IHealthHandler) target, amount);
@@ -59,8 +61,14 @@ public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C
         return true;
     }
 
-    protected float calculateDamage() {
-        return getCharacter().getAttributes().getAttackDamage(getCharacter().getLevels());
+    protected float calculateDamage(GameObject target) {
+        val rawAmount = getCharacter().getAttributes().getAttackDamage();
+        if (target instanceof CharacterObject) {
+            val reduction = ((CharacterObject) target).getAttributes().calculateDamageReduction(rawAmount);
+            return rawAmount - reduction;
+        } else {
+            return rawAmount;
+        }
     }
 
     protected void dealDamage(GameObject target, IHealthHandler targetWithHealth, float amount) {
@@ -75,6 +83,9 @@ public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C
 
         if (target instanceof CharacterObject) {
             getEventSystem().fire(new CharacterEvent.Damage(getCharacter(), target, amount));
+            if (this.lastAttackKill) {
+                getEventSystem().fire(new CharacterEvent.Death((CharacterObject) target, CharacterEvent.Death.Cause.CHARACTER));
+            }
         }
     }
 }

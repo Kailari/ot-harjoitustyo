@@ -6,19 +6,99 @@ import lombok.RequiredArgsConstructor;
 import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 
+/**
+ * Hahmojen toimintoihin liittyvät viestit.
+ */
+@RequiredArgsConstructor
 public class CharacterEvent implements IEvent {
-    @RequiredArgsConstructor
+    @Getter @NonNull private final CharacterObject character;
+
+    /**
+     * Viesti joka lähetetään kun hahmo vahingoittaa jotakin peliobjektia.
+     */
     public static class Damage extends CharacterEvent {
-        @Getter @NonNull private final CharacterObject attacker;
         @Getter @NonNull private final GameObject target;
         @Getter private final float amount;
+
+        /**
+         * Luo uuden viestin.
+         *
+         * @param character hyökkäävä hahmo
+         * @param target    kohde jonka kimppuun hyökätään
+         * @param amount    vahinkopisteiden määrä
+         */
+        public Damage(@NonNull CharacterObject character, GameObject target, float amount) {
+            super(character);
+            this.target = target;
+            this.amount = amount;
+        }
     }
 
     /**
-     * Viesti joka lähetetään kun pelaaja kuolee.
+     * Viesti joka lähetetään kun hahmo kuolee.
      */
-    @RequiredArgsConstructor
-    public static class Died extends CharacterEvent {
-        @Getter private final CharacterObject character;
+    public static class Death extends CharacterEvent {
+        @Getter public final Cause cause;
+
+        /**
+         * Luo uuden viestin.
+         *
+         * @param character kuoleva peliobjekti
+         * @param cause     kuolinsyy
+         */
+        public Death(@NonNull CharacterObject character, @NonNull Cause cause) {
+            super(character);
+            this.cause = cause;
+        }
+
+        /**
+         * Kuolinsyy.
+         */
+        public enum Cause {
+            /** Yleinen kuolinsyy, käytetään kun muut syyt eivät sovi. */
+            GENERIC,
+
+            /** Toisen hahmon tuottamat vahinkopisteet. */
+            CHARACTER,
+
+            /** Valitettava onnettomuus. */
+            FALL,
+        }
+    }
+
+    /**
+     * Viesti joka lähetetään kun hahmon kokemustaso nousee.
+     */
+    public static class LevelUp extends CharacterEvent {
+        @Getter private final int level;
+
+        /**
+         * Luo uuden viestin.
+         *
+         * @param character hahmo jonka kokemustaso nousee
+         * @param level     hahmon uusi kokemustaso
+         */
+        public LevelUp(@NonNull CharacterObject character, int level) {
+            super(character);
+            this.level = level;
+        }
+    }
+
+    /**
+     * Viesti joka lähetetään kun hahmo saa lisää terveyspisteitä.
+     */
+    public static class Heal extends CharacterEvent {
+        @Getter private final float amount;
+
+        /**
+         * Luo uuden viestin.
+         *
+         * @param character hahmo joka saa tervyspisteitä
+         * @param amount    annettavien terveyspisteiden määrä
+         */
+        public Heal(@NonNull CharacterObject character, float amount) {
+            super(character);
+            this.amount = amount;
+        }
     }
 }

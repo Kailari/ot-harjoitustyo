@@ -137,7 +137,6 @@ public enum Attribute {
     public static class Vitality {
         private static final float[] HEALTH_MODIFIER = {0.0f, 0.05f, 0.1f, 0.15f, 0.20f, 0.25f, 0.3f, 0.35f, 0.40f, 0.50f};
         private static final float[] REGEN_MODIFIER = {0.0f, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 1.0f};
-        private static final int[] REGEN_DELAY = {5, 5, 4, 4, 4, 4, 3, 3, 3, 2};
 
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
@@ -163,19 +162,6 @@ public enum Attribute {
             validateLevel(level);
 
             return Vitality.REGEN_MODIFIER[level - 1];
-        }
-
-        /**
-         * Hakee attribuutin tasoa vastaavan bonuksen arvon.
-         *
-         * @param levels attribuuttien tasot
-         * @return tasoa vastaava bonus
-         */
-        public static int getHealthRegenDelay(@NonNull CharacterLevels levels) {
-            val level = levels.getAttributeLevel(VITALITY);
-            validateLevel(level);
-
-            return Vitality.REGEN_DELAY[level - 1];
         }
     }
 

@@ -87,7 +87,7 @@ public class WarcryAbility
 
     private float calculateFearChance(@NonNull CharacterObject target) {
         val chance = Attribute.Charisma.getWarcryFearChance(getCharacter().getLevels());
-        val resistance = target.getAttributes().getFearResistance(target.getLevels());
+        val resistance = target.getAttributes().getFearResistance();
         return chance * (1.0f - Math.min(0.99f, resistance));
     }
 
