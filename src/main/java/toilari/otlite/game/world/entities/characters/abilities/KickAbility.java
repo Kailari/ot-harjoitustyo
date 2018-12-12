@@ -99,6 +99,9 @@ public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAtta
             if (target instanceof CharacterObject) {
                 target.getWorld().getTileAt(oldX, oldY).onCharacterExit(oldX, oldY, (CharacterObject) target);
                 target.getWorld().getTileAt(newX, newY).onCharacterEnter(newX, newY, (CharacterObject) target);
+                if (((CharacterObject) target).isDead()) {
+                    return;
+                }
             }
         }
     }
