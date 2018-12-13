@@ -3,6 +3,8 @@ package toilari.otlite.view.lwjgl;
 import lombok.Getter;
 import toilari.otlite.dao.TextureDAO;
 
+import java.util.Objects;
+
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 
@@ -18,8 +20,8 @@ public class Texture {
     private final int handle;
 
     /**
-     * Luo uuden tekstuurin. Älä kutsu tätä konstruktoria suoraan, vaan käytä {@link TextureDAO}
-     * -luokan tarjoamaa toiminnallisuutta tekstuurien luomiseen.
+     * Luo uuden tekstuurin. Älä kutsu tätä konstruktoria suoraan, vaan käytä {@link TextureDAO} -luokan tarjoamaa
+     * toiminnallisuutta tekstuurien luomiseen.
      *
      * @param width  tekstuurin leveys
      * @param height tekstuurin korkeus
@@ -46,8 +48,8 @@ public class Texture {
     }
 
     /**
-     * Jos tämä tekstuuri on aktiivinen, vapauttaa sen. Tämän metodin kutsumisen jälkeen mikään tekstuuri
-     * ei ole liitettynä/aktiivisena.
+     * Jos tämä tekstuuri on aktiivinen, vapauttaa sen. Tämän metodin kutsumisen jälkeen mikään tekstuuri ei ole
+     * liitettynä/aktiivisena.
      */
     public void release() {
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -58,5 +60,15 @@ public class Texture {
      */
     public void destroy() {
         this.referenceCounter--;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Texture && handle == ((Texture) o).handle;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(handle);
     }
 }

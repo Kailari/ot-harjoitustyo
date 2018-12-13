@@ -13,6 +13,7 @@ import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.TextRenderer;
 import toilari.otlite.view.lwjgl.Texture;
+import toilari.otlite.view.lwjgl.batch.SpriteBatch;
 import toilari.otlite.view.lwjgl.ui.UIButton;
 import toilari.otlite.view.lwjgl.ui.UIPanel;
 
@@ -92,8 +93,9 @@ public class LevelUpMenuRenderer {
      * @param camera       kamera jonka näkökulmasta piiretään
      * @param state        pelitila
      * @param textRenderer piirtäjä jolla merkkijonot piiretään
+     * @param batch        sarjapiirtäjä jonka jonoon piirtokomennot asetetaan
      */
-    public void draw(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, @NonNull TextRenderer textRenderer) {
+    public void draw(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, @NonNull TextRenderer textRenderer, SpriteBatch batch) {
         if (this.buttons == null) {
             refreshButtons(state.getManager().getPlayer(), state.getGame().getStatistics(), state.getGame().getActiveProfile());
         }
@@ -101,26 +103,26 @@ public class LevelUpMenuRenderer {
         val topLeftX = camera.getX() + camera.getViewportWidth() / 2.0f - MENU_WIDTH / 2.0f;
         val topLeftY = camera.getY() + camera.getViewportHeight() / 2.0f - MENU_HEIGHT / 2.0f;
 
-        this.background.draw(camera, topLeftX, topLeftY, BACKGROUND_COLOR);
+        this.background.draw(camera, batch, topLeftX, topLeftY, BACKGROUND_COLOR);
 
         for (int i = 0; i < Attribute.MAX.ordinal(); i++) {
-            drawAttributeField(camera, state, textRenderer, topLeftX, topLeftY, i, Attribute.values()[i]);
+            drawAttributeField(camera, state, textRenderer, topLeftX, topLeftY, i, Attribute.values()[i], batch);
         }
 
-        this.closeButton.draw(camera, textRenderer, CLOSE_BUTTON_FONT_SIZE,
+        this.closeButton.draw(camera, batch, textRenderer, CLOSE_BUTTON_FONT_SIZE,
             topLeftX + MENU_WIDTH / 2.0f - CLOSE_BUTTON_WIDTH / 2.0f,
             topLeftY + TOP_MARGIN + (Attribute.MAX.ordinal() * (ATTRIBUTE_FIELD_HEIGHT + ATTRIBUTE_FIELD_MARGIN)) - ATTRIBUTE_FIELD_MARGIN + CLOSE_BUTTON_TOP_MARGIN);
     }
 
-    private void drawAttributeField(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, @NonNull TextRenderer textRenderer, float topLeftX, float topLeftY, int i, Attribute attribute) {
+    private void drawAttributeField(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, @NonNull TextRenderer textRenderer, float topLeftX, float topLeftY, int i, Attribute attribute, SpriteBatch batch) {
         val x = topLeftX + SIDE_MARGIN;
         val y = topLeftY + TOP_MARGIN + (i * (ATTRIBUTE_FIELD_HEIGHT + ATTRIBUTE_FIELD_MARGIN));
 
         val level = state.getManager().getPlayer().getLevels().getAttributeLevel(attribute);
         val label = String.format("%" + LONGEST_ATTRIBUTE_NAME_LENGTH + "s: %s%d", attribute.name(), (level < 10 ? "0" : ""), level);
-        textRenderer.draw(camera, x, y, ATTRIBUTE_FIELD_COLOR, LABEL_FONT_SIZE, label);
+        textRenderer.draw(camera, batch, x, y, ATTRIBUTE_FIELD_COLOR, LABEL_FONT_SIZE, label);
 
-        this.buttons[i].draw(camera, textRenderer, LEVEL_UP_BUTTON_FONT_SIZE, x + label.length() * LABEL_FONT_SIZE + LEVEL_UP_BUTTON_MARGIN + LEVEL_UP_BUTTON_OFFSET, y + LEVEL_UP_BUTTON_OFFSET);
+        this.buttons[i].draw(camera, batch, textRenderer, LEVEL_UP_BUTTON_FONT_SIZE, x + label.length() * LABEL_FONT_SIZE + LEVEL_UP_BUTTON_MARGIN + LEVEL_UP_BUTTON_OFFSET, y + LEVEL_UP_BUTTON_OFFSET);
     }
 
     private void refreshButtons(CharacterObject player, StatisticsManager statistics, Profile activeProfile) {

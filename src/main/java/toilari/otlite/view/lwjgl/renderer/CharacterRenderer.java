@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
-import toilari.otlite.dao.TextureDAO;
+import toilari.otlite.dao.IGetDAO;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.util.Color;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
@@ -12,14 +12,14 @@ import toilari.otlite.view.lwjgl.AnimatedSprite;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.TextRenderer;
 import toilari.otlite.view.lwjgl.Texture;
-import toilari.otlite.view.renderer.IRenderer;
+import toilari.otlite.view.lwjgl.batch.SpriteBatch;
 
 /**
  * Piirtäjä pelihahmojen piirtämiseen.
  */
-public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera> {
+public class CharacterRenderer implements ILWJGLRenderer<CharacterObject> {
     private static final Color HEALTH_COLOR = new Color(0.85f, 0.15f, 0.15f);
-    @Getter(AccessLevel.PROTECTED) @NonNull private final TextureDAO textureDAO;
+    @Getter(AccessLevel.PROTECTED) @NonNull private final IGetDAO<Texture, String> textureDAO;
     @Getter(AccessLevel.PROTECTED) @NonNull private final TextRenderer textRenderer;
 
     private final Context context;
@@ -33,9 +33,9 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
      * @param textureDAO tekstuuridao jolla piirtäjä luodaan.
      * @param context    piirtokonteksti
      */
-    public CharacterRenderer(TextureDAO textureDAO, Context context) {
+    public CharacterRenderer(IGetDAO<Texture, String> textureDAO, Context context) {
         this.textureDAO = textureDAO;
-        this.textRenderer = new TextRenderer(this.textureDAO, 1, 16);
+        this.textRenderer = new TextRenderer(this.textureDAO);
         this.context = context;
     }
 
@@ -44,19 +44,19 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
         this.textRenderer.init();
         this.texture = this.textureDAO.get(this.context.texture);
 
-        this.sprite = new AnimatedSprite(this.texture, this.context.nFrames, this.context.width, this.context.height);
+        this.sprite = new AnimatedSprite(this.texture, this.context.nFrames);
         return false;
     }
 
     @Override
-    public void draw(@NonNull LWJGLCamera camera, @NonNull CharacterObject character) {
+    public void draw(@NonNull LWJGLCamera camera, @NonNull CharacterObject character, @NonNull SpriteBatch batch) {
         int frame = getFrame(character);
 
-        this.sprite.draw(camera, character.getX(), character.getY(), frame, this.context.color);
+        this.sprite.draw(camera, batch, character.getX(), character.getY(), this.context.width, this.context.height, frame, this.context.color);
     }
 
     @Override
-    public void postDraw(@NonNull LWJGLCamera camera, @NonNull CharacterObject character) {
+    public void postDraw(@NonNull LWJGLCamera camera, @NonNull CharacterObject character, @NonNull SpriteBatch batch) {
         val mx = Input.getHandler().mouseX() / camera.getPixelsPerUnit();
         val my = Input.getHandler().mouseY() / camera.getPixelsPerUnit();
 
@@ -73,7 +73,7 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
 
             val x = character.getX() + this.context.width / 2 - (size * str.length()) / 2;
             val y = character.getY() + this.context.height + 1;
-            this.textRenderer.draw(camera, x, y, HEALTH_COLOR, size, str);
+            this.textRenderer.draw(camera, batch, x, y, HEALTH_COLOR, size, str);
         }
     }
 
@@ -98,7 +98,6 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
     @Override
     public void destroy() {
         this.texture.destroy();
-        this.sprite.destroy();
         this.textRenderer.destroy();
     }
 }

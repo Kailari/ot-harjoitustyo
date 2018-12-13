@@ -2,6 +2,7 @@ package toilari.otlite.view.lwjgl.renderer;
 
 import lombok.NonNull;
 import lombok.val;
+import org.joml.Matrix4f;
 import toilari.otlite.dao.IGetAllDAO;
 import toilari.otlite.dao.TextureDAO;
 import toilari.otlite.dao.serialization.IGetByIDDao;
@@ -17,9 +18,9 @@ import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.TextRenderer;
 import toilari.otlite.view.lwjgl.Texture;
+import toilari.otlite.view.lwjgl.batch.SpriteBatch;
 import toilari.otlite.view.lwjgl.ui.UIButton;
 import toilari.otlite.view.lwjgl.ui.UICharacterEntry;
-import toilari.otlite.view.renderer.IRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,7 @@ import java.util.List;
  *
  * @param <R> piirtäjä-DAOn tyyppi
  */
-public class BestiaryGameStateRenderer<R extends IGetAllDAO<IRenderer> & IGetByIDDao<IRenderer>> implements ILWJGLGameStateRenderer<BestiaryGameState> {
+public class BestiaryGameStateRenderer<R extends IGetAllDAO<ILWJGLRenderer> & IGetByIDDao<ILWJGLRenderer>> implements ILWJGLGameStateRenderer<BestiaryGameState> {
     private static final int RETURN_BUTTON_WIDTH = 24;
     private static final int RETURN_BUTTON_HEIGHT = 8;
     private static final int RETURN_BUTTON_TEXTURE_SIZE = 2;
@@ -60,6 +61,7 @@ public class BestiaryGameStateRenderer<R extends IGetAllDAO<IRenderer> & IGetByI
     @NonNull private final IGetAllDAO<CharacterObject> characters;
     @NonNull private final TextRenderer textRenderer;
     @NonNull private final R renderers;
+    @NonNull private final SpriteBatch batch;
 
     private World previewWorld;
     private Texture uiTexture;
@@ -83,11 +85,14 @@ public class BestiaryGameStateRenderer<R extends IGetAllDAO<IRenderer> & IGetByI
         this.textures = textures;
         this.characters = characters;
         this.renderers = renderers;
-        this.textRenderer = new TextRenderer(this.textures, 1, 16);
+        this.textRenderer = new TextRenderer(this.textures);
+        this.batch = new SpriteBatch();
     }
 
     @Override
     public boolean init(@NonNull BestiaryGameState state) {
+        this.batch.init();
+
         this.statisticsManager = state.getGame().getStatistics();
         this.profile = state.getGame().getActiveProfile();
 
@@ -169,40 +174,42 @@ public class BestiaryGameStateRenderer<R extends IGetAllDAO<IRenderer> & IGetByI
         val screenTopLeftX = camera.getX();
         val screenTopLeftY = camera.getY();
 
-        this.returnButton.draw(camera, this.textRenderer, RETURN_BUTTON_FONT_SIZE,
+        this.batch.begin();
+        this.returnButton.draw(camera, this.batch, this.textRenderer, RETURN_BUTTON_FONT_SIZE,
             screenTopLeftX + camera.getViewportWidth() - 2 - RETURN_BUTTON_WIDTH,
             screenTopLeftY + camera.getViewportHeight() - 2 - RETURN_BUTTON_HEIGHT);
 
         if (this.activeEntry != null) {
-            drawActiveEntry(camera, screenTopLeftX, screenTopLeftY);
+            drawActiveEntry(camera, screenTopLeftX, screenTopLeftY, batch);
         }
 
         drawSelectButtons(camera, screenTopLeftX, screenTopLeftY);
+        this.batch.end(camera);
     }
 
-    private void drawActiveEntry(@NonNull LWJGLCamera camera, float screenTopLeftX, float screenTopLeftY) {
+    private void drawActiveEntry(@NonNull LWJGLCamera camera, float screenTopLeftX, float screenTopLeftY, @NonNull SpriteBatch batch) {
         val portraitSize = 8;
         drawActiveEntryPortrait(camera,
             screenTopLeftX + SELECT_BUTTON_WIDTH / 2.0f + SELECT_BUTTON_HORIZONTAL_MARGIN - portraitSize / 2.0f,
             screenTopLeftY + camera.getViewportHeight() / 4.0f - portraitSize / 2.0f);
         drawActiveEntryStats(camera,
             screenTopLeftX + SELECT_BUTTON_HORIZONTAL_MARGIN * 2 + SELECT_BUTTON_WIDTH,
-            screenTopLeftY + 2);
+            screenTopLeftY + 2, batch);
     }
 
     private void drawSelectButtons(@NonNull LWJGLCamera camera, float screenTopLeftX, float screenTopLeftY) {
         for (int i = 0; i < this.characterButtons.size(); i++) {
-            this.characterButtons.get(i).draw(camera, this.textRenderer, SELECT_BUTTON_FONT_SIZE,
+            this.characterButtons.get(i).draw(camera, this.batch, this.textRenderer, SELECT_BUTTON_FONT_SIZE,
                 screenTopLeftX + 2,
                 screenTopLeftY + camera.getViewportHeight() / 2.0f + 2 + i * (SELECT_BUTTON_HEIGHT + SELECT_BUTTON_MARGIN));
         }
     }
 
-    private void drawActiveEntryStats(@NonNull LWJGLCamera camera, float x, float y) {
+    private void drawActiveEntryStats(@NonNull LWJGLCamera camera, float x, float y, @NonNull SpriteBatch batch) {
         val info = this.activeEntry.getCharacter().getInfo();
         val attr = this.activeEntry.getCharacter().getAttributes();
 
-        this.textRenderer.draw(camera, x, y, ATTRIBUTE_TITLE_COLOR, 4, info.getName());
+        this.textRenderer.draw(camera, batch, x, y, ATTRIBUTE_TITLE_COLOR, 4, info.getName());
 
         val rowHeight = 3.5f;
         int i = 0;
@@ -212,7 +219,7 @@ public class BestiaryGameStateRenderer<R extends IGetAllDAO<IRenderer> & IGetByI
         drawStatEntry(camera, x + 1, y + 6 + (i++ * rowHeight), 3, "AP", String.format("%d", attr.getActionPoints()), ATTRIBUTE_ENTRY_COLOR);
 
         if (this.activeEntry.getCharacter().getInfo().getName().equals("Hero (you!)")) {
-            this.textRenderer.draw(camera, x, y + 10 + (i * rowHeight), STATS_TITLE_COLOR, 4, "Statistics");
+            this.textRenderer.draw(camera, batch, x, y + 10 + (i * rowHeight), STATS_TITLE_COLOR, 4, "Statistics");
 
             for (val statistic : Statistics.values()) {
                 val value = this.statisticsManager.getDouble(statistic, this.profile.getId());
@@ -227,11 +234,11 @@ public class BestiaryGameStateRenderer<R extends IGetAllDAO<IRenderer> & IGetByI
         val numberOfSpaces = maxNumberOfChars - (titleNumberOfChars);
 
         val format = "%s: %" + numberOfSpaces + "s";
-        this.textRenderer.draw(camera, x, y, color, fontsize, String.format(format, title, value));
+        this.textRenderer.draw(camera, batch, x, y, color, fontsize, String.format(format, title, value));
     }
 
     private void drawActiveEntryPortrait(@NonNull LWJGLCamera camera, float x, float y) {
-        this.activeEntry.drawPortrait(camera, x, y);
+        this.activeEntry.drawPortrait(camera, this.batch, x, y);
     }
 
     @Override

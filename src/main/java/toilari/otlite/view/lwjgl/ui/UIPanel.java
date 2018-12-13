@@ -6,6 +6,7 @@ import toilari.otlite.game.util.Color;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.Sprite;
 import toilari.otlite.view.lwjgl.Texture;
+import toilari.otlite.view.lwjgl.batch.SpriteBatch;
 
 /**
  * Käyttöliittymän "paneeli" eli rajattu alue.
@@ -40,38 +41,39 @@ public class UIPanel {
         this.height = height;
         this.size = size;
 
-        this.topLeft = new Sprite(texture, 0, 0, 4, 4, size, size);
-        this.top = new Sprite(texture, 3, 0, 2, 4, width - 2 * size, size);
-        this.topRight = new Sprite(texture, 4, 0, 4, 4, size, size);
+        this.topLeft = new Sprite(texture, 0, 0, 4, 4);
+        this.top = new Sprite(texture, 3, 0, 2, 4);
+        this.topRight = new Sprite(texture, 4, 0, 4, 4);
 
-        this.left = new Sprite(texture, 0, 3, 4, 2, size, height - 2 * size);
-        this.fill = new Sprite(texture, 3, 3, 2, 2, width - 2 * size, height - 2 * size);
-        this.right = new Sprite(texture, 4, 3, 4, 2, size, height - 2 * size);
+        this.left = new Sprite(texture, 0, 3, 4, 2);
+        this.fill = new Sprite(texture, 3, 3, 2, 2);
+        this.right = new Sprite(texture, 4, 3, 4, 2);
 
-        this.botLeft = new Sprite(texture, 0, 4, 4, 4, size, size);
-        this.bot = new Sprite(texture, 3, 4, 2, 4, width - 2 * size, size);
-        this.botRight = new Sprite(texture, 4, 4, 4, 4, size, size);
+        this.botLeft = new Sprite(texture, 0, 4, 4, 4);
+        this.bot = new Sprite(texture, 3, 4, 2, 4);
+        this.botRight = new Sprite(texture, 4, 4, 4, 4);
     }
 
     /**
      * Piirtää paneelin.
      *
      * @param camera kamera jonka näkökulmasta piiretään
+     * @param batch  sarjapiirtäjä jonka jonoon piirtokomennot asetetaan
      * @param x      x-koordinaatti johon piiretään
      * @param y      y-koordinaatti johon piiretään
      * @param color  värisävy
      */
-    public void draw(@NonNull LWJGLCamera camera, float x, float y, @NonNull Color color) {
-        this.topLeft.draw(camera, x, y, color);
-        this.top.draw(camera, x + this.size, y, color);
-        this.topRight.draw(camera, x + this.width - this.size, y, color);
+    public void draw(@NonNull LWJGLCamera camera, @NonNull SpriteBatch batch, float x, float y, @NonNull Color color) {
+        this.topLeft.draw(camera, batch, x, y, this.size, this.size, color);
+        this.top.draw(camera, batch, x + this.size, y, this.width - 2 * this.size, this.size, color);
+        this.topRight.draw(camera, batch, x + this.width - this.size, y, this.size, this.size, color);
 
-        this.left.draw(camera, x, y + this.size, color);
-        this.fill.draw(camera, x + this.size, y + this.size, color);
-        this.right.draw(camera, x + this.width - this.size, y + this.size, color);
+        this.left.draw(camera, batch, x, y + this.size, size, height - 2 * size, color);
+        this.fill.draw(camera, batch, x + this.size, y + this.size, width - 2 * size, height - 2 * size, color);
+        this.right.draw(camera, batch, x + this.width - this.size, y + this.size, size, height - 2 * size, color);
 
-        this.botLeft.draw(camera, x, y + this.height - this.size, color);
-        this.bot.draw(camera, x + this.size, y + this.height - this.size, color);
-        this.botRight.draw(camera, x + this.width - this.size, y + this.height - this.size, color);
+        this.botLeft.draw(camera, batch, x, y + this.height - this.size, size, size, color);
+        this.bot.draw(camera, batch, x + this.size, y + this.height - this.size, width - 2 * size, size, color);
+        this.botRight.draw(camera, batch, x + this.width - this.size, y + this.height - this.size, size, size, color);
     }
 }

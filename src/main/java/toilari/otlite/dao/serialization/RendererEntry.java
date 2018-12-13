@@ -3,6 +3,7 @@ package toilari.otlite.dao.serialization;
 import lombok.Getter;
 import lombok.NonNull;
 import toilari.otlite.dao.TextureDAO;
+import toilari.otlite.view.lwjgl.renderer.ILWJGLRenderer;
 import toilari.otlite.view.renderer.IRenderer;
 
 /**
@@ -11,7 +12,7 @@ import toilari.otlite.view.renderer.IRenderer;
  * @param <R> piirtäjän tyyppi
  * @param <C> piirtäjän piirtokontekstin tyyppi
  */
-class RendererEntry<R extends IRenderer, C> {
+class RendererEntry<R extends ILWJGLRenderer, C> {
     @Getter private final RendererAdapter.RendererFactory<R, C> factory;
     @Getter private final Class<? extends C> contextClass;
 

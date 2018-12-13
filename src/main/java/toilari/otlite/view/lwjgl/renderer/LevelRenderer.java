@@ -9,6 +9,7 @@ import toilari.otlite.game.world.level.Tile;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.Sprite;
 import toilari.otlite.view.lwjgl.Texture;
+import toilari.otlite.view.lwjgl.batch.SpriteBatch;
 
 /**
  * Piirtää pelin kartan.
@@ -54,9 +55,7 @@ public class LevelRenderer implements ILWJGLRenderer<Level> {
                     tileWidth * x,
                     tileHeight * y,
                     tileWidth,
-                    tileHeight,
-                    Tile.SIZE_IN_WORLD,
-                    Tile.SIZE_IN_WORLD);
+                    tileHeight);
             }
         }
 
@@ -64,7 +63,7 @@ public class LevelRenderer implements ILWJGLRenderer<Level> {
     }
 
     @Override
-    public void draw(@NonNull LWJGLCamera camera, @NonNull Level level) {
+    public void draw(@NonNull LWJGLCamera camera, @NonNull Level level, @NonNull SpriteBatch batch) {
         this.tileset.bind();
 
         for (int y = 0; y < level.getHeight(); y++) {
@@ -72,7 +71,7 @@ public class LevelRenderer implements ILWJGLRenderer<Level> {
                 val tile = level.getTileAt(x, y);
                 val index = tile.getTileIndex();
 
-                this.tileSprites[index].draw(camera, x * Tile.SIZE_IN_WORLD, y * Tile.SIZE_IN_WORLD, Color.WHITE);
+                this.tileSprites[index].draw(camera, batch, x * Tile.SIZE_IN_WORLD, y * Tile.SIZE_IN_WORLD, Tile.SIZE_IN_WORLD, Tile.SIZE_IN_WORLD, Color.WHITE);
             }
         }
 

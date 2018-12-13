@@ -52,7 +52,7 @@ public class LWJGLCamera extends toilari.otlite.view.Camera {
      *
      * @return näkymämatriisi taulukkona.
      */
-    float[] getViewMatrixArr() {
+    public float[] getViewMatrixArr() {
         refreshViewMatrix();
         return this.viewMatrixArr;
     }

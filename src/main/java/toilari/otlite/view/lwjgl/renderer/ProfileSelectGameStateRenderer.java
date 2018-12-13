@@ -11,6 +11,7 @@ import toilari.otlite.game.util.Color;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.TextRenderer;
 import toilari.otlite.view.lwjgl.Texture;
+import toilari.otlite.view.lwjgl.batch.SpriteBatch;
 import toilari.otlite.view.lwjgl.ui.UIButton;
 
 import java.sql.SQLException;
@@ -48,6 +49,7 @@ public class ProfileSelectGameStateRenderer implements ILWJGLGameStateRenderer<P
 
     @NonNull private final TextureDAO textureDAO;
     @NonNull private final TextRenderer textRenderer;
+    @NonNull private final SpriteBatch batch;
 
     private Texture uiTexture;
     private UIButton createProfileButton;
@@ -64,11 +66,13 @@ public class ProfileSelectGameStateRenderer implements ILWJGLGameStateRenderer<P
      */
     public ProfileSelectGameStateRenderer(@NonNull TextureDAO textureDAO) {
         this.textureDAO = textureDAO;
-        this.textRenderer = new TextRenderer(this.textureDAO, 1, 16);
+        this.textRenderer = new TextRenderer(this.textureDAO);
+        this.batch = new SpriteBatch();
     }
 
     @Override
     public boolean init(@NonNull ProfileSelectGameState state) {
+        this.batch.init();
         this.state = state;
         this.textRenderer.init();
         this.uiTexture = this.textureDAO.get("ui.png");
@@ -106,15 +110,17 @@ public class ProfileSelectGameStateRenderer implements ILWJGLGameStateRenderer<P
 
     @Override
     public void draw(@NonNull LWJGLCamera camera, @NonNull ProfileSelectGameState state) {
+        this.batch.begin();
         drawTitle(camera);
         drawButtons(camera);
+        this.batch.end(camera);
     }
 
     private void drawTitle(@NonNull LWJGLCamera camera) {
         val centerX = camera.getViewportWidth() / 2;
         val x = centerX - TITLE_STRING.length() * (TITLE_FONTSIZE / 2.0f);
 
-        this.textRenderer.draw(camera, x, TITLE_Y, TITLE_COLOR, TITLE_FONTSIZE, TITLE_STRING);
+        this.textRenderer.draw(camera, this.batch, x, TITLE_Y, TITLE_COLOR, TITLE_FONTSIZE, TITLE_STRING);
     }
 
     private void drawButtons(@NonNull LWJGLCamera camera) {
@@ -124,14 +130,14 @@ public class ProfileSelectGameStateRenderer implements ILWJGLGameStateRenderer<P
         for (int i = 0; i < this.profileButtons.size(); i++) {
             val button = this.profileButtons.get(i);
             val y = BUTTON_START_Y + ADD_BUTTON_HEIGHT + BUTTON_MARGIN + (i * (LARGE_BUTTON_HEIGHT + BUTTON_MARGIN));
-            button.draw(camera, this.textRenderer, LARGE_BUTTON_FONT_SIZE, x, y);
+            button.draw(camera, this.batch, this.textRenderer, LARGE_BUTTON_FONT_SIZE, x, y);
 
             val removeButton = this.profileRemoveButtons.get(i);
             val removeButtonX = x + LARGE_BUTTON_WIDTH - LARGE_BUTTON_HEIGHT;
-            removeButton.draw(camera, this.textRenderer, LARGE_BUTTON_FONT_SIZE, removeButtonX, y);
+            removeButton.draw(camera, this.batch, this.textRenderer, LARGE_BUTTON_FONT_SIZE, removeButtonX, y);
         }
 
-        this.createProfileButton.draw(camera, this.textRenderer, ADD_BUTTON_FONT_SIZE, x, BUTTON_START_Y);
+        this.createProfileButton.draw(camera, this.batch, this.textRenderer, ADD_BUTTON_FONT_SIZE, x, BUTTON_START_Y);
     }
 
     private boolean refreshProfileList(@NonNull ProfileSelectGameState state) {

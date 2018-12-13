@@ -3,6 +3,7 @@ package toilari.otlite.view.lwjgl.renderer;
 import lombok.NonNull;
 import lombok.val;
 import lombok.var;
+import org.joml.Matrix4f;
 import toilari.otlite.dao.TextureDAO;
 import toilari.otlite.game.MainMenuGameState;
 import toilari.otlite.game.event.EventSystem;
@@ -15,6 +16,7 @@ import toilari.otlite.game.util.Color;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.TextRenderer;
 import toilari.otlite.view.lwjgl.Texture;
+import toilari.otlite.view.lwjgl.batch.SpriteBatch;
 import toilari.otlite.view.lwjgl.ui.UIButton;
 
 import java.util.ArrayList;
@@ -37,6 +39,7 @@ public class MainMenuGameStateRenderer implements ILWJGLGameStateRenderer<MainMe
 
     @NonNull private final TextureDAO textures;
     @NonNull private final TextRenderer textRenderer;
+    @NonNull private final SpriteBatch batch;
 
     private Texture uiTexture;
 
@@ -51,11 +54,13 @@ public class MainMenuGameStateRenderer implements ILWJGLGameStateRenderer<MainMe
      */
     public MainMenuGameStateRenderer(@NonNull TextureDAO textures) {
         this.textures = textures;
-        this.textRenderer = new TextRenderer(this.textures, 1, 16);
+        this.textRenderer = new TextRenderer(this.textures);
+        this.batch = new SpriteBatch();
     }
 
     @Override
     public boolean init(@NonNull MainMenuGameState state) {
+        this.batch.init();
         this.statisticsManager = state.getGame().getStatistics();
         this.profile = state.getGame().getActiveProfile();
         this.textRenderer.init();
@@ -109,10 +114,11 @@ public class MainMenuGameStateRenderer implements ILWJGLGameStateRenderer<MainMe
 
         val x = (camera.getViewportWidth() / 2f) - (TITLE_STRING.length() / 2.0f) * TITLE_FONT_SIZE;
         val y = 4f;
-
-        this.textRenderer.draw(camera, x, y, TITLE_COLOR, TITLE_FONT_SIZE, TITLE_STRING);
+        this.batch.begin();
+        this.textRenderer.draw(camera, this.batch, x, y, TITLE_COLOR, TITLE_FONT_SIZE, TITLE_STRING);
 
         drawButtons(camera);
+        this.batch.end(camera);
     }
 
     private void drawButtons(@NonNull LWJGLCamera camera) {
@@ -121,7 +127,7 @@ public class MainMenuGameStateRenderer implements ILWJGLGameStateRenderer<MainMe
 
         for (int i = 0; i < this.buttons.size(); i++) {
             val button = this.buttons.get(i);
-            button.draw(camera, this.textRenderer, BUTTON_FONT_SIZE, x, y);
+            button.draw(camera, this.batch, this.textRenderer, BUTTON_FONT_SIZE, x, y);
             y += BUTTON_HEIGHT + BUTTON_MARGIN;
         }
     }

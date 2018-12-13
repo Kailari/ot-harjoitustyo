@@ -12,6 +12,7 @@ import toilari.otlite.game.world.entities.IHealthHandler;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.TextRenderer;
+import toilari.otlite.view.lwjgl.batch.SpriteBatch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,8 +77,9 @@ public class PopupTextRenderer {
      *
      * @param camera       kamera jonka näkökulmasta piirretään
      * @param textRenderer tekstipiirtäjä jolla luvut piirretään
+     * @param batch        sarjapiirtäjä jonka jonoon piirtokomennot asetetaan
      */
-    public void draw(@NonNull LWJGLCamera camera, @NonNull TextRenderer textRenderer) {
+    public void draw(@NonNull LWJGLCamera camera, @NonNull TextRenderer textRenderer, @NonNull SpriteBatch batch) {
         this.popupTextsSwap.clear();
         for (val instance : this.popupTexts) {
             if (System.currentTimeMillis() > instance.timestamp + instance.duration) {
@@ -85,7 +87,7 @@ public class PopupTextRenderer {
             }
 
             this.popupTextsSwap.add(instance);
-            drawPopupText(camera, textRenderer, instance);
+            drawPopupText(camera, textRenderer, instance, batch);
         }
 
         val tmp = this.popupTexts;
@@ -93,7 +95,7 @@ public class PopupTextRenderer {
         this.popupTextsSwap = tmp;
     }
 
-    private void drawPopupText(@NonNull LWJGLCamera camera, @NonNull TextRenderer textRenderer, PopupText instance) {
+    private void drawPopupText(@NonNull LWJGLCamera camera, @NonNull TextRenderer textRenderer, PopupText instance, @NonNull SpriteBatch batch) {
 
         float dt = (System.currentTimeMillis() - instance.timestamp) / (float) instance.duration;
         var x = MathUtil.lerp(instance.startX, instance.targetX, dt);
@@ -101,7 +103,7 @@ public class PopupTextRenderer {
 
         var offsetY = 0.0f;
         var offsetX = instance.centered ? ((instance.text.length() - 1) * instance.fontsize) / -2.0f : 0.0f;
-        textRenderer.draw(camera, x + offsetX, y + offsetY, instance.color, instance.fontsize, instance.text);
+        textRenderer.draw(camera, batch, x + offsetX, y + offsetY, instance.color, instance.fontsize, instance.text);
     }
 
     private void onCharacterHealthChange(@NonNull GameObject target, float amount, boolean critical) {

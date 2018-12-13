@@ -1,6 +1,6 @@
 {
   "texture": "white_knight.png",
-  "nFrames": 9,
+  "nFrames": 8,
   "states": {
     "idle": [2, 3, 2, 4],
     "active": [0, 1],

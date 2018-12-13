@@ -13,6 +13,7 @@ import toilari.otlite.dao.util.TextFileHelper;
 import toilari.otlite.game.util.Color;
 import toilari.otlite.view.lwjgl.renderer.CharacterRenderer;
 import toilari.otlite.view.lwjgl.renderer.Context;
+import toilari.otlite.view.lwjgl.renderer.ILWJGLRenderer;
 import toilari.otlite.view.lwjgl.renderer.PlayerRenderer;
 import toilari.otlite.view.renderer.IRenderer;
 
@@ -24,7 +25,7 @@ import java.nio.file.Path;
  * Lataa piirtäjiä määritystiedostoista.
  */
 @Slf4j
-public class RendererDAO extends AutoDiscoverFileDAO<IRenderer> implements IGetByIDDao<IRenderer> {
+public class RendererDAO extends AutoDiscoverFileDAO<ILWJGLRenderer> implements IGetByIDDao<ILWJGLRenderer> {
     private static final String[] EXTENSIONS = {"json"};
     private final Gson gson;
 
@@ -43,7 +44,7 @@ public class RendererDAO extends AutoDiscoverFileDAO<IRenderer> implements IGetB
         typeAdapter.registerRenderer("character", CharacterRenderer::new, Context.class);
         this.gson = new GsonBuilder()
             .registerTypeAdapter(Color.class, new ColorAdapter())
-            .registerTypeAdapter(IRenderer.class, typeAdapter)
+            .registerTypeAdapter(ILWJGLRenderer.class, typeAdapter)
             .create();
     }
 
@@ -54,9 +55,9 @@ public class RendererDAO extends AutoDiscoverFileDAO<IRenderer> implements IGetB
     }
 
     @Override
-    protected IRenderer load(Path path) {
+    protected ILWJGLRenderer load(Path path) {
         try (Reader reader = TextFileHelper.getReader(path)) {
-            return this.gson.fromJson(reader, IRenderer.class);
+            return this.gson.fromJson(reader, ILWJGLRenderer.class);
         } catch (JsonSyntaxException e) {
             LOG.warn("Json syntax-error in file {}: {}", path, e.getMessage());
         } catch (IOException e) {
@@ -67,7 +68,7 @@ public class RendererDAO extends AutoDiscoverFileDAO<IRenderer> implements IGetB
     }
 
     @Override
-    public IRenderer getByID(String id) {
+    public ILWJGLRenderer getByID(String id) {
         return get(id + ".json");
     }
 }

@@ -12,6 +12,7 @@ import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.Sprite;
 import toilari.otlite.view.lwjgl.TextRenderer;
 import toilari.otlite.view.lwjgl.Texture;
+import toilari.otlite.view.lwjgl.batch.SpriteBatch;
 
 /**
  * Käyttöliittymän kykypalkki josta löytyvät kaikki pelihahmon kyvyt.
@@ -44,47 +45,48 @@ public class UIAbilityBar {
         this.textRenderer = textRenderer;
 
         this.abilityBackgroundTexture = textures.get("ability_background.png");
-        this.abilityBackground = new Sprite(this.abilityBackgroundTexture, 0, 0, 16, 16, 16, 16);
+        this.abilityBackground = new Sprite(this.abilityBackgroundTexture, 0, 0, 16, 16);
     }
 
     /**
      * Piirtää palkin.
      *
      * @param camera      kamera jonka näkökulmasta piiretään
+     * @param batch       sarjapiirtäjä jonka jonoon piirtokomennot asetetaan
      * @param abilities   pelihahmon kyvyt joista näytettävät kyvyt valitaan
      * @param x           palkin x-koordinaatti
      * @param y           palkin y-koordinaatti
      * @param remainingAp hahmon jäljelläolevat toimintopisteet
      */
-    public void draw(LWJGLCamera camera, @NonNull CharacterAbilities abilities, float x, float y, int remainingAp) {
+    public void draw(LWJGLCamera camera, SpriteBatch batch, @NonNull CharacterAbilities abilities, float x, float y, int remainingAp) {
         int i = 0;
         for (val ability : abilities.getAbilitiesSortedByPriority()) {
             if (!abilities.getComponent(ability.getClass()).isHidden() && ability.getCost() != -1) {
                 val ts = abilities.getComponent(TargetSelectorAbility.class);
-                drawAbility(camera, ability, ts, i++, x, y, remainingAp);
+                drawAbility(camera, batch, ability, ts, i++, x, y, remainingAp);
             }
         }
     }
 
-    private void drawAbility(LWJGLCamera camera, IAbility ability, TargetSelectorControllerComponent ts, int index, float x, float y, int remainingAp) {
+    private void drawAbility(LWJGLCamera camera, SpriteBatch batch, IAbility ability, TargetSelectorControllerComponent ts, int index, float x, float y, int remainingAp) {
         val xx = 2 + x + index * (16 + 2);
 
         val color = ability.isOnCooldown() ? ABILITY_COLOR_ON_COOLDOWN : (ts.isActive(ability) ? ABILITY_COLOR_WHILE_ACTIVE : ABILITY_COLOR_IDLE);
-        this.abilityBackground.draw(camera, xx, y, color);
+        this.abilityBackground.draw(camera, batch, xx, y, 16, 16, color);
 
         // Ability name (above the icon)
-        this.textRenderer.draw(camera, xx, y - (2.5f + ability.getName().chars().filter(c -> c == '\n').count() * ABILITY_LABEL_FONTSIZE), ABILITY_LABEL_COLOR, ABILITY_LABEL_FONTSIZE, ability.getName());
+        this.textRenderer.draw(camera, batch, xx, y - (2.5f + ability.getName().chars().filter(c -> c == '\n').count() * ABILITY_LABEL_FONTSIZE), ABILITY_LABEL_COLOR, ABILITY_LABEL_FONTSIZE, ability.getName());
 
         // Ability index (left bottom)
-        this.textRenderer.draw(camera, xx + 1, y + 16 - 5.5f, ABILITY_INDEX_COLOR, 4, String.valueOf(index + 1));
+        this.textRenderer.draw(camera, batch, xx + 1, y + 16 - 5.5f, ABILITY_INDEX_COLOR, 4, String.valueOf(index + 1));
 
         // AP cost (right bottom)
         val apColor = ability.getCost() > remainingAp ? ABILITY_COST_COLOR_CANNOT_AFFORD : ABILITY_COST_COLOR_CAN_AFFORD;
-        this.textRenderer.draw(camera, xx + 11, y + 16 - 5.5f, apColor, 4, String.valueOf(ability.getCost()));
+        this.textRenderer.draw(camera, batch, xx + 11, y + 16 - 5.5f, apColor, 4, String.valueOf(ability.getCost()));
 
         // Cooldown (overdraw the whole thing)
         if (ability.isOnCooldown()) {
-            this.textRenderer.draw(camera, xx + 1, y + 1, ABILITY_COOLDOWN_COLOR, 14, String.valueOf(ability.getRemainingCooldown()));
+            this.textRenderer.draw(camera, batch, xx + 1, y + 1, ABILITY_COOLDOWN_COLOR, 14, String.valueOf(ability.getRemainingCooldown()));
         }
     }
 

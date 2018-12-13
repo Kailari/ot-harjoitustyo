@@ -14,13 +14,13 @@ import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbi
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.TextRenderer;
 import toilari.otlite.view.lwjgl.Texture;
+import toilari.otlite.view.lwjgl.batch.SpriteBatch;
 import toilari.otlite.view.lwjgl.ui.UIAbilityBar;
-import toilari.otlite.view.renderer.IRenderer;
 
 /**
  * Piirtäjä pelitilan piirtämiseen. Vastaa maailman
  */
-public class PlayGameStateRenderer<R extends IGetAllDAO<IRenderer> & IGetByIDDao<IRenderer>> implements ILWJGLGameStateRenderer<PlayGameState> {
+public class PlayGameStateRenderer<R extends IGetAllDAO<ILWJGLRenderer> & IGetByIDDao<ILWJGLRenderer>> implements ILWJGLGameStateRenderer<PlayGameState> {
     private static final Color DEATH_MESSAGE_COLOR = new Color(0.65f, 0.25f, 0.25f);
     private static final Color RETURN_TO_MENU_MESSAGE_COLOR = Color.WHITE.shade(0.15f);
     private static final Color GAME_INFO_COLOR = new Color(0.25f, 0.65f, 0.25f);
@@ -35,6 +35,7 @@ public class PlayGameStateRenderer<R extends IGetAllDAO<IRenderer> & IGetByIDDao
     private LevelRenderer levelRenderer;
     private UIAbilityBar abilityBar;
     private LevelUpMenuRenderer levelUpMenuRenderer;
+    private SpriteBatch batch;
 
     /**
      * Luo uuden pelitilapiirtäjän.
@@ -44,16 +45,18 @@ public class PlayGameStateRenderer<R extends IGetAllDAO<IRenderer> & IGetByIDDao
      */
     public PlayGameStateRenderer(@NonNull R renderers, @NonNull IGetDAO<Texture, String> textureDao) {
         this.textureDao = textureDao;
-        this.textRenderer = new TextRenderer(this.textureDao, 1, 16);
+        this.textRenderer = new TextRenderer(this.textureDao);
         this.levelRenderer = new LevelRenderer(this.textureDao, "tileset.png", 8, 8);
 
         this.renderers = renderers;
+        this.batch = new SpriteBatch();
 
         this.popupTextRenderer = new PopupTextRenderer();
     }
 
     @Override
     public boolean init(@NonNull PlayGameState state) {
+        this.batch.init();
         this.state = state;
 
         for (val renderer : this.renderers.getAll()) {
@@ -81,15 +84,25 @@ public class PlayGameStateRenderer<R extends IGetAllDAO<IRenderer> & IGetByIDDao
     public void draw(@NonNull LWJGLCamera camera, @NonNull PlayGameState state) {
         makeCameraFollowPlayer(camera, state);
 
+        this.batch.begin();
         drawWorld(camera, state);
-        postDrawWorld(camera, state);
+        this.batch.end(camera);
 
-        this.popupTextRenderer.draw(camera, this.textRenderer);
+        this.batch.begin();
+        postDrawWorld(camera, state);
+        this.batch.end(camera);
+
+        this.batch.begin();
+        this.popupTextRenderer.draw(camera, this.textRenderer, batch);
+        this.batch.end(camera);
+
+        this.batch.begin();
         if (!state.isMenuOpen()) {
             drawUI(camera, state);
         } else {
-            this.levelUpMenuRenderer.draw(camera, state, this.textRenderer);
+            this.levelUpMenuRenderer.draw(camera, state, this.textRenderer, batch);
         }
+        this.batch.end(camera);
     }
 
     private void makeCameraFollowPlayer(@NonNull LWJGLCamera camera, @NonNull PlayGameState state) {
@@ -101,24 +114,24 @@ public class PlayGameStateRenderer<R extends IGetAllDAO<IRenderer> & IGetByIDDao
 
     private void drawWorld(@NonNull LWJGLCamera camera, @NonNull PlayGameState state) {
         val world = state.getWorld();
-        this.levelRenderer.draw(camera, world.getCurrentLevel());
+        this.levelRenderer.draw(camera, world.getCurrentLevel(), batch);
 
         for (val object : world.getObjectManager().getObjects()) {
             val renderer = this.renderers.getByID(object.getRendererID());
             if (renderer != null) {
-                renderer.draw(camera, object);
+                renderer.draw(camera, object, batch);
             }
         }
     }
 
     private void postDrawWorld(@NonNull LWJGLCamera camera, @NonNull PlayGameState state) {
         val world = state.getWorld();
-        this.levelRenderer.postDraw(camera, world.getCurrentLevel());
+        this.levelRenderer.postDraw(camera, world.getCurrentLevel(), batch);
 
         for (val object : world.getObjectManager().getObjects()) {
             val renderer = this.renderers.getByID(object.getRendererID());
             if (renderer != null) {
-                renderer.postDraw(camera, object);
+                renderer.postDraw(camera, object, batch);
             }
         }
     }
@@ -129,7 +142,7 @@ public class PlayGameStateRenderer<R extends IGetAllDAO<IRenderer> & IGetByIDDao
 
         drawTurnStatus(camera, state, screenTopLeftX, screenTopLeftY);
         val remainingAP = state.getManager().isCharactersTurn(state.getManager().getPlayer()) ? state.getManager().getRemainingActionPoints() : 0;
-        this.abilityBar.draw(camera, state.getManager().getPlayer().getAbilities(), screenTopLeftX, screenTopLeftY + camera.getViewportHeight() - 18, remainingAP);
+        this.abilityBar.draw(camera, batch, state.getManager().getPlayer().getAbilities(), screenTopLeftX, screenTopLeftY + camera.getViewportHeight() - 18, remainingAP);
 
         if (state.getManager().getPlayer().isDead()) {
             drawDeathMessage(camera, state, screenTopLeftX, screenTopLeftY);
@@ -145,7 +158,7 @@ public class PlayGameStateRenderer<R extends IGetAllDAO<IRenderer> & IGetByIDDao
 
     private void drawCurrentTurn(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, float x, float y) {
         val str = String.format("Floor: %d Turn: %d", state.getWorld().getFloor(), state.getManager().getPlayer().getTurnsTaken());
-        this.textRenderer.draw(camera, x, y, GAME_INFO_COLOR, 3, str);
+        this.textRenderer.draw(camera, batch, x, y, GAME_INFO_COLOR, 3, str);
     }
 
     private void drawXPStatus(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, float x, float y) {
@@ -161,12 +174,12 @@ public class PlayGameStateRenderer<R extends IGetAllDAO<IRenderer> & IGetByIDDao
         val progressTowardsNextLevel = currentExperience - requiredForCurrent;
 
         val str = String.format("Level: %d\nXP: %d/%d", currentLevel, progressTowardsNextLevel, actualRequiredExperience);
-        this.textRenderer.draw(camera, x, y, GAME_INFO_COLOR, 3, str);
+        this.textRenderer.draw(camera, batch, x, y, GAME_INFO_COLOR, 3, str);
     }
 
     private void drawActionLabel(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, float x, float y) {
         String apStr = resolveActionLabel(state);
-        this.textRenderer.draw(camera, x, y, ACTION_LABEL_COLOR, 2, apStr);
+        this.textRenderer.draw(camera, batch, x, y, ACTION_LABEL_COLOR, 2, apStr);
     }
 
     private String resolveActionLabel(@NonNull PlayGameState state) {
@@ -201,7 +214,7 @@ public class PlayGameStateRenderer<R extends IGetAllDAO<IRenderer> & IGetByIDDao
 
         val dt = Math.min(1, (System.currentTimeMillis() - state.getManager().getPlayer().getDeathTime()) / 5000.0f);
         this.textRenderer.draw(camera,
-            x + (w / 2f) - (len * size) / 2f,
+            batch, x + (w / 2f) - (len * size) / 2f,
             y + (h / 2f) - (size / 2f) + ((h / 2f + size) - dt * (h / 2f + size)),
             DEATH_MESSAGE_COLOR,
             size, ded);
@@ -216,7 +229,7 @@ public class PlayGameStateRenderer<R extends IGetAllDAO<IRenderer> & IGetByIDDao
         val continueLen = continueStr.length();
         val continueSize = 3;
         this.textRenderer.draw(camera,
-            x + (w / 2.0f) - (continueLen * continueSize) / 2.0f,
+            batch, x + (w / 2.0f) - (continueLen * continueSize) / 2.0f,
             y + (h / 2.0f) + (size / 2.0f) + 0.5f,
             RETURN_TO_MENU_MESSAGE_COLOR,
             continueSize, continueStr

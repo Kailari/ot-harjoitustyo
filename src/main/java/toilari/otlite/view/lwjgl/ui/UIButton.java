@@ -10,6 +10,7 @@ import toilari.otlite.game.util.Color;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.TextRenderer;
 import toilari.otlite.view.lwjgl.Texture;
+import toilari.otlite.view.lwjgl.batch.SpriteBatch;
 
 /**
  * Painike käyttöliittymässä.
@@ -64,14 +65,14 @@ public class UIButton {
      * @param x            painikkeen x-koordinaatti
      * @param y            painikkeen y-koordinaatti
      */
-    public void draw(@NonNull LWJGLCamera camera, @NonNull TextRenderer textRenderer, int fontSize, float x, float y) {
+    public void draw(@NonNull LWJGLCamera camera, @NonNull SpriteBatch batch, @NonNull TextRenderer textRenderer, int fontSize, float x, float y) {
         updateMouse(camera, x, y);
 
-        this.panel.draw(camera, x, y, this.color);
+        this.panel.draw(camera, batch, x, y, this.color);
 
         val textX = x + (this.panel.getWidth() / 2f - (this.text.length() / 2.0f) * fontSize);
         val textY = y + (this.panel.getHeight() / 2f - fontSize / 2f);
-        textRenderer.draw(camera, textX, textY, Color.WHITE, fontSize, this.text);
+        textRenderer.draw(camera, batch, textX, textY, Color.WHITE, fontSize, this.text);
     }
 
     private void updateMouse(@NonNull LWJGLCamera camera, float x, float y) {

@@ -4,6 +4,7 @@ import lombok.NonNull;
 import lombok.val;
 import toilari.otlite.dao.IGetDAO;
 import toilari.otlite.game.util.Color;
+import toilari.otlite.view.lwjgl.batch.SpriteBatch;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,25 +23,19 @@ public class TextRenderer {
     }
 
     @NonNull private final IGetDAO<Texture, String> textures;
-    private final int maxFontSize;
-    private final int minFontSize;
 
     private Texture fontTexture;
-    private AnimatedSprite[] font;
+    private AnimatedSprite font;
 
     /**
      * Luo uuden piirtäjän.
      *
-     * @param textures    DAO jolla tarvittavat tekstuurit ladataan
-     * @param minFontSize minimifonttikoko
-     * @param maxFontSize maksimifonttikoko
+     * @param textures DAO jolla tarvittavat tekstuurit ladataan
      *
      * @throws NullPointerException jos dao on <code>null</code>
      */
-    public TextRenderer(@NonNull IGetDAO<Texture, String> textures, int minFontSize, int maxFontSize) {
+    public TextRenderer(@NonNull IGetDAO<Texture, String> textures) {
         this.textures = textures;
-        this.maxFontSize = maxFontSize;
-        this.minFontSize = minFontSize;
     }
 
 
@@ -49,26 +44,22 @@ public class TextRenderer {
      */
     public void init() {
         this.fontTexture = this.textures.get("font.png");
-        int size = this.minFontSize;
 
-        this.font = new AnimatedSprite[this.maxFontSize - this.minFontSize + 1];
-        for (int i = 0; i < this.font.length; i++, size++) {
-            this.font[i] = new AnimatedSprite(this.fontTexture, AVAILABLE_CHARS.length(), size, size);
-        }
+        this.font = new AnimatedSprite(this.fontTexture, AVAILABLE_CHARS.length());
     }
 
     /**
      * Piirtää merkkijonon ruudulle.
      *
      * @param camera kamera jonka näkökulmasta piiretään
+     * @param batch  sarjapiirtä
      * @param x      tekstin x-koordinaatti
      * @param y      tekstin y-koordinaatti
      * @param color  väri
      * @param size   fonttikoko
      * @param string piirrettävä merkkijono
      */
-    public void draw(@NonNull LWJGLCamera camera, float x, float y, @NonNull Color color, int size, @NonNull String string) {
-        size = Math.max(this.minFontSize, Math.min(this.maxFontSize, size));
+    public void draw(@NonNull LWJGLCamera camera, @NonNull SpriteBatch batch, float x, float y, @NonNull Color color, float size, @NonNull String string) {
         string = string.toUpperCase();
         float destX = x, destY = y;
         for (int i = 0; i < string.length(); i++) {
@@ -85,7 +76,7 @@ public class TextRenderer {
                 continue;
             }
 
-            this.font[size - 1].draw(camera, destX, destY, TextRenderer.CHAR_TO_FRAME.get(c), color);
+            this.font.draw(camera, batch, destX, destY, size, size, TextRenderer.CHAR_TO_FRAME.get(c), color);
             destX += size;
         }
     }
@@ -95,8 +86,5 @@ public class TextRenderer {
      */
     public void destroy() {
         this.fontTexture.destroy();
-        for (val as : this.font) {
-            as.destroy();
-        }
     }
 }
