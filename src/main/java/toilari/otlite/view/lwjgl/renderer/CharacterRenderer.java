@@ -50,10 +50,7 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
 
     @Override
     public void draw(@NonNull LWJGLCamera camera, @NonNull CharacterObject character) {
-        val isOwnTurn = character.getWorld().getObjectManager().isCharactersTurn(character);
-        val hasActionPoints = character.getWorld().getObjectManager().getRemainingActionPoints() > 0;
-
-        int frame = getFrame(isOwnTurn, hasActionPoints, character);
+        int frame = getFrame(character);
 
         this.sprite.draw(camera, character.getX(), character.getY(), frame, this.context.color);
     }
@@ -80,21 +77,21 @@ public class CharacterRenderer implements IRenderer<CharacterObject, LWJGLCamera
         }
     }
 
-    private int getFrame(boolean isOwnTurn, boolean hasActionPoints, CharacterObject character) {
+    private int getFrame(CharacterObject character) {
         int frame;
         float time = character.getTimeAlive();
         float frameDuration = this.context.framesPerSecond == 0 ? 0 : 1.0f / this.context.framesPerSecond;
-        if (isOwnTurn && hasActionPoints) {
-            float totalDuration = frameDuration * this.context.walkFrames.length;
-            int subFrame = (int) ((time % totalDuration) / frameDuration);
 
-            frame = this.context.walkFrames[Math.max(0, Math.min(this.context.walkFrames.length - 1, subFrame))];
-        } else {
-            float totalDuration = frameDuration * this.context.idleFrames.length;
-            int subFrame = (int) ((time % totalDuration) / frameDuration);
-
-            frame = this.context.idleFrames[Math.max(0, Math.min(this.context.idleFrames.length - 1, subFrame))];
+        val frames = this.context.states.get(character.getState());
+        if (frames == null) {
+            return 0;
         }
+
+        float totalDuration = frameDuration * frames.length;
+        int subFrame = (int) ((time % totalDuration) / frameDuration);
+
+        frame = frames[Math.max(0, Math.min(frames.length - 1, subFrame))];
+
         return frame;
     }
 

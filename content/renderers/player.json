@@ -1,8 +1,11 @@
 {
   "texture": "white_knight.png",
-  "nFrames": 6,
-  "walkFrames": [0, 1],
-  "idleFrames": [2, 3, 4, 5],
+  "nFrames": 9,
+  "states": {
+    "idle": [2, 3, 2, 4],
+    "active": [0, 1],
+    "block": [5, 6, 7]
+  },
   "framesPerSecond": 2,
   "color": [1.0, 1.0, 1.0],
   "width": 8,

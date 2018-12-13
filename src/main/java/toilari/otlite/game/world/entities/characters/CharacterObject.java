@@ -5,7 +5,6 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import toilari.otlite.game.event.CharacterEvent;
 import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.IHealthHandler;
 import toilari.otlite.game.world.entities.TurnObjectManager;
@@ -35,9 +34,23 @@ public class CharacterObject extends GameObject implements IHealthHandler {
     @Getter private final CharacterLevels levels;
     @Getter private final CharacterInfo info;
 
+    @Getter @Setter private String stateOverride;
     @Getter private boolean panicking;
     @Getter private int panicSourceX;
     @Getter private int panicSourceY;
+
+    /**
+     * Hakee pelihahmon tilan.
+     *
+     * @return merkkijono joka kuvaa hahmon tilaa
+     */
+    public String getState() {
+        if (this.stateOverride != null) {
+            return this.stateOverride;
+        }
+
+        return getWorld().getObjectManager().isCharactersTurn(this) && getWorld().getObjectManager().getRemainingActionPoints() > 0 ? "active" : "idle";
+    }
 
     /**
      * Asettaa hahmon tilan paniikkiin.
@@ -125,6 +138,7 @@ public class CharacterObject extends GameObject implements IHealthHandler {
      * Päivitysrutiini jota kutsutaan vain hahmon omalla vuorolla.
      *
      * @param turnManager objekti-/vuoromanageri jolla hahmojen vuoroja hallinnoidaan
+     *
      * @throws NullPointerException jos vuoromanageri on <code>null</code>
      */
     public void updateOnTurn(@NonNull TurnObjectManager turnManager) {

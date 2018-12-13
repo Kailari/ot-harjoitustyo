@@ -56,8 +56,16 @@
         "class": "player"
       }
     },
-    "kick": {
+    "block": {
       "priority": 3,
+      "name": "Block/\nHunker Down",
+      "component": {
+        "visibleOnHud": true,
+        "class": "player"
+      }
+    },
+    "kick": {
+      "priority": 4,
       "name": "Kick",
       "component": {
         "visibleOnHud": true,
@@ -65,7 +73,7 @@
       }
     },
     "warcry": {
-      "priority": 4,
+      "priority": 5,
       "name": "Warcry",
       "component": {
         "visibleOnHud": true,
