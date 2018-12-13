@@ -61,21 +61,22 @@ public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAtta
         setLastAttackDamage(0.0f);
 
         if (tileBehindTargetIsFree(direction, 1)) {
-            int knockbackAmount = calculateKnockbackAmount(component.getTargetSelector().getTarget(), component.getTargetSelector().getTargetDirection());
-            knockBackTarget(target, direction, knockbackAmount);
-
-            // If target is a character and didn't die while getting knocked back
-            if (target instanceof IHealthHandler && !((IHealthHandler) target).isDead()) {
-                dealDamage(target, (IHealthHandler) target, calculateDamage(target) * 0.5f);
-                if (((IHealthHandler) target).isDead()) {
-                    return true;
-                }
-            }
+            handleKnockbackAttack(component, target, direction);
         } else {
             dealDamage(target, (IHealthHandler) target, calculateDamage(target) * 1.5f);
         }
 
         return true;
+    }
+
+    private void handleKnockbackAttack(@NonNull AbstractAttackControllerComponent<KickAbility> component, GameObject target, Direction direction) {
+        int knockbackAmount = calculateKnockbackAmount(component.getTargetSelector().getTarget(), component.getTargetSelector().getTargetDirection());
+        knockBackTarget(target, direction, knockbackAmount);
+
+        // If target is a character and didn't die while getting knocked back
+        if (target instanceof IHealthHandler && !((IHealthHandler) target).isDead()) {
+            dealDamage(target, (IHealthHandler) target, calculateDamage(target) * 0.5f);
+        }
     }
 
     private boolean tileBehindTargetIsFree(Direction direction, int delta) {

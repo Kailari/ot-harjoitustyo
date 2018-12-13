@@ -1,10 +1,10 @@
 package toilari.otlite.game;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import lombok.var;
 import toilari.otlite.game.input.IInputHandler;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.view.Camera;
@@ -25,8 +25,6 @@ public abstract class AbstractGameRunner<T extends Camera> {
     @NonNull @Getter private final Game game;
 
     @Getter private T camera;
-    @Getter(AccessLevel.PROTECTED) private float delta;
-
 
     protected AbstractGameRunner(@NonNull Game game, @NonNull Map<Class, IGameStateRenderer> stateRendererMappings) {
         this.game = game;
@@ -103,11 +101,11 @@ public abstract class AbstractGameRunner<T extends Camera> {
         this.camera = createCamera();
         Input.init(createInputHandler());
 
-        long time = System.currentTimeMillis();
+        var time = System.currentTimeMillis();
         while (this.game.isRunning()) {
-            long current = System.currentTimeMillis();
-            long elapsed = current - time;
-            this.delta = elapsed / 1000.0f;
+            val current = System.currentTimeMillis();
+            val elapsed = current - time;
+            val delta = elapsed / 1000.0f;
             time = current;
 
             Input.getHandler().update();

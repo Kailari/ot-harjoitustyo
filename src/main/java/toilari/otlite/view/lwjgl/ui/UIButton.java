@@ -60,6 +60,7 @@ public class UIButton {
      * Piirtää painikkeen.
      *
      * @param camera       kamera jonka näkökulmasta piiretään
+     * @param batch        sarjapiirtäjä jonka jonoon piirettävät kuvat asetetaan
      * @param textRenderer tekstipiirtäjä jota käytetään tekstin piirtämiseen
      * @param fontSize     fonttikoko
      * @param x            painikkeen x-koordinaatti

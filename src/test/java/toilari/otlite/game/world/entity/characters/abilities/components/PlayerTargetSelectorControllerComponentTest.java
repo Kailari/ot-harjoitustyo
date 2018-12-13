@@ -226,7 +226,12 @@ class PlayerTargetSelectorControllerComponentTest {
         val ts = new TargetSelectorAbility();
         val component = new PlayerTargetSelectorControllerComponent();
         val attack = FakeAttackAbility.createWithoutTargetValidation(0, 0);
-        val attack2 = new KickAbility();
+        val attack2 = new KickAbility() {
+            @Override
+            public int getCost() {
+                return 0;
+            }
+        };
         val character = FakeCharacterObject.createAtWithAbilities(1, 1,
             new AbilityEntry<>(0, ts, component),
             new AbilityEntry<>(1, attack, FakeAttackControllerComponent.createWithoutTargetValidation()),

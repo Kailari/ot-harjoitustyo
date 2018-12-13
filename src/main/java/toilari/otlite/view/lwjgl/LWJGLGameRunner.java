@@ -15,7 +15,6 @@ import toilari.otlite.game.Game;
 import toilari.otlite.game.input.IInputHandler;
 import toilari.otlite.view.renderer.IGameStateRenderer;
 
-import java.util.Arrays;
 import java.util.Map;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
@@ -31,10 +30,6 @@ public class LWJGLGameRunner extends AbstractGameRunner<LWJGLCamera> {
     @Getter @Setter private int windowWidth;
     @Getter @Setter private int windowHeight;
     private long windowHandle;
-
-    private double[] fpsCache = new double[120];
-    private double[] deltaCache = new double[120];
-    private int frames = 0;
 
     /**
      * Luo uuden LWJGL-pohjaisen piirtäjän.
@@ -155,23 +150,7 @@ public class LWJGLGameRunner extends AbstractGameRunner<LWJGLCamera> {
         if (glfwWindowShouldClose(this.windowHandle)) {
             getGame().setRunning(false);
         }
-
-        val delta = getDelta();
-        val fps = Math.round(1.0 / delta);
-        this.frames++;
-        val frame = this.frames >= this.deltaCache.length ? this.deltaCache.length - 1 : this.frames;
-        for (int i = frame; i > 0; i--) {
-            this.deltaCache[i] = this.deltaCache[i - 1];
-            this.fpsCache[i] = this.fpsCache[i - 1];
-        }
-        this.fpsCache[0] = fps;
-        this.deltaCache[0] = delta;
-
-        val averageFps = Arrays.stream(this.fpsCache).limit(this.frames).average().orElse(0.0);
-        val averageDelta = Arrays.stream(this.deltaCache).limit(this.frames).average().orElse(0.0);
-        glfwSetWindowTitle(this.windowHandle, String.format("OT-lite - FPS:%4d - Frame duration: %.8f", Math.round(averageFps), averageDelta));
     }
-
 
     @Override
     public void destroy() {

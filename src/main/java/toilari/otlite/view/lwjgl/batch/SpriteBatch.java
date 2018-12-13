@@ -29,7 +29,6 @@ public class SpriteBatch {
     private static ShaderProgram shader;
     private float[] vertices;
     private Matrix4f model;
-    private int drawcalls;
 
     @NonNull
     private static ShaderProgram getShader() {
@@ -64,6 +63,9 @@ public class SpriteBatch {
     private int nSpritesInBatch;
     private int nVertices;
 
+    /**
+     * Alustaa piirtäjän.
+     */
     public void init() {
         this.vao = glGenVertexArrays();
         glBindVertexArray(this.vao);
@@ -85,12 +87,18 @@ public class SpriteBatch {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
     }
 
+    /**
+     * Vapauttaa kaikki varatut resurssit.
+     */
     public void destroy() {
         glDeleteVertexArrays(this.vao);
         glDeleteBuffers(this.vbo);
         glDeleteBuffers(this.ebo);
     }
 
+    /**
+     * Avaa piirtojonon. Kutsuttava aina ennen kuin yhtään <code>queue(...)</code>-metodia voidaan kutsua.
+     */
     public void begin() {
         if (this.vao == -1) {
             throw new IllegalStateException("VAO is not initialized!");
@@ -106,6 +114,11 @@ public class SpriteBatch {
         this.nSpritesInBatch = 0;
     }
 
+    /**
+     * Lopettaa piirtämisen ja tyhjentää jonon piirtämällä kaikki loput jonossa olevat kuvat näytölle.
+     *
+     * @param camera kamera jonka näkökulmasta piiretään
+     */
     public void end(@NonNull LWJGLCamera camera) {
         if (!this.beginCalled) {
             throw new IllegalStateException("Call SpriteBatch.begin() before .end()!");
@@ -113,10 +126,24 @@ public class SpriteBatch {
 
         flush(camera);
 
-        this.drawcalls = 0;
         this.beginCalled = false;
     }
 
+    /**
+     * Asettaa kuvan jonoon piirettäväksi.
+     *
+     * @param camera       kamera jonka näkökulmasta piiretään
+     * @param texture      piirettävä kuva
+     * @param color        värisävy
+     * @param x            x-koordinaatti pelimaailmassa
+     * @param y            y-koordinaatti pelimaailmassa
+     * @param w            leveys pelimaailmassa
+     * @param h            korkeus pelimaailmassa
+     * @param regionStartX kuvasta piirettävän alueen vasemman yläkulman x-koordinaatti
+     * @param regionStartY kuvasta piirettävän alueen vasemman yläkulman y-koordinaatti
+     * @param regionWidth  kuvasta piirettävän alueen leveys
+     * @param regionHeight kuvasta piirettävän alueen korkeus
+     */
     public void queue(@NonNull LWJGLCamera camera, @NonNull Texture texture, @NonNull Color color, float x, float y, float w, float h, int regionStartX, int regionStartY, int regionWidth, int regionHeight) {
         val textureWidth = texture.getWidth();
         val textureHeight = texture.getHeight();
@@ -129,6 +156,21 @@ public class SpriteBatch {
         queue(camera, texture, color, x, y, w, h, u0, v0, u1, v1);
     }
 
+    /**
+     * Asettaa kuvan jonoon piirrettäväksi.
+     *
+     * @param camera  kamera jonka näkökulmasta piiretään
+     * @param texture piirettävä kuva
+     * @param color   värisävy
+     * @param x       x-koordinaatti pelimaailmassa
+     * @param y       y-koordinaatti pelimaailmassa
+     * @param w       leveys pelimaailmassa
+     * @param h       korkeus pelimaailmassa
+     * @param u0      vasemman yläkulman u-koordinaatti
+     * @param v0      vasemman yläkulman v-koordinaatti
+     * @param u1      oikean alakulman u-koordinaatti
+     * @param v1      oikean alakulman v-koordinaatti
+     */
     public void queue(@NonNull LWJGLCamera camera, @NonNull Texture texture, @NonNull Color color, float x, float y, float w, float h, float u0, float v0, float u1, float v1) {
         if (!this.beginCalled) {
             throw new IllegalStateException("Call SpriteBatch.begin() before queuing data!");
@@ -159,6 +201,16 @@ public class SpriteBatch {
 
     private void flush(@NonNull LWJGLCamera camera) {
         this.active.bind();
+        prepareShader(camera);
+        constructVBO();
+
+        glDrawElements(GL_TRIANGLES, this.nSpritesInBatch * 6, GL_UNSIGNED_INT, 0);
+
+        this.nSpritesInBatch = 0;
+        this.nVertices = 0;
+    }
+
+    private void prepareShader(@NonNull LWJGLCamera camera) {
         getShader().use();
 
         val uniformModel = glGetUniformLocation(getShader().getProgram(), "model");
@@ -168,7 +220,9 @@ public class SpriteBatch {
         glUniformMatrix4fv(uniformModel, false, this.model.get(new float[4 * 4]));
         glUniformMatrix4fv(uniformView, false, camera.getViewMatrixArr());
         glUniformMatrix4fv(uniformProj, false, camera.getProjectionMatrixArr());
+    }
 
+    private void constructVBO() {
         glBindVertexArray(this.vao);
         glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
         glBufferData(GL_ARRAY_BUFFER, this.vertices, GL_STATIC_DRAW);
@@ -184,13 +238,5 @@ public class SpriteBatch {
         // vertex color
         glEnableVertexAttribArray(2);
         glVertexAttribPointer(2, 3, GL_FLOAT, false, 4 * 7, 4 * 4);
-
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this.ebo);
-        glDrawElements(GL_TRIANGLES, this.nSpritesInBatch * 6, GL_UNSIGNED_INT, 0);
-
-        this.nSpritesInBatch = 0;
-        this.nVertices = 0;
-        this.drawcalls++;
     }
 }

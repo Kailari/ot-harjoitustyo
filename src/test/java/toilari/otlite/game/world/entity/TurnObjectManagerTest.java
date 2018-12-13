@@ -32,7 +32,7 @@ class TurnObjectManagerTest {
             1,
             0,
             10,
-            1336, // LVL 1 DEX gives 1 AP more, thus results in 1337 AP
+            1337, // <---
             0,
             0.1f,
             0.0f,
@@ -86,8 +86,6 @@ class TurnObjectManagerTest {
         val character = FakeCharacterObject.create();
         manager.spawn(character);
 
-        manager.spendActionPoints(1);
-        assertEquals(2, manager.getRemainingActionPoints());
         manager.spendActionPoints(1);
         assertEquals(1, manager.getRemainingActionPoints());
         manager.spendActionPoints(1);
