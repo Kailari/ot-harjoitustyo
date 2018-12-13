@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import toilari.otlite.dao.IGetAllDAO;
 import toilari.otlite.dao.serialization.IGetByIDDao;
+import toilari.otlite.game.event.CharacterEvent;
 import toilari.otlite.game.event.PlayEvent;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.TurnObjectManager;
@@ -23,6 +24,8 @@ public class PlayGameState extends GameState {
     @NonNull private final IGetByIDDao<CharacterObject> characters;
 
     @Getter private int currentFloor = 0;
+
+    @Getter private boolean menuOpen = false;
 
     /**
      * Luo uuden pelitila-instanssin.
@@ -56,12 +59,29 @@ public class PlayGameState extends GameState {
         LOG.info("Initialization finished.");
 
         getEventSystem().subscribeTo(PlayEvent.ReturnToMenuAfterLoss.class, (e) -> getGame().changeState(new MainMenuGameState()));
+        getEventSystem().subscribeTo(PlayEvent.CloseMenu.class, (e) -> this.menuOpen = false);
+        getEventSystem().subscribeTo(CharacterEvent.LevelUp.class, this::onCharacterLevelUp);
+
+        getEventSystem().subscribeTo(PlayEvent.LevelUpAttribute.class, e -> {
+            val levels = this.manager.getPlayer().getLevels();
+            if (levels.calculateMaxAttributePoints() - levels.calculateAttributePointsInUse() > 0) {
+                levels.levelUpAttribute(e.getAttribute());
+            }
+        });
         return false;
+    }
+
+    private void onCharacterLevelUp(@NonNull CharacterEvent.LevelUp event) {
+        if (event.getCharacter().equals(this.manager.getPlayer())) {
+            this.menuOpen = true;
+        }
     }
 
     @Override
     public void update(float delta) {
-        this.world.update(delta);
+        if (!this.menuOpen) {
+            this.world.update(delta);
+        }
     }
 
     @Override

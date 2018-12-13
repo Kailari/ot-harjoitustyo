@@ -5,7 +5,8 @@
   },
   "attributes": {
     "baseActionPoints": 0,
-    "baseHealth": 5.0
+    "baseHealth": 5.0,
+    "xpReward": 8
   },
   "abilities": {
     "move": {

@@ -10,7 +10,6 @@ import toilari.otlite.game.event.PlayEvent;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
 import toilari.otlite.game.util.Color;
-import toilari.otlite.game.world.entities.characters.CharacterLevels;
 import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbility;
 import toilari.otlite.view.lwjgl.LWJGLCamera;
 import toilari.otlite.view.lwjgl.TextRenderer;
@@ -35,6 +34,7 @@ public class PlayGameStateRenderer<R extends IGetAllDAO<IRenderer> & IGetByIDDao
 
     private LevelRenderer levelRenderer;
     private UIAbilityBar abilityBar;
+    private LevelUpMenuRenderer levelUpMenuRenderer;
 
     /**
      * Luo uuden pelitilapiirtäjän.
@@ -63,8 +63,9 @@ public class PlayGameStateRenderer<R extends IGetAllDAO<IRenderer> & IGetByIDDao
         }
 
         this.textRenderer.init();
-        this.popupTextRenderer.init(state);
+        this.levelUpMenuRenderer = new LevelUpMenuRenderer(this.textureDao, state);
         this.abilityBar = new UIAbilityBar(this.textureDao, this.textRenderer);
+        this.popupTextRenderer.init(state);
 
         return this.levelRenderer.init();
     }
@@ -84,7 +85,11 @@ public class PlayGameStateRenderer<R extends IGetAllDAO<IRenderer> & IGetByIDDao
         postDrawWorld(camera, state);
 
         this.popupTextRenderer.draw(camera, this.textRenderer);
-        drawUI(camera, state);
+        if (!state.isMenuOpen()) {
+            drawUI(camera, state);
+        } else {
+            this.levelUpMenuRenderer.draw(camera, state, this.textRenderer);
+        }
     }
 
     private void makeCameraFollowPlayer(@NonNull LWJGLCamera camera, @NonNull PlayGameState state) {

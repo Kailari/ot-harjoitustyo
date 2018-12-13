@@ -127,7 +127,7 @@ public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAtta
         }
 
         val maxAmount = (max - min) * (1.0f - resistance);
-        return Math.round(min + (this.random.nextFloat() * maxAmount));
+        return Math.round(min + (this.random.nextFloat() * (maxAmount - min)));
     }
 
     private int numberOfFreeTilesInDirection(Direction direction, int max) {
