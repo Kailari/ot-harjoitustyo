@@ -28,6 +28,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static float getDamageModifier(@NonNull CharacterLevels levels) {
@@ -41,6 +42,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static float getKnockbackResistance(@NonNull CharacterLevels levels) {
@@ -54,6 +56,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static int getKickKnockbackMin(@NonNull CharacterLevels levels) {
@@ -67,6 +70,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static int getKickKnockbackMax(@NonNull CharacterLevels levels) {
@@ -80,6 +84,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static int getKickCost(@NonNull CharacterLevels levels) {
@@ -93,6 +98,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static int getKickCooldown(@NonNull CharacterLevels levels) {
@@ -111,6 +117,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static float getArmorModifier(@NonNull CharacterLevels levels) {
@@ -124,6 +131,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static float getHealthModifier(@NonNull CharacterLevels levels) {
@@ -142,6 +150,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static float getHealthModifier(@NonNull CharacterLevels levels) {
@@ -155,6 +164,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static float getHealthRegenModifier(@NonNull CharacterLevels levels) {
@@ -175,6 +185,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static int getActionPoints(@NonNull CharacterLevels levels) {
@@ -188,6 +199,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static int getLeapRange(@NonNull CharacterLevels levels) {
@@ -201,6 +213,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static int getLeapCost(@NonNull CharacterLevels levels) {
@@ -214,6 +227,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static int getLeapCooldown(@NonNull CharacterLevels levels) {
@@ -226,15 +240,16 @@ public enum Attribute {
 
     public static class Charisma {
         private static final float[] FEAR_RESISTANCE_MODIFIER = {0.0f, 0.05f, 0.1f, 0.15f, 0.2f, 0.25f, 0.3f, 0.4f, 0.5f, 0.75f};
-        private static final int[] WARCRY_RANGE = {-1, -1, -1, 2, 2, 3, 3, 3, 3, 4};
-        private static final int[] WARCRY_COST = {-1, -1, -1, 2, 2, 2, 1, 1, 1, 1};
-        private static final int[] WARCRY_COOLDOWN = {-1, -1, -1, 6, 5, 5, 4, 4, 4, 4};
-        private static final float[] WARCRY_FEAR_CHANCE = {-1, -1, -1, 0.1f, 0.25f, 0.35f, 0.45f, 0.50f, 0.65f, 0.9f};
+        private static final int[] WARCRY_RANGE = {-1, 1, 2, 2, 2, 3, 3, 3, 3, 4};
+        private static final int[] WARCRY_COST = {-1, 2, 2, 2, 2, 2, 1, 1, 1, 1};
+        private static final int[] WARCRY_COOLDOWN = {-1, 9, 8, 7, 6, 5, 4, 4, 4, 4};
+        private static final float[] WARCRY_FEAR_CHANCE = {-1, 0.15f, 0.20f, 0.25f, 0.3f, 0.35f, 0.4f, 0.5f, 0.6f, 0.75f};
 
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static float getFearResistanceModifier(@NonNull CharacterLevels levels) {
@@ -248,6 +263,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static int getWarcryRange(@NonNull CharacterLevels levels) {
@@ -261,6 +277,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static int getWarcryCost(@NonNull CharacterLevels levels) {
@@ -274,6 +291,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static int getWarcryCooldown(@NonNull CharacterLevels levels) {
@@ -287,6 +305,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static float getWarcryFearChance(@NonNull CharacterLevels levels) {
@@ -305,6 +324,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static float getPotionPotencyModifier(@NonNull CharacterLevels levels) {
@@ -318,6 +338,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static float getXpBonus(@NonNull CharacterLevels levels) {
@@ -337,6 +358,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static float getFearResistance(@NonNull CharacterLevels levels) {
@@ -350,6 +372,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static float getCriticalHitDamageModifier(@NonNull CharacterLevels levels) {
@@ -363,6 +386,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         static int getActionPoints(@NonNull CharacterLevels levels) {
@@ -381,6 +405,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static float getCriticalHitChance(@NonNull CharacterLevels levels) {
@@ -394,6 +419,7 @@ public enum Attribute {
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
          *
          * @param levels attribuuttien tasot
+         *
          * @return tasoa vastaava bonus
          */
         public static float getEvasion(@NonNull CharacterLevels levels) {

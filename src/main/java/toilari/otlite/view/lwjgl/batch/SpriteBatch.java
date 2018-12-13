@@ -18,6 +18,10 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
+/**
+ * Batch Renderer eli "Sarjapiirtäjä"/joukkopiirtäjä. Piirtäjä joka kokoaa useiden piirrettävien tekstuurien
+ * piirtokäskyt yhteen ja suorittaa ne kerralla. Säästää huomattavan määrän resursseja.
+ */
 @Slf4j
 public class SpriteBatch {
     private static final int MAX_SPRITES = 512;
@@ -109,7 +113,6 @@ public class SpriteBatch {
 
         flush(camera);
 
-        LOG.debug("Ending batch with {} drawcalls", this.drawcalls);
         this.drawcalls = 0;
         this.beginCalled = false;
     }
@@ -155,8 +158,6 @@ public class SpriteBatch {
     }
 
     private void flush(@NonNull LWJGLCamera camera) {
-        LOG.debug("Flushing with {} sprites!", this.nSpritesInBatch);
-
         this.active.bind();
         getShader().use();
 

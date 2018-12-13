@@ -15,7 +15,7 @@
     "attackCost": 1,
     "attackCooldown": 0,
 
-    "baseActionPoints": 2,
+    "baseActionPoints": 1,
     "xpReward": 35,
 
     "baseHealth": 50.0,
