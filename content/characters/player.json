@@ -33,7 +33,7 @@
     "attributeLevels": [
       1, 1, 1, 1, 1, 1, 1, 1
     ],
-    "experiencePerFloor": 25
+    "experiencePerFloor": 15
   },
   "abilities": {
     "target_selector": {

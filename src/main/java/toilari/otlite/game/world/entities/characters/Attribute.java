@@ -20,8 +20,8 @@ public enum Attribute {
 
         private static final int[] KICK_KNOCKBACK_MIN = {-1, 1, 1, 1, 1, 1, 2, 2, 2, 3};
         private static final int[] KICK_KNOCKBACK_MAX = {-1, 1, 1, 1, 2, 2, 2, 2, 3, 4};
-        private static final int[] KICK_COST = {-1, 1, 1, 2, 2, 2, 2, 2, 2, 2};
-        private static final int[] KICK_COOLDOWN = {-1, 4, 4, 3, 3, 3, 3, 2, 2, 1};
+        private static final int[] KICK_COST = {-1, 2, 2, 2, 2, 2, 2, 2, 2, 1};
+        private static final int[] KICK_COOLDOWN = {-1, 6, 6, 5, 5, 4, 4, 3, 3, 2};
 
 
         /**
@@ -166,7 +166,7 @@ public enum Attribute {
     }
 
     public static class Dexterity {
-        private static final int[] ACTION_POINTS = {0, 1, 1, 1, 2, 2, 2, 3, 3, 4};
+        private static final int[] ACTION_POINTS = {0, 0, 1, 1, 2, 2, 2, 3, 3, 4};
         private static final int[] LEAP_RANGE = {-1, -1, -1, 2, 2, 2, 3, 3, 3, 4};
         private static final int[] LEAP_COST = {-1, -1, -1, 2, 2, 3, 3, 3, 2, 2};
         private static final int[] LEAP_COOLDOWN = {-1, -1, -1, 4, 4, 2, 3, 3, 3, 2};

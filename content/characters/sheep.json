@@ -11,7 +11,7 @@
     "moveCooldown": 0,
 
     "baseActionPoints": 1,
-    "xpReward": 10,
+    "xpReward": 7,
 
     "baseHealth": 25.0,
     "healthGain": 1.5,

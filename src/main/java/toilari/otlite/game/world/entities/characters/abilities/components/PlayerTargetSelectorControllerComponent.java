@@ -52,7 +52,7 @@ public class PlayerTargetSelectorControllerComponent extends TargetSelectorContr
 
     private void cycleTargetWithAbilityKeys() {
         for (int i = 0; i < this.abilityKeys.length; i++) {
-            if (Input.getHandler().isKeyPressed(this.abilityKeys[i]) && hasAbility(i) && notOnCooldown(i) && canAfford(i)) {
+            if (Input.getHandler().isKeyPressed(this.abilityKeys[i]) && isUnlocked(i) && hasAbility(i) && notOnCooldown(i) && canAfford(i)) {
                 if (getTarget() == null || isActive(i) || (!getAbilities()[i].canPerformOn(getTarget(), getTargetDirection()))) {
                     setActiveTargetedAbility(i);
                     cycleTargets();
@@ -123,12 +123,13 @@ public class PlayerTargetSelectorControllerComponent extends TargetSelectorContr
         }
     }
 
-    private boolean isActive(int abilityIndex) {
-        return hasAbility(abilityIndex) && isActive(getAbilities()[abilityIndex]);
+    private boolean isUnlocked(int abilityIndex) {
+        // locked abilities have negative cost
+        return hasAbility(abilityIndex) && getAbilities()[abilityIndex].getCost() >= 0;
     }
 
-    private boolean canTargetSelf(int abilityIndex) {
-        return hasAbility(abilityIndex) && getAbilities()[abilityIndex].canTargetSelf();
+    private boolean isActive(int abilityIndex) {
+        return hasAbility(abilityIndex) && isActive(getAbilities()[abilityIndex]);
     }
 
     private boolean notOnCooldown(int abilityIndex) {

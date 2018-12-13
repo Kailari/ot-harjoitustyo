@@ -121,8 +121,8 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
         }
 
         /**
-         * Hakee raa'an liikesyötteen x-aksellilla. Arvo on parsimaton näppäimistösyöte eikä ota kantaa
-         * onko kyseessä painallus vai jatkuva tila
+         * Hakee raa'an liikesyötteen x-aksellilla. Arvo on parsimaton näppäimistösyöte eikä ota kantaa onko kyseessä
+         * painallus vai jatkuva tila
          *
          * @return -1 vasemmalle, 1 oikealle, 0 paikallaan
          */
@@ -133,8 +133,8 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
         }
 
         /**
-         * Hakee raa'an liikesyötteen y-aksellilla. Arvo on parsimaton näppäimistösyöte eikä ota kantaa
-         * onko kyseessä painallus vai jatkuva tila
+         * Hakee raa'an liikesyötteen y-aksellilla. Arvo on parsimaton näppäimistösyöte eikä ota kantaa onko kyseessä
+         * painallus vai jatkuva tila
          *
          * @return -1 ylös, 1 alas, 0 paikallaan
          */
@@ -178,8 +178,61 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
         @Override
         public void doUpdateInput(MoveAbility ability) {
             val direction = getAvailableDirections().get(getRandom().nextInt(getAvailableDirections().size()));
+            moveToDirection(direction);
+        }
+
+        protected void moveToDirection(Direction direction) {
             setInputX(direction.getDx());
             setInputY(direction.getDy());
+        }
+    }
+
+    /**
+     * Tekoälyn ohjainkomponentti, joka pyrkii liikkumaan kohti pelaajaa pelaajan ollessa tarpeeksi lähellä.
+     */
+    @RequiredArgsConstructor
+    public static class AIMoveTowardsPlayer extends AI {
+        private final int searchRange;
+
+        /**
+         * Kopio komponentin tiedot toisesta komponentista.
+         *
+         * @param template komponentti josta kopioidaan
+         */
+        public AIMoveTowardsPlayer(MoveControllerComponent template) {
+            this.searchRange = ((AIMoveTowardsPlayer) template).searchRange;
+        }
+
+        @Override
+        public void doUpdateInput(MoveAbility ability) {
+            if (targetIsNear()) {
+                moveTowardsTarget();
+            } else {
+                super.doUpdateInput(ability);
+            }
+        }
+
+        private void moveTowardsTarget() {
+            getAvailableDirections().stream()
+                .min(Comparator.comparingInt((d) -> {
+                    val x = getCharacter().getTileX();
+                    val y = getCharacter().getTileY();
+                    return squaredDistanceToPlayerFrom(x + d.getDx(), y + d.getDy());
+                })).ifPresent(this::moveToDirection);
+        }
+
+        private int squaredDistanceToPlayerFrom(int x, int y) {
+            val player = getCharacter().getWorld().getObjectManager().getPlayer();
+            int dx = x - player.getTileX();
+            int dy = y - player.getTileY();
+            return dx * dx + dy * dy;
+        }
+
+        private boolean targetIsNear() {
+            val player = getCharacter().getWorld().getObjectManager().getPlayer();
+            val dx = Math.abs(player.getTileX() - getCharacter().getTileX());
+            val dy = Math.abs(player.getTileY() - getCharacter().getTileY());
+            return dx <= this.searchRange && dy <= this.searchRange;
         }
     }
 }

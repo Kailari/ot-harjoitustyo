@@ -71,7 +71,7 @@ public class CharacterLevels {
             throw new IllegalArgumentException("Level cannot be nagative!");
         }
 
-        return (100 + Math.max(0, level - 1)) * level;
+        return (100 + Math.max(0, level - 1) * 5) * level;
     }
 
     /**
@@ -96,7 +96,8 @@ public class CharacterLevels {
      */
     public void rewardExperience(int amount) {
         val levelBefore = getXpLevel();
-        this.experience += amount;
+        val multiplier = 1.0f + Attribute.Intelligence.getXpBonus(this);
+        this.experience += amount * multiplier;
 
         val levelAfter = getXpLevel();
         if (levelAfter > levelBefore) {

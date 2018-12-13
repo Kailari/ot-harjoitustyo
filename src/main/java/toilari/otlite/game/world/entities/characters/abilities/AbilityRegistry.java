@@ -23,7 +23,8 @@ public class AbilityRegistry {
 
         register("move", MoveAbility.class, MoveAbility::new)
             .registerComponent("player", MoveControllerComponent.Player.class, MoveControllerComponent.Player::new)
-            .registerComponent("animal", MoveControllerComponent.AI.class, MoveControllerComponent.AI::new);
+            .registerComponent("animal", MoveControllerComponent.AI.class, MoveControllerComponent.AI::new)
+            .registerComponent("move_towards_player", MoveControllerComponent.AIMoveTowardsPlayer.class, MoveControllerComponent.AIMoveTowardsPlayer::new);
 
         register("end_turn", EndTurnAbility.class, EndTurnAbility::new)
             .registerComponent("player", EndTurnControllerComponent.Player.class, EndTurnControllerComponent.Player::new)

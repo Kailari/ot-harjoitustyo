@@ -7,7 +7,7 @@
     "attributeLevels": [
       1, 1, 1, 1, 1, 1, 1, 1
     ],
-    "experiencePerFloor": 25
+    "experiencePerFloor": 50
   },
   "attributes": {
     "moveCost": 1,
@@ -16,9 +16,10 @@
     "attackCooldown": 0,
 
     "baseActionPoints": 1,
+    "xpReward": 35,
 
     "baseHealth": 50.0,
-    "healthGain": 1.5,
+    "healthGain": 5.0,
 
     "baseArmor": 2,
     "armorGain": 0.1,
@@ -31,7 +32,7 @@
     "baseAttackDamage": 15.0,
     "baseAttackDamageGain": 0.1875,
     "baseCriticalHitChance": 0.025,
-    "baseCriticalHitDamage": 1.5
+    "baseCriticalHitDamage": 1.0
   },
   "abilities": {
     "target_selector": {
@@ -49,7 +50,8 @@
     "move": {
       "priority": 2,
       "component": {
-        "class": "animal"
+        "class": "move_towards_player",
+        "searchRange": 3
       }
     },
     "end_turn": {

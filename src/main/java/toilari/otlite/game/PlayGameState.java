@@ -69,7 +69,7 @@ public class PlayGameState extends GameState {
 
         getEventSystem().subscribeTo(PlayEvent.NextFloor.class, (e) -> {
             val levels = this.manager.getPlayer().getLevels();
-            levels.rewardExperience(levels.getExperiencePerFloor() * Math.round(Math.min(1.0f, this.world.getFloor() * 0.1f)));
+            levels.rewardExperience(levels.getExperiencePerFloor() * Math.round(this.world.getFloor() * 0.1f));
         });
 
         getEventSystem().subscribeTo(PlayEvent.LevelUpAttribute.class, e -> {

@@ -56,6 +56,10 @@ public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAtta
             return false;
         }
 
+        setLastAttackCritical(false);
+        setLastAttackKill(false);
+        setLastAttackDamage(0.0f);
+
         if (tileBehindTargetIsFree(direction, 1)) {
             int knockbackAmount = calculateKnockbackAmount(component.getTargetSelector().getTarget(), component.getTargetSelector().getTargetDirection());
             knockBackTarget(target, direction, knockbackAmount);
