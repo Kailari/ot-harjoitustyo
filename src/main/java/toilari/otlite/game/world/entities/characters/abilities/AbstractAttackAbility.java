@@ -8,6 +8,8 @@ import toilari.otlite.game.world.entities.IHealthHandler;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.components.AbstractAttackControllerComponent;
 
+import java.util.Random;
+
 /**
  * Hahmon kyky hyökätä.
  */
@@ -15,6 +17,8 @@ public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C
     extends AbstractAbility<A, C>
     implements ITargetedAbility<A, C> {
 
+    @Getter private transient Random random;
+    @Getter @Setter(AccessLevel.PROTECTED) private transient boolean lastAttackCritical;
     @Getter @Setter(AccessLevel.PROTECTED) private transient boolean lastAttackKill;
     @Getter @Setter(AccessLevel.PROTECTED) private transient float lastAttackDamage;
 
@@ -26,7 +30,20 @@ public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C
     }
 
     protected AbstractAttackAbility(@NonNull String name) {
+        this(name, new Random());
+    }
+
+    protected AbstractAttackAbility(@NonNull String name, Random random) {
         super(name);
+        this.random = random;
+    }
+
+    @Override
+    public void init(@NonNull CharacterObject character) {
+        super.init(character);
+        if (this.random == null) {
+            this.random = new Random();
+        }
     }
 
     @Override
@@ -39,6 +56,12 @@ public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C
         return !character.isDead() && !getCharacter().equals(character);
     }
 
+    protected void reset() {
+        this.lastAttackKill = false;
+        this.lastAttackCritical = false;
+        this.lastAttackDamage = 0.0f;
+    }
+
     @Override
     public boolean perform(@NonNull C component) {
         val target = component.getTargetSelector().getTarget();
@@ -47,8 +70,14 @@ public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C
             return false;
         }
 
-        this.lastAttackKill = false;
-        this.lastAttackDamage = 0.0f;
+        reset();
+
+        if (target instanceof CharacterObject) {
+            if (targetEvadesAttack((CharacterObject) target, this.random.nextFloat())) {
+                getEventSystem().fire(new CharacterEvent.MissedAttack(getCharacter(), (CharacterObject) target));
+                return true;
+            }
+        }
 
         val amount = calculateDamage(target);
         if (target instanceof IHealthHandler) {
@@ -59,8 +88,23 @@ public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C
         return true;
     }
 
+    protected boolean targetEvadesAttack(CharacterObject target, float randomValue) {
+        val evasion = target.getAttributes().getEvasion();
+        return randomValue < evasion;
+    }
+
+    protected boolean hitsCritically(float randomValue) {
+        val chance = getCharacter().getAttributes().getCriticalHitChance();
+        return randomValue < chance;
+    }
+
     protected float calculateDamage(GameObject target) {
-        val rawAmount = getCharacter().getAttributes().getAttackDamage();
+        var rawAmount = getCharacter().getAttributes().getAttackDamage();
+        if (hitsCritically(this.random.nextFloat())) {
+            this.lastAttackCritical = true;
+            rawAmount = calculateCriticalDamage(rawAmount);
+        }
+
         if (target instanceof CharacterObject) {
             val reduction = ((CharacterObject) target).getAttributes().calculateDamageReduction(rawAmount);
             return rawAmount - reduction;
@@ -69,10 +113,20 @@ public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C
         }
     }
 
+    protected float calculateCriticalDamage(float rawAmount) {
+        val multiplier = getCriticalHitDamageMultiplier();
+        return rawAmount * multiplier;
+    }
+
+    protected float getCriticalHitDamageMultiplier() {
+        return getCharacter().getAttributes().getCriticalHitDamage();
+    }
+
     protected void dealDamage(GameObject target, IHealthHandler targetWithHealth, float amount) {
         float current = targetWithHealth.getHealth();
         targetWithHealth.setHealth(Math.max(0, current - amount));
 
+        this.lastAttackKill = false;
         if (targetWithHealth.isDead()) {
             targetWithHealth.setHealth(0.0f);
             target.remove();
@@ -80,7 +134,7 @@ public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C
         }
 
         if (target instanceof CharacterObject) {
-            getEventSystem().fire(new CharacterEvent.Damage(getCharacter(), target, amount));
+            getEventSystem().fire(new CharacterEvent.Damage(getCharacter(), target, amount, this.lastAttackCritical));
             if (this.lastAttackKill) {
                 getEventSystem().fire(new CharacterEvent.Death((CharacterObject) target, CharacterEvent.Death.Cause.CHARACTER));
             }

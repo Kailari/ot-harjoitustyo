@@ -166,7 +166,7 @@ public enum Attribute {
     }
 
     public static class Dexterity {
-        private static final int[] ACTION_POINTS = {1, 1, 2, 2, 2, 3, 3, 3, 3, 4};
+        private static final int[] ACTION_POINTS = {0, 1, 1, 1, 2, 2, 2, 3, 3, 4};
         private static final int[] LEAP_RANGE = {-1, -1, -1, 2, 2, 2, 3, 3, 3, 4};
         private static final int[] LEAP_COST = {-1, -1, -1, 2, 2, 3, 3, 3, 2, 2};
         private static final int[] LEAP_COOLDOWN = {-1, -1, -1, 4, 4, 2, 3, 3, 3, 2};
@@ -330,7 +330,7 @@ public enum Attribute {
 
     public static class Wisdom {
         private static final float[] FEAR_RESISTANCE = {0.0f, 0.05f, 0.1f, 0.15f, 0.2f, 0.25f, 0.3f, 0.4f, 0.5f, 0.75f};
-        private static final float[] CRITICAL_HIT_DAMAGE_MODIFIER = {0.5f, 0.55f, 0.6f, 0.65f, 0.7f, 0.75f, 0.8f, 0.9f, 1.0f, 2.0f};
+        private static final float[] CRITICAL_HIT_DAMAGE_MODIFIER = {0.1f, 0.15f, 0.2f, 0.25f, 0.3f, 0.4f, 0.5f, 0.7f, 0.9f, 1.5f};
         private static final int[] ACTION_POINTS = {-1, -1, -1, -1, -1, -1, -1, -1, 1, 2};
 
         /**
@@ -375,7 +375,7 @@ public enum Attribute {
 
     public static class Luck {
         private static final float[] CRITICAL_HIT_CHANCE = {0.01f, 0.02f, 0.03f, 0.04f, 0.05f, 0.075f, 0.1f, 0.125f, 0.15f, 0.3333f};
-        private static final float[] EVASION = {0.05f, 0.025f, 0.05f, 0.075f, 0.1f, 0.125f, 0.15f, 0.2f, 0.3f, 0.45f};
+        private static final float[] EVASION = {0.0f, 0.01f, 0.02f, 0.03f, 0.045f, 0.07f, 0.09f, 0.12f, 0.15f, 0.20f};
 
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.

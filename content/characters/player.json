@@ -4,13 +4,36 @@
     "name": "Hero (you!)"
   },
   "attributes": {
-    "baseActionPoints": 1,
-    "baseAttackDamage": 9001
+    "moveCost": 1,
+    "moveCooldown": 0,
+    "attackCost": 1,
+    "attackCooldown": 0,
+
+    "baseActionPoints": 2,
+
+    "baseHealth": 100.0,
+    "healthGain": 1.5,
+    "baseHealthRegen": 5.0,
+    "baseHealthRegenGain": 1.5,
+
+    "baseArmor": 0,
+    "armorGain": 0.1,
+    "baseEvasion": 0.01,
+    "evasionGain": 0.001125,
+
+    "baseKnockbackResistance": 0.0,
+    "baseFearResistance": 0.0,
+
+    "baseAttackDamage": 10.0,
+    "baseAttackDamageGain": 0.1875,
+    "baseCriticalHitChance": 0.025,
+    "baseCriticalHitDamage": 1.0
   },
   "levels": {
     "attributeLevels": [
       1, 1, 1, 1, 1, 1, 1, 1
-    ]
+    ],
+    "experiencePerFloor": 25
   },
   "abilities": {
     "target_selector": {

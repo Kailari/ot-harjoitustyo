@@ -26,6 +26,7 @@ public class World {
     private IGetAllDAO<Tile> tiles = null;
     private IGetByIDDao<CharacterObject> characters = null;
 
+    @Getter private int floor;
     @Getter private Level currentLevel;
     @NonNull @Getter private final TurnObjectManager objectManager;
 
@@ -144,6 +145,7 @@ public class World {
         level.setNextLevel();
         level.spawn(this.characters, this.objectManager);
 
+        this.floor++;
         getObjectManager().getEventSystem().fire(new PlayEvent.NextFloor());
     }
 

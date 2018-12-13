@@ -111,6 +111,7 @@ public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAtta
             if (targetCharacter.isDead()) {
                 setLastAttackDamage(targetHealth);
                 setLastAttackKill(true);
+                return true;
             }
         }
         return false;
@@ -127,7 +128,7 @@ public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAtta
         }
 
         val maxAmount = (max - min) * (1.0f - resistance);
-        return Math.round(min + (this.random.nextFloat() * (maxAmount - min)));
+        return Math.round(min + (this.random.nextFloat() * maxAmount));
     }
 
     private int numberOfFreeTilesInDirection(Direction direction, int max) {

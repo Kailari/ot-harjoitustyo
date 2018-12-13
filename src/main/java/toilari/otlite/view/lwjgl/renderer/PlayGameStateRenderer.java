@@ -144,7 +144,7 @@ public class PlayGameStateRenderer<R extends IGetAllDAO<IRenderer> & IGetByIDDao
     }
 
     private void drawCurrentTurn(@NonNull LWJGLCamera camera, @NonNull PlayGameState state, float x, float y) {
-        val str = String.format("Floor: %d Turn: %d", state.getCurrentFloor(), state.getManager().getPlayer().getTurnsTaken());
+        val str = String.format("Floor: %d Turn: %d", state.getWorld().getFloor(), state.getManager().getPlayer().getTurnsTaken());
         this.textRenderer.draw(camera, x, y, GAME_INFO_COLOR, 3, str);
     }
 

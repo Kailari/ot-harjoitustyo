@@ -33,11 +33,12 @@ public class LevelUpMenuRenderer {
 
     private static final int LEVEL_UP_BUTTON_MARGIN = 2;
 
-    private static final int ATTRIBUTE_FIELD_MARGIN = 2;
+    private static final int ATTRIBUTE_FIELD_MARGIN = 3;
     private static final int ATTRIBUTE_FIELD_HEIGHT = LABEL_FONT_SIZE;
 
-    private static final int LEVEL_UP_BUTTON_SIZE = ATTRIBUTE_FIELD_HEIGHT;
-    private static final int LEVEL_UP_BUTTON_FONT_SIZE = 4;
+    private static final int LEVEL_UP_BUTTON_SIZE = ATTRIBUTE_FIELD_HEIGHT + 2;
+    private static final int LEVEL_UP_BUTTON_FONT_SIZE = 3;
+    private static final int LEVEL_UP_BUTTON_OFFSET = -1;
     private static final Color LEVEL_UP_BUTTON_COLOR_HOVER = Color.WHITE;
     private static final Color LEVEL_UP_BUTTON_COLOR_IDLE = Color.WHITE.shade(0.35f);
     private static final Color LEVEL_UP_BUTTON_COLOR_DISABLED = Color.WHITE.shade(0.5f);
@@ -119,7 +120,7 @@ public class LevelUpMenuRenderer {
         val label = String.format("%" + LONGEST_ATTRIBUTE_NAME_LENGTH + "s: %s%d", attribute.name(), (level < 10 ? "0" : ""), level);
         textRenderer.draw(camera, x, y, ATTRIBUTE_FIELD_COLOR, LABEL_FONT_SIZE, label);
 
-        this.buttons[i].draw(camera, textRenderer, LEVEL_UP_BUTTON_FONT_SIZE, x + label.length() * LABEL_FONT_SIZE + LEVEL_UP_BUTTON_MARGIN, y);
+        this.buttons[i].draw(camera, textRenderer, LEVEL_UP_BUTTON_FONT_SIZE, x + label.length() * LABEL_FONT_SIZE + LEVEL_UP_BUTTON_MARGIN + LEVEL_UP_BUTTON_OFFSET, y + LEVEL_UP_BUTTON_OFFSET);
     }
 
     private void refreshButtons(CharacterObject player, StatisticsManager statistics, Profile activeProfile) {

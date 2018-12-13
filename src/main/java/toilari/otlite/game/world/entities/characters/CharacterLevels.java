@@ -18,6 +18,7 @@ public class CharacterLevels {
     private transient CharacterObject character;
 
     @Getter private int experience;
+    @Getter private int experiencePerFloor = 0;
     private int[] attributeLevels = new int[]{1, 1, 1, 1, 1, 1, 1, 1};
 
 
@@ -70,7 +71,7 @@ public class CharacterLevels {
             throw new IllegalArgumentException("Level cannot be nagative!");
         }
 
-        return (5 + level) * level;
+        return (100 + Math.max(0, level - 1)) * level;
     }
 
     /**
@@ -80,7 +81,12 @@ public class CharacterLevels {
      */
     public CharacterLevels(CharacterLevels template) {
         this.experience = template.experience;
-        this.attributeLevels = Arrays.copyOf(template.attributeLevels, Attribute.MAX.ordinal());
+        this.experiencePerFloor = template.experiencePerFloor;
+
+        this.attributeLevels = new int[Attribute.MAX.ordinal()];
+        for (int i = 0; i < this.attributeLevels.length; i++) {
+            this.attributeLevels[i] = template.attributeLevels[i] > 0 ? template.attributeLevels[i] : 1;
+        }
     }
 
     /**
@@ -182,7 +188,9 @@ public class CharacterLevels {
     void init(@NonNull CharacterObject character) {
         if (character.getWorld() != null) {
             this.eventSystem = character.getWorld().getObjectManager().getEventSystem();
+            this.experience = this.experiencePerFloor * character.getWorld().getFloor();
         }
         this.character = character;
+
     }
 }

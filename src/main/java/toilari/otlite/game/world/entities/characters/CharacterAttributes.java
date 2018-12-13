@@ -153,37 +153,34 @@ public class CharacterAttributes {
     private transient CharacterObject character;
 
     @Getter private int moveCost = 1;
-
     @Getter private int moveCooldown = 0;
     @Getter private int attackCost = 1;
     @Getter private int attackCooldown = 0;
-    @Getter private int xpReward = 1;
+    @Getter private int xpReward = 10;
+    private int baseActionPoints;
 
-    private int baseActionPoints = 0;
+    private int baseArmor;
+    private float armorGain;
+    private float baseEvasion;
+    private float evasionGain;
+    private float baseKnockbackResistance;
+    private float baseFearResistance;
 
-    private int baseArmor = 0;
+    private float baseAttackDamage;
+    private float attackDamageGain;
+    private float baseCriticalHitChance;
+    private float baseCriticalHitDamage;
 
-    private float armorGain = 0.05f;
-    private float baseEvasion = 0.01f;
-    private float evasionGain = 0.001f;
-    private float baseKnockbackResistance = 0.0f;
-
-    private float baseFearResistance = 0.0f;
-    private float baseAttackDamage = 1.0f;
-
-    private float attackDamageGain = 0.01f;
-    private float baseCriticalHitChance = 0.01f;
-    private float baseCriticalHitDamage = 0.30f;
-    private float baseHealth = 10.0f;
-
-    private float healthGain = 0.01f;
-    private float baseHealthRegen = 0.50f;
-    private float healthRegenGain = 0.01f;
+    private float baseHealth;
+    private float healthGain;
+    private float baseHealthRegen;
+    private float healthRegenGain;
 
     /**
      * Laskee panssarista aiheutuvan vahinkopisteiden vähennyksen.
      *
      * @param amount vahinkopisteet ennen vähennyksiä
+     *
      * @return vähettävien vahinkopisteiden määrä
      */
     public float calculateDamageReduction(float amount) {
@@ -218,6 +215,11 @@ public class CharacterAttributes {
         this.healthRegenGain = attributes.healthRegenGain;
     }
 
+    /**
+     * Alustaa hahmon attribuuttisäilön.
+     *
+     * @param character hahmo jolle nämä atribuutit kuuluvat
+     */
     public void init(CharacterObject character) {
         this.character = character;
     }

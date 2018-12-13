@@ -3,9 +3,35 @@
   "info": {
     "name": "Dark Knight"
   },
+  "levels": {
+    "attributeLevels": [
+      1, 1, 1, 1, 1, 1, 1, 1
+    ],
+    "experiencePerFloor": 25
+  },
   "attributes": {
-    "baseActionPoints": 0,
-    "baseHealth": 7.5
+    "moveCost": 1,
+    "moveCooldown": 0,
+    "attackCost": 1,
+    "attackCooldown": 0,
+
+    "baseActionPoints": 1,
+
+    "baseHealth": 50.0,
+    "healthGain": 1.5,
+
+    "baseArmor": 2,
+    "armorGain": 0.1,
+    "baseEvasion": 0.01,
+    "evasionGain": 0.001125,
+
+    "baseKnockbackResistance": 0.0,
+    "baseFearResistance": 0.0,
+
+    "baseAttackDamage": 15.0,
+    "baseAttackDamageGain": 0.1875,
+    "baseCriticalHitChance": 0.025,
+    "baseCriticalHitDamage": 1.5
   },
   "abilities": {
     "target_selector": {

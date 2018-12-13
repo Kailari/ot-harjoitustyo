@@ -3,10 +3,26 @@
   "info": {
     "name": "Sheep (Baa!)"
   },
+  "levels": {
+    "experiencePerFloor": 25
+  },
   "attributes": {
-    "baseActionPoints": 0,
-    "baseHealth": 5.0,
-    "xpReward": 8
+    "moveCost": 1,
+    "moveCooldown": 0,
+
+    "baseActionPoints": 1,
+    "xpReward": 10,
+
+    "baseHealth": 25.0,
+    "healthGain": 1.5,
+
+    "baseArmor": 0,
+    "armorGain": 0.1,
+    "baseEvasion": 0.01,
+    "evasionGain": 0.001125,
+
+    "baseKnockbackResistance": 0.0,
+    "baseFearResistance": -0.5
   },
   "abilities": {
     "move": {

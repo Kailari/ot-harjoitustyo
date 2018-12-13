@@ -11,6 +11,8 @@ import toilari.otlite.game.event.PlayEvent;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
+import toilari.otlite.game.world.entities.characters.abilities.EndTurnAbility;
+import toilari.otlite.game.world.entities.characters.abilities.components.EndTurnControllerComponent;
 import toilari.otlite.game.world.level.LevelData;
 import toilari.otlite.game.world.level.Tile;
 
@@ -22,8 +24,6 @@ public class PlayGameState extends GameState {
     @Getter @NonNull private final World world;
     @Getter @NonNull private final TurnObjectManager manager;
     @NonNull private final IGetByIDDao<CharacterObject> characters;
-
-    @Getter private int currentFloor = 0;
 
     @Getter private boolean menuOpen = false;
 
@@ -49,18 +49,28 @@ public class PlayGameState extends GameState {
     public boolean init() {
         LOG.info("Initializing PlayGameState...");
         this.world.init();
-        getEventSystem().subscribeTo(PlayEvent.NextFloor.class, (e) -> this.currentFloor++);
+        subscribeToEvents();
 
         val player = this.manager.spawnTemplate(this.characters.getByID("player"));
+        ((EndTurnControllerComponent.Player) player.getAbilities().getComponent(EndTurnAbility.class)).setAutoEndTurn(getGame().getActiveProfile().getSettings().isAutoEndTurn());
         this.manager.setPlayer(player);
         val levelId = getGame().getInitialLevelId();
         this.world.changeLevel(levelId);
 
         LOG.info("Initialization finished.");
 
+        return false;
+    }
+
+    private void subscribeToEvents() {
         getEventSystem().subscribeTo(PlayEvent.ReturnToMenuAfterLoss.class, (e) -> getGame().changeState(new MainMenuGameState()));
         getEventSystem().subscribeTo(PlayEvent.CloseMenu.class, (e) -> this.menuOpen = false);
         getEventSystem().subscribeTo(CharacterEvent.LevelUp.class, this::onCharacterLevelUp);
+
+        getEventSystem().subscribeTo(PlayEvent.NextFloor.class, (e) -> {
+            val levels = this.manager.getPlayer().getLevels();
+            levels.rewardExperience(levels.getExperiencePerFloor() * Math.round(Math.min(1.0f, this.world.getFloor() * 0.1f)));
+        });
 
         getEventSystem().subscribeTo(PlayEvent.LevelUpAttribute.class, e -> {
             val levels = this.manager.getPlayer().getLevels();
@@ -68,7 +78,6 @@ public class PlayGameState extends GameState {
                 levels.levelUpAttribute(e.getAttribute());
             }
         });
-        return false;
     }
 
     private void onCharacterLevelUp(@NonNull CharacterEvent.LevelUp event) {

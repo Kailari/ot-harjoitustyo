@@ -19,6 +19,7 @@ public class CharacterEvent implements IEvent {
     public static class Damage extends CharacterEvent {
         @Getter @NonNull private final GameObject target;
         @Getter private final float amount;
+        @Getter private final boolean critical;
 
         /**
          * Luo uuden viestin.
@@ -26,11 +27,13 @@ public class CharacterEvent implements IEvent {
          * @param character hyökkäävä hahmo
          * @param target    kohde jonka kimppuun hyökätään
          * @param amount    vahinkopisteiden määrä
+         * @param critical  oliko hyökkäys kriittinen osuma
          */
-        public Damage(@NonNull CharacterObject character, GameObject target, float amount) {
+        public Damage(@NonNull CharacterObject character, GameObject target, float amount, boolean critical) {
             super(character);
             this.target = target;
             this.amount = amount;
+            this.critical = critical;
         }
     }
 
@@ -99,6 +102,24 @@ public class CharacterEvent implements IEvent {
         public Heal(@NonNull CharacterObject character, float amount) {
             super(character);
             this.amount = amount;
+        }
+    }
+
+    /**
+     * Viesti joka lähetetään kun hahmon hyökkäys osuu huti.
+     */
+    public static class MissedAttack extends CharacterEvent {
+        @Getter @NonNull private final CharacterObject target;
+
+        /**
+         * Luo uuden viestin.
+         *
+         * @param character hyökkäävä hahmo
+         * @param target    kohde
+         */
+        public MissedAttack(CharacterObject character, CharacterObject target) {
+            super(character);
+            this.target = target;
         }
     }
 }

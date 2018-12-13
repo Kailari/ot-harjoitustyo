@@ -28,7 +28,16 @@ public class PopupTextRenderer {
     private static final int HEALTH_LABEL_DURATION = 1500;
     private static final int HEALTH_LABEL_FONTSIZE = 2;
     private static final Color DAMAGE_LABEL_COLOR = Color.RED.shade(0.15f);
+    private static final Color DAMAGE_LABEL_COLOR_CRITICAL = new Color(0.9f, 0.8f, 0.1f);
     private static final Color HEAL_LABEL_COLOR = Color.GREEN.shade(0.15f);
+
+    private static final float MISS_LABEL_START_OFFSET_X = 2.0f;
+    private static final float MISS_LABEL_START_OFFSET_Y = 2.0f;
+    private static final float MISS_LABEL_TARGET_OFFSET_X = 2.0f;
+    private static final float MISS_LABEL_TARGET_OFFSET_Y = -6.0f;
+    private static final int MISS_LABEL_DURATION = 2000;
+    private static final int MISS_LABEL_FONTSIZE = 3;
+    private static final Color MISS_LABEL_COLOR = new Color(0.1f, 0.8f, 0.9f);
 
     private static final float DEATH_LABEL_START_OFFSET_X = 2.0f;
     private static final float DEATH_LABEL_START_OFFSET_Y = 2.0f;
@@ -56,8 +65,9 @@ public class PopupTextRenderer {
     public void init(@NonNull PlayGameState state) {
         this.popupTexts = new ArrayList<>();
         this.popupTextsSwap = new ArrayList<>();
-        state.getEventSystem().subscribeTo(CharacterEvent.Damage.class, (e) -> onCharacterHealthChange(e.getTarget(), -e.getAmount()));
-        state.getEventSystem().subscribeTo(CharacterEvent.Heal.class, (e) -> onCharacterHealthChange(e.getCharacter(), e.getAmount()));
+        state.getEventSystem().subscribeTo(CharacterEvent.Damage.class, (e) -> onCharacterHealthChange(e.getTarget(), -e.getAmount(), e.isCritical()));
+        state.getEventSystem().subscribeTo(CharacterEvent.Heal.class, (e) -> onCharacterHealthChange(e.getCharacter(), e.getAmount(), false));
+        state.getEventSystem().subscribeTo(CharacterEvent.MissedAttack.class, this::onAttackMiss);
         state.getEventSystem().subscribeTo(CharacterEvent.Death.class, this::onCharacterDeath);
     }
 
@@ -94,13 +104,14 @@ public class PopupTextRenderer {
         textRenderer.draw(camera, x + offsetX, y + offsetY, instance.color, instance.fontsize, instance.text);
     }
 
-    private void onCharacterHealthChange(@NonNull GameObject target, float amount) {
+    private void onCharacterHealthChange(@NonNull GameObject target, float amount, boolean critical) {
         if (target instanceof IHealthHandler && ((IHealthHandler) target).isDead()) {
             return;
         }
 
-        var color = amount > 0 ? HEAL_LABEL_COLOR : DAMAGE_LABEL_COLOR;
+        var color = amount < 0 ? (critical ? DAMAGE_LABEL_COLOR_CRITICAL : DAMAGE_LABEL_COLOR) : HEAL_LABEL_COLOR;
         var prefix = amount > 0 ? "+" : "";
+
         this.popupTexts.add(new PopupText(
             target.getX() + HEALTH_LABEL_START_OFFSET_X,
             target.getY() + HEALTH_LABEL_START_OFFSET_Y,
@@ -108,7 +119,23 @@ public class PopupTextRenderer {
             target.getY() + HEALTH_LABEL_TARGET_OFFSET_Y,
             HEALTH_LABEL_DURATION,
             String.format("%s%.1f", prefix, amount),
-            color, HEALTH_LABEL_FONTSIZE, true));
+            color, HEALTH_LABEL_FONTSIZE + (critical ? 1 : 0), true));
+    }
+
+    private void onAttackMiss(@NonNull CharacterEvent.MissedAttack event) {
+        val target = event.getTarget();
+        if (((IHealthHandler) target).isDead()) {
+            return;
+        }
+
+        this.popupTexts.add(new PopupText(
+            target.getX() + MISS_LABEL_START_OFFSET_X,
+            target.getY() + MISS_LABEL_START_OFFSET_Y,
+            target.getX() + MISS_LABEL_TARGET_OFFSET_X,
+            target.getY() + MISS_LABEL_TARGET_OFFSET_Y,
+            MISS_LABEL_DURATION,
+            "MISSED",
+            MISS_LABEL_COLOR, MISS_LABEL_FONTSIZE, true));
     }
 
     private void onCharacterDeath(@NonNull CharacterEvent.Death event) {
