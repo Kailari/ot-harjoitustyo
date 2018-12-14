@@ -112,6 +112,9 @@ public enum Attribute {
     public static class Endurance {
         private static final float[] ARMOR_MODIFIER = {0.0f, 0.05f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f, 0.40f, 0.55f, 0.75f};
         private static final float[] HEALTH_MODIFIER = {0.0f, 0.025f, 0.05f, 0.075f, 0.01f, 0.0125f, 0.015f, 0.0175f, 0.012f, 0.013f};
+        private static final int[] BLOCK_COST = {-1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+        private static final int[] BLOCK_COOLDOWN = {-1, 4, 4, 4, 3, 3, 3, 2, 2, 2};
+        private static final int[] BLOCK_ATTACKS = {-1, 1, 1, 1, 1, 1, 1, 1, 1, 2};
 
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
@@ -139,6 +142,48 @@ public enum Attribute {
             validateLevel(level);
 
             return Endurance.HEALTH_MODIFIER[level - 1];
+        }
+
+        /**
+         * Hakee attribuutin tasoa vastaavan bonuksen arvon.
+         *
+         * @param levels attribuuttien tasot
+         *
+         * @return tasoa vastaava bonus
+         */
+        public static int getBlockingCost(CharacterLevels levels) {
+            val level = levels.getAttributeLevel(ENDURANCE);
+            validateLevel(level);
+
+            return Endurance.BLOCK_COST[level - 1];
+        }
+
+        /**
+         * Hakee attribuutin tasoa vastaavan bonuksen arvon.
+         *
+         * @param levels attribuuttien tasot
+         *
+         * @return tasoa vastaava bonus
+         */
+        public static int getBlockingCooldown(CharacterLevels levels) {
+            val level = levels.getAttributeLevel(ENDURANCE);
+            validateLevel(level);
+
+            return Endurance.BLOCK_COOLDOWN[level - 1];
+        }
+
+        /**
+         * Hakee attribuutin tasoa vastaavan bonuksen arvon.
+         *
+         * @param levels attribuuttien tasot
+         *
+         * @return tasoa vastaava bonus
+         */
+        public static int getNumberOfAttacksBlocked(CharacterLevels levels) {
+            val level = levels.getAttributeLevel(ENDURANCE);
+            validateLevel(level);
+
+            return Endurance.BLOCK_ATTACKS[level - 1];
         }
     }
 

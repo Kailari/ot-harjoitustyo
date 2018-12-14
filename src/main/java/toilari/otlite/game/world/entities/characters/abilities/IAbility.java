@@ -13,6 +13,7 @@ import toilari.otlite.game.world.entities.characters.abilities.components.MoveCo
  * @param <A> tyyppi itse. (Esim {@link MoveAbility}:lla tämä on <code>MoveAbility</code>) Tarvitaan ohjainkomponentin
  *            tyypin varmistamiseen
  * @param <C> ohjainkomponentin tyyppi
+ *
  * @see IControllerComponent
  */
 public interface IAbility<A extends IAbility<A, C>, C extends IControllerComponent<A>> {
@@ -50,6 +51,7 @@ public interface IAbility<A extends IAbility<A, C>, C extends IControllerCompone
      * lasketaan kunkin vuoron lopuksi, kunnes ne ovat taas käytettävissä ajastimen päästessä nollaan
      *
      * @return onko kyky jäähtymässä
+     *
      * @see #getRemainingCooldown()
      * @see #putOnCooldown()
      * @see #getCooldownLength()
@@ -61,6 +63,7 @@ public interface IAbility<A extends IAbility<A, C>, C extends IControllerCompone
      * Kertoo kauanko kyky on vielä jäähtymässä.
      *
      * @return montako vuoroa kyky on vielä jäähtymässä
+     *
      * @see #isOnCooldown()
      * @see #putOnCooldown()
      * @see #getCooldownLength()
@@ -93,6 +96,7 @@ public interface IAbility<A extends IAbility<A, C>, C extends IControllerCompone
      * Kertoo kuinka pitkä tämän kyvyn jäähtymisajastin on.
      *
      * @return kyvyn jäähtymisajastimen kesto
+     *
      * @see #isOnCooldown()
      * @see #getRemainingCooldown()
      * @see #putOnCooldown()
@@ -101,11 +105,19 @@ public interface IAbility<A extends IAbility<A, C>, C extends IControllerCompone
     int getCooldownLength();
 
     /**
+     * Kutsutaan kun hahmon oma vuoro alkaa.
+     */
+    default void onBeginTurn() {
+    }
+
+    /**
      * Suorittaa kyvyn. Suorittaa kyvyn pelilogiikkaosuuden esim. {@link MoveAbility#perform(MoveControllerComponent)}
      * siirtää pelihahmoan siihen suuntaan johon ohjainkomponentti pyytää.
      *
      * @param component ohjainkomponentti joka pyysi siirtämään hahmoa
+     *
      * @return <code>true</code> jos toiminto suoritettiin, <code>false</code> muulloin
+     *
      * @throws NullPointerException jos komponentti on <code>null</code>
      */
     boolean perform(@NonNull C component);

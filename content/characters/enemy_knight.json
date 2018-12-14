@@ -38,13 +38,13 @@
     "target_selector": {
       "priority": 0,
       "component": {
-        "class": "attack_adjacent_if_possible"
+        "class": "always_select_adjacent"
       }
     },
     "attack": {
       "priority": 1,
       "component": {
-        "class": "ai"
+        "class": "attack_always_if_possible"
       }
     },
     "move": {
@@ -57,7 +57,7 @@
     "end_turn": {
       "priority": 99,
       "component": {
-        "class": "ai"
+        "class": "end_if_nothing_else_to_do"
       }
     }
   }

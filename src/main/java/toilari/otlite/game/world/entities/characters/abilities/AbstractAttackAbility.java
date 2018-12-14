@@ -73,8 +73,7 @@ public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C
         reset();
 
         if (target instanceof CharacterObject) {
-            if (targetEvadesAttack((CharacterObject) target, this.random.nextFloat())) {
-                getEventSystem().fire(new CharacterEvent.MissedAttack(getCharacter(), (CharacterObject) target));
+            if (checkEvadeAndBlock((CharacterObject) target)) {
                 return true;
             }
         }
@@ -86,6 +85,26 @@ public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C
         }
 
         return true;
+    }
+
+    protected boolean checkEvadeAndBlock(CharacterObject target) {
+        if (targetBlocksAttack(target)) {
+            getEventSystem().fire(new CharacterEvent.BlockedAttack(getCharacter(), target));
+            return true;
+        } else if (targetEvadesAttack(target, this.random.nextFloat())) {
+            getEventSystem().fire(new CharacterEvent.MissedAttack(getCharacter(), target));
+            return true;
+        }
+        return false;
+    }
+
+    private boolean targetBlocksAttack(CharacterObject target) {
+        val blockAbility = target.getAbilities().getAbility(BlockAbility.class);
+        if (blockAbility != null && blockAbility.getBlocksAvailable() > 0) {
+            blockAbility.blockAttack(getCharacter());
+            return true;
+        }
+        return false;
     }
 
     protected boolean targetEvadesAttack(CharacterObject target, float randomValue) {

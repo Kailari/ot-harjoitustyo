@@ -132,6 +132,9 @@ public class CharacterObject extends GameObject implements IHealthHandler {
      */
     public void beginTurn() {
         this.turnsTaken++;
+        for (val ability : this.abilities.getAbilitiesSortedByPriority()) {
+            ability.onBeginTurn();
+        }
     }
 
     /**
@@ -156,7 +159,6 @@ public class CharacterObject extends GameObject implements IHealthHandler {
                 StreamSupport.stream(this.abilities.getAbilitiesSortedByPriority().spliterator(), false)
                     .map(a -> getAbilities().getComponentResponsibleFor(a))
                     .forEach(c -> ((IControllerComponent) c).reset());
-
                 break;
             }
         }

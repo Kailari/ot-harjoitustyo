@@ -34,7 +34,7 @@
     "end_turn": {
       "priority": 99,
       "component": {
-        "class": "ai"
+        "class": "end_if_nothing_else_to_do"
       }
     }
   }

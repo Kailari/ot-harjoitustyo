@@ -122,4 +122,22 @@ public class CharacterEvent implements IEvent {
             this.target = target;
         }
     }
+
+    /**
+     * Viesti joka lähetetään kun hahmo torjuu hyökkäyksen.
+     */
+    public static class BlockedAttack extends CharacterEvent {
+        @Getter @NonNull private final CharacterObject target;
+
+        /**
+         * Luo uuden viestin.
+         *
+         * @param character hyökkäävä hahmo
+         * @param target    kohde
+         */
+        public BlockedAttack(CharacterObject character, CharacterObject target) {
+            super(character);
+            this.target = target;
+        }
+    }
 }

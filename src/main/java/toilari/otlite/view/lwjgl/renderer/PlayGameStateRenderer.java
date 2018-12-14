@@ -142,7 +142,7 @@ public class PlayGameStateRenderer<R extends IGetAllDAO<ILWJGLRenderer> & IGetBy
 
         drawTurnStatus(camera, state, screenTopLeftX, screenTopLeftY);
         val remainingAP = state.getManager().isCharactersTurn(state.getManager().getPlayer()) ? state.getManager().getRemainingActionPoints() : 0;
-        this.abilityBar.draw(camera, batch, state.getManager().getPlayer().getAbilities(), screenTopLeftX, screenTopLeftY + camera.getViewportHeight() - 18, remainingAP);
+        this.abilityBar.draw(camera, batch, state.getManager().getPlayer().getAbilities(), screenTopLeftX + 2, screenTopLeftY + camera.getViewportHeight() - UIAbilityBar.HEIGHT - 2, remainingAP);
 
         if (state.getManager().getPlayer().isDead()) {
             drawDeathMessage(camera, state, screenTopLeftX, screenTopLeftY);

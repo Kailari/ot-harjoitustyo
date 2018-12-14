@@ -19,7 +19,7 @@ public class AbilityRegistry {
     static {
         register("target_selector", TargetSelectorAbility.class, TargetSelectorAbility::new)
             .registerComponent("player", PlayerTargetSelectorControllerComponent.class, PlayerTargetSelectorControllerComponent::new)
-            .registerComponent("attack_adjacent_if_possible", AlwaysAttackAdjacentIfPossibleTargetSelectorControllerComponent.class, AlwaysAttackAdjacentIfPossibleTargetSelectorControllerComponent::new);
+            .registerComponent("always_select_adjacent", AlwaysAttackAdjacentIfPossibleTargetSelectorControllerComponent.class, AlwaysAttackAdjacentIfPossibleTargetSelectorControllerComponent::new);
 
         register("move", MoveAbility.class, MoveAbility::new)
             .registerComponent("player", MoveControllerComponent.Player.class, MoveControllerComponent.Player::new)
@@ -28,11 +28,11 @@ public class AbilityRegistry {
 
         register("end_turn", EndTurnAbility.class, EndTurnAbility::new)
             .registerComponent("player", EndTurnControllerComponent.Player.class, EndTurnControllerComponent.Player::new)
-            .registerComponent("ai", EndTurnControllerComponent.AI.class, EndTurnControllerComponent.AI::new);
+            .registerComponent("end_if_nothing_else_to_do", EndTurnControllerComponent.AI.class, EndTurnControllerComponent.AI::new);
 
         register("attack", AttackAbility.class, AttackAbility::new)
             .registerComponent("player", AttackControllerComponent.Player.class, AttackControllerComponent.Player::new)
-            .registerComponent("ai", AttackControllerComponent.AI.class, AttackControllerComponent.AI::new);
+            .registerComponent("attack_always_if_possible", AttackControllerComponent.AI.class, AttackControllerComponent.AI::new);
 
         register("kick", KickAbility.class, KickAbility::new)
             .registerComponent("player", KickControllerComponent.Player.class, KickControllerComponent.Player::new)
@@ -40,6 +40,9 @@ public class AbilityRegistry {
 
         register("warcry", WarcryAbility.class, WarcryAbility::new)
             .registerComponent("player", WarcryControllerComponent.Player.class, WarcryControllerComponent.Player::new);
+
+        register("block", BlockAbility.class, BlockAbility::new)
+            .registerComponent("player", BlockControllerComponent.Player.class, BlockControllerComponent.Player::new);
     }
 
     /**
