@@ -32,13 +32,42 @@ Kyvyn aktivoinnin jälkeen valitaan kohde johon vaikutus halutaan kohdistaa. Nyk
 Kun haluttu kohde on valittu voidaan toiminto vahvistaa välilyönnistä tai peruuttaa painamalla esc. Kyvyn käyttämisen jälkeen kyky menee jäähtymään jolloin sen ikonin tilalla näkyy luku joka kertoo montako vuoroa kyky on vielä jäähtymässä.
 
 ## Kyvyt
-Aktivoitavia kykyjä on tällä hetkellä kolme:
+Aktivoitavia kykyjä on tällä hetkellä neljä:
 
-#### Normaali hyökkäys
-Normaali hyökkäys eli "basic attack" tekee pelihahmon attribuuttien määrittämän vahinkopisteiden määrän mukaan vahinkoa hahmon vieressä olevaan kohteeseen.
+#### Normaali hyökkäys / "Basic Attack"
+- Aina käytettävissä, maksaa 1 AP
+- Tehdyn vahingon määrä riippuu pelaajan kokemustasosta
+- Pelaajan _Strength_-attribuutti nostaa vahingon määrää
+- Voi tehdä kriittistä vahinkoa
+  - Todennäköisyys riippuu pelaajan _Luck_-attribuutista
+  - Vahinko riippuu pelaajan _Wisdom_-attribuutista
+- Kohde voi väistää tai torjua iskun
+  - Todennäköisyys väistämiseen riippuu kohteen kokemustasosta ja _Luck_-attribuutista
+  - Torjuminen tapahtuu _Block_-kyvyllä
 
-#### Potku
-Potku tekee normaalin hyökkäyksen määrän vahinkoa, mutta tönäisee myös kohdehahmoa poispäin pelaajasta. Tämä on hyödyllistä mm. pelaajaan kohdistuvien hyökkäyksien välttämiseen ja _valitettavien onnettomuuksien_ aiheuttamiseen. Tehdyn vahingon määrä kaksinkertaistuu mikäli hahmoa ei voida lainkaan siirtää poispäin sen takana olevan seinän vuoksi.
+Normaali hyökkäys eli "basic attack" tekee pelihahmon attribuuttien määrittämän vahinkopisteiden määrän mukaan vahinkoa hahmon vieressä olevaan valittuun kohteeseen.
 
-#### Sotahuuto
-Sotahuuto (_"warcry"_) kylvää kauhua lähellä oleviin hahmoihin ja voi pelaajan attribuuteista riippuvalla todennäköisyydellä saattaa ne paniikkiin. Panikoivilla hahmoilla on 30% todennäköisyys joka vuoron lopuksi lopettaa panikointi. Panikoivat hahmot eivät kykene hyökkäämään, vaan liikkuvat vain pakonomaisesti poispäin kohteesta joka alunperin aiheutti paniikin.
+#### Torjuminen / "Block"
+- Käytettävissä jos pelaajan _Endurance_-attribuutti on vähintään tasolla kaksi
+- Jäähtymisaika 4-2 vuoroa riippuen pelaajan _Endurance_-attribuutista
+- Maksaa 1 AP
+- Torjuu korkeintaan yhden hyökkäyksen (kaksi jos pelaajan _Endurance_ on tasolla kymmennen)
+
+Mikäli hahmo aktivoi torjumisen vuorollaan, ei seuraava hahmoon kohdistettu hyökkäys tee lainkaan vahinkoa. Kyky poistuu käytöstä mikäli hahmoon kohdistuu hyökkäys joka torjutaan tai kun hahmon vuoro alkaa seuraavan kerran.
+
+#### Potku / "Kick"
+- Käytettävissä jos pelaajan _Strength_-attribuutti on vähintään tasolla kaksi
+- Jäähtymisaika 6-2 vuoroa, riippuen pelaajan _Strength_-attribuutista
+- Maksaa 2-1 AP, riippuen pelaajan _Strength_-attribuutista
+- Tönäisee kohdetta taaksepäin 1-4 ruutua, riippuen pelaajan _Strength_-attribuutista
+
+Potku tekee normaalin hyökkäyksen määrän vahinkoa, mutta tönäisee myös kohdehahmoa poispäin pelaajasta. Tämä on hyödyllistä mm. pelaajaan kohdistuvien hyökkäyksien välttämiseen ja _valitettavien onnettomuuksien_ aiheuttamiseen. Tehdyn vahingon määrä on 150% normaalista mikäli hahmoa ei voida lainkaan siirtää poispäin sen takana olevan seinän vuoksi.
+
+#### Sotahuuto / "Warcry"
+- Käytettävissä jos pelaajan _Charisma_-attribuutti on vähintään tasolla 2
+- Jäähtymisaika 9-4 vuoroa, riippuen pelaajan _Charisma_-attribuutista
+- Maksaa 2-1 AP, riippuen pelaajan _Charisma_-attribuutista
+- 25-85% todennäköisyys aiheuttaa paniikkia 1-4 ruudun säteellä pelaajasta
+- Todennäköisyys ja kantama riippuvat pelaajan _Charisma_-attribuutista
+
+Sotahuuto kylvää kauhua lähellä oleviin hahmoihin ja voi pelaajan attribuuteista riippuvalla todennäköisyydellä saattaa ne paniikkiin. Panikoivilla hahmoilla on 30% todennäköisyys joka vuoron lopuksi lopettaa panikointi. Panikoivat hahmot eivät kykene hyökkäämään, vaan liikkuvat pakonomaisesti poispäin kohteesta joka alunperin aiheutti paniikin.

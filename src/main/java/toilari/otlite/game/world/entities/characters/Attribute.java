@@ -288,7 +288,7 @@ public enum Attribute {
         private static final int[] WARCRY_RANGE = {-1, 1, 2, 2, 2, 3, 3, 3, 3, 4};
         private static final int[] WARCRY_COST = {-1, 2, 2, 2, 2, 2, 1, 1, 1, 1};
         private static final int[] WARCRY_COOLDOWN = {-1, 9, 8, 7, 6, 5, 4, 4, 4, 4};
-        private static final float[] WARCRY_FEAR_CHANCE = {-1, 0.15f, 0.20f, 0.25f, 0.3f, 0.35f, 0.4f, 0.5f, 0.6f, 0.75f};
+        private static final float[] WARCRY_FEAR_CHANCE = {-1, 0.25f, 0.30f, 0.35f, 0.4f, 0.45f, 0.5f, 0.6f, 0.7f, 0.85f};
 
         /**
          * Hakee attribuutin tasoa vastaavan bonuksen arvon.
