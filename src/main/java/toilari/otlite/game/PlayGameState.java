@@ -12,7 +12,7 @@ import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.EndTurnAbility;
-import toilari.otlite.game.world.entities.characters.abilities.components.EndTurnControllerComponent;
+import toilari.otlite.game.world.entities.characters.abilities.components.PlayerEndTurnControllerComponent;
 import toilari.otlite.game.world.level.LevelData;
 import toilari.otlite.game.world.level.Tile;
 
@@ -52,7 +52,7 @@ public class PlayGameState extends GameState {
         subscribeToEvents();
 
         val player = this.manager.spawnTemplate(this.characters.getByID("player"));
-        ((EndTurnControllerComponent.Player) player.getAbilities().getComponent(EndTurnAbility.class)).setAutoEndTurn(getGame().getActiveProfile().getSettings().isAutoEndTurn());
+        ((PlayerEndTurnControllerComponent) player.getAbilities().getComponent(EndTurnAbility.class)).setAutoEndTurn(getGame().getActiveProfile().getSettings().isAutoEndTurn());
         this.manager.setPlayer(player);
         val levelId = getGame().getInitialLevelId();
         this.world.changeLevel(levelId);

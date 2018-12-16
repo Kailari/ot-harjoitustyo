@@ -10,12 +10,12 @@ import toilari.otlite.game.input.Key;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.abilities.EndTurnAbility;
-import toilari.otlite.game.world.entities.characters.abilities.components.EndTurnControllerComponent;
+import toilari.otlite.game.world.entities.characters.abilities.components.PlayerEndTurnControllerComponent;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class PlayerEndTurnAbilityTest {
+class PlayerEndTurnControllerComponentTest {
     @Test
     void doesNotEndTurnWhenActionPointsRunOutAndAutoEndTurnIsFalse() {
         Input.init(new FakeInputHandler());
@@ -24,7 +24,7 @@ class PlayerEndTurnAbilityTest {
         world.init();
 
         val character = FakeCharacterObject.createWithAbilities(
-            new AbilityEntry<>(0, new EndTurnAbility(), new EndTurnControllerComponent.Player()));
+            new AbilityEntry<>(0, new EndTurnAbility(), new PlayerEndTurnControllerComponent()));
         manager.spawn(character);
 
         manager.spendActionPoints(manager.getRemainingActionPoints());
@@ -39,7 +39,7 @@ class PlayerEndTurnAbilityTest {
         val world = new World(manager);
         world.init();
 
-        val component = new EndTurnControllerComponent.Player();
+        val component = new PlayerEndTurnControllerComponent();
         component.setAutoEndTurn(true);
         val character = FakeCharacterObject.createWithAbilities(
             new AbilityEntry<>(0, new EndTurnAbility(), component));
@@ -58,7 +58,7 @@ class PlayerEndTurnAbilityTest {
         world.init();
 
         val character = FakeCharacterObject.createWithAbilities(
-            new AbilityEntry<>(0, new EndTurnAbility(), new EndTurnControllerComponent.Player()));
+            new AbilityEntry<>(0, new EndTurnAbility(), new PlayerEndTurnControllerComponent()));
         manager.spawn(character);
 
         manager.update(1.0f);
@@ -73,7 +73,7 @@ class PlayerEndTurnAbilityTest {
         world.init();
 
         val character = FakeCharacterObject.createWithAbilities(
-            new AbilityEntry<>(0, new EndTurnAbility(), new EndTurnControllerComponent.Player()));
+            new AbilityEntry<>(0, new EndTurnAbility(), new PlayerEndTurnControllerComponent()));
         manager.spawn(character);
 
         manager.update(1.0f);
@@ -83,9 +83,4 @@ class PlayerEndTurnAbilityTest {
         assertEquals(1, manager.getTotalTurn());
     }
 
-    @Test
-    @SuppressWarnings("ConstantConditions")
-    void performThrowsWhenGivenNullArgument() {
-        assertThrows(NullPointerException.class, () -> new EndTurnAbility().perform(null));
-    }
 }

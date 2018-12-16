@@ -2,7 +2,6 @@ package toilari.otlite.view.lwjgl.renderer;
 
 import lombok.NonNull;
 import lombok.val;
-import org.joml.Matrix4f;
 import toilari.otlite.dao.IGetAllDAO;
 import toilari.otlite.dao.TextureDAO;
 import toilari.otlite.dao.serialization.IGetByIDDao;
@@ -167,6 +166,10 @@ public class BestiaryGameStateRenderer<R extends IGetAllDAO<ILWJGLRenderer> & IG
                 state.setActiveCharacter(entry.getCharacter());
                 this.activeEntry = entry;
             }));
+
+        if (this.activeEntry == null) {
+            this.activeEntry = entry;
+        }
     }
 
     @Override

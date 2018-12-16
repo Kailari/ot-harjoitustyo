@@ -192,6 +192,10 @@ public class CharacterObject extends GameObject implements IHealthHandler {
 
     @Override
     public void remove() {
+        if (!this.isSpawned()) {
+            throw new IllegalStateException("Cannot remove non-spawned character!");
+        }
+
         this.deathTime = System.currentTimeMillis();
         super.remove();
     }

@@ -22,13 +22,13 @@ public class AbilityRegistry {
             .registerComponent("always_select_adjacent", AlwaysAttackAdjacentIfPossibleTargetSelectorControllerComponent.class, AlwaysAttackAdjacentIfPossibleTargetSelectorControllerComponent::new);
 
         register("move", MoveAbility.class, MoveAbility::new)
-            .registerComponent("player", MoveControllerComponent.Player.class, MoveControllerComponent.Player::new)
-            .registerComponent("animal", MoveControllerComponent.AI.class, MoveControllerComponent.AI::new)
-            .registerComponent("move_towards_player", MoveControllerComponent.AIMoveTowardsPlayer.class, MoveControllerComponent.AIMoveTowardsPlayer::new);
+            .registerComponent("player", PlayerMoveControllerComponent.class, PlayerMoveControllerComponent::new)
+            .registerComponent("animal", AIRandomRoamMoveControllerComponent.class, AIRandomRoamMoveControllerComponent::new)
+            .registerComponent("move_towards_player", AIMoveTowardsPlayerMoveControllerComponent.class, AIMoveTowardsPlayerMoveControllerComponent::new);
 
         register("end_turn", EndTurnAbility.class, EndTurnAbility::new)
-            .registerComponent("player", EndTurnControllerComponent.Player.class, EndTurnControllerComponent.Player::new)
-            .registerComponent("end_if_nothing_else_to_do", EndTurnControllerComponent.AI.class, EndTurnControllerComponent.AI::new);
+            .registerComponent("player", PlayerEndTurnControllerComponent.class, PlayerEndTurnControllerComponent::new)
+            .registerComponent("end_if_nothing_else_to_do", PerformIfNothingElseToDoEndTurnControllerComponent.class, PerformIfNothingElseToDoEndTurnControllerComponent::new);
 
         register("attack", AttackAbility.class, AttackAbility::new)
             .registerComponent("player", AttackControllerComponent.Player.class, AttackControllerComponent.Player::new)
@@ -54,6 +54,7 @@ public class AbilityRegistry {
      * @param abilityFactory tehdas jolla kyvyn instansseja voidaan tuottaa
      * @param <A>            kyvyn tyyppi
      * @param <C>            kyvyn ohjainkomponentin tyyppi
+     *
      * @return kyvyn rekisteri-instanssi jota voidaan käyttää komponenttien rekisteröintiin
      */
     public static <A extends IAbility<A, C>, C extends IControllerComponent<A>> AbilityComponentEntry<A, C> register(String key, Class<? extends A> abilityClass, Supplier<A> abilityFactory) {
@@ -67,6 +68,7 @@ public class AbilityRegistry {
      * Hakee tunnistetta vastaavan kyvyn luokan.
      *
      * @param key kyvyn tunniste
+     *
      * @return <code>null</code> jos tunnistetta vastaavaa kykyä ei löydy, muulloin tunnistetta vastaava kyky
      */
     public static Class<? extends IAbility> getAbilityClass(@NonNull String key) {
@@ -79,6 +81,7 @@ public class AbilityRegistry {
      *
      * @param abilityKey   kyvyn tunniste
      * @param componentKey ohjainkomponentin tunniste
+     *
      * @return <code>null</code> jos tunnistetta vastaavaa kykyä ei löydy, muulloin tunnistetta vastaava kyky
      */
     public static Class<? extends IControllerComponent> getComponentClass(@NonNull String abilityKey, @NonNull String componentKey) {
@@ -93,7 +96,9 @@ public class AbilityRegistry {
      * @param componentTemplate komponenttitemplaatti jota etsitään
      * @param <A>               kyvyn tyyppi
      * @param <C>               komponentin tyyppi
+     *
      * @return <code>null</code> jos komponenttia vastaavaa tehdasta ei löydy, muulloin löydetty tehdas
+     *
      * @throws NullPointerException jos kumpikaan templaateista on <code>null</code>
      */
     public static <A extends IAbility<A, C>, C extends IControllerComponent<A>> Function<C, C> getComponentInstanceFactory(@NonNull A abilityTemplate, @NonNull C componentTemplate) {
@@ -114,7 +119,9 @@ public class AbilityRegistry {
      * @param abilityTemplate kykytemplaatti jota vastaavaa tehdasta etsitään
      * @param <A>             kyvyn tyyppi
      * @param <C>             komponentin tyyppi
+     *
      * @return <code>null</code> jos kykyä vastaavaa tehdasta ei löydy, muulloin löydetty tehdas
+     *
      * @throws NullPointerException jos templaatti on <code>null</code>
      */
     public static <A extends IAbility<A, C>, C extends IControllerComponent<A>> Supplier<A> getAbilityInstanceFactory(@NonNull A abilityTemplate) {

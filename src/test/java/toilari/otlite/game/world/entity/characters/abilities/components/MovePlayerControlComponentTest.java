@@ -11,16 +11,16 @@ import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
-import toilari.otlite.game.world.entities.characters.abilities.components.MoveControllerComponent;
+import toilari.otlite.game.world.entities.characters.abilities.components.PlayerMoveControllerComponent;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-class MoveAbilityPlayerControlComponentTest {
+class MovePlayerControlComponentTest {
     @Test
     void getMoveInputXReturnsOneWhenInputHandlerOutputsRight() {
         Input.init(new FakeInputHandler(Key.RIGHT));
-        val component = new MoveControllerComponent.Player();
+        val component = new PlayerMoveControllerComponent();
 
         assertEquals(1, component.getMoveInputX());
     }
@@ -28,7 +28,7 @@ class MoveAbilityPlayerControlComponentTest {
     @Test
     void getMoveInputXReturnsMinusOneWhenInputHandlerOutputsLeft() {
         Input.init(new FakeInputHandler(Key.LEFT));
-        val component = new MoveControllerComponent.Player();
+        val component = new PlayerMoveControllerComponent();
 
         assertEquals(-1, component.getMoveInputX());
     }
@@ -36,7 +36,7 @@ class MoveAbilityPlayerControlComponentTest {
     @Test
     void getMoveInputYReturnsMinusOneWhenInputHandlerOutputsUp() {
         Input.init(new FakeInputHandler(Key.UP));
-        val component = new MoveControllerComponent.Player();
+        val component = new PlayerMoveControllerComponent();
 
         assertEquals(-1, component.getMoveInputY());
     }
@@ -44,7 +44,7 @@ class MoveAbilityPlayerControlComponentTest {
     @Test
     void getMoveInputYReturnsOneWhenInputHandlerOutputsDown() {
         Input.init(new FakeInputHandler(Key.DOWN));
-        val component = new MoveControllerComponent.Player();
+        val component = new PlayerMoveControllerComponent();
 
         assertEquals(1, component.getMoveInputY());
     }
@@ -57,7 +57,7 @@ class MoveAbilityPlayerControlComponentTest {
         world.init();
 
         val ability = new MoveAbility();
-        val component = new MoveControllerComponent.Player();
+        val component = new PlayerMoveControllerComponent();
         val player = FakeCharacterObject.createWithAbilities(
             new AbilityEntry<>(0, ability, component));
         manager.spawn(player);
@@ -74,7 +74,7 @@ class MoveAbilityPlayerControlComponentTest {
         world.init();
 
         val ability = new MoveAbility();
-        val component = new MoveControllerComponent.Player();
+        val component = new PlayerMoveControllerComponent();
         val player = FakeCharacterObject.createWithAbilities(
             new AbilityEntry<>(0, ability, component)
         );

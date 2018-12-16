@@ -44,4 +44,8 @@
 |10.12|    4 h | Käyttöliittymän viilailua, siivoilua ja lisää testejä. |
 |11.12|    3 h | Arkkitehttuurin dokumentointia ja käyttöohjeen laatimista. |
 |11.12|    1 h | Pientä viilailua. |
-| **yhteensä** | 98 h ||
+|12.12|    1 h | Windows-yhteensopivuudessa oli ongelmia, korjattu'd. |
+|12.12|    5 h | Pieniä bugifixejä ja pelihahmon progressio. |
+|13.12|    4 h | Batched renderer suorituskyvyn parantamiseksi. |
+|14.12|    2 h | Dokumentointia ja pieniä gameplay muutoksia. |
+| **yhteensä** | 110 h ||

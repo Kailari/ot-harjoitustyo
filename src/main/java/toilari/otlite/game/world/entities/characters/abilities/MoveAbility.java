@@ -2,6 +2,7 @@ package toilari.otlite.game.world.entities.characters.abilities;
 
 import lombok.val;
 import toilari.otlite.game.util.Direction;
+import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.components.MoveControllerComponent;
 
 /**
@@ -20,6 +21,7 @@ public class MoveAbility extends AbstractAbility<MoveAbility, MoveControllerComp
      *
      * @param direction suunta johon liikutaan
      * @param tiles     montako ruutua siirrytään
+     *
      * @return <code>true</code> jos liikkuminen on mahdollista
      */
     public boolean canMoveTo(Direction direction, int tiles) {
@@ -41,7 +43,8 @@ public class MoveAbility extends AbstractAbility<MoveAbility, MoveControllerComp
         val tileIsWalkable = !tileAtTarget.isWall();
 
         if (tileIsWalkable) {
-            return objectAtTarget == null || objectAtTarget.isRemoved();
+            return objectAtTarget == null || objectAtTarget.isRemoved()
+                || (objectAtTarget instanceof CharacterObject && ((CharacterObject) objectAtTarget).isDead());
         }
 
         return false;
