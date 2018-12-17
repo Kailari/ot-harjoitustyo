@@ -22,6 +22,17 @@ public class AIMoveTowardsPlayerMoveControllerComponent extends AIRandomRoamMove
         this.searchRange = ((AIMoveTowardsPlayerMoveControllerComponent) template).searchRange;
     }
 
+    /**
+     * Luo uuden komponentin ja asettaa satunnaislukugeneraattorin siemenluvun.
+     *
+     * @param searchRange matka jolta pelaajaa etsitään
+     * @param seed        siemenluku
+     */
+    public AIMoveTowardsPlayerMoveControllerComponent(int searchRange, long seed) {
+        super(seed);
+        this.searchRange = searchRange;
+    }
+
     @Override
     public void doUpdateInput(MoveAbility ability) {
         if (targetIsNear()) {

@@ -11,12 +11,21 @@ import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
 @NoArgsConstructor
 public class AIRandomRoamMoveControllerComponent extends MoveControllerComponent {
     /**
-     * Kopio komponentin toisesta komponentista.
+     * Kopioi komponentin toisesta komponentista.
      *
      * @param template komponentti josta kopioidaan
      */
     public AIRandomRoamMoveControllerComponent(MoveControllerComponent template) {
         super(template);
+    }
+
+    /**
+     * Luo uuden ohjainkomponentin ja asettaa satunnaislukugeneraattorin siemenluvun.
+     *
+     * @param seed siemenluku
+     */
+    public AIRandomRoamMoveControllerComponent(long seed) {
+        super(seed);
     }
 
     @Override

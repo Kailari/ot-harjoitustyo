@@ -15,27 +15,11 @@ import java.util.Random;
  * Hahmon hyökkäyskyky jolla hahmo voi potkia muita hahmoja tehden vahinkoa ja tönäisten niitä taaksepäin.
  */
 public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAttackControllerComponent<KickAbility>> {
-    private final Random random;
-
     /**
      * Luo uuden kyvyn.
      */
     public KickAbility() {
-        this(new Random());
-    }
-
-    /**
-     * Luo uuden kyvyn.
-     *
-     * @param seed pseudosatunnaislukugeneraattorin siemenluku
-     */
-    public KickAbility(long seed) {
-        this(new Random(seed));
-    }
-
-    private KickAbility(@NonNull Random random) {
-        super("Kick");
-        this.random = random;
+        super("kick", new Random());
     }
 
     @Override
@@ -69,7 +53,7 @@ public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAtta
         return true;
     }
 
-    private void handleKnockbackAttack(@NonNull AbstractAttackControllerComponent<KickAbility> component, GameObject target, Direction direction) {
+    private void handleKnockbackAttack(AbstractAttackControllerComponent<KickAbility> component, GameObject target, Direction direction) {
         int knockbackAmount = calculateKnockbackAmount(component.getTargetSelector().getTarget(), component.getTargetSelector().getTargetDirection());
         knockBackTarget(target, direction, knockbackAmount);
 
@@ -133,7 +117,7 @@ public class KickAbility extends AbstractAttackAbility<KickAbility, AbstractAtta
         }
 
         val maxAmount = (max - min) * (1.0f - resistance);
-        return Math.round(min + (this.random.nextFloat() * maxAmount));
+        return Math.round(min + (getRandom().nextFloat() * maxAmount));
     }
 
     private int numberOfFreeTilesInDirection(Direction direction, int max) {

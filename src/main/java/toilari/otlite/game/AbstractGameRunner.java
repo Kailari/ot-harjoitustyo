@@ -55,7 +55,20 @@ public abstract class AbstractGameRunner<T extends Camera> {
      *
      * @return <code>true</code> jos alustus onnistuu, <code>false</code> jos ilmentyy virhe
      */
-    protected abstract boolean init();
+    protected boolean init() {
+        this.game.init();
+
+        this.camera = createCamera();
+        Input.init(createInputHandler());
+        return true;
+    }
+
+    /**
+     * Vapauttaa pelille varatut resurssit.
+     */
+    protected void destroy() {
+        this.game.destroy();
+    }
 
     /**
      * Piirtää pelin.
@@ -71,11 +84,6 @@ public abstract class AbstractGameRunner<T extends Camera> {
         // TODO: Wrapper class to handle state-to-renderer -mappings to get rid of unchecked behavior
         stateRenderer.draw(camera, state);
     }
-
-    /**
-     * Vapauttaa pelin piirtämiseen varatut resurssit.
-     */
-    protected abstract void destroy();
 
     /**
      * Luo uuden syötteenkäsittelijän. Kutsutaan kerran {@link #init()} jälkeen, ennen päälooppiin siirtymistä.
@@ -96,10 +104,6 @@ public abstract class AbstractGameRunner<T extends Camera> {
      */
     public void run() {
         init();
-        this.game.init();
-
-        this.camera = createCamera();
-        Input.init(createInputHandler());
 
         var time = System.currentTimeMillis();
         while (this.game.isRunning()) {
@@ -108,11 +112,14 @@ public abstract class AbstractGameRunner<T extends Camera> {
             val delta = elapsed / 1000.0f;
             time = current;
 
-            Input.getHandler().update();
-            this.game.update(delta);
-            display(this.camera);
+            runTick(delta);
         }
-        this.game.destroy();
         destroy();
+    }
+
+    public void runTick(float delta) {
+        Input.getHandler().update();
+        this.game.update(delta);
+        display(this.camera);
     }
 }

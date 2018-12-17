@@ -20,25 +20,6 @@ class AbstractAttackAbilityTest {
     }
 
     @Test
-    void canPerformOnReturnsFalseIfAttackingSelf() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
-
-        val ability = FakeAttackAbility.create(1, 0);
-        val character = FakeCharacterObject.createAtWithAbilities(6, 9,
-            new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(null, Direction.RIGHT)),
-            new AbilityEntry<>(1, ability, FakeAttackControllerComponent.create()));
-        ability.init(character);
-        manager.spawn(character);
-
-        assertFalse(ability.canPerformOn(character, Direction.NONE));
-        for (val direction : Direction.asIterable()) {
-            assertFalse(ability.canPerformOn(character, direction));
-        }
-    }
-
-    @Test
     void canPerformOnReturnsFalseIfAttackingNull() {
         val manager = new TurnObjectManager();
         val world = new World(manager);
@@ -77,27 +58,6 @@ class AbstractAttackAbilityTest {
         assertFalse(ability.canPerformOn(other, Direction.NONE));
         for (val direction : Direction.asIterable()) {
             assertFalse(ability.canPerformOn(other, direction));
-        }
-    }
-
-    @Test
-    void canPerformOnReturnsFalseIfAttackingNonCharacter() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
-
-        val ability = FakeAttackAbility.create(1, 0);
-        val character = FakeCharacterObject.createAtWithAbilities(6, 9,
-            new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(null, Direction.RIGHT)),
-            new AbilityEntry<>(1, ability, FakeAttackControllerComponent.create()));
-        ability.init(character);
-        manager.spawn(character);
-
-        val nonCharacterObject = new GameObject();
-        manager.spawn(nonCharacterObject);
-        assertFalse(ability.canPerformOn(nonCharacterObject, Direction.NONE));
-        for (val direction : Direction.asIterable()) {
-            assertFalse(ability.canPerformOn(nonCharacterObject, direction));
         }
     }
 

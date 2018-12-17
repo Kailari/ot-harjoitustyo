@@ -48,12 +48,10 @@ public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C
 
     @Override
     public boolean canPerformOn(GameObject target, @NonNull Direction direction) {
-        if (direction == Direction.NONE || !(target instanceof CharacterObject) || target.isRemoved()) {
-            return false;
-        }
-
-        val character = (CharacterObject) target;
-        return !character.isDead() && !getCharacter().equals(character);
+        return target != null
+            && !target.isRemoved()
+            && direction != Direction.NONE
+            && (!(target instanceof CharacterObject) || !((CharacterObject) target).isDead());
     }
 
     protected void reset() {

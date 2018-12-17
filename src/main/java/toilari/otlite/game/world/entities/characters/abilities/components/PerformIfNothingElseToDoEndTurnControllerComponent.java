@@ -1,5 +1,6 @@
 package toilari.otlite.game.world.entities.characters.abilities.components;
 
+import lombok.NoArgsConstructor;
 import lombok.val;
 import toilari.otlite.game.world.entities.characters.abilities.EndTurnAbility;
 
@@ -7,6 +8,7 @@ import toilari.otlite.game.world.entities.characters.abilities.EndTurnAbility;
  * Tekoälyn vuoronlopetuskyvyn ohjainkomponentti joka lopettaa vuoron välittömästi kun mitään kykyä ei voida enää
  * käyttää.
  */
+@NoArgsConstructor
 public class PerformIfNothingElseToDoEndTurnControllerComponent extends EndTurnControllerComponent {
     private transient int updateTicksWaited;
     private transient int prevRemaining = -1;

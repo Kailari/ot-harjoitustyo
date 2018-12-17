@@ -26,6 +26,10 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
         this.random = new Random();
     }
 
+    public MoveControllerComponent(long seed) {
+        this.random = new Random(seed);
+    }
+
     @Override
     public boolean wants(MoveAbility ability) {
         return getCharacter().isPanicking() || getInputDirection() != Direction.NONE;

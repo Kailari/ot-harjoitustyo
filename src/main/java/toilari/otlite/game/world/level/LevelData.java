@@ -1,10 +1,7 @@
 package toilari.otlite.game.world.level;
 
 import com.google.gson.annotations.SerializedName;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.val;
+import lombok.*;
 import toilari.otlite.dao.IGetAllDAO;
 import toilari.otlite.dao.serialization.IGetByIDDao;
 import toilari.otlite.game.world.entities.ObjectManager;
@@ -16,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @NoArgsConstructor
+@AllArgsConstructor
 public class LevelData {
     @Getter private int width = 0, height = 0;
     @Getter private Map<String, Byte> mapping = new HashMap<>();
@@ -61,7 +59,8 @@ public class LevelData {
         }
     }
 
-    private static class CharacterEntry {
+    @AllArgsConstructor
+    public static class CharacterEntry {
         int x, y;
         String id;
     }

@@ -2,6 +2,7 @@ package toilari.otlite.game.world.entities.characters;
 
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import toilari.otlite.game.event.CharacterEvent;
@@ -18,7 +19,7 @@ public class CharacterLevels {
     private transient CharacterObject character;
 
     @Getter private int experience;
-    @Getter private int experiencePerFloor = 0;
+    @Getter @Setter private int experiencePerFloor = 0;
     private int[] attributeLevels = new int[]{1, 1, 1, 1, 1, 1, 1, 1};
 
 
@@ -186,7 +187,7 @@ public class CharacterLevels {
         setAttributeLevel(Attribute.LUCK, 1);
     }
 
-    void init(@NonNull CharacterObject character) {
+    public void init(@NonNull CharacterObject character) {
         if (character.getWorld() != null) {
             this.eventSystem = character.getWorld().getObjectManager().getEventSystem();
             this.experience = this.experiencePerFloor * character.getWorld().getFloor();

@@ -18,6 +18,10 @@ public class TileMapping {
     @NonNull private final Map<String, Byte> idToIndex = new HashMap<>();
     @NonNull private final Map<Byte, Tile> indexToTile = new HashMap<>();
 
+    public Map<String, Byte> getMapping() {
+        return this.idToIndex;
+    }
+
     /**
      * Luo hakutaulun johon lisätään annetulla DAO:lla löydetyt ruututyyppien
      * määrittelyt.
