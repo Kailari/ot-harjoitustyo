@@ -5,6 +5,8 @@ import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.characters.abilities.AbstractAttackAbility;
 
+import java.util.Random;
+
 public class FakeAttackAbility extends AbstractAttackAbility<FakeAttackAbility, FakeAttackControllerComponent> {
     private final int cost;
     private final int cooldown;
@@ -18,7 +20,7 @@ public class FakeAttackAbility extends AbstractAttackAbility<FakeAttackAbility, 
     }
 
     private FakeAttackAbility(int cost, int cooldown) {
-        super("fakeAttack");
+        super("fakeAttack", new Random(1337));
         this.cost = cost;
         this.cooldown = cooldown;
     }

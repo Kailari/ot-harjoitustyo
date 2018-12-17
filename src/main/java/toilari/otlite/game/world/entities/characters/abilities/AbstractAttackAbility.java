@@ -39,14 +39,6 @@ public abstract class AbstractAttackAbility<A extends AbstractAttackAbility<A, C
     }
 
     @Override
-    public void init(@NonNull CharacterObject character) {
-        super.init(character);
-        if (this.random == null) {
-            this.random = new Random();
-        }
-    }
-
-    @Override
     public boolean canPerformOn(GameObject target, @NonNull Direction direction) {
         return target != null
             && !target.isRemoved()

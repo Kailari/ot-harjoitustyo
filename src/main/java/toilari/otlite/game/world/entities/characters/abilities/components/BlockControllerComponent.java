@@ -1,5 +1,6 @@
 package toilari.otlite.game.world.entities.characters.abilities.components;
 
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
@@ -10,6 +11,7 @@ import toilari.otlite.game.world.entities.characters.abilities.BlockAbility;
 /**
  * Torjumiskyvyn ohjainkomponentti.
  */
+@NoArgsConstructor
 public abstract class BlockControllerComponent
     extends AbstractTargetedControllerComponent<BlockAbility>
     implements ITargetedControllerComponent<BlockAbility> {

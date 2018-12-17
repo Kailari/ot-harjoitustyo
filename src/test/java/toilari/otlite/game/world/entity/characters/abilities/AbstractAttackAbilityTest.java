@@ -1,14 +1,19 @@
 package toilari.otlite.game.world.entity.characters.abilities;
 
+import lombok.NonNull;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import toilari.otlite.fake.*;
+import toilari.otlite.game.event.CharacterEvent;
 import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.TurnObjectManager;
+import toilari.otlite.game.world.entities.characters.Attribute;
 import toilari.otlite.game.world.entities.characters.abilities.AttackAbility;
+import toilari.otlite.game.world.entities.characters.abilities.BlockAbility;
 import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbility;
+import toilari.otlite.game.world.entities.characters.abilities.components.BlockControllerComponent;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -236,6 +241,76 @@ class AbstractAttackAbilityTest {
         manager.spawn(character);
 
         assertTrue(ability.perform(component));
+    }
+
+    @Test
+    void performReturnsTrueForDummyNonCharacterNonHealthHandlerTarget() {
+        val manager = new TurnObjectManager();
+        val world = new World(manager);
+        world.init();
+
+        val other = new GameObject();
+        manager.spawn(other);
+
+        val ability = FakeAttackAbility.create(1, 0);
+        val component = FakeAttackControllerComponent.create();
+        val character = FakeCharacterObject.createWithAbilities(
+            new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(other, Direction.RIGHT)),
+            new AbilityEntry<>(1, ability, component));
+
+        manager.spawn(character);
+
+        assertTrue(ability.perform(component));
+    }
+
+    // "variables used in lambda expressions need to be final or effectively final" - so we need to use fields instead.
+    private int blockedAttacks = 0;
+    private int evadedAttacks = 0;
+
+    @Test
+    void targetEvasionAndBlockingProcs() {
+        val manager = new TurnObjectManager();
+        val world = new World(manager);
+        world.init();
+
+        this.blockedAttacks = 0;
+        this.evadedAttacks = 0;
+        manager.getEventSystem().subscribeTo(CharacterEvent.BlockedAttack.class, (e) -> this.blockedAttacks++);
+        manager.getEventSystem().subscribeTo(CharacterEvent.MissedAttack.class, (e) -> this.evadedAttacks++);
+
+        val block = new BlockAbility();
+        val blockComponent = new BlockControllerComponent() {
+            @Override
+            protected void doUpdateInput(@NonNull BlockAbility ability) {
+            }
+        };
+        val other = FakeCharacterObject.createImmortalWithAbilities(
+            new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(null, Direction.NONE)),
+            new AbilityEntry<>(1, block, blockComponent)
+        );
+        manager.spawn(other);
+        other.getLevels().rewardExperience(1000);
+        other.getLevels().setAttributeLevel(Attribute.ENDURANCE, 2);
+
+        val ability = FakeAttackAbility.create(1, 0);
+        val component = FakeAttackControllerComponent.create();
+        val ts = FakeTargetSelectorControllerComponent.create(other, Direction.RIGHT);
+        val character = FakeCharacterObject.createWithAbilities(
+            new AbilityEntry<>(0, new TargetSelectorAbility(), ts),
+            new AbilityEntry<>(1, ability, component));
+
+        manager.spawn(character);
+
+        for (int i = 0; i < 10000; i++) {
+            ts.setTarget(other, Direction.RIGHT);
+            if (i % 5 == 0) {
+                block.perform(blockComponent);
+            }
+            ability.perform(component);
+        }
+
+        assertEquals(2000, this.blockedAttacks);
+        assertEquals(419, this.evadedAttacks);
     }
 
     @Test

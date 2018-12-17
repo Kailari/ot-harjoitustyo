@@ -14,7 +14,7 @@ public class FakeCharacterObject extends CharacterObject {
             2,
             0,
             0.1f,
-            0.0f,
+            0.05f,
             0.001f,
             0.0f,
             0.0f,
@@ -31,6 +31,32 @@ public class FakeCharacterObject extends CharacterObject {
 
     private FakeCharacterObject(CharacterAttributes attributes) {
         super(attributes);
+    }
+
+    public static FakeCharacterObject createImmortalWithAbilities(AbilityEntry... abilities) {
+        val character = createWithAttributes(new CharacterAttributes(null, 1, 0, 1, 0, 10,
+            2,
+            0,
+            0.1f,
+            0.05f,
+            0.001f,
+            0.0f,
+            0.0f,
+            1.0f,
+            0.1f,
+            0.0f,
+            0.1f,
+            Float.POSITIVE_INFINITY,
+            0.1f,
+            0.5f,
+            0.001f
+        ));
+
+        for (val entry : abilities) {
+            character.getAbilities().addAbility(entry.getAbility(), entry.getComponent());
+        }
+
+        return character;
     }
 
     public static FakeCharacterObject create() {
