@@ -32,35 +32,33 @@ public class AlwaysAttackAdjacentIfPossibleTargetSelectorControllerComponent ext
     public void updateInput(@NonNull TargetSelectorAbility ability) {
         val world = getCharacter().getWorld();
         val manager = world.getObjectManager();
-        val player = manager.getPlayer(); // TODO: Instead of targetting only player, determine by target candidate instead
+        val player = manager.getPlayer();
 
         if (findNewActiveAbility(manager)) {
-            return;
-        }
-
-        for (val direction : Direction.asIterable()) {
-            val candidate = findTargetInDirection(direction);
-            if (Objects.equals(player, candidate)) {
-                setTarget(player, direction);
-                return;
+            for (val direction : Direction.asIterable()) {
+                val candidate = findTargetInDirection(direction);
+                if (Objects.equals(player, candidate)) {
+                    setTarget(player, direction);
+                    return;
+                }
             }
         }
 
         setTarget(null, Direction.NONE);
     }
 
-    private boolean findNewActiveAbility(@NonNull TurnObjectManager manager) {
+    private boolean findNewActiveAbility(TurnObjectManager manager) {
         val activeCandidate = Arrays.stream(getAbilities())
             .sorted(Comparator.comparingInt(IAbility::getPriority))
-            .filter(a -> !a.isOnCooldown() && manager.getRemainingActionPoints() >= a.getCost())
+            .filter((a) -> a.getCost() > -1 && !a.isOnCooldown() && manager.getRemainingActionPoints() >= a.getCost())
             .findFirst();
 
         if (!activeCandidate.isPresent()) {
             this.setActiveTargetedAbility(null);
-            return true;
+            return false;
         }
 
         this.setActiveTargetedAbility(activeCandidate.get());
-        return false;
+        return true;
     }
 }
