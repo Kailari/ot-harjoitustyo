@@ -117,6 +117,11 @@ public abstract class AbstractGameRunner<T extends Camera> {
         destroy();
     }
 
+    /**
+     * Simuloi peliä yhden päivityssyklin verran.
+     *
+     * @param delta viimeisimmästä päivityksestä kulunut aika
+     */
     public void runTick(float delta) {
         Input.getHandler().update();
         this.game.update(delta);

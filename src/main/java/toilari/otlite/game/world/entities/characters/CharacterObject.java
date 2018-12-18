@@ -83,8 +83,14 @@ public class CharacterObject extends GameObject implements IHealthHandler {
      * @param attributes attribuuttien arvot
      * @param levels     attribuuttien tasot
      * @param info       hahmon tiedot
+     * @param random     hahmon satunnaislukugeneraattori
      */
-    public CharacterObject(@NonNull CharacterAttributes attributes, @NonNull CharacterLevels levels, @NonNull CharacterInfo info, @NonNull Random random) {
+    public CharacterObject(
+        @NonNull CharacterAttributes attributes,
+        @NonNull CharacterLevels levels,
+        @NonNull CharacterInfo info,
+        @NonNull Random random
+    ) {
         this.attributes = attributes;
         this.levels = levels;
         this.info = info;

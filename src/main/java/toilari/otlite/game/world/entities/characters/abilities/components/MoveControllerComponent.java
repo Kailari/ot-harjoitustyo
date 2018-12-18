@@ -26,6 +26,11 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
         this.random = new Random();
     }
 
+    /**
+     * Luo uuden ohjainkomponentin.
+     *
+     * @param seed satunnaislukugeneraattorin siemenluku
+     */
     public MoveControllerComponent(long seed) {
         this.random = new Random(seed);
     }
@@ -67,16 +72,20 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
         if (!getCharacter().isPanicking()) {
             doUpdateInput(ability);
         } else {
-            Direction direction;
-            if (!this.availableDirections.isEmpty()) {
-                this.availableDirections.sort(Comparator.comparingInt(this::distanceToPanicSource));
-                direction = this.availableDirections.get(this.availableDirections.size() - 1);
-            } else {
-                direction = Direction.NONE;
-            }
-            setInputX(direction.getDx());
-            setInputY(direction.getDy());
+            handlePanickMove();
         }
+    }
+
+    private void handlePanickMove() {
+        Direction direction;
+        if (!this.availableDirections.isEmpty()) {
+            this.availableDirections.sort(Comparator.comparingInt(this::distanceToPanicSource));
+            direction = this.availableDirections.get(this.availableDirections.size() - 1);
+        } else {
+            direction = Direction.NONE;
+        }
+        setInputX(direction.getDx());
+        setInputY(direction.getDy());
     }
 
     private int distanceToPanicSource(Direction direction) {

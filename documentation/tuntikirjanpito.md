@@ -48,4 +48,7 @@
 |12.12|    5 h | Pieniä bugifixejä ja pelihahmon progressio. |
 |13.12|    4 h | Batched renderer suorituskyvyn parantamiseksi. |
 |14.12|    2 h | Dokumentointia ja pieniä gameplay muutoksia. |
-| **yhteensä** | 110 h ||
+|16.12|    2 h | Testejä. |
+|17.12|    2 h | Testejä. Lisättiin laajempi "testiskenaario". |
+|18.12|    2 h | Testejä, testejä testejä. |
+| **yhteensä** | 116 h ||

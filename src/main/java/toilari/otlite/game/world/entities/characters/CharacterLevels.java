@@ -187,6 +187,11 @@ public class CharacterLevels {
         setAttributeLevel(Attribute.LUCK, 1);
     }
 
+    /**
+     * Alustaa hahmon attribuuttien tasojen hallinnointiin tarvittavat resurssit.
+     *
+     * @param character hahmo jonka attribuuttien tasoja hallinnoidaan
+     */
     public void init(@NonNull CharacterObject character) {
         if (character.getWorld() != null) {
             this.eventSystem = character.getWorld().getObjectManager().getEventSystem();
