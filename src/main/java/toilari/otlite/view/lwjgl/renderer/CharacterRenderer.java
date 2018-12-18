@@ -22,7 +22,7 @@ public class CharacterRenderer implements ILWJGLRenderer<CharacterObject> {
     @Getter(AccessLevel.PROTECTED) @NonNull private final IGetDAO<Texture, String> textureDAO;
     @Getter(AccessLevel.PROTECTED) @NonNull private final TextRenderer textRenderer;
 
-    private final Context context;
+    @Getter private final Context context;
 
     @Getter(AccessLevel.PROTECTED) private Texture texture;
     @Getter(AccessLevel.PROTECTED) private AnimatedSprite sprite;

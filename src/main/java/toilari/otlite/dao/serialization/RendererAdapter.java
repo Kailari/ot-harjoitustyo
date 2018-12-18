@@ -8,8 +8,12 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import toilari.otlite.dao.TextureDAO;
+import toilari.otlite.view.lwjgl.LWJGLCamera;
+import toilari.otlite.view.lwjgl.batch.SpriteBatch;
+import toilari.otlite.view.lwjgl.renderer.CharacterRenderer;
+import toilari.otlite.view.lwjgl.renderer.Context;
 import toilari.otlite.view.lwjgl.renderer.ILWJGLRenderer;
-import toilari.otlite.view.renderer.IRenderer;
+import toilari.otlite.view.lwjgl.renderer.PlayerRenderer;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -20,7 +24,13 @@ import java.util.Map;
  */
 @Slf4j
 public class RendererAdapter implements JsonDeserializer<ILWJGLRenderer> {
-    private final Map<String, RendererEntry<?, ?>> renderers = new HashMap<>();
+    private static final Map<String, RendererEntry<?, ?>> RENDERERS = new HashMap<>();
+
+    static {
+        registerRenderer("player", PlayerRenderer::new, Context.class);
+        registerRenderer("character", CharacterRenderer::new, Context.class);
+    }
+
     private final TextureDAO textureDAO;
 
     /**
@@ -32,12 +42,12 @@ public class RendererAdapter implements JsonDeserializer<ILWJGLRenderer> {
      * @param <R>             piirtäjän tyyppi
      * @param <C>             piirtokontekstin tyyppi
      */
-    public <R extends ILWJGLRenderer, C> void registerRenderer(
+    public static <R extends ILWJGLRenderer, C> void registerRenderer(
         @NonNull String key,
         @NonNull RendererFactory<R, C> rendererFactory,
         @NonNull Class<? extends C> contextClass
     ) {
-        this.renderers.put(key, new RendererEntry<>(rendererFactory, contextClass));
+        RENDERERS.put(key, new RendererEntry<>(rendererFactory, contextClass));
     }
 
     /**
@@ -53,18 +63,20 @@ public class RendererAdapter implements JsonDeserializer<ILWJGLRenderer> {
     public ILWJGLRenderer deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         val jsonObj = json.getAsJsonObject();
         if (jsonObj == null) {
-            return null;
+            return new NOPRenderer();
         }
 
         val classPrimitive = jsonObj.getAsJsonPrimitive("class");
         if (classPrimitive == null) {
-            return null;
+            LOG.warn("Renderer definition did not contain a \"class\" tag!");
+            return new NOPRenderer();
         }
 
         val key = classPrimitive.getAsString();
-        val entry = this.renderers.get(key);
+        val entry = RENDERERS.get(key);
         if (entry == null) {
-            return null;
+            LOG.warn("Unknown renderer class: \"{}\"", key);
+            return new NOPRenderer();
         }
 
         val renderContext = context.deserialize(jsonObj, entry.getContextClass());
@@ -88,5 +100,12 @@ public class RendererAdapter implements JsonDeserializer<ILWJGLRenderer> {
          * @return uusi piirtäjä jolle on asetettu annettu konteksti
          */
         R provide(TextureDAO textures, C context);
+    }
+
+    public class NOPRenderer implements ILWJGLRenderer {
+        @Override
+        public void draw(@NonNull LWJGLCamera camera, @NonNull Object renderable, @NonNull SpriteBatch batch) {
+            // NOP
+        }
     }
 }

@@ -25,9 +25,8 @@
     "baseCriticalHitDamage": 1.0
   },
   "levels": {
-    "experience": 200,
     "attributeLevels": [
-      2, 1, 1, 1, 1, 1, 1, 1
+      1, 1, 1, 1, 1, 1, 1, 1
     ],
     "experiencePerFloor": 15
   },

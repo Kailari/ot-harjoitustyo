@@ -16,6 +16,7 @@ import toilari.otlite.game.world.level.Tile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
@@ -129,7 +130,7 @@ public class ObjectManager {
         val attributes = new CharacterAttributes(template.getAttributes());
         val levels = new CharacterLevels(template.getLevels());
         val info = new CharacterInfo(template.getInfo());
-        val instance = new CharacterObject(attributes, levels, info);
+        val instance = new CharacterObject(attributes, levels, info, new Random());
         instance.getAbilities().cloneAbilitiesFrom(template.getAbilities());
         instance.setRendererID(template.getRendererID());
         instance.setHealth(template.getHealth());

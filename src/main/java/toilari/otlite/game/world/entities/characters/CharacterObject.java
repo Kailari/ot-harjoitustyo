@@ -23,7 +23,7 @@ import java.util.stream.StreamSupport;
 public class CharacterObject extends GameObject implements IHealthHandler {
     @Getter private transient int turnsTaken;
     @Getter private transient long deathTime;
-    private transient final Random random = new Random();
+    private transient final Random random;
 
     // Overrides IHealthHandler get/setHealth
     @Getter(onMethod = @__({@Override})) @Setter(onMethod = @__({@Override}))
@@ -84,24 +84,24 @@ public class CharacterObject extends GameObject implements IHealthHandler {
      * @param levels     attribuuttien tasot
      * @param info       hahmon tiedot
      */
-    public CharacterObject(@NonNull CharacterAttributes attributes, @NonNull CharacterLevels levels, CharacterInfo info) {
+    public CharacterObject(@NonNull CharacterAttributes attributes, @NonNull CharacterLevels levels, @NonNull CharacterInfo info, @NonNull Random random) {
         this.attributes = attributes;
         this.levels = levels;
+        this.info = info;
+        this.random = random;
 
         this.abilities = new CharacterAbilities();
-        this.info = info;
+
     }
 
     /**
      * Luo uuden hahmon ja antaa sille annetunmukaiset aloitusattribuutit.
      *
      * @param attributes hahmon attribuutit
+     * @param random     hahmon satunnaislukugeneraattori
      */
-    public CharacterObject(@NonNull CharacterAttributes attributes) {
-        this.attributes = attributes;
-        this.levels = new CharacterLevels();
-        this.info = new CharacterInfo();
-        this.abilities = new CharacterAbilities();
+    public CharacterObject(@NonNull CharacterAttributes attributes, @NonNull Random random) {
+        this(attributes, new CharacterLevels(), new CharacterInfo(), random);
     }
 
     @Override
@@ -157,8 +157,8 @@ public class CharacterObject extends GameObject implements IHealthHandler {
             // noinspection unchecked
             if (handleAbility(turnManager, ability)) {
                 StreamSupport.stream(this.abilities.getAbilitiesSortedByPriority().spliterator(), false)
-                    .map(a -> getAbilities().getComponentResponsibleFor(a))
-                    .forEach(c -> ((IControllerComponent) c).reset());
+                    .map((a) -> getAbilities().getComponentResponsibleFor(a))
+                    .forEach((c) -> ((IControllerComponent) c).reset());
                 break;
             }
         }
@@ -177,11 +177,13 @@ public class CharacterObject extends GameObject implements IHealthHandler {
 
     private void handleEndPanic() {
         if (this.isPanicking()) {
-            this.panicking = this.random.nextFloat() < 0.35f;
+            this.panicking = this.random.nextFloat() > 0.35f;
         }
     }
 
-    private <A extends IAbility<A, C>, C extends IControllerComponent<A>> void handleAbilityEndTurn(A ability) {
+    private <A extends IAbility<A, C>, C extends IControllerComponent<A>> void handleAbilityEndTurn(
+        A ability
+    ) {
         this.abilities.getComponentResponsibleFor(ability).reset();
 
         if (ability.isOnCooldown()) {
@@ -200,7 +202,10 @@ public class CharacterObject extends GameObject implements IHealthHandler {
         super.remove();
     }
 
-    private <A extends IAbility<A, C>, C extends IControllerComponent<A>> boolean handleAbility(@NonNull TurnObjectManager turnManager, @NonNull A ability) {
+    private <A extends IAbility<A, C>, C extends IControllerComponent<A>> boolean handleAbility(
+        TurnObjectManager turnManager,
+        A ability
+    ) {
         if (ability.isOnCooldown()) {
             return false;
         }

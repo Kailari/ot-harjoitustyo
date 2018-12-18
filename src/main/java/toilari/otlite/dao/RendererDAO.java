@@ -39,12 +39,9 @@ public class RendererDAO extends AutoDiscoverFileDAO<ILWJGLRenderer> implements 
      */
     public RendererDAO(@NonNull String root, @NonNull TextureDAO textureDAO) {
         super(root);
-        val typeAdapter = new RendererAdapter(textureDAO);
-        typeAdapter.registerRenderer("player", PlayerRenderer::new, Context.class);
-        typeAdapter.registerRenderer("character", CharacterRenderer::new, Context.class);
         this.gson = new GsonBuilder()
             .registerTypeAdapter(Color.class, new ColorAdapter())
-            .registerTypeAdapter(ILWJGLRenderer.class, typeAdapter)
+            .registerTypeAdapter(ILWJGLRenderer.class, new RendererAdapter(textureDAO))
             .create();
     }
 

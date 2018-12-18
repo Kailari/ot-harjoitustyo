@@ -12,6 +12,7 @@ import toilari.otlite.game.world.entities.characters.abilities.IAbility;
 import toilari.otlite.game.world.entities.characters.abilities.components.IControllerComponent;
 
 import java.lang.reflect.Type;
+import java.util.Random;
 
 /**
  * Gson adapteri hahmojen ja hahmojen komponenttien sarjoittamiseen.
@@ -26,7 +27,7 @@ public class CharacterAdapter implements JsonDeserializer<CharacterObject> {
         val characterLevels = deserializeOrCreateNewLevels(context, jsonObj);
         val characterInfo = deserializeOrCreateNewInfo(context, jsonObj);
 
-        val character = new CharacterObject(characterAttributes, characterLevels, characterInfo);
+        val character = new CharacterObject(characterAttributes, characterLevels, characterInfo, new Random());
 
         val abilities = jsonObj.getAsJsonObject("abilities");
         if (abilities != null) {

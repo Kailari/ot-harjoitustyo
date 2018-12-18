@@ -7,6 +7,7 @@ import toilari.otlite.game.world.entities.characters.CharacterAttributes;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 
 import java.util.HashMap;
+import java.util.Random;
 
 public class FakeCharacterObject extends CharacterObject {
     private FakeCharacterObject() {
@@ -30,7 +31,27 @@ public class FakeCharacterObject extends CharacterObject {
     }
 
     private FakeCharacterObject(CharacterAttributes attributes) {
-        super(attributes);
+        super(attributes, new Random());
+    }
+
+    public FakeCharacterObject(Random random) {
+        super(new CharacterAttributes(null, 1, 0, 1, 0, 10,
+            2,
+            0,
+            0.1f,
+            0.05f,
+            0.001f,
+            0.0f,
+            0.0f,
+            1.0f,
+            0.1f,
+            0.0f,
+            0.1f,
+            10.0f,
+            0.1f,
+            0.5f,
+            0.001f
+        ), random);
     }
 
     public static FakeCharacterObject createImmortalWithAbilities(AbilityEntry... abilities) {
@@ -108,5 +129,9 @@ public class FakeCharacterObject extends CharacterObject {
         manager.spawn(map.get(Direction.UP));
         manager.spawn(map.get(Direction.DOWN));
         return map;
+    }
+
+    public static FakeCharacterObject create(Random random) {
+        return new FakeCharacterObject(random);
     }
 }

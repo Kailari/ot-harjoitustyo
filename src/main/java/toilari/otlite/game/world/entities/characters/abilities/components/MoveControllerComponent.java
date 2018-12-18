@@ -67,8 +67,13 @@ public abstract class MoveControllerComponent extends AbstractControllerComponen
         if (!getCharacter().isPanicking()) {
             doUpdateInput(ability);
         } else {
-            this.availableDirections.sort(Comparator.comparingInt(this::distanceToPanicSource));
-            val direction = this.availableDirections.get(this.availableDirections.size() - 1);
+            Direction direction;
+            if (!this.availableDirections.isEmpty()) {
+                this.availableDirections.sort(Comparator.comparingInt(this::distanceToPanicSource));
+                direction = this.availableDirections.get(this.availableDirections.size() - 1);
+            } else {
+                direction = Direction.NONE;
+            }
             setInputX(direction.getDx());
             setInputY(direction.getDy());
         }

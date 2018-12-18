@@ -13,10 +13,20 @@ import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbi
 import toilari.otlite.game.world.entities.characters.abilities.components.KickControllerComponent;
 import toilari.otlite.game.world.entities.characters.abilities.components.PlayerTargetSelectorControllerComponent;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerTargetSelectorControllerComponentTest {
+    @Test
+    void cycleTargetsDoesNotThrowIfActiveIsNull() {
+        assertDoesNotThrow(() -> new PlayerTargetSelectorControllerComponent().cycleTargets());
+    }
+
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void updateInputThrowsIfAbilityIsNull() {
+        assertThrows(NullPointerException.class, () -> new PlayerTargetSelectorControllerComponent().updateInput(null));
+    }
+
     @Test
     void cycleTargetsSelectsCorrectAfterSettingTargetManually() {
         val manager = new TurnObjectManager();

@@ -190,7 +190,7 @@ public class CharacterLevels {
     public void init(@NonNull CharacterObject character) {
         if (character.getWorld() != null) {
             this.eventSystem = character.getWorld().getObjectManager().getEventSystem();
-            this.experience = this.experiencePerFloor * character.getWorld().getFloor();
+            this.experience += this.experiencePerFloor * character.getWorld().getFloor();
         }
         this.character = character;
 
