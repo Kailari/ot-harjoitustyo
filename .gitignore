@@ -2,6 +2,7 @@
 .idea
 *.iml
 *.ipr
+.attach_pid*
 
 # Maven
 /laskarit/viikko2/Unicafe/target
