@@ -17,10 +17,10 @@ public abstract class AbstractTargetedControllerComponent<A extends AbstractAbil
     implements ITargetedControllerComponent<A> {
 
     @Getter private transient TargetSelectorControllerComponent targetSelector;
-    @Setter(AccessLevel.PROTECTED) private transient boolean wants;
+    @Getter @Setter(AccessLevel.PROTECTED) private transient boolean wantsPerform;
 
 
-    protected AbstractTargetedControllerComponent(AbstractControllerComponent template) {
+    protected AbstractTargetedControllerComponent(AbstractControllerComponent<A> template) {
         super(template);
     }
 
@@ -36,18 +36,18 @@ public abstract class AbstractTargetedControllerComponent<A extends AbstractAbil
 
     @Override
     public boolean wants(@NonNull A ability) {
-        return this.wants;
+        return this.targetSelector.getTarget() != null && this.wantsPerform;
     }
 
     @Override
     public void abilityPerformed(A ability) {
         this.targetSelector.abilityPerformed(getCharacter().getAbilities().getAbility(TargetSelectorAbility.class));
-        this.wants = false;
+        this.wantsPerform = false;
     }
 
     @Override
     public void reset() {
-        this.wants = false;
+        this.wantsPerform = false;
     }
 
     @Override

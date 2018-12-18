@@ -40,7 +40,7 @@ public abstract class BlockControllerComponent
 
         @Override
         protected void doUpdateInput(@NonNull BlockAbility ability) {
-            setWants(Input.getHandler().isKeyPressed(Key.SPACE));
+            setWantsPerform(Input.getHandler().isKeyPressed(Key.SPACE));
         }
     }
 }

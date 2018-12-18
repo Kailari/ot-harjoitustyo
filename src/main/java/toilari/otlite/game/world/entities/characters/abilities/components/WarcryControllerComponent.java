@@ -5,7 +5,6 @@ import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
 import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.entities.GameObject;
-import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbility;
 import toilari.otlite.game.world.entities.characters.abilities.WarcryAbility;
 
 /**
@@ -41,7 +40,7 @@ public abstract class WarcryControllerComponent
 
         @Override
         public void doUpdateInput(@NonNull WarcryAbility ability) {
-            setWants(Input.getHandler().isKeyPressed(Key.SPACE));
+            setWantsPerform(Input.getHandler().isKeyPressed(Key.SPACE));
         }
     }
 }
