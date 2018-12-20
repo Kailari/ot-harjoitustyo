@@ -3,7 +3,7 @@ package toilari.otlite.game.world.entity;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import toilari.otlite.fake.FakeCharacterObject;
-import toilari.otlite.game.world.World;
+import toilari.otlite.fake.FakeWorld;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.CharacterAttributes;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
@@ -21,9 +21,7 @@ class TurnObjectManagerTest {
 
     @Test
     void getRemainingActionPointsRetunsInitiallyCorrectAmount() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val character = FakeCharacterObject.createWithAttributes(new CharacterAttributes(
             null,
@@ -48,48 +46,42 @@ class TurnObjectManagerTest {
             0.5f,
             0.001f
         ));
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
-        assertEquals(1337, manager.getRemainingActionPoints());
+        assertEquals(1337, world.getObjectManager().getRemainingActionPoints());
     }
 
     @Test
     void spendActionPointsThrowsIfRemainingGoesNegative() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val character = FakeCharacterObject.create();
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
-        assertThrows(IllegalArgumentException.class, () -> manager.spendActionPoints(100));
+        assertThrows(IllegalArgumentException.class, () -> world.getObjectManager().spendActionPoints(100));
     }
 
     @Test
     void spendActionPointsThrowsIfAmountIsNegative() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val character = FakeCharacterObject.create();
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
-        assertThrows(IllegalArgumentException.class, () -> manager.spendActionPoints(-1));
+        assertThrows(IllegalArgumentException.class, () -> world.getObjectManager().spendActionPoints(-1));
     }
 
     @Test
     void spendActionPointsReducesRemainingPointsAndPointsCanReachZero() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val character = FakeCharacterObject.create();
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
-        manager.spendActionPoints(1);
-        assertEquals(1, manager.getRemainingActionPoints());
-        manager.spendActionPoints(1);
-        assertEquals(0, manager.getRemainingActionPoints());
+        world.getObjectManager().spendActionPoints(1);
+        assertEquals(1, world.getObjectManager().getRemainingActionPoints());
+        world.getObjectManager().spendActionPoints(1);
+        assertEquals(0, world.getObjectManager().getRemainingActionPoints());
     }
 
     @Test
@@ -104,113 +96,101 @@ class TurnObjectManagerTest {
 
     @Test
     void firstSpawnedCharacterGetsTurnEvenIfNextTurnIsCalledBeforeSpawning() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val character = FakeCharacterObject.create();
-        manager.nextTurn();
-        manager.nextTurn();
-        manager.nextTurn();
-        manager.spawn(character);
+        world.getObjectManager().nextTurn();
+        world.getObjectManager().nextTurn();
+        world.getObjectManager().nextTurn();
+        world.getObjectManager().spawn(character);
 
-        assertEquals(character, manager.getActiveCharacter());
-        assertTrue(manager.isCharactersTurn(character));
+        assertEquals(character, world.getObjectManager().getActiveCharacter());
+        assertTrue(world.getObjectManager().isCharactersTurn(character));
     }
 
     @Test
     void getActiveCharacterRetunsOnlyCharacterWhenThereIsOnlyOne() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val character = FakeCharacterObject.create();
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
-        assertEquals(character, manager.getActiveCharacter());
+        assertEquals(character, world.getObjectManager().getActiveCharacter());
     }
 
     @Test
     void onlyCharacterGetsTurnsInfinitelyTest100Cycles() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val character = FakeCharacterObject.create();
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         for (int i = 0; i < 100; i++) {
-            assertTrue(manager.isCharactersTurn(character));
-            manager.nextTurn();
+            assertTrue(world.getObjectManager().isCharactersTurn(character));
+            world.getObjectManager().nextTurn();
         }
     }
 
     @Test
     void turnsRepeatAfterFullRoundTest100CyclesWithMultipleCharacters() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val a = FakeCharacterObject.create();
         val b = FakeCharacterObject.create();
         val c = FakeCharacterObject.create();
-        manager.spawn(a);
-        manager.spawn(b);
-        manager.spawn(c);
+        world.getObjectManager().spawn(a);
+        world.getObjectManager().spawn(b);
+        world.getObjectManager().spawn(c);
 
         for (int i = 0; i < 100; i++) {
-            assertTrue(manager.isCharactersTurn(a));
+            assertTrue(world.getObjectManager().isCharactersTurn(a));
 
-            manager.nextTurn();
-            assertTrue(manager.isCharactersTurn(b));
+            world.getObjectManager().nextTurn();
+            assertTrue(world.getObjectManager().isCharactersTurn(b));
 
-            manager.nextTurn();
-            assertTrue(manager.isCharactersTurn(c));
+            world.getObjectManager().nextTurn();
+            assertTrue(world.getObjectManager().isCharactersTurn(c));
 
-            manager.nextTurn();
+            world.getObjectManager().nextTurn();
         }
     }
 
     @Test
     void charactersTakeTurnsInTheOrderTheyAreSpawned() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val a = FakeCharacterObject.create();
         val b = FakeCharacterObject.create();
         val c = FakeCharacterObject.create();
-        manager.spawn(a);
-        manager.spawn(b);
-        manager.spawn(c);
+        world.getObjectManager().spawn(a);
+        world.getObjectManager().spawn(b);
+        world.getObjectManager().spawn(c);
 
-        assertTrue(manager.isCharactersTurn(a));
+        assertTrue(world.getObjectManager().isCharactersTurn(a));
 
-        manager.nextTurn();
-        assertTrue(manager.isCharactersTurn(b));
+        world.getObjectManager().nextTurn();
+        assertTrue(world.getObjectManager().isCharactersTurn(b));
 
-        manager.nextTurn();
-        assertTrue(manager.isCharactersTurn(c));
+        world.getObjectManager().nextTurn();
+        assertTrue(world.getObjectManager().isCharactersTurn(c));
     }
 
     @Test
     void removingCharactersDoesNotBreakTheOrderingWithRemovedObjectsNotCleanedUp() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val characters = new FakeCharacterObject[1000];
         int nRemoved = 0;
         for (int i = 0; i < characters.length; i++) {
             characters[i] = FakeCharacterObject.create();
-            manager.spawn(characters[i]);
+            world.getObjectManager().spawn(characters[i]);
         }
 
         int i = 0;
         int j = 0;
         val rand = new Random(1337);
         while (nRemoved < characters.length * 0.9f) {
-            assertTrue(manager.isCharactersTurn(characters[j]));
+            assertTrue(world.getObjectManager().isCharactersTurn(characters[j]));
             if (!characters[i].isRemoved()) {
                 characters[i].remove();
                 nRemoved++;
@@ -227,30 +207,28 @@ class TurnObjectManagerTest {
                     j = 0;
                 }
             } while (characters[j].isRemoved());
-            manager.nextTurn();
+            world.getObjectManager().nextTurn();
         }
     }
 
     @Test
     void removingCharactersDoesNotBreakTheOrderingWithRemovedObjectsCleanedUpByUpdatingRemovalOccuringAfterTurnChange() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val characters = new FakeCharacterObject[1000];
         int nRemoved = 0;
         for (int i = 0; i < characters.length; i++) {
             characters[i] = FakeCharacterObject.create();
-            manager.spawn(characters[i]);
+            world.getObjectManager().spawn(characters[i]);
         }
 
         int i = 0;
         int j = 0;
         val rand = new Random(1337);
         while (nRemoved < characters.length * 0.9f) {
-            assertTrue(manager.isCharactersTurn(characters[j]));
+            assertTrue(world.getObjectManager().isCharactersTurn(characters[j]));
 
-            manager.nextTurn();
+            world.getObjectManager().nextTurn();
 
             if (!characters[i].isRemoved()) {
                 characters[i].remove();
@@ -272,35 +250,33 @@ class TurnObjectManagerTest {
             } while (characters[j].isRemoved());
 
 
-            manager.update(1.0f);
+            world.getObjectManager().update(1.0f);
         }
     }
 
     @Test
     void removingCharactersDoesNotBreakTheOrderingWithRemovedObjectsCleanedUpByUpdatingRemovalOccuringDuringTurn() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val characters = new FakeCharacterObject[1000];
         int nRemoved = 0;
         for (int i = 0; i < characters.length; i++) {
             characters[i] = FakeCharacterObject.create();
-            manager.spawn(characters[i]);
+            world.getObjectManager().spawn(characters[i]);
         }
 
         int i = 0;
         int j = 0;
         val rand = new Random(1337);
         while (nRemoved < characters.length * 0.9f) {
-            assertTrue(manager.isCharactersTurn(characters[j]));
+            assertTrue(world.getObjectManager().isCharactersTurn(characters[j]));
 
             if (!characters[i].isRemoved()) {
                 characters[i].remove();
                 nRemoved++;
             }
 
-            manager.nextTurn();
+            world.getObjectManager().nextTurn();
 
             i += rand.nextInt(characters.length - nRemoved);
             if (i >= characters.length) {
@@ -316,23 +292,21 @@ class TurnObjectManagerTest {
             } while (characters[j].isRemoved());
 
 
-            manager.update(1.0f);
+            world.getObjectManager().update(1.0f);
         }
     }
 
     @Test
     void updateSkipsToNextTurnIfCharacterIsRemoved() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         CharacterObject a, b;
-        manager.spawn(a = FakeCharacterObject.create());
-        manager.spawn(b = FakeCharacterObject.create());
+        world.getObjectManager().spawn(a = FakeCharacterObject.create());
+        world.getObjectManager().spawn(b = FakeCharacterObject.create());
         a.remove();
 
-        manager.update(1.0f);
+        world.getObjectManager().update(1.0f);
 
-        assertTrue(manager.isCharactersTurn(b));
+        assertTrue(world.getObjectManager().isCharactersTurn(b));
     }
 }

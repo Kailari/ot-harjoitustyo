@@ -5,8 +5,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import toilari.otlite.fake.AbilityEntry;
 import toilari.otlite.fake.FakeCharacterObject;
-import toilari.otlite.game.world.World;
-import toilari.otlite.game.world.entities.TurnObjectManager;
+import toilari.otlite.fake.FakeWorld;
 import toilari.otlite.game.world.entities.characters.CharacterAttributes;
 import toilari.otlite.game.world.entities.characters.CharacterInfo;
 import toilari.otlite.game.world.entities.characters.CharacterLevels;
@@ -43,34 +42,28 @@ class CharacterObjectTest {
 
     @Test
     void characterIsAliveWhenSpawned() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val character = FakeCharacterObject.create();
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
         assertFalse(character.isDead());
     }
 
     @Test
     void healthIsMaxedAtSpawn() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val character = FakeCharacterObject.create();
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
         assertEquals(10.0f, character.getHealth());
     }
 
     @Test
     void characterIsDeadWhenHealthIsZero() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val character = FakeCharacterObject.create();
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
         character.setHealth(0.0f);
 
         assertTrue(character.isDead());
@@ -78,8 +71,7 @@ class CharacterObjectTest {
 
     @Test
     void panickingCharacterSkipsUpdatingAbilities() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val ability = new TestAbility();
         val character = FakeCharacterObject.createWithAbilities(
@@ -95,9 +87,7 @@ class CharacterObjectTest {
 
     @Test
     void panickingCharacterUpdatesMoveAbility() {
-        val world = new World(new TurnObjectManager());
-        world.init();
-        world.changeLevel(createLevel());
+        val world = FakeWorld.createWithLevel(createLevel());
 
         val ability = new MoveAbility() {
             @Override
@@ -118,8 +108,7 @@ class CharacterObjectTest {
 
     @Test
     void getStateReturnsIdleWhenNotCharactersTurn() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val other = FakeCharacterObject.create();
         world.getObjectManager().spawn(other);
@@ -133,8 +122,7 @@ class CharacterObjectTest {
 
     @Test
     void getStateReturnsIdleWhenOutOfAP() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val character = FakeCharacterObject.create();
         world.getObjectManager().spawn(character);
@@ -146,8 +134,7 @@ class CharacterObjectTest {
 
     @Test
     void getStateReturnsActiveWhenCharactersTurnAndHasAPRemaining() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val character = FakeCharacterObject.create();
         world.getObjectManager().spawn(character);
@@ -158,8 +145,7 @@ class CharacterObjectTest {
 
     @Test
     void getStateReturnsOverrideWhenSet() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val character = FakeCharacterObject.create();
         world.getObjectManager().spawn(character);
@@ -171,8 +157,7 @@ class CharacterObjectTest {
 
     @Test
     void healAddsCorrectAmount() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val character = FakeCharacterObject.create();
         world.getObjectManager().spawn(character);
@@ -185,8 +170,7 @@ class CharacterObjectTest {
 
     @Test
     void healCannotOverheal() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val character = FakeCharacterObject.create();
         world.getObjectManager().spawn(character);
@@ -199,8 +183,7 @@ class CharacterObjectTest {
 
     @Test
     void healThrowsIfAmountIsNegative() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val character = FakeCharacterObject.create();
         world.getObjectManager().spawn(character);
@@ -216,8 +199,7 @@ class CharacterObjectTest {
 
     @Test
     void panickingEndsAfterSomeTime() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val character = FakeCharacterObject.create(new Random(1337));
         world.getObjectManager().spawn(character);
@@ -232,8 +214,7 @@ class CharacterObjectTest {
 
     @Test
     void panickingDoesNotAlwaysEndOnFirstEndTurn() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val character = FakeCharacterObject.create(new Random(1234));
         world.getObjectManager().spawn(character);
@@ -246,8 +227,7 @@ class CharacterObjectTest {
 
     @Test
     void abilityCooldownsGoDownOnTurnEnd() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val ability = new TestAbility() {
             @Override

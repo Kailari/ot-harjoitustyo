@@ -6,8 +6,6 @@ import toilari.otlite.fake.*;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
 import toilari.otlite.game.util.Direction;
-import toilari.otlite.game.world.World;
-import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.abilities.KickAbility;
 import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbility;
 import toilari.otlite.game.world.entities.characters.abilities.components.KickControllerComponent;
@@ -29,9 +27,7 @@ class PlayerTargetSelectorControllerComponentTest {
 
     @Test
     void cycleTargetsSelectsCorrectAfterSettingTargetManually() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val ts = new TargetSelectorAbility();
         val component = new PlayerTargetSelectorControllerComponent();
@@ -39,9 +35,9 @@ class PlayerTargetSelectorControllerComponentTest {
         val character = FakeCharacterObject.createAtWithAbilities(1, 1,
             new AbilityEntry<>(0, ts, component),
             new AbilityEntry<>(1, attack, FakeAttackControllerComponent.createWithoutTargetValidation()));
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
-        val charactersAround = FakeCharacterObject.createAround(manager, character);
+        val charactersAround = FakeCharacterObject.createAround(world.getObjectManager(), character);
 
         component.setActiveTargetedAbility(attack);
         component.setTarget(charactersAround.get(Direction.DOWN), Direction.DOWN);
@@ -52,9 +48,7 @@ class PlayerTargetSelectorControllerComponentTest {
 
     @Test
     void cycleTargetsDoesNotChangeTargetIfOnlyOneIsAvailable() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val ts = new TargetSelectorAbility();
         val component = new PlayerTargetSelectorControllerComponent();
@@ -62,10 +56,10 @@ class PlayerTargetSelectorControllerComponentTest {
         val character = FakeCharacterObject.createAtWithAbilities(1, 1,
             new AbilityEntry<>(0, ts, component),
             new AbilityEntry<>(1, attack, FakeAttackControllerComponent.createWithoutTargetValidation()));
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         val target = FakeCharacterObject.createAt(1, 2);
-        manager.spawn(target);
+        world.getObjectManager().spawn(target);
 
         component.setActiveTargetedAbility(attack);
         component.setTarget(target, Direction.DOWN);
@@ -76,9 +70,7 @@ class PlayerTargetSelectorControllerComponentTest {
 
     @Test
     void cycleTargetsSetsTargetToNullIfNoTargetsAreAvailable() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val ts = new TargetSelectorAbility();
         val component = new PlayerTargetSelectorControllerComponent();
@@ -86,10 +78,10 @@ class PlayerTargetSelectorControllerComponentTest {
         val character = FakeCharacterObject.createAtWithAbilities(1, 1,
             new AbilityEntry<>(0, ts, component),
             new AbilityEntry<>(1, attack, FakeAttackControllerComponent.createWithoutTargetValidation()));
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         val target = FakeCharacterObject.createAt(1, 1337);
-        manager.spawn(target);
+        world.getObjectManager().spawn(target);
 
         component.setActiveTargetedAbility(attack);
         component.setTarget(target, Direction.DOWN);
@@ -104,9 +96,7 @@ class PlayerTargetSelectorControllerComponentTest {
         Input.init(input);
         input.update();
 
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val ts = new TargetSelectorAbility();
         val component = new PlayerTargetSelectorControllerComponent();
@@ -114,9 +104,9 @@ class PlayerTargetSelectorControllerComponentTest {
         val character = FakeCharacterObject.createAtWithAbilities(1, 1,
             new AbilityEntry<>(0, ts, component),
             new AbilityEntry<>(1, attack, FakeAttackControllerComponent.createWithoutTargetValidation()));
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
-        FakeCharacterObject.createAround(manager, character);
+        FakeCharacterObject.createAround(world.getObjectManager(), character);
 
         component.updateInput(ts);
         assertNull(component.getTarget());
@@ -128,9 +118,7 @@ class PlayerTargetSelectorControllerComponentTest {
         val input = new FakeInputHandler(Key.ONE);
         Input.init(input);
 
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val ts = new TargetSelectorAbility();
         val component = new PlayerTargetSelectorControllerComponent();
@@ -138,9 +126,9 @@ class PlayerTargetSelectorControllerComponentTest {
         val character = FakeCharacterObject.createAtWithAbilities(1, 1,
             new AbilityEntry<>(0, ts, component),
             new AbilityEntry<>(1, attack, FakeAttackControllerComponent.createWithoutTargetValidation()));
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
-        val charactersAround = FakeCharacterObject.createAround(manager, character);
+        val charactersAround = FakeCharacterObject.createAround(world.getObjectManager(), character);
 
         component.updateInput(ts);
         assertEquals(attack, component.getActive());
@@ -153,9 +141,7 @@ class PlayerTargetSelectorControllerComponentTest {
         val input = new FakeInputHandler(Key.ONE);
         Input.init(input);
 
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val ts = new TargetSelectorAbility();
         val component = new PlayerTargetSelectorControllerComponent();
@@ -163,9 +149,9 @@ class PlayerTargetSelectorControllerComponentTest {
         val character = FakeCharacterObject.createAtWithAbilities(1, 1,
             new AbilityEntry<>(0, ts, component),
             new AbilityEntry<>(1, attack, FakeAttackControllerComponent.createWithoutTargetValidation()));
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
-        FakeCharacterObject.createAround(manager, character);
+        FakeCharacterObject.createAround(world.getObjectManager(), character);
 
         attack.putOnCooldown();
         component.updateInput(ts);
@@ -178,9 +164,7 @@ class PlayerTargetSelectorControllerComponentTest {
         val input = new FakeInputHandler(Key.ONE);
         Input.init(input);
 
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val ts = new TargetSelectorAbility();
         val component = new PlayerTargetSelectorControllerComponent();
@@ -188,9 +172,9 @@ class PlayerTargetSelectorControllerComponentTest {
         val character = FakeCharacterObject.createAtWithAbilities(1, 1,
             new AbilityEntry<>(0, ts, component),
             new AbilityEntry<>(1, attack, FakeAttackControllerComponent.createWithoutTargetValidation()));
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
-        FakeCharacterObject.createAround(manager, character);
+        FakeCharacterObject.createAround(world.getObjectManager(), character);
 
         component.updateInput(ts);
         assertNull(component.getActive());
@@ -202,9 +186,7 @@ class PlayerTargetSelectorControllerComponentTest {
         val input = new FakeInputHandler(Key.ONE);
         Input.init(input);
 
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val ts = new TargetSelectorAbility();
         val component = new PlayerTargetSelectorControllerComponent();
@@ -212,9 +194,9 @@ class PlayerTargetSelectorControllerComponentTest {
         val character = FakeCharacterObject.createAtWithAbilities(1, 1,
             new AbilityEntry<>(0, ts, component),
             new AbilityEntry<>(1, attack, FakeAttackControllerComponent.createWithoutTargetValidation()));
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
-        val charactersAround = FakeCharacterObject.createAround(manager, character);
+        val charactersAround = FakeCharacterObject.createAround(world.getObjectManager(), character);
 
         for (val direction : Direction.asIterable()) {
             component.updateInput(ts);
@@ -229,9 +211,7 @@ class PlayerTargetSelectorControllerComponentTest {
         val input = new FakeInputHandler(Key.ONE);
         Input.init(input);
 
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val ts = new TargetSelectorAbility();
         val component = new PlayerTargetSelectorControllerComponent();
@@ -246,9 +226,9 @@ class PlayerTargetSelectorControllerComponentTest {
             new AbilityEntry<>(0, ts, component),
             new AbilityEntry<>(1, attack, FakeAttackControllerComponent.createWithoutTargetValidation()),
             new AbilityEntry<>(2, attack2, new KickControllerComponent.Player()));
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
-        val charactersAround = FakeCharacterObject.createAround(manager, character);
+        val charactersAround = FakeCharacterObject.createAround(world.getObjectManager(), character);
 
         component.updateInput(ts);
         input.setPressedKeys(Key.TWO);
@@ -263,9 +243,7 @@ class PlayerTargetSelectorControllerComponentTest {
         val input = new FakeInputHandler(Key.ONE);
         Input.init(input);
 
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val ts = new TargetSelectorAbility();
         val component = new PlayerTargetSelectorControllerComponent();
@@ -273,9 +251,9 @@ class PlayerTargetSelectorControllerComponentTest {
         val character = FakeCharacterObject.createAtWithAbilities(1, 1,
             new AbilityEntry<>(0, ts, component),
             new AbilityEntry<>(1, attack, FakeAttackControllerComponent.createWithoutTargetValidation()));
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
-        val charactersAround = FakeCharacterObject.createAround(manager, character);
+        val charactersAround = FakeCharacterObject.createAround(world.getObjectManager(), character);
 
         component.updateInput(ts);
 
@@ -296,9 +274,7 @@ class PlayerTargetSelectorControllerComponentTest {
         val input = new FakeInputHandler(Key.ONE);
         Input.init(input);
 
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val ts = new TargetSelectorAbility();
         val component = new PlayerTargetSelectorControllerComponent();
@@ -306,10 +282,10 @@ class PlayerTargetSelectorControllerComponentTest {
         val character = FakeCharacterObject.createAtWithAbilities(1, 1,
             new AbilityEntry<>(0, ts, component),
             new AbilityEntry<>(1, attack, FakeAttackControllerComponent.createWithoutTargetValidation()));
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         val target = FakeCharacterObject.createAt(2, 1);
-        manager.spawn(target);
+        world.getObjectManager().spawn(target);
         component.updateInput(ts);
 
         Key[] keys = {Key.LEFT, Key.DOWN, Key.UP};
@@ -327,9 +303,7 @@ class PlayerTargetSelectorControllerComponentTest {
         val input = new FakeInputHandler(Key.ONE);
         Input.init(input);
 
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val ts = new TargetSelectorAbility();
         val component = new PlayerTargetSelectorControllerComponent();
@@ -337,9 +311,9 @@ class PlayerTargetSelectorControllerComponentTest {
         val character = FakeCharacterObject.createAtWithAbilities(1, 1,
             new AbilityEntry<>(0, ts, component),
             new AbilityEntry<>(1, attack, FakeAttackControllerComponent.createWithoutTargetValidation()));
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
-        val charactersAround = FakeCharacterObject.createAround(manager, character);
+        val charactersAround = FakeCharacterObject.createAround(world.getObjectManager(), character);
         component.updateInput(ts);
 
         for (val direction : Direction.asIterable()) {

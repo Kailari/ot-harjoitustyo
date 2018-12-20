@@ -2,7 +2,8 @@ package toilari.otlite;
 
 import lombok.NonNull;
 import lombok.val;
-import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import toilari.otlite.dao.IGetAllDAO;
 import toilari.otlite.dao.PlayerStatisticDAO;
@@ -16,10 +17,7 @@ import toilari.otlite.fake.FakeCharacterObject;
 import toilari.otlite.fake.FakeGameRunner;
 import toilari.otlite.fake.FakeInputHandler;
 import toilari.otlite.game.*;
-import toilari.otlite.game.event.MainMenuEvent;
-import toilari.otlite.game.event.MenuEvent;
-import toilari.otlite.game.event.PlayEvent;
-import toilari.otlite.game.event.ProfileMenuEvent;
+import toilari.otlite.game.event.*;
 import toilari.otlite.game.input.Key;
 import toilari.otlite.game.profile.statistics.StatisticsManager;
 import toilari.otlite.game.world.entities.TurnObjectManager;
@@ -43,16 +41,20 @@ import java.util.function.Supplier;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SimpleScenarioTest {
-    @Test
-    void fromLaunchToGameToDeathToMenuToQuitGame() throws SQLException {
+    private Game game;
+    private FakeGameRunner runner;
+    private FakeInputHandler input;
+
+    @BeforeEach
+    void beforeEach() throws SQLException {
         val tiles = new TileMapping(createTileMappings());
 
-        val input = new FakeInputHandler() {
+        input = new FakeInputHandler() {
             @Override
             public void update() {
             }
         };
-        val game = new TestGame(
+        game = new TestGame(
             new ProfileSelectGameState(),
             "test",
             createTileMappings(),
@@ -62,9 +64,57 @@ class SimpleScenarioTest {
             createStatisticsManager(),
             TurnObjectManager::new);
 
-        val runner = FakeGameRunner.create(game, input);
+        runner = FakeGameRunner.create(game, input);
         runner.init();
+    }
 
+    @AfterEach
+    void afterEach() {
+        runner.destroy();
+        FileHelper.deleteDirectoryAndChildren(Paths.get("target/test-temp"));
+    }
+
+    @Test
+    void openBestiary10000Times() {
+        // Create and immediately select a profile
+        assertTrue(game.getCurrentGameState() instanceof ProfileSelectGameState);
+        { //
+            ProfileSelectGameState state = (ProfileSelectGameState) game.getCurrentGameState();
+            state.getEventSystem().subscribeTo(ProfileMenuEvent.Added.class, (e) -> {
+                state.getEventSystem().fire(new ProfileMenuEvent.Select(e.getProfile()));
+            });
+            state.getEventSystem().fire(new ProfileMenuEvent.Add("TestProfile"));
+        }
+
+        for (int i = 0; i < 10000; i++) {
+            // Open bestiary
+            assertTrue(game.getCurrentGameState() instanceof MainMenuGameState);
+            { //
+                MainMenuGameState state = (MainMenuGameState) game.getCurrentGameState();
+
+                state.getEventSystem().fire(new MainMenuEvent.Bestiary());
+            }
+
+            // Close bestiary
+            assertTrue(game.getCurrentGameState() instanceof BestiaryGameState);
+            { //
+                BestiaryGameState state = (BestiaryGameState) game.getCurrentGameState();
+
+                state.getEventSystem().fire(new BestiaryEvent.Return());
+            }
+        }
+
+        // Quit game
+        assertTrue(game.getCurrentGameState() instanceof MainMenuGameState);
+        { //
+            MainMenuGameState state = (MainMenuGameState) game.getCurrentGameState();
+
+            state.getEventSystem().fire(new MenuEvent.Quit());
+        }
+    }
+
+    @Test
+    void playerWalksToAPit() {
         // Create and immediately select a profile
         assertTrue(game.getCurrentGameState() instanceof ProfileSelectGameState);
         { //
@@ -138,13 +188,6 @@ class SimpleScenarioTest {
 
             state.getEventSystem().fire(new MenuEvent.Quit());
         }
-
-        runner.destroy();
-    }
-
-    @AfterAll
-    static void afterAll() {
-        FileHelper.deleteDirectoryAndChildren(Paths.get("target/test-temp"));
     }
 
     private StatisticsManager createStatisticsManager() throws SQLException {

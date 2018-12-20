@@ -106,15 +106,6 @@ public class World {
     }
 
     /**
-     * Luo uuden pelimaailman.
-     *
-     * @param objectManager objektimanageri jolla pelimaailman objekteja tulee hallinnoida
-     */
-    public World(@NonNull TurnObjectManager objectManager) {
-        this.objectManager = objectManager;
-    }
-
-    /**
      * Vaihtaa pelin karttaa.
      *
      * @param level Uusi kartta johon vaihdetaan

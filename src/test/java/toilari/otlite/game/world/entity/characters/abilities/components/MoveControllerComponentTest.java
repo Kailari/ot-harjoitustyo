@@ -6,9 +6,9 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import toilari.otlite.fake.AbilityEntry;
 import toilari.otlite.fake.FakeCharacterObject;
+import toilari.otlite.fake.FakeWorld;
 import toilari.otlite.game.util.Direction;
 import toilari.otlite.game.world.World;
-import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
 import toilari.otlite.game.world.entities.characters.abilities.components.MoveControllerComponent;
 import toilari.otlite.game.world.level.KillTile;
@@ -237,9 +237,7 @@ class MoveControllerComponentTest {
     }
 
     private static World createWorld() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val mapping = new HashMap<String, Byte>();
         mapping.put("wall", (byte) 0);

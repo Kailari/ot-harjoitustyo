@@ -2,13 +2,8 @@ package toilari.otlite.game.world.entity.characters.abilities.components;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import toilari.otlite.fake.AbilityEntry;
-import toilari.otlite.fake.FakeAttackAbility;
-import toilari.otlite.fake.FakeAttackControllerComponent;
-import toilari.otlite.fake.FakeCharacterObject;
+import toilari.otlite.fake.*;
 import toilari.otlite.game.util.Direction;
-import toilari.otlite.game.world.World;
-import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.abilities.EndTurnAbility;
 import toilari.otlite.game.world.entities.characters.abilities.KickAbility;
 import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbility;
@@ -21,8 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AlwaysAttackAdjacentIfPossibleTargetSelectorControllerComponentTest {
     @Test
     void targetIsNullAfterUpdateInputIfCharacterHasNoAbilities() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val player = FakeCharacterObject.create();
         world.getObjectManager().spawn(player);
@@ -42,8 +36,7 @@ class AlwaysAttackAdjacentIfPossibleTargetSelectorControllerComponentTest {
 
     @Test
     void targetIsNullAfterUpdateInputIfCharacterHasNoTargetedAbilities() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val player = FakeCharacterObject.create();
         world.getObjectManager().spawn(player);
@@ -65,8 +58,7 @@ class AlwaysAttackAdjacentIfPossibleTargetSelectorControllerComponentTest {
 
     @Test
     void targetIsNullAfterUpdateInputIfCharacterHasTargetedAbilityWhichIsLocked() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val player = FakeCharacterObject.create();
         world.getObjectManager().spawn(player);
@@ -88,8 +80,7 @@ class AlwaysAttackAdjacentIfPossibleTargetSelectorControllerComponentTest {
 
     @Test
     void targetIsNullAfterUpdateInputIfCharacterHasTargetedAbilityWhichIsOnCooldown() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val player = FakeCharacterObject.create();
         world.getObjectManager().spawn(player);
@@ -113,8 +104,7 @@ class AlwaysAttackAdjacentIfPossibleTargetSelectorControllerComponentTest {
 
     @Test
     void targetIsNullAfterUpdateInputIfCharacterHasTargetedAbilityWhichCostsTooMuch() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val player = FakeCharacterObject.create();
         world.getObjectManager().spawn(player);
@@ -136,8 +126,7 @@ class AlwaysAttackAdjacentIfPossibleTargetSelectorControllerComponentTest {
 
     @Test
     void targetIsNullAfterUpdateInputIfCharacterHasTargetedAbilityWhichTheyCanUseAndPlayerIsTooFar() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val player = FakeCharacterObject.create();
         world.getObjectManager().spawn(player);
@@ -162,8 +151,7 @@ class AlwaysAttackAdjacentIfPossibleTargetSelectorControllerComponentTest {
 
     @Test
     void targetIsCorrectAfterUpdateInputIfCharacterHasTargetedAbilityWhichTheyCanUseAndPlayerIsAdjacent() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val player = FakeCharacterObject.create();
         world.getObjectManager().spawn(player);

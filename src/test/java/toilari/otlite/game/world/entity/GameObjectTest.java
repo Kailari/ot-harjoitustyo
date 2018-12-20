@@ -2,6 +2,7 @@ package toilari.otlite.game.world.entity;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import toilari.otlite.fake.FakeWorld;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.TurnObjectManager;
@@ -91,9 +92,7 @@ class GameObjectTest {
     @Test
     void objectsAreFlaggedAsSpawnedWhenSpawned() {
         val obj = new GameObject();
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        manager.init(world);
+        val world = FakeWorld.create();
 
         world.getObjectManager().spawn(obj);
 
@@ -103,9 +102,7 @@ class GameObjectTest {
     @Test
     void objectsAreFlaggedAsRemovedWhenSpawned() {
         val obj = new GameObject();
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        manager.init(world);
+        val world = FakeWorld.create();
 
         world.getObjectManager().spawn(obj);
         obj.remove();
@@ -116,9 +113,7 @@ class GameObjectTest {
     @Test
     void spawningObjectMultipleTimesThrows() {
         val obj = new GameObject();
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        manager.init(world);
+        val world = FakeWorld.create();
 
         world.getObjectManager().spawn(obj);
         assertThrows(IllegalArgumentException.class, () -> world.getObjectManager().spawn(obj));
@@ -127,9 +122,6 @@ class GameObjectTest {
     @Test
     void initObjectMultipleTimesThrows() {
         val obj = new GameObject();
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        manager.init(world);
 
         obj.init();
         assertThrows(IllegalStateException.class, obj::init);
@@ -138,9 +130,7 @@ class GameObjectTest {
     @Test
     void spawningRemovedObjectThrows() {
         val obj = new GameObject();
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        manager.init(world);
+        val world = FakeWorld.create();
 
         world.getObjectManager().spawn(obj);
         obj.remove();
@@ -151,9 +141,7 @@ class GameObjectTest {
     @Test
     void updatingRemovedObjectThrows() {
         val obj = new GameObject();
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        manager.init(world);
+        val world = FakeWorld.create();
 
         world.getObjectManager().spawn(obj);
         obj.remove();
@@ -164,9 +152,7 @@ class GameObjectTest {
     @Test
     void updatingNotSpawnedObjectThrows() {
         val obj = new GameObject();
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        manager.init(world);
+        val world = FakeWorld.create();
 
         assertThrows(IllegalStateException.class, () -> obj.update(1.0f));
     }

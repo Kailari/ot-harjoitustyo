@@ -3,8 +3,7 @@ package toilari.otlite.dao.serialization;
 import com.google.gson.GsonBuilder;
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import toilari.otlite.game.world.World;
-import toilari.otlite.game.world.entities.TurnObjectManager;
+import toilari.otlite.fake.FakeWorld;
 import toilari.otlite.game.world.entities.characters.Attribute;
 import toilari.otlite.game.world.entities.characters.CharacterObject;
 import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbility;
@@ -103,8 +102,7 @@ class CharacterAdapterTest {
 
     @Test
     void deserializationSucceedsWithValidInput() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val gson = new GsonBuilder()
             .registerTypeAdapter(CharacterObject.class, new CharacterAdapter())
@@ -124,8 +122,7 @@ class CharacterAdapterTest {
 
     @Test
     void deserializationSucceedsEvenIfTagsAreMissing() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val gson = new GsonBuilder()
             .registerTypeAdapter(CharacterObject.class, new CharacterAdapter())

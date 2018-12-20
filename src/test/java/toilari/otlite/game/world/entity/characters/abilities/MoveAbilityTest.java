@@ -4,9 +4,8 @@ import lombok.NonNull;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import toilari.otlite.fake.FakeCharacterObject;
+import toilari.otlite.fake.FakeWorld;
 import toilari.otlite.game.util.Direction;
-import toilari.otlite.game.world.World;
-import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.abilities.MoveAbility;
 import toilari.otlite.game.world.entities.characters.abilities.components.MoveControllerComponent;
 import toilari.otlite.game.world.level.Level;
@@ -37,20 +36,17 @@ class MoveAbilityTest {
 
     @Test
     void canMoveToReturnsFalseWhenTryingToMoveOutOfBounds() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.changeLevel(createLevel());
-        world.init();
+        val world = FakeWorld.createWithLevel(createLevel());
 
         val characterAtTopLeft = FakeCharacterObject.createAt(0, 0);
         val abilityAtTopLeft = new MoveAbility();
         abilityAtTopLeft.init(characterAtTopLeft);
-        manager.spawn(characterAtTopLeft);
+        world.getObjectManager().spawn(characterAtTopLeft);
 
         val characterAtBottomRight = FakeCharacterObject.createAt(7, 7);
         val abilityAtBottomRight = new MoveAbility();
         abilityAtBottomRight.init(characterAtBottomRight);
-        manager.spawn(characterAtBottomRight);
+        world.getObjectManager().spawn(characterAtBottomRight);
 
         assertFalse(abilityAtTopLeft.canMoveTo(Direction.LEFT, 1));
         assertFalse(abilityAtTopLeft.canMoveTo(Direction.UP, 1));
@@ -60,20 +56,17 @@ class MoveAbilityTest {
 
     @Test
     void canMoveToReturnsFalseWhenTryingToMoveInsideAWall() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.changeLevel(createLevel());
-        world.init();
+        val world = FakeWorld.createWithLevel(createLevel());
 
         val characterAtTopLeft = FakeCharacterObject.createAt(0, 0);
         val abilityAtTopLeft = new MoveAbility();
         abilityAtTopLeft.init(characterAtTopLeft);
-        manager.spawn(characterAtTopLeft);
+        world.getObjectManager().spawn(characterAtTopLeft);
 
         val characterAtBottomRight = FakeCharacterObject.createAt(7, 7);
         val abilityAtBottomRight = new MoveAbility();
         abilityAtBottomRight.init(characterAtBottomRight);
-        manager.spawn(characterAtBottomRight);
+        world.getObjectManager().spawn(characterAtBottomRight);
 
         assertFalse(abilityAtTopLeft.canMoveTo(Direction.RIGHT, 1));
         assertFalse(abilityAtTopLeft.canMoveTo(Direction.DOWN, 1));
@@ -83,20 +76,17 @@ class MoveAbilityTest {
 
     @Test
     void canMoveToReturnsFalseWhenTryingToMoveInsideNonRemovedCharacter() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.changeLevel(createLevel());
-        world.init();
+        val world = FakeWorld.createWithLevel(createLevel());
 
         val characterA = FakeCharacterObject.createAt(2, 2);
         val abilityA = new MoveAbility();
         abilityA.init(characterA);
-        manager.spawn(characterA);
+        world.getObjectManager().spawn(characterA);
 
         val characterB = FakeCharacterObject.createAt(3, 2);
         val abilityB = new MoveAbility();
         abilityB.init(characterB);
-        manager.spawn(characterB);
+        world.getObjectManager().spawn(characterB);
 
         assertFalse(abilityA.canMoveTo(Direction.RIGHT, 1));
         assertFalse(abilityB.canMoveTo(Direction.LEFT, 1));
@@ -104,63 +94,51 @@ class MoveAbilityTest {
 
     @Test
     void canMoveToReturnsFalseWhenDeltaIsZero() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.changeLevel(createLevel());
-        world.init();
+        val world = FakeWorld.createWithLevel(createLevel());
 
         val character = FakeCharacterObject.createAt(2, 2);
         val ability = new MoveAbility();
         ability.init(character);
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         assertFalse(ability.canMoveTo(Direction.LEFT, 0));
     }
 
     @Test
     void canMoveToReturnsFalseWhenDirectionIsNone() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.changeLevel(createLevel());
-        world.init();
+        val world = FakeWorld.createWithLevel(createLevel());
 
         val character = FakeCharacterObject.createAt(2, 2);
         val ability = new MoveAbility();
         ability.init(character);
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         assertFalse(ability.canMoveTo(Direction.NONE, 0));
     }
 
     @Test
     void canMoveToReturnsTrueWhenCharacterCanMove() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.changeLevel(createLevel());
-        world.init();
+        val world = FakeWorld.createWithLevel(createLevel());
 
         val character = FakeCharacterObject.createAt(2, 2);
         val ability = new MoveAbility();
         ability.init(character);
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         assertTrue(ability.canMoveTo(Direction.RIGHT, 1));
     }
 
     @Test
     void canMoveToReturnsTrueWhenObjectInTargetTileIsRemoved() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.changeLevel(createLevel());
-        world.init();
+        val world = FakeWorld.createWithLevel(createLevel());
 
         val characterA = FakeCharacterObject.createAt(2, 2);
         val abilityA = new MoveAbility();
         abilityA.init(characterA);
-        manager.spawn(characterA);
+        world.getObjectManager().spawn(characterA);
 
         val characterB = FakeCharacterObject.createAt(3, 2);
-        manager.spawn(characterB);
+        world.getObjectManager().spawn(characterB);
         characterB.remove();
 
         assertTrue(abilityA.canMoveTo(Direction.RIGHT, 1));
@@ -169,16 +147,13 @@ class MoveAbilityTest {
 
     @Test
     void moveChangesPositionWhenMoveSucceeds() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.changeLevel(createLevel());
-        world.init();
+        val world = FakeWorld.createWithLevel(createLevel());
 
         val character = FakeCharacterObject.createAt(1, 2);
         val ability = new MoveAbility();
         ability.init(character);
         val component = new TestMoveControllerComponent(Direction.RIGHT);
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         ability.perform(component);
 
@@ -188,32 +163,26 @@ class MoveAbilityTest {
 
     @Test
     void moveReturnsTrueWhenMoveSucceeds() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.changeLevel(createLevel());
-        world.init();
+        val world = FakeWorld.createWithLevel(createLevel());
 
         val character = FakeCharacterObject.createAt(1, 2);
         val ability = new MoveAbility();
         ability.init(character);
         val component = new TestMoveControllerComponent(Direction.RIGHT);
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         assertTrue(ability.perform(component));
     }
 
     @Test
     void moveDoesNotMoveCharacterInsideWall() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.changeLevel(createLevel());
-        world.init();
+        val world = FakeWorld.createWithLevel(createLevel());
 
         val character = FakeCharacterObject.createAt(1, 1);
         val ability = new MoveAbility();
         ability.init(character);
         val component = new TestMoveControllerComponent(Direction.LEFT);
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         ability.perform(component);
 
@@ -223,35 +192,29 @@ class MoveAbilityTest {
 
     @Test
     void moveReturnsFalseWhenMovingFails() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.changeLevel(createLevel());
-        world.init();
+        val world = FakeWorld.createWithLevel(createLevel());
 
         val character = FakeCharacterObject.createAt(1, 1);
         val ability = new MoveAbility();
         ability.init(character);
         val component = new TestMoveControllerComponent(Direction.LEFT);
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         assertFalse(ability.perform(component));
     }
 
     @Test
     void moveReturnsTrueWhenObjectInTargetTileIsRemoved() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.changeLevel(createLevel());
-        world.init();
+        val world = FakeWorld.createWithLevel(createLevel());
 
         val character = FakeCharacterObject.createAt(1, 2);
         val ability = new MoveAbility();
         ability.init(character);
         val component = new TestMoveControllerComponent(Direction.RIGHT);
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         val obstacle = FakeCharacterObject.createAt(2, 2);
-        manager.spawn(obstacle);
+        world.getObjectManager().spawn(obstacle);
         obstacle.remove();
 
         assertTrue(ability.perform(component));
@@ -259,19 +222,16 @@ class MoveAbilityTest {
 
     @Test
     void moveChangesPositionWhenObjectInTargetTileIsRemoved() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.changeLevel(createLevel());
-        world.init();
+        val world = FakeWorld.createWithLevel(createLevel());
 
         val character = FakeCharacterObject.createAt(1, 2);
         val ability = new MoveAbility();
         ability.init(character);
         val component = new TestMoveControllerComponent(Direction.RIGHT);
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         val obstacle = FakeCharacterObject.createAt(2, 2);
-        manager.spawn(obstacle);
+        world.getObjectManager().spawn(obstacle);
         obstacle.remove();
 
         ability.perform(component);

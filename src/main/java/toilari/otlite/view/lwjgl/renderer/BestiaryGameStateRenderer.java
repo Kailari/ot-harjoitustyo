@@ -100,7 +100,7 @@ public class BestiaryGameStateRenderer<R extends IGetAllDAO<ILWJGLRenderer> & IG
             public boolean isCharactersTurn(CharacterObject character) {
                 return false;
             }
-        });
+        }, state.getGame().getTiles(), state.getGame().getLevels(), state.getGame().getCharacters());
 
         if (initResources()) {
             return true;

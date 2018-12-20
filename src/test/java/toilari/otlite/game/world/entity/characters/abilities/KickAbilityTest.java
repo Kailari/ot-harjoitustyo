@@ -7,10 +7,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 import toilari.otlite.fake.AbilityEntry;
 import toilari.otlite.fake.FakeCharacterObject;
 import toilari.otlite.fake.FakeTargetSelectorControllerComponent;
+import toilari.otlite.fake.FakeWorld;
 import toilari.otlite.game.util.Direction;
-import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.GameObject;
-import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.Attribute;
 import toilari.otlite.game.world.entities.characters.abilities.KickAbility;
 import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbility;
@@ -48,9 +47,7 @@ class KickAbilityTest {
 
     @Test
     void kickingKnocksBackTarget() {
-        val world = new World(new TurnObjectManager());
-        world.init();
-        world.changeLevel(createLevel());
+        val world = FakeWorld.createWithLevel(createLevel());
 
         val target = FakeCharacterObject.createAt(2, 0);
         world.getObjectManager().spawn(target);
@@ -74,9 +71,7 @@ class KickAbilityTest {
 
     @Test
     void kickingDoesNotMoveTargetIfThereIsAWallBehindTarget() {
-        val world = new World(new TurnObjectManager());
-        world.init();
-        world.changeLevel(createLevel());
+        val world = FakeWorld.createWithLevel(createLevel());
 
         val target = FakeCharacterObject.createAt(1, 0);
         world.getObjectManager().spawn(target);
@@ -100,9 +95,7 @@ class KickAbilityTest {
 
     @Test
     void kickingDoesNotMoveTargetIfThereIsAnotherObjectBehindTarget() {
-        val world = new World(new TurnObjectManager());
-        world.init();
-        world.changeLevel(createLevel());
+        val world = FakeWorld.createWithLevel(createLevel());
 
         val obstacle = FakeCharacterObject.createAt(1, 0);
         world.getObjectManager().spawn(obstacle);
@@ -129,9 +122,7 @@ class KickAbilityTest {
 
     @Test
     void cannotPerformOnDeadTarget() {
-        val world = new World(new TurnObjectManager());
-        world.init();
-        world.changeLevel(createLevel());
+        val world = FakeWorld.createWithLevel(createLevel());
 
         val target = FakeCharacterObject.createAt(2, 0);
         world.getObjectManager().spawn(target);
@@ -157,9 +148,7 @@ class KickAbilityTest {
 
     @Test
     void cannotPerformOnRemovedTarget() {
-        val world = new World(new TurnObjectManager());
-        world.init();
-        world.changeLevel(createLevel());
+        val world = FakeWorld.createWithLevel(createLevel());
 
         val target = FakeCharacterObject.createAt(2, 0);
         world.getObjectManager().spawn(target);
@@ -185,9 +174,7 @@ class KickAbilityTest {
 
     @Test
     void cannotPerformOnDeadRemovedTarget() {
-        val world = new World(new TurnObjectManager());
-        world.init();
-        world.changeLevel(createLevel());
+        val world = FakeWorld.createWithLevel(createLevel());
 
         val target = FakeCharacterObject.createAt(2, 0);
         world.getObjectManager().spawn(target);
@@ -212,9 +199,7 @@ class KickAbilityTest {
 
     @Test
     void kickingTargetToPitKillsThem() {
-        val world = new World(new TurnObjectManager());
-        world.init();
-        world.changeLevel(createLevel());
+        val world = FakeWorld.createWithLevel(createLevel());
 
         val target = FakeCharacterObject.createAt(4, 0);
         world.getObjectManager().spawn(target);
@@ -238,9 +223,7 @@ class KickAbilityTest {
 
     @Test
     void kickingNonCharacterSuccesfullyMovesTarget() {
-        val world = new World(new TurnObjectManager());
-        world.init();
-        world.changeLevel(createLevel());
+        val world = FakeWorld.createWithLevel(createLevel());
 
         val target = new GameObject();
         target.setTilePos(2, 0);

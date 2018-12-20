@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import toilari.otlite.fake.AbilityEntry;
 import toilari.otlite.fake.FakeCharacterObject;
 import toilari.otlite.fake.FakeInputHandler;
+import toilari.otlite.fake.FakeWorld;
 import toilari.otlite.game.input.Input;
 import toilari.otlite.game.input.Key;
 import toilari.otlite.game.util.Direction;
@@ -52,15 +53,13 @@ class MovePlayerControlComponentTest {
     @Test
     void wantsMoveReturnsFalseIfNoInput() {
         Input.init(new FakeInputHandler());
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val ability = new MoveAbility();
         val component = new PlayerMoveControllerComponent();
         val player = FakeCharacterObject.createWithAbilities(
             new AbilityEntry<>(0, ability, component));
-        manager.spawn(player);
+        world.getObjectManager().spawn(player);
 
         component.updateInput(ability);
         assertFalse(component.wants(ability));
@@ -69,16 +68,14 @@ class MovePlayerControlComponentTest {
     @Test
     void getInputDirectionReturnsNoneAfterSecondUpdateWhenInputIsHeldPressed() {
         Input.init(new FakeInputHandler(Key.RIGHT, Key.DOWN));
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val ability = new MoveAbility();
         val component = new PlayerMoveControllerComponent();
         val player = FakeCharacterObject.createWithAbilities(
             new AbilityEntry<>(0, ability, component)
         );
-        manager.spawn(player);
+        world.getObjectManager().spawn(player);
 
         component.updateInput(ability);
         Input.getHandler().update();

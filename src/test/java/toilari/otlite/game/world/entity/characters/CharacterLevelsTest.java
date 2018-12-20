@@ -4,8 +4,7 @@ import lombok.val;
 import lombok.var;
 import org.junit.jupiter.api.Test;
 import toilari.otlite.fake.FakeCharacterObject;
-import toilari.otlite.game.world.World;
-import toilari.otlite.game.world.entities.TurnObjectManager;
+import toilari.otlite.fake.FakeWorld;
 import toilari.otlite.game.world.entities.characters.Attribute;
 import toilari.otlite.game.world.entities.characters.CharacterLevels;
 
@@ -31,8 +30,7 @@ class CharacterLevelsTest {
 
     @Test
     void getXpLevelIsConsistentWithAmountOfExperience() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val character = FakeCharacterObject.create();
         world.getObjectManager().spawn(character);
@@ -84,8 +82,7 @@ class CharacterLevelsTest {
 
     @Test
     void copyConstructorCopiesValues() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val character = FakeCharacterObject.create();
         world.getObjectManager().spawn(character);

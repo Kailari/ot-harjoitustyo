@@ -4,6 +4,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import toilari.otlite.fake.AbilityEntry;
 import toilari.otlite.fake.FakeCharacterObject;
+import toilari.otlite.fake.FakeWorld;
 import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.abilities.EndTurnAbility;
@@ -15,8 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class EndTurnControllerComponentTest {
     @Test
     void doesNotWantIfCharacterIsAliveAndNotRemoved() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val ability = new EndTurnAbility();
         val component = new EndTurnControllerComponent() {
@@ -32,8 +32,7 @@ class EndTurnControllerComponentTest {
 
     @Test
     void wantsIfCharacterIsDead() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val ability = new EndTurnAbility();
         val component = new EndTurnControllerComponent() {
@@ -50,8 +49,7 @@ class EndTurnControllerComponentTest {
 
     @Test
     void wantsIfCharacterIsRemoved() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val ability = new EndTurnAbility();
         val component = new EndTurnControllerComponent() {
@@ -68,8 +66,7 @@ class EndTurnControllerComponentTest {
 
     @Test
     void wantsIfCharacterIsDeadAndRemoved() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val ability = new EndTurnAbility();
         val component = new EndTurnControllerComponent() {

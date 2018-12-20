@@ -6,9 +6,7 @@ import org.junit.jupiter.api.Test;
 import toilari.otlite.fake.*;
 import toilari.otlite.game.event.CharacterEvent;
 import toilari.otlite.game.util.Direction;
-import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.GameObject;
-import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.Attribute;
 import toilari.otlite.game.world.entities.characters.abilities.AttackAbility;
 import toilari.otlite.game.world.entities.characters.abilities.BlockAbility;
@@ -26,16 +24,14 @@ class AbstractAttackAbilityTest {
 
     @Test
     void canPerformOnReturnsFalseIfAttackingNull() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val ability = FakeAttackAbility.create(1, 0);
         val character = FakeCharacterObject.createAtWithAbilities(6, 9,
             new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(null, Direction.RIGHT)),
             new AbilityEntry<>(1, ability, FakeAttackControllerComponent.create()));
         ability.init(character);
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         assertFalse(ability.canPerformOn(null, Direction.NONE));
         for (val direction : Direction.asIterable()) {
@@ -45,19 +41,17 @@ class AbstractAttackAbilityTest {
 
     @Test
     void canPerformOnReturnsFalseIfAttackingRemovedObject() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val ability = FakeAttackAbility.create(1, 0);
         val character = FakeCharacterObject.createAtWithAbilities(6, 9,
             new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(null, Direction.RIGHT)),
             new AbilityEntry<>(1, ability, FakeAttackControllerComponent.create()));
         ability.init(character);
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         val other = new GameObject();
-        manager.spawn(other);
+        world.getObjectManager().spawn(other);
         other.remove();
 
         assertFalse(ability.canPerformOn(other, Direction.NONE));
@@ -68,19 +62,17 @@ class AbstractAttackAbilityTest {
 
     @Test
     void canPerformOnReturnsFalseIfAttackingDeadCharacter() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val ability = FakeAttackAbility.create(1, 0);
         val character = FakeCharacterObject.createAtWithAbilities(6, 9,
             new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(null, Direction.RIGHT)),
             new AbilityEntry<>(1, ability, FakeAttackControllerComponent.create()));
         ability.init(character);
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         val other = FakeCharacterObject.createAt(7, 9);
-        manager.spawn(other);
+        world.getObjectManager().spawn(other);
 
         other.setHealth(0.0f);
         assertFalse(ability.canPerformOn(other, Direction.NONE));
@@ -91,19 +83,17 @@ class AbstractAttackAbilityTest {
 
     @Test
     void canPerformOnReturnsFalseIfAttackingRemovedDeadCharacter() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val ability = FakeAttackAbility.create(1, 0);
         val character = FakeCharacterObject.createAtWithAbilities(6, 9,
             new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(null, Direction.RIGHT)),
             new AbilityEntry<>(1, ability, FakeAttackControllerComponent.create()));
         ability.init(character);
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         val other = FakeCharacterObject.createAt(7, 9);
-        manager.spawn(other);
+        world.getObjectManager().spawn(other);
 
         other.setHealth(0.0f);
         other.remove();
@@ -115,19 +105,17 @@ class AbstractAttackAbilityTest {
 
     @Test
     void canPerformOnReturnsTrueIfAttackingValidNotDeadNotRemovedCharacterInAnyDirectionExceptNone() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val ability = FakeAttackAbility.create(1, 0);
         val character = FakeCharacterObject.createAtWithAbilities(6, 9,
             new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(null, Direction.RIGHT)),
             new AbilityEntry<>(1, ability, FakeAttackControllerComponent.create()));
         ability.init(character);
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         val other = FakeCharacterObject.createAt(7, 9);
-        manager.spawn(other);
+        world.getObjectManager().spawn(other);
 
         assertFalse(ability.canPerformOn(other, Direction.NONE));
         for (val direction : Direction.asIterable()) {
@@ -143,9 +131,7 @@ class AbstractAttackAbilityTest {
 
     @Test
     void performReturnsFalseIfTargetIsNull() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val ability = FakeAttackAbility.create(1, 0);
         val component = FakeAttackControllerComponent.create();
@@ -153,18 +139,16 @@ class AbstractAttackAbilityTest {
             new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(null, Direction.RIGHT)),
             new AbilityEntry<>(1, ability, component));
 
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
         assertFalse(ability.perform(component));
     }
 
     @Test
     void performReturnsFalseIfTargetIsRemoved() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val other = FakeCharacterObject.create();
-        manager.spawn(other);
+        world.getObjectManager().spawn(other);
 
         val ability = FakeAttackAbility.create(1, 0);
         val component = FakeAttackControllerComponent.create();
@@ -172,7 +156,7 @@ class AbstractAttackAbilityTest {
             new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(other, Direction.RIGHT)),
             new AbilityEntry<>(1, ability, component));
 
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         other.remove();
         assertFalse(ability.perform(component));
@@ -180,12 +164,10 @@ class AbstractAttackAbilityTest {
 
     @Test
     void performReturnsFalseIfTargetIsDead() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val other = FakeCharacterObject.create();
-        manager.spawn(other);
+        world.getObjectManager().spawn(other);
 
         val ability = FakeAttackAbility.create(1, 0);
         val component = FakeAttackControllerComponent.create();
@@ -193,7 +175,7 @@ class AbstractAttackAbilityTest {
             new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(other, Direction.RIGHT)),
             new AbilityEntry<>(1, ability, component));
 
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         other.setHealth(0.0f);
 
@@ -202,12 +184,10 @@ class AbstractAttackAbilityTest {
 
     @Test
     void performReturnsFalseIfTargetIsDeadAndRemoved() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val other = FakeCharacterObject.create();
-        manager.spawn(other);
+        world.getObjectManager().spawn(other);
 
         val ability = FakeAttackAbility.create(1, 0);
         val component = FakeAttackControllerComponent.create();
@@ -215,7 +195,7 @@ class AbstractAttackAbilityTest {
             new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(other, Direction.RIGHT)),
             new AbilityEntry<>(1, ability, component));
 
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         other.setHealth(0.0f);
         other.remove();
@@ -225,12 +205,10 @@ class AbstractAttackAbilityTest {
 
     @Test
     void performReturnsTrueIfTargetIsNotDeadAndNotRemoved() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val other = FakeCharacterObject.create();
-        manager.spawn(other);
+        world.getObjectManager().spawn(other);
 
         val ability = FakeAttackAbility.create(1, 0);
         val component = FakeAttackControllerComponent.create();
@@ -238,19 +216,17 @@ class AbstractAttackAbilityTest {
             new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(other, Direction.RIGHT)),
             new AbilityEntry<>(1, ability, component));
 
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         assertTrue(ability.perform(component));
     }
 
     @Test
     void performReturnsTrueForDummyNonCharacterNonHealthHandlerTarget() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val other = new GameObject();
-        manager.spawn(other);
+        world.getObjectManager().spawn(other);
 
         val ability = FakeAttackAbility.create(1, 0);
         val component = FakeAttackControllerComponent.create();
@@ -258,7 +234,7 @@ class AbstractAttackAbilityTest {
             new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(other, Direction.RIGHT)),
             new AbilityEntry<>(1, ability, component));
 
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         assertTrue(ability.perform(component));
     }
@@ -269,14 +245,12 @@ class AbstractAttackAbilityTest {
 
     @Test
     void targetEvasionAndBlockingProcs() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         this.blockedAttacks = 0;
         this.evadedAttacks = 0;
-        manager.getEventSystem().subscribeTo(CharacterEvent.BlockedAttack.class, (e) -> this.blockedAttacks++);
-        manager.getEventSystem().subscribeTo(CharacterEvent.MissedAttack.class, (e) -> this.evadedAttacks++);
+        world.getObjectManager().getEventSystem().subscribeTo(CharacterEvent.BlockedAttack.class, (e) -> this.blockedAttacks++);
+        world.getObjectManager().getEventSystem().subscribeTo(CharacterEvent.MissedAttack.class, (e) -> this.evadedAttacks++);
 
         val block = new BlockAbility();
         val blockComponent = new BlockControllerComponent() {
@@ -288,7 +262,7 @@ class AbstractAttackAbilityTest {
             new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(null, Direction.NONE)),
             new AbilityEntry<>(1, block, blockComponent)
         );
-        manager.spawn(other);
+        world.getObjectManager().spawn(other);
         other.getLevels().rewardExperience(1000);
         other.getLevels().setAttributeLevel(Attribute.ENDURANCE, 2);
 
@@ -299,7 +273,7 @@ class AbstractAttackAbilityTest {
             new AbilityEntry<>(0, new TargetSelectorAbility(), ts),
             new AbilityEntry<>(1, ability, component));
 
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         for (int i = 0; i < 10000; i++) {
             ts.setTarget(other, Direction.RIGHT);
@@ -315,12 +289,10 @@ class AbstractAttackAbilityTest {
 
     @Test
     void performReducesTargetHealth() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val other = FakeCharacterObject.create();
-        manager.spawn(other);
+        world.getObjectManager().spawn(other);
 
         val ability = FakeAttackAbility.create(1, 0);
         val component = FakeAttackControllerComponent.create();
@@ -328,7 +300,7 @@ class AbstractAttackAbilityTest {
             new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(other, Direction.RIGHT)),
             new AbilityEntry<>(1, ability, component));
 
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
 
         ability.perform(component);
         assertEquals(9.0f, other.getHealth());
@@ -336,12 +308,10 @@ class AbstractAttackAbilityTest {
 
     @Test
     void performFailsAfterTargetsHealthReachesZeroAfterMultipleAttacks() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        world.init();
+        val world = FakeWorld.create();
 
         val other = FakeCharacterObject.create();
-        manager.spawn(other);
+        world.getObjectManager().spawn(other);
 
         val ability = FakeAttackAbility.create(1, 0);
         val component = FakeAttackControllerComponent.create();
@@ -349,7 +319,7 @@ class AbstractAttackAbilityTest {
             new AbilityEntry<>(0, new TargetSelectorAbility(), FakeTargetSelectorControllerComponent.create(other, Direction.RIGHT)),
             new AbilityEntry<>(1, ability, component));
 
-        manager.spawn(character);
+        world.getObjectManager().spawn(character);
         for (int i = 0; i < 10; i++) {
             ability.perform(component);
         }

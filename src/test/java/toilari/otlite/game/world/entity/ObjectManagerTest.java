@@ -2,11 +2,10 @@ package toilari.otlite.game.world.entity;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import toilari.otlite.fake.FakeWorld;
 import toilari.otlite.game.GameState;
-import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.GameObject;
 import toilari.otlite.game.world.entities.ObjectManager;
-import toilari.otlite.game.world.entities.TurnObjectManager;
 
 import java.util.Arrays;
 
@@ -22,18 +21,15 @@ class ObjectManagerTest {
     @Test
     @SuppressWarnings("ConstantConditions")
     void tryingToSpawnNullObjectThrows() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        manager.init(world);
+        val world = FakeWorld.create();
 
         assertThrows(NullPointerException.class, () -> world.getObjectManager().spawn(null));
     }
 
     @Test
     void spawningSetsSpawnedObjectsWorldInstance() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        manager.init(world);
+        val world = FakeWorld.create();
+
         val object = new TestGameObject();
         world.getObjectManager().spawn(object);
 
@@ -42,9 +38,8 @@ class ObjectManagerTest {
 
     @Test
     void updatingWorldCallsObjectUpdate() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        manager.init(world);
+        val world = FakeWorld.create();
+
         val obj = new TestGameObject();
 
         world.getObjectManager().spawn(obj);
@@ -55,9 +50,8 @@ class ObjectManagerTest {
 
     @Test
     void getObjectsContainsAllSpawnedObjects() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        manager.init(world);
+        val world = FakeWorld.create();
+
         val objects = new TestGameObject[1000];
         for (int i = 0; i < 1000; i++) {
             objects[i] = new TestGameObject();
@@ -71,9 +65,8 @@ class ObjectManagerTest {
 
     @Test
     void getObjectsContainsAllButRemovedObjectsAfterNextUpdate() {
-        val manager = new TurnObjectManager();
-        val world = new World(manager);
-        manager.init(world);
+        val world = FakeWorld.create();
+
         val objects = new TestGameObject[1000];
         for (int i = 0; i < 1000; i++) {
             objects[i] = new TestGameObject();

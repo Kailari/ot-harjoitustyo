@@ -4,9 +4,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import toilari.otlite.fake.*;
 import toilari.otlite.game.util.Direction;
-import toilari.otlite.game.world.World;
 import toilari.otlite.game.world.entities.GameObject;
-import toilari.otlite.game.world.entities.TurnObjectManager;
 import toilari.otlite.game.world.entities.characters.abilities.TargetSelectorAbility;
 import toilari.otlite.game.world.entities.characters.abilities.components.AbstractAttackControllerComponent;
 
@@ -23,8 +21,7 @@ class AbstractAttackControllerComponentTest {
 
     @Test
     void abilityPerformedRewardsExperienceIfTargetIsCharacterWhichDies() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val target = FakeCharacterObject.create();
         world.getObjectManager().spawn(target);
@@ -46,8 +43,7 @@ class AbstractAttackControllerComponentTest {
 
     @Test
     void abilityPerformedDoesNotRewardExperienceIfTargetIsCharacterWhichDoesNotDie() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val target = FakeCharacterObject.create();
         world.getObjectManager().spawn(target);
@@ -68,8 +64,7 @@ class AbstractAttackControllerComponentTest {
 
     @Test
     void abilityPerformedDoesNotTouchExperienceIfTargetIsNotCharacter() {
-        val world = new World(new TurnObjectManager());
-        world.init();
+        val world = FakeWorld.create();
 
         val target = new GameObject();
         world.getObjectManager().spawn(target);

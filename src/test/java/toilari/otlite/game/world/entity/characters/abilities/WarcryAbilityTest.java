@@ -41,9 +41,4 @@ class WarcryAbilityTest {
         ability.init(character);
         assertEquals(Attribute.Charisma.getWarcryRange(character.getLevels()), ability.getAreaExtent());
     }
-
-    @Test
-    void notYetImplemented() {
-        //fail("not implemented");
-    }
 }
