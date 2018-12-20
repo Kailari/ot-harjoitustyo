@@ -14,11 +14,13 @@ Hätä ei suinkaan ole tämän näköinen sillä useimpiin kehitysympäristöihi
 - [käyttöohje](documentation/kayttoohje.md)
 - [vaatimusmäärittely](documentation/vaatimusmaarittely.md)
 - [arkkitehtuuri](documentation/arkkitehtuuri.md)
+- [testausdokumentti](documentation/testaus.md)
 - [tuntikirjanpito](documentation/tuntikirjanpito.md)
 
 ## Releaset
 - [viikko 5 (_RELEASE 1_)](https://github.com/Kailari/ot-harjoitustyo/releases/tag/viikko5)
 - [viikko 6 (_RELEASE 2_)](https://github.com/Kailari/ot-harjoitustyo/releases/tag/viikko6)
+- [loppupalautus](https://github.com/Kailari/ot-harjoitustyo/releases/tag/loppupalautus)
 
 ## Komentorivitoiminnot
 ### Testaus
