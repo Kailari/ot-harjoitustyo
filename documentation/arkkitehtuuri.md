@@ -49,11 +49,12 @@ Pelissä on maailma jossa on yksi aktiivinen ruutupohjainen kartta ja useita pel
 
 Pelihahmot ovat peliobjektien erikoistapaus, joille on lisätty erinäisiä hahmoille tyypillisen toiminnan toteuttamista helpottavia ominaisuuksia. Hahmojen toiminnallisuus on eriytetty rajapinnan `IAbility` toteuttaviin _"kykyihin"_ ja niitä ohjaaviin rajapinnan `IControllerComponent` toteuttaviin _ohjainkomponentteihin_.
 
-Kykyjen lisäksi hahmoilla on erilaisia _attribuutteja_, jotka vaikuttavat hahmon eri kykyihin ja muuhun suorituskykyyn. 
+Kykyjen lisäksi hahmoilla on erilaisia _attribuutteja_, jotka vaikuttavat hahmon eri kykyihin ja muuhun suorituskykyyn. Attribuuttien hallinnointi on toteutettu luokissa `CharacterAttributes` ja `CharacterLevels`. `CharacterLevels` vastaa _pääatribuuttien_ tasoista ja hahmon kokemustason hallinnasta ja `CharacterAttributes` sisältää attribuuttien arvot.
+
 
 ### Kartat
 
-Kartat ovat yksinkertaisia ruudukkoja jotka rakentuvat erilaisista luokan `Tile` ilmentymistä.
+Kartat ovat yksinkertaisia ruudukkoja jotka rakentuvat erilaisista luokan `Tile` ilmentymistä. Karttat tallennetaan taulukkona koḱonaislukuja, joista jokainen vastaa jotain ruututyyppiä. Nämä vastaavuudet määritellään luokan `TileMapping` avulla.
 
 ## Käyttöliittymä
 Korkeimmalla tasolla käyttöliittymästä vastaa `GameRunner`, joka suorittaa nykyistä pelitilaa vastaavan `IGameStateRenderer`-luokan ilmentymien tarjoamia metodeja. Käytettävät piirtäjien toteutukset injektoidaan konstruktorikutsun yhteydessä, jolloin käyttöliittymä on käytännössä täysin eriytetty sovelluslogiikasta.

@@ -15,15 +15,15 @@ Pelin käynnistyttyä, joko valitaan profiili tai luodaan uusi. Profiileja ei ol
 ### Profiilit
 - Peliin voi luoda useita profiileja, jotka tallennetaan tietokantaan.
 - Jokaisella profiililla on omat asetuksensa, jotka ladataan profiilin valinnan jälkeen.
-- Profiilikohtainen "Bestiary" jossa pidetään kirjaa lyötyjen mörköjen määrästä.
+- Profiilikohtainen "Bestiary" jossa pidetään  mm. lyötyjen mörköjen määrästä.
 
 ### Määritystiedostot
-- Pelin sisältöä (möröt, esineet) voi muokata/lisätä määritystiedostoja käyttäen.
+- Pelin sisältöä (möröt, kartat) voi muokata/lisätä määritystiedostoja käyttäen.
 - Esim. mörköjen tiedot tallennetaan yksinkertaisiin .json-tiedostoihin, jotka ladataan automaagisesti määrätystä polusta pelin käynnistyessä.
 
 ### Valikot
 - Profiilin valinnan jälkeen pelaajalla on saatavilla päävalikko, josta pääsee aloittamaan uuden pelin, lataamaan tallennustiedoston ja säätämään asetuksia.
-- Lisäksi päävalikosta pääsee katsomaan tilastoja.
+- Lisäksi päävalikosta pääsee katsomaan tilastoja (bestiaari).
 
 ### Pelimekaniikat
 #### Yleisesti
@@ -38,7 +38,7 @@ Pelin käynnistyttyä, joko valitaan profiili tai luodaan uusi. Profiileja ei ol
 
 #### Taistelu
 - Kahden hahmon ollessa vierekkäin, ne saavat vuorollaan käytettäväksi taistelutoimintoja, joilla ne voivat tuottaa vahinkopisteitä toisilleen.
-- Hahmoilla on myös attribuutteja, jotka vaikuttavat niihin kohdistuviin vahinkopisteisiin.
+- Hahmojen attribuutit vaikuttavat käytössä oleviin toimintoihin ja tuotettuihin/vastaanotettuihin vahinkopisteisiin
 
 #### Möröt
 - Mörköjen vahvuus kasvaa joka kerroksessa.
@@ -48,9 +48,6 @@ Pelin käynnistyttyä, joko valitaan profiili tai luodaan uusi. Profiileja ei ol
 ## Lisäominaisuuksia / Jatkokehitysideoita
 
 ### Pelimekaniikat
-#### Taistelu
-- Laajemmat vaihtoehdot taisteluun. Korkeammat attribuutit --> enemmän erilaisia iskuvaihtoehtoja
-- Rotkon reunalla olevan mörön voi yrittää potkaista alas
 
 #### Esineet
 - Pelissä on esineitä jotka vaikuttavat hahmojen attribuutteihin.
@@ -64,13 +61,9 @@ Pelin käynnistyttyä, joko valitaan profiili tai luodaan uusi. Profiileja ei ol
 
 ### Suorituskyky
 #### Grafiikka
-- Peli käyttää tällä hetkellä erittäin naiivia lähestymistapaa piirtämiseen, jossa lähes jokainen piirrettävä objekti piirretään omana piirtokäskynään. Tämä on luonnollisesti kohtuuttoman hidasta.
-    - Piirtämisen voisi toteuttaa tehokkaammin prioriteettijonolla optimoidulla sarjapiirtäjällä ("Batched renderer")
-    - Tekstuurit tulee pakata suurempiin "atlaksiin" joissa on usean eri objektin tekstuurit yhdessä kuvassa.
-    - Spritejä ei piirretä suoraan, vaan kukin sprite asetetaan vuorollaan "jonoon" piirtämistä varten.
-    - Jonona toimii prioriteettijono, joka järjestää ensisijaisesti z-akselin mukaan, ja toissijaisesti käytetyn tekstuurin mukaan.
-    - Varsinainen piirtäminen tapahtuu käymällä prioriteettijonoa läpi alusta loppuun ja lisäämällä uusien spritejen geometria lennossa luotavaan VAO/VBO:iin. Tätä jatketaan kunnes tekstuuri vaihtuu, jolloin nykyinen piirtäjä "flushataan" eli tähänasti luotu VBO piirretään ja aletaan luoda uutta uudella tekstuurilla.
-    - Optimitilanteessa tämä tarkoittaa että piirtokomentojen määrä on objektien määrän sijaan käytettyjen tekstuurien määrä
+- Peli käyttää melko naivia sarjapiirtäjän toteutusta, joka ei automaattisesti osaa optimoida piirtojärjestystä piirtokutsujen minimoimiseksi. Parempi järjestelmä olisi mahdollista toteuttaa melko pienellä vaivalla
+    - Sen sijaan että piirettävät asiat viedään välittömästi VBO:hon ja VBO flushataan tekstuurin vaihtuessa, voitaisiin oliot asettaa jonoon ja järjestää "kerroksittain" jonkin prioriteetin mukaan.
+    - Tällöin samaa tekstuuria käyttävät oliot joiden keskinäisellä järjestyksellä ei ole merkitystä voitaisiin yhdistää yhteen piirtokutsuun, vaikka tekstuuri vaihtuisikin älissä useita kertoja.
 
 #### Statistiikka
 - Statistiikkaa kerätään tällä hetkellä kirjoittaen jokainen päivitys suoraan kantaan. Tämä asettaa pelin suorituskyvylle ilmeisen I/O pullonkaulan mikäli statistiikkapäivityksiä tulee useita nopeaan tahtiin.

@@ -1,5 +1,22 @@
 # Käyttöohje
 
+## Asennus
+
+Lataa releases-osiosta käyttöjärjestelmääsi vastaava uusin release. Pura zip haluamaasi hakemistoon.
+
+## Konfigurointi
+
+Pelaajakohtaisia asetuksia pääsee muokkaamaan profiilin luonnin jälkeen muokkaamalla polusta `data/<profiilin nimi>.settings` löytyvää tiedostoa. Graafista käyttöliittymää asetuksien muokkaamiseen ei ehditty toteuttaa.
+
+## Käynnistäminen
+
+Ohjelma käynnistetään komennolla
+
+```
+java -jar otlite-<VERSIO>.jar
+```
+
+
 ## Pelaajaprofiilin valinta
 Sovellus käynnistyy ruutuun jossa käyttäjä voi valita haluamansa pelaajaprofiilin. Ensimmäisellä käynnistykerralla profiileja ei vielä ole vaan sellainen tulee luoda painamalla _"Add"_. Luodut profiilit näkyvät alla listana ja kunkin profiilin voi poistaa sen vieressä olevalla punaisella painikkeella. Pelaajaprofiili valitaan painamalla halutun profiilin painiketta.
 
